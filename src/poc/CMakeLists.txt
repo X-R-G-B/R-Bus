@@ -55,7 +55,6 @@ target_link_libraries(
 
 add_subdirectory(src)
 
-# Copy the executable to the root directory
 if (WIN32)
     add_custom_command(
         TARGET ${PROJECT_NAME} POST_BUILD
