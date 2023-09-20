@@ -8,13 +8,13 @@
 class Registry {
     public:
         template <class Component>
-        using array = std::shared_ptr<SparseArray<Component>>;
+        using array = SparseArray<Component> &;
 
         template <class Component>
         array<Component> registerComponent()
         {
             if (_data.find(typeid(Component)) == _data.end()) {
-                _data[typeid(Component)] = std::make_shared<SparseArray<Component>>();
+                _data[typeid(Component)] = SparseArray<Component>();
             }
             return castReturn<Component>();
         };
