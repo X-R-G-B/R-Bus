@@ -37,6 +37,7 @@ typedef char action_type_t;
 
 struct header_s {
     ids_received_t ids_received,
+    id_t last_id_received,
     id_t id,
     nb_action_t nb_action,
 } __attribute__((packed));
