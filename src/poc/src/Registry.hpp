@@ -13,7 +13,13 @@
 #include <memory>
 
 class Registry {
+    
     public:
+        static Registry &getInstance() {
+            static Registry instance;
+            return instance;
+        }
+
         template <class Component>
         using array = std::shared_ptr<SparseArray<Component>>;
 
@@ -24,18 +30,24 @@ class Registry {
                 _data[typeid(Component)] = std::make_shared<SparseArray<Component>>();
             }
             return castReturn<Component>();
-        };
+        }
+
         template <class Component>
         array<Component> getComponents()
         {
             return castReturn<Component>();
-        };
+        }
+
         template <class Component>
         array<Component> const &getComponents() const
         {
             return castReturn<Component>();
-        };
+        }
     private:
+        Registry() = default;
+        Registry(const Registry&) = delete;
+        Registry& operator=(const Registry&) = delete;
+
         template<class Component>
         array<Component> castReturn()
         {
