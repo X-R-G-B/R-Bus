@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
 
-add_library(asio INTERFACE)
-target_compile_options(asio INTERFACE ASIO_STANDALONE)
-
 # -- Fetch asio
 include(FetchContent)
 FetchContent_Declare(
@@ -15,8 +12,8 @@ FetchContent_GetProperties(asio)
 if(NOT asio_POPULATED)
     FetchContent_Populate(asio)
 
-    target_include_directories(asio INTERFACE ${asio_SOURCE_DIR}/include)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${asio_SOURCE_DIR}/include)
 
     find_package(Threads)
-    target_link_libraries(asio PRIVATE Threads::Threads)
+    target_link_libraries(${PROJECT_NAME} INTERFACE Threads::Threads)
 endif()

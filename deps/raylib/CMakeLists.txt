@@ -15,4 +15,10 @@ if(NOT raylib_POPULATED)
         ${raylib_SOURCE_DIR}
         ${raylib_BINARY_DIR}
     )
+
+    target_link_libraries(
+        ${PROJECT_NAME}
+        PRIVATE
+        raylib
+    )
 endif()
