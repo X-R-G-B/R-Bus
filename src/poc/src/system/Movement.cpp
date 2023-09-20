@@ -1,30 +1,41 @@
 /*
-** Movement.cpp for R-Bus in /home/kitetsu/Epitech/R-Bus/src/system
-**
-** Made by brice
-** Login   <brice.desousa@epitech.eu>
-**
-** Started on  Wed Sep 20 10:19:53 AM 2023 brice
-** Last update Thu Sep 20 2:34:00 PM 2023 brice
+** EPITECH PROJECT, 2023
+** R-Bus
+** File description:
+** Movement
 */
 
+#include <cstdlib>
 #include <iostream>
+#include "raylib.h"
 #include "Movement.hpp"
+#include "CustomTypes.hpp"
+#include "EventManager.hpp"
 
 namespace System {
     Movement::Movement(Registry *registry)
         : ASystem(registry)
     {
-        
     }
 
     void Movement::run()
     {
-        std::cout << "Printing sparse array of int" << std::endl;
+        EventManager &eventManager = EventManager::getInstance();
         Registry::array<int> arrInt = _registry->getComponents<int>();
+        Registry::array<Pixel> arrPixel = _registry->getComponents<Pixel>();
 
         for (auto begin = arrInt->begin(); begin != arrInt->end(); begin++) {
             std::cout << *begin << std::endl;
+        }
+        for (auto begin = arrPixel->begin(); begin != arrPixel->end(); begin++) {
+            if (eventManager.checkEvent(KEY_LEFT))
+                begin->x -= 1;
+            if (eventManager.checkEvent(KEY_RIGHT))
+                begin->x += 1;
+            if (eventManager.checkEvent(KEY_UP))
+                begin->y -= 1;
+            if (eventManager.checkEvent(KEY_DOWN))
+                begin->y += 1;
         }
         std::cout << "------------------------------------" << std::endl;
     }

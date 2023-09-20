@@ -13,6 +13,7 @@ target_sources(
     ${CMAKE_CURRENT_SOURCE_DIR}/Collison.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Movement.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ASystem.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PixelRenderer.cpp
 )
 
 add_subdirectory(managers)

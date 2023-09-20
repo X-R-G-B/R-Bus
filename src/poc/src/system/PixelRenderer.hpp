@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2023
 ** R-Bus
 ** File description:
-** Collison
+** PixelRenderer
 */
 
 #pragma once
@@ -10,12 +10,9 @@
 #include "ASystem.hpp"
 
 namespace System {
-    class Collison : public ASystem {
+    class PixelRenderer : public ASystem {
         public:
-            Collison(Registry *registry);
-
+            PixelRenderer(Registry *registry);
             void run() final;
-        protected:
-        private:
     };
 }

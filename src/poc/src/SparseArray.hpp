@@ -5,6 +5,8 @@
 ** SparseArray
 */
 
+#pragma once
+
 #include <iterator>
 #include <list>
 
