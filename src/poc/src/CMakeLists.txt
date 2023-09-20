@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
 add_subdirectory(system)
+add_subdirectory(network)
 
 target_include_directories(
     ${PROJECT_NAME}

@@ -8,6 +8,7 @@
 #pragma once
 
 #include <list>
+#include <boost/asio.hpp>
 
 #define MAX_ACTIONS 16
 
@@ -90,7 +91,7 @@ namespace Nitwork {
             }
         protected:
         private:
-//            asio::io_context io_context;
+            asio::io_context io_context;
             std::list<Actions::maxStruct_s> actions;
             std::array<Actions::id_t, MAX_ACTIONS> ids;
     };
