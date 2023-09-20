@@ -10,5 +10,7 @@ target_sources(
     ${PROJECT_NAME}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/SystemManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Systems.cpp
 )
+
+add_subdirectory(managers)

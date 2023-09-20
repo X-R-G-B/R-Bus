@@ -11,25 +11,22 @@
 #include <typeinfo>
 #include <typeindex>
 #include <unordered_map>
-#include "SparseArray.hpp"
 #include <memory>
+#include "SparseArray.hpp"
 
 class Registry {
     
     public:
-        static Registry &getInstance() {
-            static Registry instance;
-            return instance;
-        }
-
         template <class Component>
-        using array = std::shared_ptr<SparseArray<Component>>;
+        using array = SparseArray<Component> &;
+
+        static Registry &getInstance();
 
         template <class Component>
         array<Component> registerComponent()
         {
             if (_data.find(typeid(Component)) == _data.end()) {
-                _data[typeid(Component)] = std::make_shared<SparseArray<Component>>();
+                _data[typeid(Component)] = SparseArray<Component>();
             }
             return castReturn<Component>();
         }
@@ -47,13 +44,14 @@ class Registry {
         }
     private:
         Registry() = default;
-        Registry(const Registry&) = delete;
-        Registry& operator=(const Registry&) = delete;
 
         template<class Component>
         array<Component> castReturn()
         {
             return std::any_cast<array<Component>>(_data[typeid(Component)]);
         }
+
+        static Registry _instance;
+        Registry& operator=(const Registry&) = delete;
         std::unordered_map<std::type_index, std::any> _data;
 };

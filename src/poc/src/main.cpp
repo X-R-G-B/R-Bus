@@ -6,15 +6,13 @@
 */
 
 #include <iostream>
-#include "raylib.h"
-#include "SystemManager.hpp"
-#include "Collison.hpp"
-#include "Movement.hpp"
-#include "PixelRenderer.hpp"
-#include "CustomTypes.hpp"
-#include "EventManager.hpp"
+#include "GameManager.hpp"
 
 int main()
 {
+    Systems::GameManager &gameManager = Systems::GameManager::getInstance();
 
+    while (1) {
+        gameManager.updateSystems();
+    }
 }

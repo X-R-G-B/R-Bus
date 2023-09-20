@@ -10,10 +10,13 @@ target_sources(
     ${PROJECT_NAME}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
+<<<<<<< Updated upstream:src/poc/src/system/CMakeLists.txt
     ${CMAKE_CURRENT_SOURCE_DIR}/Collison.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Movement.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/ASystem.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/PixelRenderer.cpp
+=======
+    ${CMAKE_CURRENT_SOURCE_DIR}/ASystemManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameManager.cpp
+>>>>>>> Stashed changes:src/poc/src/Systems/managers/CMakeLists.txt
 )
-
-add_subdirectory(managers)
