@@ -1,11 +1,8 @@
 /*
-** Collison.cpp for R-Bus in /home/kitetsu/Epitech/R-Bus/src/system
-**
-** Made by brice
-** Login   <brice.desousa@epitech.eu>
-**
-** Started on  Wed Sep 20 9:36:31 AM 2023 brice
-** Last update Thu Sep 20 12:03:08 PM 2023 brice
+** EPITECH PROJECT, 2023
+** R-Bus
+** File description:
+** Collison
 */
 
 #include <iostream>
