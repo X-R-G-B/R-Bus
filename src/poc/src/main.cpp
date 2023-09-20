@@ -12,6 +12,7 @@
 #include "raylib.h"
 #include "PixelRenderer.hpp"
 #include "CustomTypes.hpp"
+#include "EventManager.hpp"
 
 void initRaylib()
 {
@@ -26,6 +27,8 @@ int main()
     initRaylib();
     System::SystemManager manager;
     System::SystemManager displaySystemManager;
+    System::SystemManager inputSystemManager;
+    EventManager &eventManager = EventManager::getInstance();
 
     Registry *registry = new Registry();
     Registry::array<int> arrInt = registry->registerComponent<int>();
@@ -44,7 +47,7 @@ int main()
     arrPixel->add({0, 0});
 
     manager.addSystem(std::make_unique<System::Collison>(registry));
-    manager.addSystem(std::make_unique<System::Movement>(registry));
+    inputSystemManager.addSystem(std::make_unique<System::Movement>(registry));
     displaySystemManager.addSystem(std::make_unique<System::PixelRenderer>(registry));
 
     while (!WindowShouldClose()) {
@@ -52,6 +55,8 @@ int main()
         ClearBackground(RAYWHITE);
         manager.updateSystems();
         displaySystemManager.updateSystems();
+        inputSystemManager.updateSystems();
+        eventManager.updateEvents();
         EndDrawing();
     }
     CloseWindow();
