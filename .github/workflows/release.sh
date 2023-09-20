@@ -39,7 +39,7 @@ TAG="$TAG_MAJOR.$TAG_MINOR.$TAG_PATCH"
 gh release create "$TAG"           \
   --title "v$TAG"                  \
   --generate-notes                 \
-  --target feature/RB-27
+  --target main
 
 echo "$TAG"
 
