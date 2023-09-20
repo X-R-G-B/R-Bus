@@ -20,7 +20,5 @@ namespace System {
             Registry *_registry;
         private:
             void clientRun() final;
-
-
     };
 }
