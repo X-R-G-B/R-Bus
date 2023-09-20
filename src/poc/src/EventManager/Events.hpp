@@ -8,10 +8,11 @@
 #pragma once
 
 #include <list>
+#include <array>
 #include "raylib.h"
 
 namespace Events {
-    static const std::list<int> events = {
+    static const std::array<int, 4> events = {
         KEY_LEFT,
         KEY_RIGHT,
         KEY_UP,
