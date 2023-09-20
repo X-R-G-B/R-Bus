@@ -72,6 +72,9 @@ jobs:
     needs: release-create
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
     - name: Install deps
       run: sudo apt-get update && sudo apt-get install -y tar git
 
@@ -98,6 +101,9 @@ jobs:
     needs: release-create
 
     steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
     - name: Install deps
       run: sudo apt-get update && sudo apt-get install -y tar git
 
