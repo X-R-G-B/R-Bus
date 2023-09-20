@@ -6,11 +6,11 @@
 */
 
 #include <iostream>
+#include "raylib.h"
 #include "SystemManager.hpp"
 #include "Collison.hpp"
 #include "Movement.hpp"
 #include "EventManager.hpp"
-#include "raylib.h"
 
 int main()
 {
