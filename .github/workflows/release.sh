@@ -41,5 +41,4 @@ gh release create "$TAG"           \
   --generate-notes                 \
   --target main
 
-
 echo "release_tag=$TAG" >> $GITHUB_OUTPUT
