@@ -38,3 +38,13 @@ build/
 .vs/
 *.ini
 !dllTest/*
+
+#CMake
+*.vcxproj*
+CmakeCache*
+CmakeFiles/
+Debug/
+cmake_*
+*.dir/
+*.sln
+x64/
