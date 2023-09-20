@@ -9,17 +9,21 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
 
+    outputs:
+      release: ${{ steps.release.outputs.release_tag }}
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
-    - name: Create Release
+    - id: release
+      name: Create Release
       if: github.repository != 'EpitechPromo2026/B-CPP-500-TLS-5-1-rtype-xavier.mitault.git'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: bash ./.github/workflows/release.sh
+      run: bash ./.github/workflows/release.sh >> $GITHUB_OUTPUT
 
   build-windows:
     runs-on: windows-latest
@@ -38,8 +42,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload "${{ github.ref_name }}" ./r-type_server.exe
-        gh release upload "${{ github.ref_name }}" ./r-type_client.exe
+        gh release upload "${{ needs.release-create.outputs.release }}" ./r-type_server.exe
+        gh release upload "${{ needs.release-create.outputs.release }}" ./r-type_client.exe
 
   build-linux:
     runs-on: ubuntu-latest
@@ -58,8 +62,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload "${{ github.ref_name }}" ./r-type_server
-        gh release upload "${{ github.ref_name }}" ./r-type_client
+        gh release upload "${{ needs.release-create.outputs.release }}" ./r-type_server
+        gh release upload "${{ needs.release-create.outputs.release }}" ./r-type_client
 
   asio-to-tar:
     runs-on: ubuntu-latest
@@ -85,7 +89,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload "${{ github.ref_name }}" ./asio.tar
+        gh release upload "${{ needs.release-create.outputs.release }}" ./asio.tar
 
   raylib-to-tar:
     runs-on: ubuntu-latest
@@ -110,4 +114,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload "${{ github.ref_name }}" ./raylib.tar
+        gh release upload "${{ needs.release-create.outputs.release }}" ./raylib.tar
