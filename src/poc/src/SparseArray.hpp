@@ -1,11 +1,8 @@
 /*
-** SparseArray.hpp for R-Bus in /home/kitetsu/Epitech/R-Bus/src/poc/src
-**
-** Made by brice
-** Login   <brice.desousa@epitech.eu>
-**
-** Started on  Wed Sep 20 4:21:15 PM 2023 brice
-** Last update Wed Sep 20 4:21:15 PM 2023 brice
+** EPITECH PROJECT, 2023
+** R-Bus
+** File description:
+** SparseArray
 */
 
 #include <iterator>

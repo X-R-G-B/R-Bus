@@ -24,7 +24,7 @@ else()
     target_compile_options(
         ${PROJECT_NAME}
         PRIVATE
-        -Wall -Wextra
+        -Wall -Wextra -pedantic
     )
 endif()
 
