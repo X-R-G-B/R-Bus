@@ -23,7 +23,9 @@ jobs:
       if: github.repository != 'EpitechPromo2026/B-CPP-500-TLS-5-1-rtype-xavier.mitault.git'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: bash ./.github/workflows/release.sh >> $GITHUB_OUTPUT
+      run: |
+        export GITHUB_OUTPUT=$GITHUB_OUTPUT
+        bash ./.github/workflows/release.sh
 
   build-windows:
     runs-on: windows-latest

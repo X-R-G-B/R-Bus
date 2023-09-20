@@ -41,4 +41,4 @@ gh release create "$TAG"           \
   --generate-notes                 \
   --target feature/RB-27
 
-echo "release=$TAG"
+echo "release=$TAG" >> $GITHUB_OUTPUT
