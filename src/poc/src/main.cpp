@@ -6,10 +6,10 @@
 */
 
 #include <iostream>
+#include "raylib.h"
 #include "SystemManager.hpp"
 #include "Collison.hpp"
 #include "Movement.hpp"
-#include "raylib.h"
 #include "PixelRenderer.hpp"
 #include "CustomTypes.hpp"
 #include "EventManager.hpp"

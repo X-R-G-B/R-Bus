@@ -6,8 +6,8 @@
 */
 
 #include <iostream>
-#include "PixelRenderer.hpp"
 #include "raylib.h"
+#include "PixelRenderer.hpp"
 #include "CustomTypes.hpp"
 
 namespace System {

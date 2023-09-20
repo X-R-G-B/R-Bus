@@ -7,10 +7,10 @@
 
 #include <cstdlib>
 #include <iostream>
+#include "raylib.h"
 #include "Movement.hpp"
 #include "CustomTypes.hpp"
 #include "EventManager.hpp"
-#include "raylib.h"
 
 namespace System {
     Movement::Movement(Registry *registry)
