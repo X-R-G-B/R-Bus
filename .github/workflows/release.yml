@@ -44,8 +44,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload "${{ needs.release-create.outputs.release }}" ./r-type_server.exe
-        gh release upload "${{ needs.release-create.outputs.release }}" ./r-type_client.exe
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type_server.exe
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type_client.exe
 
   build-linux:
     runs-on: ubuntu-latest
@@ -64,8 +64,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload "${{ needs.release-create.outputs.release }}" ./r-type_server
-        gh release upload "${{ needs.release-create.outputs.release }}" ./r-type_client
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type_server
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type_client
 
   asio-to-tar:
     runs-on: ubuntu-latest
@@ -91,7 +91,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload "${{ needs.release-create.outputs.release }}" ./asio.tar
+        gh release upload ${{ needs.release-create.outputs.release }} ./asio.tar
 
   raylib-to-tar:
     runs-on: ubuntu-latest
@@ -116,4 +116,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload "${{ needs.release-create.outputs.release }}" ./raylib.tar
+        gh release upload ${{ needs.release-create.outputs.release }} ./raylib.tar
