@@ -18,7 +18,7 @@
 namespace System {
     class SystemManager {
         public:
-            SystemManager(Registry &regis   try);
+            SystemManager(Registry &registry);
             ~SystemManager();
 
             void updateSystems();
