@@ -25,6 +25,7 @@ int main()
 {
     initRaylib();
     System::SystemManager manager;
+    System::SystemManager displaySystemManager;
 
     Registry *registry = new Registry();
     Registry::array<int> arrInt = registry->registerComponent<int>();
@@ -44,12 +45,13 @@ int main()
 
     manager.addSystem(std::make_unique<System::Collison>(registry));
     manager.addSystem(std::make_unique<System::Movement>(registry));
-    manager.addSystem(std::make_unique<System::PixelRenderer>(registry));
+    displaySystemManager.addSystem(std::make_unique<System::PixelRenderer>(registry));
 
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
         manager.updateSystems();
+        displaySystemManager.updateSystems();
         EndDrawing();
     }
     CloseWindow();
