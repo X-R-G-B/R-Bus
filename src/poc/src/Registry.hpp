@@ -5,6 +5,8 @@
 ** Registry
 */
 
+#pragma once
+
 #include <any>
 #include <typeinfo>
 #include <typeindex>

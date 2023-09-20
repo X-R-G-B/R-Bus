@@ -6,35 +6,39 @@
 */
 
 #include <iostream>
-#include <unistd.h>
+#include "raylib.h"
 #include "SystemManager.hpp"
 #include "Collison.hpp"
 #include "Movement.hpp"
+#include "EventManager.hpp"
 
 int main()
 {
-    Registry *registry = new Registry();
-    Registry::array<int> arrInt = registry->registerComponent<int>();
-    arrInt->add(4);
-    arrInt->add(69);
-    Registry::array<float> arrFloat = registry->registerComponent<float>();
-    arrFloat->add(69.69);
-    Registry::array<float> scdContainer = registry->getComponents<float>();
-    for (auto begin = arrInt->begin(); begin != arrInt->end(); begin++) {
-        std::cout << *begin << std::endl;
-    }
-    for (auto begin = scdContainer->begin(); begin != scdContainer->end(); begin++) {
-        std::cout << *begin << std::endl;
-    }
+    const int screenWidth = 800;
+    const int screenHeight = 450;
 
-    System::SystemManager manager;
+    InitWindow(screenWidth, screenHeight, "raylib [core] example - keyboard input");
 
-    manager.addSystem(std::make_unique<System::Collison>(registry));
-    manager.addSystem(std::make_unique<System::Movement>(registry));
+    Vector2 ballPosition = { (float)screenWidth/2, (float)screenHeight/2 };
+
+    SetTargetFPS(60);
+    EventManager &eventManager = EventManager::getInstance();
 
     while (1) {
-        manager.updateSystems();
-        sleep(1);
+        eventManager.updateEvents();
+        if (eventManager.checkEvent(KEY_LEFT)) {
+            std::cout << "yes yes yes" << std::endl;
+        }
+        BeginDrawing();
+
+            ClearBackground(RAYWHITE);
+
+            DrawText("move the ball with arrow keys", 10, 10, 20, DARKGRAY);
+
+            DrawCircleV(ballPosition, 50, MAROON);
+
+        EndDrawing();
     }
+    CloseWindow();
     return 0;
 }
