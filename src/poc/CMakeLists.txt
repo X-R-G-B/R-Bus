@@ -32,7 +32,6 @@ add_executable(
     ${PROJECT_NAME}
 )
 
-# Set compiler flags
 if(MSVC)
     target_compile_options(
         ${PROJECT_NAME}
