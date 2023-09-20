@@ -5,10 +5,10 @@
 ** Movement
 */
 
+#include <cstdlib>
 #include <iostream>
 #include "Movement.hpp"
 #include "CustomTypes.hpp"
-#include <cstdlib>
 
 namespace System {
     Movement::Movement(Registry *registry)

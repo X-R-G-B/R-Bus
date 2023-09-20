@@ -10,7 +10,6 @@ project(
 
 set(CMAKE_CXX_STANDARD 20)
 
-# Get some dependencies
 include(FetchContent)
 
 FetchContent_Declare(
@@ -28,7 +27,6 @@ if(NOT raylib_POPULATED)
         ${raylib_BINARY_DIR}
     )
 endif()
-
 
 add_executable(
     ${PROJECT_NAME}
@@ -49,7 +47,6 @@ else()
     )
 endif()
 
-# Add project includes, sources, and link libraries
 target_link_libraries(
     ${PROJECT_NAME}
     PRIVATE
