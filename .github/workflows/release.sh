@@ -27,7 +27,7 @@ elif grep -q "^PATCH" CHANGELOG; then
     TAG_MAJOR=$((LAST_TAG_MAJOR + 0))
     TAG_MINOR=$((LAST_TAG_MINOR + 0))
     TAG_PATCH=$((LAST_TAG_PATCH + 1))
-else; then
+else
     WARNINGS="$WARNINGS ; This release is created with default bump version because no commits was ok"
     TAG_MAJOR=$((LAST_TAG_MAJOR + 0))
     TAG_MINOR=$((LAST_TAG_MINOR + 0))
