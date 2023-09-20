@@ -1,0 +1,103 @@
+name: Release
+
+on:
+  push:
+    branches: [feature/RB-27]
+
+jobs:
+  release-create:
+    permissions: write-all
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Create Release
+      if: github.repository != 'EpitechPromo2026/B-CPP-500-TLS-5-1-rtype-xavier.mitault.git'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: bash ./.github/workflows/release.sh
+
+  build-windows:
+    runs-on: windows-latest
+    needs: release-create
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Build
+      run: |
+        echo "RType server" > ./r-type_server.exe
+        echo "RType client" > ./r-type_client.exe
+
+    - name: Upload To Release
+      run: |
+        gh release upload "${{ github.ref_name }}" ./r-type_server.exe
+        gh release upload "${{ github.ref_name }}" ./r-type_client.exe
+
+  build-linux:
+    runs-on: windows-latest
+    needs: release-create
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Build
+      run: |
+        echo "RType server" > ./r-type_server
+        echo "RType client" > ./r-type_client
+
+    - name: Upload To Release
+      run: |
+        gh release upload "${{ github.ref_name }}" ./r-type_server
+        gh release upload "${{ github.ref_name }}" ./r-type_client
+
+  asio-to-tar:
+    runs-on: windows-latest
+    needs: release-create
+
+    steps:
+    - name: Install deps
+      run: sudo apt-get update && sudo apt-get install -y tar git
+
+    - name: Get Asio
+      run: |
+        git clone https://github.com/chriskohlhoff/asio.git asio-repo
+        cd asio-repo || exit 14
+        git checkout $(git describe --tags --abbrev=0)
+        cd ..
+
+    - name: To Tar
+      run: |
+        cd asio-repo || exit 14
+        tar -cvf ../asio.tar asio
+
+    - name: Upload To Release
+      run: |
+        gh release upload "${{ github.ref_name }}" ./asio.tar
+
+  raylib-to-tar:
+    runs-on: windows-latest
+    needs: release-create
+
+    steps:
+    - name: Install deps
+      run: sudo apt-get update && sudo apt-get install -y tar git
+
+    - name: Get Raylib
+      run: |
+        git clone https://github.com/raysan5/raylib.git raylib-repo
+        cd raylib-repo || exit 14
+        git checkout 4.5.0
+        cd ..
+
+    - name: Zip To Tar
+      run: |
+        tar -cvf raylib.tar raylib-repo
+
+    - name: Upload To Release
+      run: |
+        gh release upload "${{ github.ref_name }}" ./raylib.tar
