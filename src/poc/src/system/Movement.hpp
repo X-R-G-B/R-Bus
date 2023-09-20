@@ -1,11 +1,8 @@
 /*
-** Movement.hpp for R-Bus in /home/kitetsu/Epitech/R-Bus/src/system
-**
-** Made by brice
-** Login   <brice.desousa@epitech.eu>
-**
-** Started on  Wed Sep 20 10:19:50 AM 2023 brice
-** Last update Thu Sep 20 10:28:46 AM 2023 brice
+** EPITECH PROJECT, 2023
+** R-Bus
+** File description:
+** Movement
 */
 
 #pragma once
