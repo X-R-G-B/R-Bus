@@ -12,7 +12,7 @@
 #include "Movement.hpp"
 
 namespace System {
-    Movement::Movement(const Registry &registry)
+    Movement::Movement(Registry *registry)
         : ASystem(registry)
     {
         
@@ -20,8 +20,12 @@ namespace System {
 
     void Movement::run()
     {
-        std::cout << "Update Movement" << std::endl;
-        // get Position sparseArray with Position component type index
+        std::cout << "Printing sparse array of int" << std::endl;
+        Registry::array<int> arrInt = _registry->getComponents<int>();
 
+        for (auto begin = arrInt->begin(); begin != arrInt->end(); begin++) {
+            std::cout << *begin << std::endl;
+        }
+        std::cout << "------------------------------------" << std::endl;
     }
 }

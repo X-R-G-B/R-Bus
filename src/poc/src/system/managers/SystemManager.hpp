@@ -13,17 +13,16 @@
 #include <memory>
 #include <vector>
 #include "ISystem.hpp"
-#include "Registry.hpp"
 
 namespace System {
     class SystemManager {
         public:
-            SystemManager(Registry &registry);
+            SystemManager();
             ~SystemManager();
 
             void updateSystems();
 
-            void addSystems(std::vector<std::unique_ptr<ISystem>> systems);
+            void addSystem(std::unique_ptr<ISystem> system);
     
         protected:
             std::vector<std::unique_ptr<ISystem>> _systems;

@@ -16,14 +16,14 @@
 namespace System {
     class ASystem : public ISystem {
         public:
-            ASystem(const Registry &registry);
+            ASystem(Registry *registry);
             ~ASystem() = default;
             
         protected:
+            Registry *_registry;
         private:
             void clientRun() final;
 
-            Registry _registry;
 
     };
 }

@@ -12,7 +12,7 @@
 
 
 namespace System {
-    SystemManager::SystemManager(Registry &registry)
+    SystemManager::SystemManager()
     {
     }
 
@@ -27,10 +27,8 @@ namespace System {
         }
     }
 
-    void addSystems(std::vector<std::unique_ptr<ISystem>> systems)
+    void SystemManager::addSystem(std::unique_ptr<ISystem> system)
     {
-        for (auto &system: systems) {
-            
-        }
+        _systems.push_back(std::move(system));
     }
 }

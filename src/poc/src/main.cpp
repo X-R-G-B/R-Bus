@@ -1,5 +1,8 @@
 #include <iostream>
-#include "Registry.hpp"
+#include <unistd.h>
+#include "SystemManager.hpp"
+#include "Collison.hpp"
+#include "Movement.hpp"
 
 int main()
 {
@@ -17,6 +20,14 @@ int main()
         std::cout << *begin << std::endl;
     }
 
+    System::SystemManager manager;
 
+    manager.addSystem(std::make_unique<System::Collison>(registry));
+    manager.addSystem(std::make_unique<System::Movement>(registry));
+
+    while (1) {
+        manager.updateSystems();
+        sleep(1);
+    }
     return 0;
 }

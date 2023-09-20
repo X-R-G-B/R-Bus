@@ -15,7 +15,7 @@
 namespace System {
     class Movement : public ASystem {
         public:
-            Movement(const Registry &registry);
+            Movement(Registry *registry);
 
             void run() final;
         protected:

@@ -15,7 +15,7 @@
 namespace System {
     class Collison : public ASystem {
         public:
-            Collison(const Registry &registry);
+            Collison(Registry *registry);
 
             void run() final;
         protected:

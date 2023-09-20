@@ -12,7 +12,7 @@
 
 namespace System {
     
-    ASystem::ASystem(const Registry &registry)
+    ASystem::ASystem(Registry *registry)
         : _registry(registry)
     {
 

@@ -13,7 +13,7 @@
 
 namespace System {
     
-    Collison::Collison(const Registry &registry)
+    Collison::Collison(Registry *registry)
         : ASystem(registry)
     {
 
@@ -21,21 +21,12 @@ namespace System {
 
     void Collison::run()
     {
-        std::cout << "Update Collision" << std::endl;
-        // get Position sparseArray with Position component type index
-        //h
-        // get Dammage sparseArray with Dammage component type index
-        // get Health sparse Array with Health component type index
+        std::cout << "Increment sparse array int of 1" << std::endl;
+        Registry::array<int> arrInt = _registry->getComponents<int>();
 
-        // if (sparseArray.size() == 0) {
-        //      return ()
-        // }
-        // for (std::size_t i = 0, auto it = sparseArray.begin(); it != sparseArray.end(); it++) {
-        //      Position  toCheck =  sparseArray[i];
-        //      auto tmp = it;
-        //      for (; tmp != sparseArray.end(); tmp++) {
-        //          if ()
-        //      }
-        //}
+        for (auto begin = arrInt->begin(); begin != arrInt->end(); begin++) {
+            *begin += 1;
+        }
+        std::cout << "------------------------------------" << std::endl;
     }
 }
