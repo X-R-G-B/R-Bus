@@ -1,8 +1,8 @@
-name: "Performance Regression"
-description: If the app runs slowly with potential new versions
-title: "[PERF] - <title>"
+name: "Regression"
+description: If there a regression on the project
+title: "[REGR] - <title>"
 labels: [
-  "perf regression"
+  "regression"
 ]
 body:
   - type: input
