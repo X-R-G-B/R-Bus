@@ -5,6 +5,7 @@ include(FetchContent)
 FetchContent_Declare(
     raylib
     URL "https://github.com/X-R-G-B/R-Bus/releases/latest/download/raylib.tar"
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 
 FetchContent_GetProperties(raylib)

@@ -5,6 +5,7 @@ include(FetchContent)
 FetchContent_Declare(
     asio
     URL "https://github.com/X-R-G-B/R-Bus/releases/latest/download/asio.tar"
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 
 FetchContent_GetProperties(asio)

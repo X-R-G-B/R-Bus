@@ -4,6 +4,10 @@ set(PROJECT_NAME poc)
 
 set(CMAKE_CXX_STANDARD 20)
 
+if(NOT DEFINED CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
 project(
     ${PROJECT_NAME}
     VERSION 1.0.0
