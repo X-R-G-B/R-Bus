@@ -1,6 +1,6 @@
 name: "Feature request"
 description: "Issue for new feature request"
-title: "[REQUEST] Title"
+title: "[REQUEST] - Title"
 labels: [
   "enhancement"
 ]
