@@ -9,5 +9,4 @@
 
 namespace Systems {
     void collision(std::size_t);
-    void movement(std::size_t);
 }

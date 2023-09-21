@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2023
 ** R-Bus
 ** File description:
-** PixelRenderer
+** GraphicManager
 */
 
 #pragma once
@@ -10,14 +10,15 @@
 #include "ASystemManager.hpp"
 
 namespace Systems {
-    class PixelRenderer : public ASystemManager {
+    class GraphicManager : public ASystemManager {
         public:
-            static PixelRenderer &getInstance();
+            static GraphicManager &getInstance();
             void updateSystems();
             void addSystem(std::function<void(std::size_t)>);
             void removeSystem(std::size_t);
         private:
-            PixelRenderer();
-            static PixelRenderer _instance;
+            GraphicManager();
+            ~GraphicManager();
+            static GraphicManager _instance;
     };
 }
