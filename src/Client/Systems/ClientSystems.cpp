@@ -13,7 +13,7 @@
 
 void GraphicSystems::pixelRenderer(std::size_t)
 {
-    Registry::array<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
     for (auto begin = arrPixel.begin(); begin != arrPixel.end(); begin++) {
         for (int i = 0; i < 50; i++) {
             for (int j = 0; j < 50 ; j++) {
@@ -25,7 +25,7 @@ void GraphicSystems::pixelRenderer(std::size_t)
 
 void EventsSystems::playerMovement(std::size_t)
 {
-    Registry::array<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
 
     for (auto &pixel : arrPixel) {
         if (IsKeyDown(KEY_RIGHT))
