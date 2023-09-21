@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
 
-add_subdirectory(system)
-add_subdirectory(EventManager)
-
 target_include_directories(
     ${PROJECT_NAME}
     PRIVATE
@@ -12,5 +9,6 @@ target_include_directories(
 target_sources(
     ${PROJECT_NAME}
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GraphicManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/SystemEventsManager.cpp
 )

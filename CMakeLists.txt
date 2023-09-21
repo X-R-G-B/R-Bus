@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 
-set(PROJECT_NAME poc)
+set(PROJECT_NAME client)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -20,7 +20,21 @@ add_executable(
 
 add_subdirectory(deps)
 
-add_subdirectory(src/poc)
+if(MSVC)
+    target_compile_options(
+        ${PROJECT_NAME}
+        PRIVATE
+        /W4
+    )
+else()
+    target_compile_options(
+        ${PROJECT_NAME}
+        PRIVATE
+        -Wall -Wextra -pedantic
+    )
+endif()
+
+add_subdirectory(src)
 
 if (WIN32)
     add_custom_command(

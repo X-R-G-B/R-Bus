@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.27)
+cmake_minimum_required(VERSION 3.15)
 
 target_include_directories(
     ${PROJECT_NAME}
@@ -10,5 +10,7 @@ target_sources(
     ${PROJECT_NAME}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/SystemManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Systems.cpp
 )
+
+add_subdirectory(Managers)
