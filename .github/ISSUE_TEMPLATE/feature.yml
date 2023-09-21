@@ -1,0 +1,55 @@
+name: "Feature request"
+description: "Issue for new feature request"
+title: "[REQUEST] Title"
+labels: [
+  "enhancement"
+]
+body:
+  - type: input
+    id: start_date
+    attributes:
+      label: "Start Date"
+      description: Start of development
+      placeholder: "month/day/year"
+    validations:
+      required: true
+  - type: textarea
+    id: todo
+    attributes:
+      label: "To Do"
+      description: "What needed to be done"
+      value: |
+        [TODO]
+        Explain what you want to do.
+        
+        [FORWHAT]
+        Explain why you are proposing this feature.
+
+        [REQUIREMENTS]
+        Explain what you need for the feature.
+    validations:
+      required: true
+  - type: dropdown
+    id: techno
+    attributes:
+      label: "Techno"
+      description: "Technology that will implement the feature"
+      multiple: true
+      options:
+        - Python
+        - Java
+        - JavaScript
+        - C
+        - C++
+        - C#
+        - PHP
+        - Swift
+        - Kotlin
+        - Ruby
+        - Go
+        - Rust
+        - TypeScript
+        - Scala
+        - R
+        - HTML / CSS
+        - Not mentioned
