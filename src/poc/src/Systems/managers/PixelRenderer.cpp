@@ -10,26 +10,29 @@
 #include "PixelRenderer.hpp"
 #include "CustomTypes.hpp"
 
-namespace System {
+namespace Systems {
+    PixelRenderer PixelRenderer::_instance = PixelRenderer();
 
-    PixelRenderer::PixelRenderer(Registry *registry) :
-        ASystem(registry)
+    PixelRenderer::PixelRenderer()
     {}
 
-    void PixelRenderer::run()
+    PixelRenderer &PixelRenderer::getInstance()
     {
-        int x = 0, y = 0;
-        Registry::array<Pixel> arrInt = _registry->getComponents<Pixel>();
+        return _instance;
+    }
 
-        for (auto begin = arrInt->begin(); begin != arrInt->end(); begin++) {
-            x = begin->x;
-            y = begin->y;
-        }
+    void PixelRenderer::updateSystems()
+    {
+        ASystemManager::updateSystems();
+    }
 
-        for (int i = 0; i < 50; i++) {
-            for (int j = 0; j < 50 ; j++) {
-                DrawPixel(x + i, y + j, PURPLE);
-            }
-        }
+    void PixelRenderer::addSystem(std::function<void(std::size_t)> sys)
+    {
+        ASystemManager::addSystem(sys);
+    }
+
+    void PixelRenderer::removeSystem(std::size_t id)
+    {
+        ASystemManager::removeSystem(id);
     }
 }

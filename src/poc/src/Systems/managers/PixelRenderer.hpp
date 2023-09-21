@@ -7,12 +7,17 @@
 
 #pragma once
 
-#include "ASystem.hpp"
+#include "ASystemManager.hpp"
 
-namespace System {
-    class PixelRenderer : public ASystem {
+namespace Systems {
+    class PixelRenderer : public ASystemManager {
         public:
-            PixelRenderer(Registry *registry);
-            void run() final;
+            static PixelRenderer &getInstance();
+            void updateSystems();
+            void addSystem(std::function<void(std::size_t)>);
+            void removeSystem(std::size_t);
+        private:
+            PixelRenderer();
+            static PixelRenderer _instance;
     };
 }

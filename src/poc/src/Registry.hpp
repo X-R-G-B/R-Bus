@@ -12,6 +12,7 @@
 #include <typeindex>
 #include <unordered_map>
 #include <memory>
+#include <iostream>
 #include "SparseArray.hpp"
 
 class Registry {
