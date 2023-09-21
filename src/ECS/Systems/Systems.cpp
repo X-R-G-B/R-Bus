@@ -12,8 +12,8 @@
 namespace Systems {
     void collision(std::size_t)
     {
-        Registry::array<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
-        
+        Registry::components<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
+
         for (auto begin = arrPixel.begin(); begin != arrPixel.end(); begin++) {
             if (begin->x < 0)
                 begin->x = 0;

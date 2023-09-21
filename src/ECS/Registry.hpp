@@ -19,12 +19,12 @@ class Registry {
     
     public:
         template <class Component>
-        using array = SparseArray<Component> &;
+        using components = SparseArray<Component> &;
 
         static Registry &getInstance();
 
         template <class Component>
-        array<Component> registerComponent()
+        components<Component> registerComponent()
         {
             if (_data.find(typeid(Component)) == _data.end()) {
                 _data[typeid(Component)] = SparseArray<Component>();
@@ -33,13 +33,13 @@ class Registry {
         }
 
         template <class Component>
-        array<Component> getComponents()
+        components<Component> getComponents()
         {
             return castReturn<Component>();
         }
 
         template <class Component>
-        array<Component> const &getComponents() const
+        components<Component> const &getComponents() const
         {
             return castReturn<Component>();
         }
@@ -47,9 +47,9 @@ class Registry {
         Registry() = default;
 
         template<class Component>
-        array<Component> castReturn()
+        components<Component> castReturn()
         {
-            return std::any_cast<array<Component>>(_data[typeid(Component)]);
+            return std::any_cast<components<Component>>(_data[typeid(Component)]);
         }
 
         static Registry _instance;
