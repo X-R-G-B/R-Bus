@@ -18,7 +18,7 @@ int main()
     Systems::GraphicManager &graphicManager = Systems::GraphicManager::getInstance();
     Systems::SystemEventsManager &systemEventsManager = Systems::SystemEventsManager::getInstance();
 
-    Registry::components<Pixel> arrPixel = Registry::getInstance().registerComponent<Pixel>();
+    Registry::components<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
     arrPixel.add({20, 20});
 
     while (1) {
