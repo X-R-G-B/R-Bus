@@ -24,7 +24,7 @@ class Registry {
         static Registry &getInstance();
 
         template <class Component>
-        components<Component> registerComponent()
+        components<Component> getComponents()
         {
             if (_data.find(typeid(Component)) == _data.end()) {
                 _data[typeid(Component)] = SparseArray<Component>();
@@ -33,14 +33,11 @@ class Registry {
         }
 
         template <class Component>
-        components<Component> getComponents()
-        {
-            return castReturn<Component>();
-        }
-
-        template <class Component>
         components<Component> const &getComponents() const
         {
+            if (_data.find(typeid(Component)) == _data.end()) {
+                _data[typeid(Component)] = SparseArray<Component>();
+            }
             return castReturn<Component>();
         }
     private:
