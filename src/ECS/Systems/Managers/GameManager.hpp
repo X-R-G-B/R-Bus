@@ -18,9 +18,9 @@ namespace Systems {
             void addSystem(std::function<void(std::size_t)> /*sys*/) override;
             void removeSystem(std::size_t /*id*/) override;
 
-            GameManager(GameManager const &) = delete;
-            GameManager(GameManager const &&) = delete;
-            void operator=(GameManager const &) = delete;
+            GameManager(GameManager const &)     = delete;
+            GameManager(GameManager const &&)    = delete;
+            void operator=(GameManager const &)  = delete;
             void operator=(GameManager const &&) = delete;
 
         private:

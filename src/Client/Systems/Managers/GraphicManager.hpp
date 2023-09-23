@@ -18,9 +18,9 @@ namespace Systems {
             void addSystem(std::function<void(std::size_t)> /*sys*/) override;
             void removeSystem(std::size_t /*id*/) override;
 
-            GraphicManager(GraphicManager const &) = delete;
+            GraphicManager(GraphicManager const &)  = delete;
             GraphicManager(GraphicManager const &&) = delete;
-            void operator=(GraphicManager const &) = delete;
+            void operator=(GraphicManager const &)  = delete;
             void operator=(GraphicManager const &&) = delete;
 
         private:

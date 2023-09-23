@@ -18,10 +18,10 @@ namespace Systems {
             void addSystem(std::function<void(std::size_t)> /*sys*/) override;
             void removeSystem(std::size_t /*id*/) override;
 
-            SystemEventsManager(SystemEventsManager const &) = delete;
+            SystemEventsManager(SystemEventsManager const &)  = delete;
             SystemEventsManager(SystemEventsManager const &&) = delete;
-            void operator=(SystemEventsManager const &) = delete;
-            void operator=(SystemEventsManager const &&) = delete;
+            void operator=(SystemEventsManager const &)       = delete;
+            void operator=(SystemEventsManager const &&)      = delete;
 
         private:
             SystemEventsManager();

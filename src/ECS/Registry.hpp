@@ -34,12 +34,12 @@ class Registry {
         void removeEntity(std::size_t /*id*/);
 
         auto operator=(const Registry &) -> Registry & = delete;
-        Registry(const Registry &) = delete;
-        void operator=(const Registry &&) = delete;
-        Registry(Registry &&) = delete;
+        Registry(const Registry &)                     = delete;
+        void operator=(const Registry &&)              = delete;
+        Registry(Registry &&)                          = delete;
 
     private:
-        Registry() = default;
+        Registry()  = default;
         ~Registry() = default;
 
         template <typename Component> void checkAddSparseArray()
