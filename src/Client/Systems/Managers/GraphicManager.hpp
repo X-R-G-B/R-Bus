@@ -12,10 +12,11 @@
 namespace Systems {
     class GraphicManager : public ASystemManager {
         public:
+            ~GraphicManager() override;
             static auto getInstance() -> GraphicManager &;
-            void updateSystems();
-            void addSystem(std::function<void(std::size_t)> /*sys*/);
-            void removeSystem(std::size_t /*id*/);
+            void updateSystems() override;
+            void addSystem(std::function<void(std::size_t)> /*sys*/) override;
+            void removeSystem(std::size_t /*id*/) override;
 
             GraphicManager(GraphicManager const &) = delete;
             GraphicManager(GraphicManager const &&) = delete;
@@ -24,7 +25,6 @@ namespace Systems {
 
         private:
             GraphicManager();
-            ~GraphicManager();
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static GraphicManager _instance; 
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)

@@ -15,7 +15,7 @@ namespace Systems {
 
     GameManager::GameManager()
     {
-        addSystem(Systems::collision);
+        ASystemManager::addSystem(Systems::collision);
     }
 
     auto GameManager::getInstance() -> GameManager &

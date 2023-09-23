@@ -12,10 +12,16 @@
 namespace Systems {
     class GameManager : public ASystemManager {
         public:
+            ~GameManager() override = default;
             static auto getInstance() -> GameManager &;
-            void updateSystems();
-            void addSystem(std::function<void(std::size_t)> /*sys*/);
-            void removeSystem(std::size_t /*id*/);
+            void updateSystems() override;
+            void addSystem(std::function<void(std::size_t)> /*sys*/) override;
+            void removeSystem(std::size_t /*id*/) override;
+
+            GameManager(GameManager const &) = delete;
+            GameManager(GameManager const &&) = delete;
+            void operator=(GameManager const &) = delete;
+            void operator=(GameManager const &&) = delete;
 
         private:
             GameManager();
