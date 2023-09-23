@@ -11,6 +11,8 @@ jobs:
 
       - name: Install winget
         uses: Cyberboss/install-winget@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
         run: winget install --accept-package-agreements --accept-source-agreements LLVM
