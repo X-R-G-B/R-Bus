@@ -15,8 +15,8 @@
 namespace Systems {
     class ASystemManager {
         public:
-            virtual ~ASystemManager()                                  = default;
-            ASystemManager(const ASystemManager &)                     = delete;
+            virtual ~ASystemManager()              = default;
+            ASystemManager(const ASystemManager &) = delete;
             auto operator=(const ASystemManager &) -> ASystemManager & = delete;
             ASystemManager(ASystemManager &&)                          = delete;
             auto operator=(ASystemManager &&) -> ASystemManager &      = delete;
