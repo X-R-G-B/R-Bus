@@ -6,6 +6,7 @@
 */
 
 #include "ClientSystems.hpp"
+#include <cstddef>
 #include <iostream>
 #include "raylib.h"
 #include "CustomTypes.hpp"
@@ -20,7 +21,7 @@ void GraphicSystems::pixelRenderer(std::size_t)
             continue;
         }
         for (int i = 0; i < 50; i++) {
-            for (int j = 0; j < 50 ; j++) {
+            for (int j = 0; j < 50; j++) {
                 DrawPixel(begin->value().x + i, begin->value().y + j, PURPLE);
             }
         }

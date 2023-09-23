@@ -20,7 +20,8 @@ int main()
     Systems::SystemEventsManager &systemEventsManager =
     Systems::SystemEventsManager::getInstance();
 
-    Registry::components<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Pixel> arrPixel =
+    Registry::getInstance().getComponents<Pixel>();
     Registry::getInstance().addEntity();
     arrPixel.back() = {20, 20};
     Registry::getInstance().addEntity();

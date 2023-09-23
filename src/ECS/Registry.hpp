@@ -8,10 +8,6 @@
 #pragma once
 
 #include <any>
-#include <typeinfo>
-#include <typeindex>
-#include <unordered_map>
-#include <memory>
 #include <functional>
 #include <iostream>
 #include <memory>
@@ -27,8 +23,7 @@ class Registry {
 
         static Registry &getInstance();
 
-        template <class Component>
-        const components<Component> getComponents()
+        template <class Component> const components<Component> getComponents()
         {
             checkAddSparseArray<Component>();
             return castReturn<Component>();
@@ -41,24 +36,23 @@ class Registry {
     private:
         Registry() = default;
 
-        template <typename Component>
-        void checkAddSparseArray()
+        template <typename Component> void checkAddSparseArray()
         {
             if (_data.find(typeid(Component)) == _data.end()) {
                 _data[typeid(Component)] = SparseArray<Component>();
-                _addComponentPlaceFunctions.push_back(&Registry::addComponentPlace<Component>);
-                _removeComponentFunctions.push_back(&Registry::removeComponent<Component>);
+                _addComponentPlaceFunctions.push_back(
+                &Registry::addComponentPlace<Component>);
+                _removeComponentFunctions.push_back(
+                &Registry::removeComponent<Component>);
             }
         }
 
-        template <typename Component>
-        void addComponentPlace()
+        template <typename Component> void addComponentPlace()
         {
             castReturn<Component>().add();
         }
 
-        template <typename Component>
-        void removeComponent(std::size_t id)
+        template <typename Component> void removeComponent(std::size_t id)
         {
             castReturn<Component>().erase(id);
         }
@@ -70,9 +64,10 @@ class Registry {
         }
 
         static Registry _instance;
-        Registry& operator=(const Registry&) = delete;
+        Registry &operator=(const Registry &) = delete;
 
         std::list<std::function<void(Registry &)>> _addComponentPlaceFunctions;
-        std::list<std::function<void(Registry &, std::size_t)>> _removeComponentFunctions;
+        std::list<std::function<void(Registry &, std::size_t)>>
+        _removeComponentFunctions;
         std::unordered_map<std::type_index, std::any> _data;
 };

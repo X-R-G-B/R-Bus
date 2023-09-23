@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <optional>
 #include <iterator>
 #include <list>
+#include <optional>
 
 template <typename Component> class SparseArray {
     public:
@@ -41,6 +41,7 @@ template <typename Component> class SparseArray {
         {
             return _components.back();
         }
+
     private:
         std::list<std::optional<Component>> _components;
 };
