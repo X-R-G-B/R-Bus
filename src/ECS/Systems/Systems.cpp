@@ -32,7 +32,7 @@ namespace Systems {
                 begin.value().y = 0;
             }
             if (begin.value().y > yMax) {
-                begin.value().y =yMax;
+                begin.value().y = yMax;
             }
         }
     }
