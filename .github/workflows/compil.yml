@@ -1,9 +1,9 @@
-name: Format
+name: Compil
 
 on: [push, pull_request]
 
 jobs:
-  windows-format:
+  windows-compil:
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -15,31 +15,35 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install dependencies
-        run: winget install --accept-package-agreements --accept-source-agreements LLVM
+        run: |
+          winget install --accept-package-agreements --accept-source-agreements CMake
+          winget install --accept-package-agreements --accept-source-agreements LLVM
 
-      - name: Format
-        run: ./scripts/format.ps1 --dry-run
+      - name: Compil
+        run: ./scripts/compil.ps1 --dry-run
 
-  linux-format:
+  linux-compil:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt install clang
+        run: sudo apt install g++ cmake clang-tidy
 
-      - name: Format
-        run: ./scripts/format.sh --dry-run
+      - name: Compil
+        run: ./scripts/compil.sh --dry-run
 
-  macos-format:
+  macos-compil:
     runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: brew install clang-format
+        run: |
+          brew install cmake
+          brew install llvm
 
-      - name: Format
-        run: ./scripts/format.sh --dry-run
+      - name: Compil
+        run: ./scripts/compil.sh --dry-run

@@ -1,4 +1,4 @@
-#!powershell
+#!/bin/pwsh
 # Format c++ files and exit with error if files are not formatted
 
 $argClangFormat = @()
