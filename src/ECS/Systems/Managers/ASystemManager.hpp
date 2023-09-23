@@ -21,14 +21,14 @@ namespace Systems {
             ASystemManager(ASystemManager &&)                  = delete;
             ASystemManager & operator=(ASystemManager &&)      = delete;
 
-        protected:
-            ASystemManager() = default;
-
             virtual void updateSystems();
 
             virtual void addSystem(std::function<void(std::size_t)> /*sys*/);
 
             virtual void removeSystem(std::size_t /*id*/);
+
+        protected:
+            ASystemManager() = default;
 
             std::list<std::function<void(std::size_t)>> & getSystems();
 
