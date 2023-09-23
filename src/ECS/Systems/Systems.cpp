@@ -17,10 +17,11 @@ namespace Systems {
         Registry::components<Types::CollisionRect> arrCollisionRect =
         Registry::getInstance().getComponents<Types::CollisionRect>();
 
-        auto positionIt = arrPosition.begin();
+        auto positionIt  = arrPosition.begin();
         auto collisionIt = arrCollisionRect.begin();
 
-        while (positionIt != arrPosition.end() && collisionIt != arrCollisionRect.end()) {
+        while (positionIt != arrPosition.end()
+               && collisionIt != arrCollisionRect.end()) {
             if (positionIt->has_value() && collisionIt->has_value()) {
                 if (positionIt->value().x < 0) {
                     positionIt->value().x = 0;
