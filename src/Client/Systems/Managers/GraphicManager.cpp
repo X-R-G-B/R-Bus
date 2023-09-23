@@ -5,11 +5,11 @@
 ** GraphicManager
 */
 
-#include <iostream>
-#include "raylib.h"
 #include "GraphicManager.hpp"
-#include "CustomTypes.hpp"
+#include <iostream>
 #include "ClientSystems.hpp"
+#include "CustomTypes.hpp"
+#include "raylib.h"
 
 namespace Systems {
     GraphicManager GraphicManager::_instance = GraphicManager();
@@ -51,4 +51,4 @@ namespace Systems {
     {
         ASystemManager::removeSystem(id);
     }
-}
+} // namespace Systems

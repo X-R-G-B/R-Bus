@@ -9,7 +9,7 @@
 
 Registry Registry::_instance = Registry();
 
-Registry &Registry::getInstance() {
+Registry &Registry::getInstance()
+{
     return _instance;
 }
-

@@ -16,9 +16,10 @@ namespace Systems {
             void updateSystems();
             void addSystem(std::function<void(std::size_t)>);
             void removeSystem(std::size_t);
+
         private:
             GraphicManager();
             ~GraphicManager();
             static GraphicManager _instance;
     };
-}
+} // namespace Systems

@@ -6,13 +6,14 @@
 */
 
 #include <iostream>
-#include "Registry.hpp"
 #include "CustomTypes.hpp"
+#include "Registry.hpp"
 
 namespace Systems {
     void collision(std::size_t)
     {
-        Registry::components<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
+        Registry::components<Pixel> arrPixel =
+        Registry::getInstance().getComponents<Pixel>();
 
         for (auto begin = arrPixel.begin(); begin != arrPixel.end(); begin++) {
             if (begin->x < 0)
@@ -25,4 +26,4 @@ namespace Systems {
                 begin->y = 400;
         }
     }
-}
+} // namespace Systems

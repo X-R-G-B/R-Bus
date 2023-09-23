@@ -5,18 +5,19 @@
 ** Systems implementation
 */
 
-#include <iostream>
-#include "raylib.h"
 #include "ClientSystems.hpp"
-#include "Registry.hpp"
+#include <iostream>
 #include "CustomTypes.hpp"
+#include "Registry.hpp"
+#include "raylib.h"
 
 void GraphicSystems::pixelRenderer(std::size_t)
 {
-    Registry::components<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Pixel> arrPixel =
+    Registry::getInstance().getComponents<Pixel>();
     for (auto begin = arrPixel.begin(); begin != arrPixel.end(); begin++) {
         for (int i = 0; i < 50; i++) {
-            for (int j = 0; j < 50 ; j++) {
+            for (int j = 0; j < 50; j++) {
                 DrawPixel(begin->x + i, begin->y + j, PURPLE);
             }
         }
@@ -25,7 +26,8 @@ void GraphicSystems::pixelRenderer(std::size_t)
 
 void EventsSystems::playerMovement(std::size_t)
 {
-    Registry::components<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Pixel> arrPixel =
+    Registry::getInstance().getComponents<Pixel>();
 
     for (auto &pixel : arrPixel) {
         if (IsKeyDown(KEY_RIGHT))
