@@ -2,7 +2,6 @@ Language: Cpp
 ColumnLimit: '80'
 ReflowComments: true
 AlignAfterOpenBracket: AlwaysBreak
-BreakArrays: true
 AllowAllArgumentsOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
 EmptyLineBeforeAccessModifier: Always
