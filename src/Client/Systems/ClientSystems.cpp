@@ -11,7 +11,7 @@
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
 
-void GraphicSystems::RectRenderer(std::size_t)
+void GraphicSystems::rectRenderer(std::size_t)
 {
     Registry::components<Types::Position> arrPosition =
     Registry::getInstance().getComponents<Types::Position>();
@@ -59,5 +59,31 @@ void EventsSystems::playerMovement(std::size_t)
         if (IsKeyDown(KEY_DOWN)) {
             position.value().y += 1;
         }
+    }
+}
+
+void GraphicSystems::spriteRenderer(std::size_t)
+{
+    Registry::components<Types::Sprite> arrSprite =
+    Registry::getInstance().getComponents<Types::Sprite>();
+    Registry::components<Types::Rect> arrRect =
+    Registry::getInstance().getComponents<Types::Rect>();
+    Registry::components<Types::Position> arrPosition =
+    Registry::getInstance().getComponents<Types::Position>();
+
+    for (std::size_t i = 0;
+         i < arrSprite.size() || i < arrRect.size() || i < arrPosition.size();
+         i++) {
+        if (
+        !arrSprite[i].has_value() || !arrRect[i].has_value()
+        || !arrPosition[i].has_value()) {
+            continue;
+        }
+        DrawTextureRec(
+        arrSprite[i].value().sprite,
+        Rectangle(
+        arrRect[i].value().x, arrRect[i].value().y, arrRect[i].value().width,
+        arrRect[i].value().height),
+        Vector2(arrPosition[i].value().x, arrPosition[i].value().y), WHITE);
     }
 }

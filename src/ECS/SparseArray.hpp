@@ -8,8 +8,8 @@
 #pragma once
 
 #include <iterator>
-#include <list>
 #include <optional>
+#include <vector>
 
 template <typename Component> class SparseArray {
     public:
@@ -28,12 +28,12 @@ template <typename Component> class SparseArray {
             return _components[idx];
         }
 
-        std::list<std::optional<Component>>::iterator begin()
+        std::vector<std::optional<Component>>::iterator begin()
         {
             return _components.begin();
         }
 
-        std::list<std::optional<Component>>::iterator end()
+        std::vector<std::optional<Component>>::iterator end()
         {
             return _components.end();
         }
@@ -41,7 +41,11 @@ template <typename Component> class SparseArray {
         {
             return _components.back();
         }
+        std::size_t size()
+        {
+            return _components.size();
+        }
 
     private:
-        std::list<std::optional<Component>> _components;
+        std::vector<std::optional<Component>> _components;
 };
