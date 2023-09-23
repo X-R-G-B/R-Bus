@@ -5,13 +5,12 @@
 ** ASystemManager
 */
 
-
 #pragma once
 
+#include <functional>
+#include <list>
 #include <memory>
 #include <vector>
-#include <list>
-#include <functional>
 
 namespace Systems {
     class ASystemManager {
@@ -23,7 +22,7 @@ namespace Systems {
             void addSystem(std::function<void(std::size_t)>);
 
             void removeSystem(std::size_t);
-    
+
             std::list<std::function<void(std::size_t)>> _systems;
     };
-}
+} // namespace Systems

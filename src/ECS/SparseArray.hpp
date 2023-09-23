@@ -10,8 +10,7 @@
 #include <iterator>
 #include <list>
 
-template <typename Component>
-class SparseArray {
+template <typename Component> class SparseArray {
     public:
         void add(Component component)
         {
@@ -37,6 +36,7 @@ class SparseArray {
         {
             return _components.end();
         }
+
     private:
         std::list<Component> _components;
 };
