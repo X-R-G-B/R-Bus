@@ -11,6 +11,8 @@
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
 
+static const auto pixelRenderNumber = 50;
+
 void GraphicSystems::pixelRenderer(std::size_t /*unused*/)
 {
     Registry::components<Pixel> arrPixel =
@@ -19,8 +21,8 @@ void GraphicSystems::pixelRenderer(std::size_t /*unused*/)
         if (!begin.has_value()) {
             continue;
         }
-        for (int i = 0; i < 50; i++) {
-            for (int j = 0; j < 50; j++) {
+        for (int i = 0; i < pixelRenderNumber; i++) {
+            for (int j = 0; j < pixelRenderNumber; j++) {
                 DrawPixel(begin.value().x + i, begin.value().y + j, PURPLE);
             }
         }

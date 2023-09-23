@@ -9,7 +9,9 @@
 #include "Systems.hpp"
 
 namespace Systems {
+    // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
     GameManager GameManager::_instance = GameManager();
+    // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
     GameManager::GameManager()
     {

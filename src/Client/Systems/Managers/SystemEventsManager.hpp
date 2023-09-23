@@ -19,6 +19,8 @@ namespace Systems {
 
         private:
             SystemEventsManager();
+            // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static SystemEventsManager _instance;
+            // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
     };
 } // namespace Systems

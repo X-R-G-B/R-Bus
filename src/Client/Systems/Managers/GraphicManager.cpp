@@ -12,14 +12,17 @@
 #include "CustomTypes.hpp"
 
 namespace Systems {
+    // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
     GraphicManager GraphicManager::_instance = GraphicManager();
+    // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
     GraphicManager::GraphicManager()
     {
         const int screenWidth  = 800;
         const int screenHeight = 450;
+        const int frameRate    = 60;
         InitWindow(screenWidth, screenHeight, "Poc ECS");
-        SetTargetFPS(60);
+        SetTargetFPS(frameRate);
 
         addSystem(GraphicSystems::pixelRenderer);
     }

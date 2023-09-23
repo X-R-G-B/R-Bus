@@ -11,7 +11,9 @@
 #include "CustomTypes.hpp"
 
 namespace Systems {
+    // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
     SystemEventsManager SystemEventsManager::_instance = SystemEventsManager();
+    // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
     SystemEventsManager::SystemEventsManager()
     {

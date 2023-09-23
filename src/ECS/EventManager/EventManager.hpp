@@ -18,6 +18,8 @@ class EventManager {
     private:
         EventManager() = default;
 
+        // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
         static EventManager instance;
+        // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
         std::list<int> _activeEvents;
 };

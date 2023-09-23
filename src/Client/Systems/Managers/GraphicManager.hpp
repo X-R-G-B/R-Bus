@@ -17,9 +17,16 @@ namespace Systems {
             void addSystem(std::function<void(std::size_t)> /*sys*/);
             void removeSystem(std::size_t /*id*/);
 
+            GraphicManager(GraphicManager const &) = delete;
+            GraphicManager(GraphicManager const &&) = delete;
+            void operator=(GraphicManager const &) = delete;
+            void operator=(GraphicManager const &&) = delete;
+
         private:
             GraphicManager();
             ~GraphicManager();
-            static GraphicManager _instance;
+            // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
+            static GraphicManager _instance; 
+            // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
     };
 } // namespace Systems

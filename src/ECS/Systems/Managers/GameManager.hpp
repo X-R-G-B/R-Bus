@@ -19,6 +19,8 @@ namespace Systems {
 
         private:
             GameManager();
+            // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static GameManager _instance;
+            // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
     };
 } // namespace Systems

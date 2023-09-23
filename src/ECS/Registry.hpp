@@ -33,8 +33,14 @@ class Registry {
 
         void removeEntity(std::size_t /*id*/);
 
+        auto operator=(const Registry &) -> Registry & = delete;
+        Registry(const Registry &) = delete;
+        void operator=(const Registry &&) = delete;
+        Registry(Registry &&) = delete;
+
     private:
         Registry() = default;
+        ~Registry() = default;
 
         template <typename Component> void checkAddSparseArray()
         {
@@ -63,8 +69,9 @@ class Registry {
             _data[typeid(Component)]);
         }
 
+        // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
         static Registry _instance;
-        auto operator=(const Registry &) -> Registry & = delete;
+        // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
         std::list<std::function<void(Registry &)>> _addComponentPlaceFunctions;
         std::list<std::function<void(Registry &, std::size_t)>>

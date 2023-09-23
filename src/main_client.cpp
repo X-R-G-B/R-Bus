@@ -14,6 +14,8 @@
 
 auto main() -> int
 {
+    const int sizeArrPix = 20;
+    const int sizeArrPixLarge = 100;
     Systems::GameManager &gameManager = Systems::GameManager::getInstance();
     Systems::GraphicManager &graphicManager =
     Systems::GraphicManager::getInstance();
@@ -23,12 +25,12 @@ auto main() -> int
     Registry::components<Pixel> arrPixel =
     Registry::getInstance().getComponents<Pixel>();
     Registry::getInstance().addEntity();
-    arrPixel.back() = {20, 20};
+    arrPixel.back() = {sizeArrPix, sizeArrPix};
     Registry::getInstance().addEntity();
-    arrPixel.back() = {100, 20};
+    arrPixel.back() = {sizeArrPixLarge, sizeArrPix};
     Registry::getInstance().removeEntity(0);
 
-    while (1) {
+    while (true) {
         systemEventsManager.updateSystems();
         gameManager.updateSystems();
         graphicManager.updateSystems();
