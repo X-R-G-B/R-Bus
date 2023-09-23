@@ -48,3 +48,7 @@ cmake_*
 *.dir/
 *.sln
 x64/
+
+.cache/*
+r-type_client
+r-type_server

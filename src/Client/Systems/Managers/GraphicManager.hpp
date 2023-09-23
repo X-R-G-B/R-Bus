@@ -12,10 +12,10 @@
 namespace Systems {
     class GraphicManager : public ASystemManager {
         public:
-            static GraphicManager &getInstance();
+            static auto getInstance() -> GraphicManager &;
             void updateSystems();
-            void addSystem(std::function<void(std::size_t)>);
-            void removeSystem(std::size_t);
+            void addSystem(std::function<void(std::size_t)> /*sys*/);
+            void removeSystem(std::size_t /*id*/);
 
         private:
             GraphicManager();

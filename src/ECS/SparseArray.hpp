@@ -23,21 +23,21 @@ template <typename Component> class SparseArray {
             std::advance(it, id);
             _components.erase(it);
         };
-        std::optional<Component> &operator[](size_t idx)
+        auto operator[](size_t idx) -> std::optional<Component> &
         {
             return _components[idx];
         }
 
-        std::list<std::optional<Component>>::iterator begin()
+        auto begin() -> std::list<std::optional<Component>>::iterator
         {
             return _components.begin();
         }
 
-        std::list<std::optional<Component>>::iterator end()
+        auto end() -> std::list<std::optional<Component>>::iterator
         {
             return _components.end();
         }
-        std::optional<Component> &back()
+        auto back() -> std::optional<Component> &
         {
             return _components.back();
         }

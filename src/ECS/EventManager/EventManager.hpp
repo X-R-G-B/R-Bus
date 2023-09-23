@@ -11,9 +11,9 @@
 
 class EventManager {
     public:
-        static EventManager &getInstance();
+        static auto getInstance() -> EventManager &;
         void updateEvents();
-        bool checkEvent(int event);
+        auto checkEvent(int event) -> bool;
 
     private:
         EventManager() = default;

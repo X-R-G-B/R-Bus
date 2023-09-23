@@ -10,9 +10,9 @@
 #include <cstddef>
 
 namespace GraphicSystems {
-    void pixelRenderer(std::size_t);
+    void pixelRenderer(std::size_t /*unused*/);
 }
 
 namespace EventsSystems {
-    void playerMovement(std::size_t);
+    void playerMovement(std::size_t /*unused*/);
 }

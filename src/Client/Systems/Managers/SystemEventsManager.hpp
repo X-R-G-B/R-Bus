@@ -12,10 +12,10 @@
 namespace Systems {
     class SystemEventsManager : public ASystemManager {
         public:
-            static SystemEventsManager &getInstance();
+            static auto getInstance() -> SystemEventsManager &;
             void updateSystems();
-            void addSystem(std::function<void(std::size_t)>);
-            void removeSystem(std::size_t);
+            void addSystem(std::function<void(std::size_t)> /*sys*/);
+            void removeSystem(std::size_t /*id*/);
 
         private:
             SystemEventsManager();

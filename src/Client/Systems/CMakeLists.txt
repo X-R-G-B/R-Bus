@@ -7,7 +7,7 @@ target_include_directories(
 )
 
 target_sources(
-    ${PROJECT_NAME}
+    ${PROJECT_NAME_CLIENT}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/ClientSystems.cpp
 )

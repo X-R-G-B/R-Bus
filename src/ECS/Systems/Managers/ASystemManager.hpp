@@ -19,9 +19,9 @@ namespace Systems {
 
             void updateSystems();
 
-            void addSystem(std::function<void(std::size_t)>);
+            void addSystem(std::function<void(std::size_t)> /*sys*/);
 
-            void removeSystem(std::size_t);
+            void removeSystem(std::size_t /*id*/);
 
             std::list<std::function<void(std::size_t)>> _systems;
     };

@@ -11,7 +11,7 @@
 
 EventManager EventManager::instance = EventManager();
 
-EventManager &EventManager::getInstance()
+auto EventManager::getInstance() -> EventManager &
 {
     return instance;
 }
@@ -26,7 +26,7 @@ void EventManager::updateEvents()
     }
 }
 
-bool EventManager::checkEvent(int event)
+auto EventManager::checkEvent(int event) -> bool
 {
     for (auto activeEvent : _activeEvents) {
         if (activeEvent == event) {

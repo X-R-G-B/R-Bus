@@ -12,10 +12,10 @@
 namespace Systems {
     class GameManager : public ASystemManager {
         public:
-            static GameManager &getInstance();
+            static auto getInstance() -> GameManager &;
             void updateSystems();
-            void addSystem(std::function<void(std::size_t)>);
-            void removeSystem(std::size_t);
+            void addSystem(std::function<void(std::size_t)> /*sys*/);
+            void removeSystem(std::size_t /*id*/);
 
         private:
             GameManager();

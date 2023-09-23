@@ -12,7 +12,7 @@
 #include "Registry.hpp"
 #include "SystemEventsManager.hpp"
 
-int main()
+auto main() -> int
 {
     Systems::GameManager &gameManager = Systems::GameManager::getInstance();
     Systems::GraphicManager &graphicManager =
