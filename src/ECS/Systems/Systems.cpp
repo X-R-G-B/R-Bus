@@ -13,6 +13,8 @@
 namespace Systems {
     void collision(std::size_t /*unused*/)
     {
+        const int xMax = 750;
+        const int yMax = 400;
         Registry::components<Pixel> arrPixel =
         Registry::getInstance().getComponents<Pixel>();
 
@@ -23,14 +25,14 @@ namespace Systems {
             if (begin.value().x < 0) {
                 begin.value().x = 0;
             }
-            if (begin.value().x > 750) {
-                begin.value().x = 750;
+            if (begin.value().x > xMax) {
+                begin.value().x = xMax;
             }
             if (begin.value().y < 0) {
                 begin.value().y = 0;
             }
-            if (begin.value().y > 400) {
-                begin.value().y = 400;
+            if (begin.value().y > yMax) {
+                begin.value().y =yMax;
             }
         }
     }
