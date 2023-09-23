@@ -15,15 +15,15 @@ TAG_PATCH=""
 
 WARNINGS=""
 
-if grep -q "^MAJOR" CHANGELOG; then
+if [[ "$(git show --pretty=format:%s --grep '^MAJOR' "$LAST_TAG..HEAD")" == "" ]]; then
     TAG_MAJOR=$((LAST_TAG_MAJOR + 1))
     TAG_MINOR="0"
     TAG_PATCH="0"
-elif grep -q "^MINOR" CHANGELOG; then
+elif [[ "$(git show --pretty=format:%s --grep '^MINOR' "$LAST_TAG..HEAD")" == "" ]]; then
     TAG_MAJOR=$((LAST_TAG_MAJOR + 0))
     TAG_MINOR=$((LAST_TAG_MINOR + 1))
     TAG_PATCH="0"
-elif grep -q "^PATCH" CHANGELOG; then
+elif [[ "$(git show --pretty=format:%s --grep '^PATCH' "$LAST_TAG..HEAD")" == "" ]]; then
     TAG_MAJOR=$((LAST_TAG_MAJOR + 0))
     TAG_MINOR=$((LAST_TAG_MINOR + 0))
     TAG_PATCH=$((LAST_TAG_PATCH + 1))
@@ -42,3 +42,4 @@ gh release create "$TAG"           \
   --target main
 
 echo "release_tag=$TAG" >> $GITHUB_OUTPUT
+echo "$WARNINGS"
