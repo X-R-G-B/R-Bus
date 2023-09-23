@@ -3,7 +3,6 @@ ColumnLimit: '80'
 ReflowComments: true
 AlignAfterOpenBracket: AlwaysBreak
 BreakArrays: true
-InsertBraces: true
 AllowAllArgumentsOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
 EmptyLineBeforeAccessModifier: Always
