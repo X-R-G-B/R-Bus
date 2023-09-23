@@ -10,9 +10,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install winget
-        uses: Cyberboss/install-winget@v1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe
 
       - name: Install dependencies
         run: winget install --accept-package-agreements --accept-source-agreements LLVM
