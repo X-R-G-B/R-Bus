@@ -14,6 +14,9 @@ add_executable(
     ${PROJECT_NAME}
 )
 
+set(ASIO_DIR /usr/include/asio)
+target_include_directories(${PROJECT_NAME} PRIVATE ${ASIO_DIR})
+
 if(MSVC)
     target_compile_options(
         ${PROJECT_NAME}
