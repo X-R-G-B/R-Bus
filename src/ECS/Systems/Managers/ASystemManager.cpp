@@ -29,4 +29,4 @@ namespace Systems {
         std::advance(it, id);
         _systems.erase(it);
     }
-}
+} // namespace Systems

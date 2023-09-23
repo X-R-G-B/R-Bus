@@ -5,10 +5,10 @@
 ** SystemEventsManager
 */
 
-#include <iostream>
 #include "SystemEventsManager.hpp"
-#include "CustomTypes.hpp"
+#include <iostream>
 #include "ClientSystems.hpp"
+#include "CustomTypes.hpp"
 
 namespace Systems {
     SystemEventsManager SystemEventsManager::_instance = SystemEventsManager();
@@ -37,4 +37,4 @@ namespace Systems {
     {
         ASystemManager::removeSystem(id);
     }
-}
+} // namespace Systems

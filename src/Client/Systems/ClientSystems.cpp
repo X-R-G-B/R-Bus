@@ -5,15 +5,16 @@
 ** Systems implementation
 */
 
+#include "ClientSystems.hpp"
 #include <iostream>
 #include "raylib.h"
-#include "ClientSystems.hpp"
-#include "Registry.hpp"
 #include "CustomTypes.hpp"
+#include "Registry.hpp"
 
 void GraphicSystems::pixelRenderer(std::size_t)
 {
-    Registry::components<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Pixel> arrPixel =
+    Registry::getInstance().getComponents<Pixel>();
     for (auto begin = arrPixel.begin(); begin != arrPixel.end(); begin++) {
         if (*begin == std::nullopt) {
             continue;
@@ -28,7 +29,8 @@ void GraphicSystems::pixelRenderer(std::size_t)
 
 void EventsSystems::playerMovement(std::size_t)
 {
-    Registry::components<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Pixel> arrPixel =
+    Registry::getInstance().getComponents<Pixel>();
 
     for (auto &pixel : arrPixel) {
         if (pixel == std::nullopt) {

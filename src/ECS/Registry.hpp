@@ -14,13 +14,16 @@
 #include <memory>
 #include <functional>
 #include <iostream>
+#include <memory>
+#include <typeindex>
+#include <typeinfo>
+#include <unordered_map>
+#include "raylib.h"
 #include "SparseArray.hpp"
 
 class Registry {
-    
     public:
-        template <class Component>
-        using components = SparseArray<Component> &;
+        template <class Component> using components = SparseArray<Component> &;
 
         static Registry &getInstance();
 
@@ -60,10 +63,10 @@ class Registry {
             castReturn<Component>().erase(id);
         }
 
-        template<class Component>
-        components<Component> castReturn()
+        template <class Component> components<Component> castReturn()
         {
-            return std::any_cast<components<Component>>(_data[typeid(Component)]);
+            return std::any_cast<components<Component>>(
+            _data[typeid(Component)]);
         }
 
         static Registry _instance;

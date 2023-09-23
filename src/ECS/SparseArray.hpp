@@ -11,8 +11,7 @@
 #include <iterator>
 #include <list>
 
-template <typename Component>
-class SparseArray {
+template <typename Component> class SparseArray {
     public:
         void add()
         {

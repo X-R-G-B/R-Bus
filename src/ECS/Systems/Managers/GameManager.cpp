@@ -35,4 +35,4 @@ namespace Systems {
     {
         ASystemManager::removeSystem(id);
     }
-}
+} // namespace Systems
