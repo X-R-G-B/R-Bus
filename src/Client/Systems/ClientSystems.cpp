@@ -18,21 +18,24 @@ void GraphicSystems::RectRenderer(std::size_t)
     Registry::components<Types::RectangleShape> arrRect =
     Registry::getInstance().getComponents<Types::RectangleShape>();
 
-    Types::Position position = {0, 0};
-    for (auto &pos : arrPosition) {
-        position = pos;
-    }
+    auto positionIt = arrPosition.begin();
+    auto rectIt = arrRect.begin();
 
-    double x = (position.x * GetScreenWidth()) / 100;
-    double y = (position.y * GetScreenHeight()) / 100;
+    while (positionIt != arrPosition.end() && rectIt != arrRect.end()) {
+        if (positionIt->has_value() && rectIt->has_value()) {
+            Types::Position &position = positionIt->value();
+            Types::RectangleShape &rectangle = rectIt->value();
 
-    for (auto begin = arrRect.begin(); begin != arrRect.end(); begin++) {
-        for (int i = 0; i < (begin->width * GetScreenWidth()) / 100; i++) {
-            for (int j = 0; j < (begin->width * GetScreenHeight()) / 100; j++) {
-                DrawPixel(
-                static_cast<int>(x) + i, static_cast<int>(y) + j, PURPLE);
-            }
+            double x = (position.x * GetScreenWidth()) / 100;
+            double y = (position.y * GetScreenHeight()) / 100;
+
+            double width = (rectangle.width * GetScreenWidth()) / 100;
+            double height = (rectangle.height * GetScreenHeight()) / 100;
+
+            DrawRectangle(static_cast<int>(x), static_cast<int>(y), static_cast<int>(width), static_cast<int>(height), PURPLE);
         }
+        positionIt++;
+        rectIt++;
     }
 }
 
@@ -43,16 +46,16 @@ void EventsSystems::playerMovement(std::size_t)
 
     for (auto &position : arrPosition) {
         if (IsKeyDown(KEY_RIGHT)) {
-            position.x += 1;
+            position.value().x += 1;
         }
         if (IsKeyDown(KEY_LEFT)) {
-            position.x -= 1;
+            position.value().x -= 1;
         }
         if (IsKeyDown(KEY_UP)) {
-            position.y -= 1;
+            position.value().y -= 1;
         }
         if (IsKeyDown(KEY_DOWN)) {
-            position.y += 1;
+            position.value().y += 1;
         }
     }
 }

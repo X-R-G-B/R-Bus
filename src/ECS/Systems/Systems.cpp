@@ -12,31 +12,31 @@
 namespace Systems {
     void windowCollision(std::size_t)
     {
-        Types::Position *position = nullptr;
-
         Registry::components<Types::Position> arrPosition =
         Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
         Registry::getInstance().getComponents<Types::CollisionRect>();
 
-        for (auto &pos : arrPosition) {
-            position = &pos;
-        }
+        auto positionIt = arrPosition.begin();
+        auto collisionIt = arrCollisionRect.begin();
 
-        for (auto begin = arrCollisionRect.begin();
-             begin != arrCollisionRect.end() && position != nullptr; begin++) {
-            if (position->x < 0) {
-                position->x = 0;
+        while (positionIt != arrPosition.end() && collisionIt != arrCollisionRect.end()) {
+            if (positionIt->has_value() && collisionIt->has_value()) {
+                if (positionIt->value().x < 0) {
+                    positionIt->value().x = 0;
+                }
+                if (positionIt->value().y < 0) {
+                    positionIt->value().y = 0;
+                }
+                if (positionIt->value().x + collisionIt->value().width > 100) {
+                    positionIt->value().x = 100 - collisionIt->value().width;
+                }
+                if (positionIt->value().y + collisionIt->value().height > 100) {
+                    positionIt->value().y = 100 - collisionIt->value().height;
+                }
             }
-            if (position->y < 0) {
-                position->y = 0;
-            }
-            if (position->x + begin->width > 100) {
-                position->x = 100 - begin->width;
-            }
-            if (position->y + begin->height > 100) {
-                position->y = 100 - begin->height;
-            }
+            positionIt++;
+            collisionIt++;
         }
     }
 } // namespace Systems

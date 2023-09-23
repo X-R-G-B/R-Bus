@@ -29,10 +29,11 @@ int main()
 
     Registry::components<Types::CollisionRect> arrCollisionRect =
     Registry::getInstance().getComponents<Types::CollisionRect>();
+    Registry::getInstance().addEntity();
 
-    arrCollisionRect.add({10, 10});
-    arrRect.add({10, 10});
-    arrPosition.add({50, 50});
+    arrCollisionRect.back() = {10, 10};
+    arrRect.back() = {10, 10};
+    arrPosition.back() = {50, 50};
 
     while (1) {
         systemEventsManager.updateSystems();
