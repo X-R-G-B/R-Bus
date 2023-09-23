@@ -9,6 +9,7 @@ IndentWrappedFunctionNames: 'false'
 AccessModifierOffset: 0
 IndentAccessModifiers: true
 BinPackParameters: false
+AlwaysBreakTemplateDeclarations: Yes
 AlignOperands: false
 BreakBeforeBraces: Custom
 
