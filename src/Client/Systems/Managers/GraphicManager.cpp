@@ -7,16 +7,16 @@
 
 #include "GraphicManager.hpp"
 #include <iostream>
+#include "raylib.h"
 #include "ClientSystems.hpp"
 #include "CustomTypes.hpp"
-#include "raylib.h"
 
 namespace Systems {
     GraphicManager GraphicManager::_instance = GraphicManager();
 
     GraphicManager::GraphicManager()
     {
-        const int screenWidth = 800;
+        const int screenWidth  = 800;
         const int screenHeight = 450;
         InitWindow(screenWidth, screenHeight, "Poc ECS");
         SetTargetFPS(60);

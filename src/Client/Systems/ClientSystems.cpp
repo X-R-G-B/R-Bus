@@ -7,9 +7,9 @@
 
 #include "ClientSystems.hpp"
 #include <iostream>
+#include "raylib.h"
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
-#include "raylib.h"
 
 void GraphicSystems::pixelRenderer(std::size_t)
 {
@@ -30,13 +30,17 @@ void EventsSystems::playerMovement(std::size_t)
     Registry::getInstance().getComponents<Pixel>();
 
     for (auto &pixel : arrPixel) {
-        if (IsKeyDown(KEY_RIGHT))
+        if (IsKeyDown(KEY_RIGHT)) {
             pixel.x += 1;
-        if (IsKeyDown(KEY_LEFT))
+        }
+        if (IsKeyDown(KEY_LEFT)) {
             pixel.x -= 1;
-        if (IsKeyDown(KEY_UP))
+        }
+        if (IsKeyDown(KEY_UP)) {
             pixel.y -= 1;
-        if (IsKeyDown(KEY_DOWN))
+        }
+        if (IsKeyDown(KEY_DOWN)) {
             pixel.y += 1;
+        }
     }
 }

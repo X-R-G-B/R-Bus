@@ -1,14 +1,17 @@
 Language: Cpp
 ColumnLimit: '80'
 ReflowComments: true
-AlignAfterOpenBracket: DontAlign
+AlignAfterOpenBracket: AlwaysBreak
+BreakArrays: true
+InsertBraces: true
+InsertNewlineAtEOF: true
 AllowAllArgumentsOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
+EmptyLineBeforeAccessModifier: Always
 IndentWrappedFunctionNames: 'false'
 AccessModifierOffset: 0
 IndentAccessModifiers: true
-BinPackArguments: true
-BinPackParameters: true
+BinPackParameters: false
 AlignOperands: false
 BreakBeforeBraces: Custom
 
@@ -33,8 +36,9 @@ AlwaysBreakAfterReturnType: None
 TabWidth: '4'
 UseTab: Never
 IndentPPDirectives: BeforeHash
-AlignConsecutiveAssignments: false
+AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: false
+AlignArrayOfStructures: 'Left'
 Cpp11BracedListStyle: true
 PointerAlignment: Right
 SpacesInCStyleCastParentheses: false
@@ -67,12 +71,12 @@ BreakBeforeTernaryOperators: true
 SortIncludes: true
 IncludeBlocks: Preserve
 IncludeCategories:
-  - Regex:           '^"[[:alnum:]./]+"'       # Any "my_header.h"
-    Priority:        3
-  - Regex:           '<criterion/[a-z]+\.h>'  # Criterion headers
-    Priority:        2
-  - Regex:           '<[[:alnum:]./]+>'        # System/Standard libs
+  - Regex:           '<.+>'        # System/Standard libs
     Priority:        1
+  - Regex:           '"raylib.h"'  # Criterion headers
+    Priority:        2
+  - Regex:           '".+"'       # Any "my_header.h"
+    Priority:        3
 
 # Sort 'using' declarations
 SortUsingDeclarations: true

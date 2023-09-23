@@ -12,6 +12,10 @@
 #include "raylib.h"
 
 namespace Events {
-    static const std::array<int, 4> events = {
-    KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN};
+    static const auto events = {
+    KEY_LEFT,
+    KEY_RIGHT,
+    KEY_UP,
+    KEY_DOWN,
+    };
 }

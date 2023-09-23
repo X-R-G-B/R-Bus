@@ -7,6 +7,4 @@ if [ "$1" == "--dry-run" ]; then
     ARGS="--dry-run --Werror"
 fi
 
-files=$(find src/ -name '*.cpp' -o -name '*.hpp')
-
-clang-format --style=file $ARGS -i $files
+find src/ \( -name '*.cpp' -o -name '*.hpp' \) -print0 | xargs -0 clang-format --style=file $ARGS -i
