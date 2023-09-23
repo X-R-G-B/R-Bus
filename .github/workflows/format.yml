@@ -16,7 +16,7 @@ jobs:
         run: winget install LLVM
 
       - name: Format
-        run: ./scripts/format.ps1
+        run: ./scripts/format.ps1 --dry-run
 
   linux-check:
     runs-on: ubuntu-latest
@@ -28,7 +28,7 @@ jobs:
         run: sudo apt install clang
 
       - name: Exec sh
-        run: ./scripts/format.sh
+        run: ./scripts/format.sh --dry-run
 
   macos-check:
     runs-on: macos-latest
@@ -40,4 +40,4 @@ jobs:
         run: brew install clang-format
 
       - name: Exec sh
-        run: ./scripts/format.sh
+        run: ./scripts/format.sh --dry-run
