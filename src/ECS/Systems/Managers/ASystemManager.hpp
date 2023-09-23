@@ -19,7 +19,7 @@ namespace Systems {
             ASystemManager(const ASystemManager &) = delete;
             auto operator=(const ASystemManager &) -> ASystemManager & = delete;
             ASystemManager(ASystemManager &&)                          = delete;
-            auto operator=(ASystemManager &&) -> ASystemManager &      = delete;
+            auto operator=(ASystemManager &&) -> ASystemManager      & = delete;
 
         protected:
             ASystemManager() = default;
