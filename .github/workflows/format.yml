@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install winget
-        run: ./.github/scripts/install-winget.ps1
+        run: ./.github/workflows/install-winget.ps1
 
       - name: Install dependencies
         run: winget install --accept-package-agreements --accept-source-agreements LLVM
