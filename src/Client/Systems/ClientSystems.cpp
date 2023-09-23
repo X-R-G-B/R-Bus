@@ -16,9 +16,12 @@ void GraphicSystems::pixelRenderer(std::size_t)
     Registry::components<Pixel> arrPixel =
     Registry::getInstance().getComponents<Pixel>();
     for (auto begin = arrPixel.begin(); begin != arrPixel.end(); begin++) {
+        if (!begin->has_value()) {
+            continue;
+        }
         for (int i = 0; i < 50; i++) {
             for (int j = 0; j < 50; j++) {
-                DrawPixel(begin->x + i, begin->y + j, PURPLE);
+                DrawPixel(begin->value().x + i, begin->value().y + j, PURPLE);
             }
         }
     }
@@ -30,17 +33,16 @@ void EventsSystems::playerMovement(std::size_t)
     Registry::getInstance().getComponents<Pixel>();
 
     for (auto &pixel : arrPixel) {
-        if (IsKeyDown(KEY_RIGHT)) {
-            pixel.x += 1;
+        if (!pixel.has_value()) {
+            continue;
         }
-        if (IsKeyDown(KEY_LEFT)) {
-            pixel.x -= 1;
-        }
-        if (IsKeyDown(KEY_UP)) {
-            pixel.y -= 1;
-        }
-        if (IsKeyDown(KEY_DOWN)) {
-            pixel.y += 1;
-        }
+        if (IsKeyDown(KEY_RIGHT))
+            pixel.value().x += 1;
+        if (IsKeyDown(KEY_LEFT))
+            pixel.value().x -= 1;
+        if (IsKeyDown(KEY_UP))
+            pixel.value().y -= 1;
+        if (IsKeyDown(KEY_DOWN))
+            pixel.value().y += 1;
     }
 }

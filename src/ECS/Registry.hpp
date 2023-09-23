@@ -8,6 +8,7 @@
 #pragma once
 
 #include <any>
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <typeindex>
@@ -24,23 +25,37 @@ class Registry {
 
         template <class Component> components<Component> getComponents()
         {
-            if (_data.find(typeid(Component)) == _data.end()) {
-                _data[typeid(Component)] = SparseArray<Component>();
-            }
+            checkAddSparseArray<Component>();
             return castReturn<Component>();
         }
 
-        template <class Component>
-        components<Component> const &getComponents() const
-        {
-            if (_data.find(typeid(Component)) == _data.end()) {
-                _data[typeid(Component)] = SparseArray<Component>();
-            }
-            return castReturn<Component>();
-        }
+        void addEntity();
+
+        void removeEntity(std::size_t);
 
     private:
         Registry() = default;
+
+        template <typename Component> void checkAddSparseArray()
+        {
+            if (_data.find(typeid(Component)) == _data.end()) {
+                _data[typeid(Component)] = SparseArray<Component>();
+                _addComponentPlaceFunctions.push_back(
+                &Registry::addComponentPlace<Component>);
+                _removeComponentFunctions.push_back(
+                &Registry::removeComponent<Component>);
+            }
+        }
+
+        template <typename Component> void addComponentPlace()
+        {
+            castReturn<Component>().add();
+        }
+
+        template <typename Component> void removeComponent(std::size_t id)
+        {
+            castReturn<Component>().erase(id);
+        }
 
         template <class Component> components<Component> castReturn()
         {
@@ -50,5 +65,9 @@ class Registry {
 
         static Registry _instance;
         Registry &operator=(const Registry &) = delete;
+
+        std::list<std::function<void(Registry &)>> _addComponentPlaceFunctions;
+        std::list<std::function<void(Registry &, std::size_t)>>
+        _removeComponentFunctions;
         std::unordered_map<std::type_index, std::any> _data;
 };

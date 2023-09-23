@@ -22,7 +22,11 @@ int main()
 
     Registry::components<Pixel> arrPixel =
     Registry::getInstance().getComponents<Pixel>();
-    arrPixel.add({20, 20});
+    Registry::getInstance().addEntity();
+    arrPixel.back() = {20, 20};
+    Registry::getInstance().addEntity();
+    arrPixel.back() = {100, 20};
+    Registry::getInstance().removeEntity(0);
 
     while (1) {
         systemEventsManager.updateSystems();
