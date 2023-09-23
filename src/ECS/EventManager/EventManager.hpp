@@ -14,6 +14,7 @@ class EventManager {
         static EventManager &getInstance();
         void updateEvents();
         bool checkEvent(int event);
+
     private:
         EventManager() = default;
 

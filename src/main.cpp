@@ -6,29 +6,44 @@
 */
 
 #include <iostream>
+#include "raylib.h"
+#include "CustomTypes.hpp"
 #include "GameManager.hpp"
 #include "GraphicManager.hpp"
-#include "SystemEventsManager.hpp"
-#include "CustomTypes.hpp"
 #include "Registry.hpp"
-#include "raylib.h"
+#include "SystemEventsManager.hpp"
 
 int main()
 {
     Systems::GameManager &gameManager = Systems::GameManager::getInstance();
-    Systems::GraphicManager &graphicManager = Systems::GraphicManager::getInstance();
-    Systems::SystemEventsManager &systemEventsManager = Systems::SystemEventsManager::getInstance();
+    Systems::GraphicManager &graphicManager =
+    Systems::GraphicManager::getInstance();
+    Systems::SystemEventsManager &systemEventsManager =
+    Systems::SystemEventsManager::getInstance();
 
-    Registry::components<Pixel> arrPixel = Registry::getInstance().registerComponent<Pixel>();
-    Registry::components<Sprite> arrSprite = Registry::getInstance().registerComponent<Sprite>();
-    Registry::components<Position> arrPosition = Registry::getInstance().registerComponent<Position>();
-    Registry::components<Rect> arrRect = Registry::getInstance().registerComponent<Rect>();
-    arrSprite.add({LoadTexture("assets/R-TypeSheet/r-typesheet10.gif")});
-    arrPosition.add({50, 50});
-    for (auto begin = arrSprite.begin(); begin != arrSprite.end(); begin++) {
-        arrRect.add({begin->sprite.width, begin->sprite.height,0, 0});
-    }
-    arrPixel.add({20, 20});
+    Registry::components<Pixel> arrPixel =
+    Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Sprite> arrSprite =
+    Registry::getInstance().getComponents<Sprite>();
+    Registry::components<Position> arrPosition =
+    Registry::getInstance().getComponents<Position>();
+    Registry::components<Rect> arrRect =
+    Registry::getInstance().getComponents<Rect>();
+
+    Registry::getInstance().addEntity();
+    arrPosition.back() = {50, 50};
+    arrSprite.back() =
+    Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet10.gif")});
+    arrRect.back() = {50, 50, 0, 0};
+
+    Registry::getInstance().addEntity();
+    arrPosition.back() = {100, 100};
+    arrSprite.back() =
+    Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet11.gif")});
+    arrRect.back() = {50, 50, 0, 0};
+
+    Registry::getInstance().addEntity();
+    arrPixel.back() = {50, 50};
 
     while (1) {
         systemEventsManager.updateSystems();

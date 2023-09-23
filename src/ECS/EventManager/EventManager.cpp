@@ -5,8 +5,8 @@
 ** EventManager implementation
 */
 
-#include "raylib.h"
 #include "EventManager.hpp"
+#include "raylib.h"
 #include "Events.hpp"
 
 EventManager EventManager::instance = EventManager();

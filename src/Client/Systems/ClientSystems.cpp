@@ -5,19 +5,23 @@
 ** Systems implementation
 */
 
+#include "ClientSystems.hpp"
 #include <iostream>
 #include "raylib.h"
-#include "ClientSystems.hpp"
-#include "Registry.hpp"
 #include "CustomTypes.hpp"
+#include "Registry.hpp"
 
 void GraphicSystems::pixelRenderer(std::size_t)
 {
-    Registry::components<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Pixel> arrPixel =
+    Registry::getInstance().getComponents<Pixel>();
     for (auto begin = arrPixel.begin(); begin != arrPixel.end(); begin++) {
+        if (!begin->has_value()) {
+            continue;
+        }
         for (int i = 0; i < 50; i++) {
-            for (int j = 0; j < 50 ; j++) {
-                DrawPixel(begin->x + i, begin->y + j, PURPLE);
+            for (int j = 0; j < 50; j++) {
+                DrawPixel(begin->value().x + i, begin->value().y + j, PURPLE);
             }
         }
     }
@@ -25,34 +29,46 @@ void GraphicSystems::pixelRenderer(std::size_t)
 
 void EventsSystems::playerMovement(std::size_t)
 {
-    Registry::components<Pixel> arrPixel = Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Pixel> arrPixel =
+    Registry::getInstance().getComponents<Pixel>();
 
     for (auto &pixel : arrPixel) {
+        if (!pixel.has_value()) {
+            continue;
+        }
         if (IsKeyDown(KEY_RIGHT))
-            pixel.x += 1;
+            pixel.value().x += 1;
         if (IsKeyDown(KEY_LEFT))
-            pixel.x -= 1;
+            pixel.value().x -= 1;
         if (IsKeyDown(KEY_UP))
-            pixel.y -= 1;
+            pixel.value().y -= 1;
         if (IsKeyDown(KEY_DOWN))
-            pixel.y += 1;
+            pixel.value().y += 1;
     }
 }
 
 void GraphicSystems::spriteRenderer(std::size_t)
 {
-    Registry::components<Sprite> arrSprite = Registry::getInstance().getComponents<Sprite>();
-    Registry::components<Rect> arrRect = Registry::getInstance().getComponents<Rect>();
-    Registry::components<Position> arrPosition = Registry::getInstance().getComponents<Position>();
+    Registry::components<Sprite> arrSprite =
+    Registry::getInstance().getComponents<Sprite>();
+    Registry::components<Rect> arrRect =
+    Registry::getInstance().getComponents<Rect>();
+    Registry::components<Position> arrPosition =
+    Registry::getInstance().getComponents<Position>();
 
-    for (auto itSprite = arrSprite.begin(); itSprite != arrSprite.end(); itSprite++) {
-        for (auto itRect = arrRect.begin(); itRect != arrRect.end(); itRect++) {
-            for (auto itPos = arrPosition.begin(); itPos != arrPosition.end(); itPos++) {
-                DrawTextureRec(itSprite->sprite,
-                                Rectangle(itRect->x, itRect->y, itRect->width, itRect->height),
-                                Vector2(itPos->x, itPos->y),
-                                WHITE);
-            }
+    for (std::size_t i = 0;
+         i < arrSprite.size() || i < arrRect.size() || i < arrPosition.size();
+         i++) {
+        if (
+        !arrSprite[i].has_value() || !arrRect[i].has_value()
+        || !arrPosition[i].has_value()) {
+            continue;
         }
+        DrawTextureRec(
+        arrSprite[i].value().sprite,
+        Rectangle(
+        arrRect[i].value().x, arrRect[i].value().y, arrRect[i].value().width,
+        arrRect[i].value().height),
+        Vector2(arrPosition[i].value().x, arrPosition[i].value().y), WHITE);
     }
 }
