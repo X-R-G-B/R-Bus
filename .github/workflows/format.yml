@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt install clang
+        run: sudo apt-get -y install clang
 
       - name: Format
         run: ./scripts/format.sh --dry-run
