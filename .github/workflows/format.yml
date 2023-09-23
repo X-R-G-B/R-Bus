@@ -1,0 +1,40 @@
+name: Format
+
+on: [push, pull_request]
+
+jobs:
+  windows-check:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: winget install LLVM
+
+      - name: Format
+        run: ./scripts/format.ps1
+
+  linux-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt install clang
+
+      - name: Exec sh
+        run: ./scripts/format.sh
+
+  macos-check:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo brew install clang-format
+
+      - name: Exec sh
+        run: ./scripts/format.sh
