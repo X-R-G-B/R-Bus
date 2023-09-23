@@ -16,18 +16,17 @@ namespace Systems {
         Registry::getInstance().getComponents<Pixel>();
 
         for (auto begin = arrPixel.begin(); begin != arrPixel.end(); begin++) {
-            if (begin->x < 0) {
-                begin->x = 0;
+            if (!begin->has_value()) {
+                continue;
             }
-            if (begin->x > 750) {
-                begin->x = 750;
-            }
-            if (begin->y < 0) {
-                begin->y = 0;
-            }
-            if (begin->y > 400) {
-                begin->y = 400;
-            }
+            if (begin->value().x < 0)
+                begin->value().x = 0;
+            if (begin->value().x > 750)
+                begin->value().x = 750;
+            if (begin->value().y < 0)
+                begin->value().y = 0;
+            if (begin->value().y > 400)
+                begin->value().y = 400;
         }
     }
 } // namespace Systems

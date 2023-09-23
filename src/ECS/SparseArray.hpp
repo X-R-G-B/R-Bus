@@ -9,14 +9,15 @@
 
 #include <iterator>
 #include <list>
+#include <optional>
 
 template <typename Component> class SparseArray {
     public:
-        void add(Component component)
+        void add()
         {
-            _components.push_back(component);
-        };
-        void erase(int id)
+            _components.push_back(std::nullopt);
+        }
+        void erase(std::size_t id)
         {
             auto it = _components.begin();
             std::advance(it, id);
@@ -27,16 +28,20 @@ template <typename Component> class SparseArray {
             return _components[idx];
         }
 
-        std::list<Component>::iterator begin()
+        std::list<std::optional<Component>>::iterator begin()
         {
             return _components.begin();
         }
 
-        std::list<Component>::iterator end()
+        std::list<std::optional<Component>>::iterator end()
         {
             return _components.end();
         }
+        std::optional<Component> &back()
+        {
+            return _components.back();
+        }
 
     private:
-        std::list<Component> _components;
+        std::list<std::optional<Component>> _components;
 };

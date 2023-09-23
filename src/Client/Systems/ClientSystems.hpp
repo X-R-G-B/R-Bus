@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <cstddef>
+
 namespace GraphicSystems {
     void pixelRenderer(std::size_t);
 }
