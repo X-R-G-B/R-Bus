@@ -11,7 +11,8 @@
 
 namespace GraphicSystems {
     void pixelRenderer(std::size_t);
-}
+    void spriteRenderer(std::size_t);
+} // namespace GraphicSystems
 
 namespace EventsSystems {
     void playerMovement(std::size_t);

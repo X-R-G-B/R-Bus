@@ -46,3 +46,29 @@ void EventsSystems::playerMovement(std::size_t)
             pixel.value().y += 1;
     }
 }
+
+void GraphicSystems::spriteRenderer(std::size_t)
+{
+    Registry::components<Sprite> arrSprite =
+    Registry::getInstance().getComponents<Sprite>();
+    Registry::components<Rect> arrRect =
+    Registry::getInstance().getComponents<Rect>();
+    Registry::components<Position> arrPosition =
+    Registry::getInstance().getComponents<Position>();
+
+    for (std::size_t i = 0;
+         i < arrSprite.size() || i < arrRect.size() || i < arrPosition.size();
+         i++) {
+        if (
+        !arrSprite[i].has_value() || !arrRect[i].has_value()
+        || !arrPosition[i].has_value()) {
+            continue;
+        }
+        DrawTextureRec(
+        arrSprite[i].value().sprite,
+        Rectangle(
+        arrRect[i].value().x, arrRect[i].value().y, arrRect[i].value().width,
+        arrRect[i].value().height),
+        Vector2(arrPosition[i].value().x, arrPosition[i].value().y), WHITE);
+    }
+}

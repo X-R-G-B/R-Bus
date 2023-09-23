@@ -22,6 +22,7 @@ namespace Systems {
         SetTargetFPS(60);
 
         addSystem(GraphicSystems::pixelRenderer);
+        addSystem(GraphicSystems::spriteRenderer);
     }
 
     GraphicManager::~GraphicManager()
