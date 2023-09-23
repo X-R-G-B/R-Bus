@@ -8,8 +8,6 @@
 #pragma once
 #include <cstddef>
 
-#include <cstddef>
-
 namespace GraphicSystems {
     void RectRenderer(std::size_t);
 }
