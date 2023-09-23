@@ -29,7 +29,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt install g++ cmake clang-tidy
+        run: sudo apt install g++ cmake clang-tidy xrandr-dev
 
       - name: Compil
         run: ./scripts/compil.sh --dry-run
@@ -44,6 +44,7 @@ jobs:
         run: |
           brew install cmake
           brew install llvm
+          ln -s "$(brew --prefix llvm)/bin/clang-tidy" "/usr/local/bin/clang-tidy"
 
       - name: Compil
         run: ./scripts/compil.sh --dry-run
