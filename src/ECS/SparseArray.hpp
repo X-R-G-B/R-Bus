@@ -23,7 +23,7 @@ template <typename Component> class SparseArray {
             std::advance(it, id);
             _components.erase(it);
         };
-        Component &operator[](size_t idx)
+        std::optional<Component> &operator[](size_t idx)
         {
             return _components[idx];
         }
