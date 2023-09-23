@@ -20,9 +20,10 @@
 
 class Registry {
     public:
-        template <class Component> using components = SparseArray<Component> &;
+        template <class Component>
+        using components = SparseArray<Component> &;
 
-        static Registry & getInstance();
+        static Registry &getInstance();
 
         template <class Component>
         components<Component> getComponents()
@@ -35,10 +36,10 @@ class Registry {
 
         void removeEntity(std::size_t /*id*/);
 
-        Registry & operator=(const Registry &) = delete;
-        Registry(const Registry &)             = delete;
-        void operator=(const Registry &&)      = delete;
-        Registry(Registry &&)                  = delete;
+        Registry &operator=(const Registry &) = delete;
+        Registry(const Registry &)            = delete;
+        void operator=(const Registry &&)     = delete;
+        Registry(Registry &&)                 = delete;
 
     private:
         Registry()  = default;

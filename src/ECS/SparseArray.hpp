@@ -11,7 +11,8 @@
 #include <optional>
 #include <vector>
 
-template <typename Component> class SparseArray {
+template <typename Component>
+class SparseArray {
     public:
         void add()
         {
@@ -37,7 +38,7 @@ template <typename Component> class SparseArray {
         {
             return _components.end();
         }
-        std::optional<Component> & back()
+        std::optional<Component> &back()
         {
             return _components.back();
         }

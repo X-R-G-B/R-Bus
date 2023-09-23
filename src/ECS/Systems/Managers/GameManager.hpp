@@ -13,7 +13,7 @@ namespace Systems {
     class GameManager : public ASystemManager {
         public:
             ~GameManager() override = default;
-            static GameManager & getInstance();
+            static GameManager &getInstance();
 
             GameManager(GameManager const &)     = delete;
             GameManager(GameManager const &&)    = delete;
