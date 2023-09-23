@@ -18,7 +18,7 @@ jobs:
         run: |
           winget install --accept-package-agreements --accept-source-agreements CMake
           winget install --accept-package-agreements --accept-source-agreements LLVM
-          winget install --accept-package-agreements --accept-source-agreements Make
+          winget install --accept-package-agreements --accept-source-agreements --id=GnuWin32.Make -e
 
       - name: Compil
         run: ./scripts/compil.ps1 --dry-run
