@@ -4,7 +4,6 @@ ReflowComments: true
 AlignAfterOpenBracket: AlwaysBreak
 BreakArrays: true
 InsertBraces: true
-InsertNewlineAtEOF: true
 AllowAllArgumentsOnNextLine: true
 AllowAllParametersOfDeclarationOnNextLine: true
 EmptyLineBeforeAccessModifier: Always
