@@ -26,7 +26,7 @@ namespace Systems {
         private:
             GraphicManager();
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
-            static GraphicManager _instance; 
+            static GraphicManager _instance;
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
     };
 } // namespace Systems
