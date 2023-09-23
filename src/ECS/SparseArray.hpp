@@ -28,12 +28,12 @@ template <typename Component> class SparseArray {
             return _components[idx];
         }
 
-        auto begin() -> std::list<std::optional<Component>>::iterator
+        auto begin() -> typename std::list<std::optional<Component>>::iterator
         {
             return _components.begin();
         }
 
-        auto end() -> std::list<std::optional<Component>>::iterator
+        auto end() -> typename std::list<std::optional<Component>>::iterator
         {
             return _components.end();
         }
