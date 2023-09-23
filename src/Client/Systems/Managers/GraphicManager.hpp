@@ -15,8 +15,6 @@ namespace Systems {
             ~GraphicManager() override;
             static GraphicManager &getInstance();
             void updateSystems() override;
-            void addSystem(std::function<void(std::size_t)> /*sys*/) override;
-            void removeSystem(std::size_t /*id*/) override;
 
             GraphicManager(GraphicManager const &)  = delete;
             GraphicManager(GraphicManager const &&) = delete;

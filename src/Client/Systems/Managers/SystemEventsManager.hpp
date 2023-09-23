@@ -14,9 +14,6 @@ namespace Systems {
         public:
             ~SystemEventsManager() override = default;
             static SystemEventsManager &getInstance();
-            void updateSystems() override;
-            void addSystem(std::function<void(std::size_t)> /*sys*/) override;
-            void removeSystem(std::size_t /*id*/) override;
 
             SystemEventsManager(SystemEventsManager const &)  = delete;
             SystemEventsManager(SystemEventsManager const &&) = delete;

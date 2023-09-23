@@ -14,9 +14,6 @@ namespace Systems {
         public:
             ~GameManager() override = default;
             static GameManager & getInstance();
-            void updateSystems() override;
-            void addSystem(std::function<void(std::size_t)> /*sys*/) override;
-            void removeSystem(std::size_t /*id*/) override;
 
             GameManager(GameManager const &)     = delete;
             GameManager(GameManager const &&)    = delete;

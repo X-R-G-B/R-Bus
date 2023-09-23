@@ -25,6 +25,7 @@ namespace Systems {
         SetTargetFPS(frameRate);
 
         ASystemManager::addSystem(GraphicSystems::pixelRenderer);
+        ASystemManager::addSystem(GraphicSystems::spriteRenderer);
     }
 
     GraphicManager::~GraphicManager()
@@ -43,15 +44,5 @@ namespace Systems {
         ClearBackground(RAYWHITE);
         ASystemManager::updateSystems();
         EndDrawing();
-    }
-
-    void GraphicManager::addSystem(std::function<void(std::size_t)> sys)
-    {
-        ASystemManager::addSystem(sys);
-    }
-
-    void GraphicManager::removeSystem(std::size_t id)
-    {
-        ASystemManager::removeSystem(id);
     }
 } // namespace Systems

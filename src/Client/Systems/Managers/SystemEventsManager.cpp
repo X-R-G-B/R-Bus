@@ -24,19 +24,4 @@ namespace Systems {
     {
         return _instance;
     }
-
-    void SystemEventsManager::updateSystems()
-    {
-        ASystemManager::updateSystems();
-    }
-
-    void SystemEventsManager::addSystem(std::function<void(std::size_t)> sys)
-    {
-        ASystemManager::addSystem(sys);
-    }
-
-    void SystemEventsManager::removeSystem(std::size_t id)
-    {
-        ASystemManager::removeSystem(id);
-    }
 } // namespace Systems

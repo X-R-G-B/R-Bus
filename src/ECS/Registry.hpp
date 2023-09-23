@@ -10,6 +10,7 @@
 #include <any>
 #include <functional>
 #include <iostream>
+#include <list>
 #include <memory>
 #include <typeindex>
 #include <typeinfo>
