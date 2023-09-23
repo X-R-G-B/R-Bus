@@ -9,6 +9,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install winget
+        uses: Cyberboss/install-winget@v1
+
       - name: Install dependencies
         run: winget install LLVM
 
