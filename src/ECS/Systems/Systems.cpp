@@ -10,23 +10,32 @@
 #include "Registry.hpp"
 
 namespace Systems {
-    void collision(std::size_t)
+    void windowCollision(std::size_t)
     {
-        Registry::components<Pixel> arrPixel =
-        Registry::getInstance().getComponents<Pixel>();
+        Types::Position *position = nullptr;
 
-        for (auto begin = arrPixel.begin(); begin != arrPixel.end(); begin++) {
-            if (begin->x < 0) {
-                begin->x = 0;
+        Registry::components<Types::Position> arrPosition =
+        Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::CollisionRect> arrCollisionRect =
+        Registry::getInstance().getComponents<Types::CollisionRect>();
+
+        for (auto &pos : arrPosition) {
+            position = &pos;
+        }
+
+        for (auto begin = arrCollisionRect.begin();
+             begin != arrCollisionRect.end() && position != nullptr; begin++) {
+            if (position->x < 0) {
+                position->x = 0;
             }
-            if (begin->x > 750) {
-                begin->x = 750;
+            if (position->y < 0) {
+                position->y = 0;
             }
-            if (begin->y < 0) {
-                begin->y = 0;
+            if (position->x + begin->width > 100) {
+                position->x = 100 - begin->width;
             }
-            if (begin->y > 400) {
-                begin->y = 400;
+            if (position->y + begin->height > 100) {
+                position->y = 100 - begin->height;
             }
         }
     }

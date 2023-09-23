@@ -6,9 +6,10 @@
 */
 
 #pragma once
+#include <cstddef>
 
 namespace GraphicSystems {
-    void pixelRenderer(std::size_t);
+    void RectRenderer(std::size_t);
 }
 
 namespace EventsSystems {

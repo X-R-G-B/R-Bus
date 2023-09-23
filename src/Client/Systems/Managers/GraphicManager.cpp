@@ -21,7 +21,7 @@ namespace Systems {
         InitWindow(screenWidth, screenHeight, "Poc ECS");
         SetTargetFPS(60);
 
-        addSystem(GraphicSystems::pixelRenderer);
+        addSystem(GraphicSystems::RectRenderer);
     }
 
     GraphicManager::~GraphicManager()

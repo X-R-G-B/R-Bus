@@ -20,9 +20,19 @@ int main()
     Systems::SystemEventsManager &systemEventsManager =
     Systems::SystemEventsManager::getInstance();
 
-    Registry::components<Pixel> arrPixel =
-    Registry::getInstance().getComponents<Pixel>();
-    arrPixel.add({20, 20});
+    // We create a Rectangle of size 10% at the middle of the screen
+    Registry::components<Types::RectangleShape> arrRect =
+    Registry::getInstance().getComponents<Types::RectangleShape>();
+
+    Registry::components<Types::Position> arrPosition =
+    Registry::getInstance().getComponents<Types::Position>();
+
+    Registry::components<Types::CollisionRect> arrCollisionRect =
+    Registry::getInstance().getComponents<Types::CollisionRect>();
+
+    arrCollisionRect.add({10, 10});
+    arrRect.add({10, 10});
+    arrPosition.add({50, 50});
 
     while (1) {
         systemEventsManager.updateSystems();

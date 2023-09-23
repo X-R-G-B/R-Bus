@@ -11,14 +11,26 @@
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
 
-void GraphicSystems::pixelRenderer(std::size_t)
+void GraphicSystems::RectRenderer(std::size_t)
 {
-    Registry::components<Pixel> arrPixel =
-    Registry::getInstance().getComponents<Pixel>();
-    for (auto begin = arrPixel.begin(); begin != arrPixel.end(); begin++) {
-        for (int i = 0; i < 50; i++) {
-            for (int j = 0; j < 50; j++) {
-                DrawPixel(begin->x + i, begin->y + j, PURPLE);
+    Registry::components<Types::Position> arrPosition =
+    Registry::getInstance().getComponents<Types::Position>();
+    Registry::components<Types::RectangleShape> arrRect =
+    Registry::getInstance().getComponents<Types::RectangleShape>();
+
+    Types::Position position = {0, 0};
+    for (auto &pos : arrPosition) {
+        position = pos;
+    }
+
+    double x = (position.x * GetScreenWidth()) / 100;
+    double y = (position.y * GetScreenHeight()) / 100;
+
+    for (auto begin = arrRect.begin(); begin != arrRect.end(); begin++) {
+        for (int i = 0; i < (begin->width * GetScreenWidth()) / 100; i++) {
+            for (int j = 0; j < (begin->width * GetScreenHeight()) / 100; j++) {
+                DrawPixel(
+                static_cast<int>(x) + i, static_cast<int>(y) + j, PURPLE);
             }
         }
     }
@@ -26,21 +38,21 @@ void GraphicSystems::pixelRenderer(std::size_t)
 
 void EventsSystems::playerMovement(std::size_t)
 {
-    Registry::components<Pixel> arrPixel =
-    Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Types::Position> arrPosition =
+    Registry::getInstance().getComponents<Types::Position>();
 
-    for (auto &pixel : arrPixel) {
+    for (auto &position : arrPosition) {
         if (IsKeyDown(KEY_RIGHT)) {
-            pixel.x += 1;
+            position.x += 1;
         }
         if (IsKeyDown(KEY_LEFT)) {
-            pixel.x -= 1;
+            position.x -= 1;
         }
         if (IsKeyDown(KEY_UP)) {
-            pixel.y -= 1;
+            position.y -= 1;
         }
         if (IsKeyDown(KEY_DOWN)) {
-            pixel.y += 1;
+            position.y += 1;
         }
     }
 }

@@ -6,7 +6,8 @@
 */
 
 #pragma once
+#include <cstddef>
 
 namespace Systems {
-    void collision(std::size_t);
+    void windowCollision(std::size_t);
 }
