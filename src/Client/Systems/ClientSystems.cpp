@@ -13,7 +13,7 @@
 
 static const auto pixelRenderNumber = 50;
 
-void GraphicSystems::pixelRenderer(std::size_t /*unused*/)
+void GraphicSystems::pixelRenderer(std::size_t UNUSED)
 {
     Registry::components<Pixel> arrPixel =
     Registry::getInstance().getComponents<Pixel>();
