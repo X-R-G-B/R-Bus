@@ -13,6 +13,7 @@
 #include <asio.hpp>
 
 #define MAX_ACTIONS 16
+#define MAX_PLAYERS 4
 #define HEADER_SIZE sizeof(int) * 4
 
 namespace Nitwork {
@@ -93,20 +94,58 @@ namespace Nitwork {
                 return instance;
             }
 
-            void start() {
-                _input_context.run();
+            // start the server
+            void Start() {
+                try {
+                    _endpoint = asio::ip::udp::endpoint(asio::ip::udp::v4(), 4242);
+                    _socket.open(asio::ip::udp::v4());
+                    _socket.bind(_endpoint);
+                    ContinuousReception();
+                    return true;
+                } catch (std::exception &e) {
+                    std::cerr << e.what() << std::endl;
+                    return false;
+                }
             }
+            void Stop() {
+                _input_context.stop();
+                _output_context.stop();
+                _inputThread.join();
+                _clockThread.join();
+                for (auto &thread : _outputThreads) {
+                    thread.join();
+                }
+            }
+            void ContinuousReception() {
+                _inputThread = std::thread([this]() {
+                    _input_context.run();
 
+                });
+            }
+            // Method which handle clock and unlock client threads each n ticks
+            void ClockThread(int tick) {
+                _clockThread = std::thread([this]() {
+                    while (true) {
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                        _queueCondVar.notify_all();
+                    }
+                });
+            }
+            void ClientsDatasHandler() {
+                _outputThreads = std::array<std::thread, MAX_PLAYERS>();
+                for (int i = 0; i < MAX_PLAYERS; i++) {
+                    _outputThreads[i] = std::thread([this]() {
+                        while (true) {
+                            std::unique_lock<std::mutex> lock(_queueMutex);
+                            _queueCondVar.wait(lock);
+                            // handle actions and send it to the client
+                        }
+                    });
+                }
+            }
             // Initialise the connection with the server
 //            bool initConnection(const std::string &ip, int port) {
-//                try {
-//                    _endpoint = asio::ip::udp::endpoint(asio::ip::address::from_string(ip), port);
-//                    _socket.open(asio::ip::udp::v4());
-//                    return true;
-//                } catch (std::exception &e) {
-//                    std::cerr << e.what() << std::endl;
-//                    return false;
-//                }
+//
 //            }
 
             // Loop to check if anything is received, and add it to the list of actions
@@ -181,18 +220,17 @@ namespace Nitwork {
 //            }
         protected:
         private:
-            asio::io_context _inputContext;
-            asio::io_context _outputContext;
-            std::thread _inputThread;
-            std::thread _clockThread;
-            std::array<std::thread, 4> _outputThreads;
-            std::list<Actions::maxStruct_s> _actions;
-            std::mutex _queueMutex;
-            std::condition_variable _queueCondVar;
-
-
-            asio::ip::udp::socket _socket;
-            asio::ip::udp::endpoint _endpoint;
-            std::array<Actions::id_t, MAX_ACTIONS> _ids;
+            asio::io_context _inputContext; // first context which will handle the inputs and check if it's a new connexion
+            asio::io_context _outputContext; // second context which will handle the outputs (handle actions and send it, each n ticks
+            std::thread _inputThread; // A thread for the first context
+            std::thread _clockThread; // A thread for the clock which is in the second context
+            std::array<std::thread, MAX_PLAYERS> _outputThreads; // A thread for each player which is in the second context
+            std::list<Actions::maxStruct_s> _actions; // A list of actions which will be handled by the second context
+            std::mutex _queueMutex; // A mutex to lock the queue which will be used by both contexts
+            std::condition_variable _queueCondVar; // A condition variable to wait for the queue to be used by the second context
+            std::vector<asio::ip::udp::endpoint> _endpoints; // A vector of endpoints which will be used to send the actions to the clients and identify them
+            std::array<Actions::id_t, MAX_ACTIONS> _ids; // An array of ids which will be used to identify the actions
+            asio::ip::udp::socket _socket; // The socket which will be used to send and receive the actions
+            asio::ip::udp::endpoint _endpoint; // The endpoint which will be used to send and receive the actions
     };
 }
