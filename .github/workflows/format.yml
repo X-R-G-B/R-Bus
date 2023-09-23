@@ -13,7 +13,7 @@ jobs:
         uses: Cyberboss/install-winget@v1
 
       - name: Install dependencies
-        run: winget install LLVM
+        run: winget install --accept-package-agreements --accept-source-agreements LLVM
 
       - name: Format
         run: ./scripts/format.ps1 --dry-run
