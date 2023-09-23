@@ -14,7 +14,7 @@
 EventManager EventManager::instance = EventManager();
 // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
-auto EventManager::getInstance() -> EventManager &
+EventManager &EventManager::getInstance()
 {
     return instance;
 }
@@ -29,7 +29,7 @@ void EventManager::updateEvents()
     }
 }
 
-auto EventManager::checkEvent(int event) -> bool
+bool EventManager::checkEvent(int event)
 {
     return std::any_of(
     _activeEvents.begin(), _activeEvents.end(), [event](int e) {

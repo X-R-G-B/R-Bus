@@ -32,7 +32,7 @@ namespace Systems {
         CloseWindow();
     }
 
-    auto GraphicManager::getInstance() -> GraphicManager &
+    GraphicManager &GraphicManager::getInstance()
     {
         return _instance;
     }

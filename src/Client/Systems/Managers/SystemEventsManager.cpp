@@ -20,7 +20,7 @@ namespace Systems {
         ASystemManager::addSystem(EventsSystems::playerMovement);
     }
 
-    auto SystemEventsManager::getInstance() -> SystemEventsManager &
+    SystemEventsManager &SystemEventsManager::getInstance()
     {
         return _instance;
     }

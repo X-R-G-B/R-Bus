@@ -12,7 +12,7 @@
 #include "Registry.hpp"
 #include "SystemEventsManager.hpp"
 
-auto main() -> int
+int main()
 {
     const int sizeArrPix              = 20;
     const int sizeArrPixLarge         = 100;

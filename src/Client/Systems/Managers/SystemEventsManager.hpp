@@ -13,7 +13,7 @@ namespace Systems {
     class SystemEventsManager : public ASystemManager {
         public:
             ~SystemEventsManager() override = default;
-            static auto getInstance() -> SystemEventsManager &;
+            static SystemEventsManager &getInstance();
             void updateSystems() override;
             void addSystem(std::function<void(std::size_t)> /*sys*/) override;
             void removeSystem(std::size_t /*id*/) override;

@@ -13,7 +13,7 @@ namespace Systems {
     class GraphicManager : public ASystemManager {
         public:
             ~GraphicManager() override;
-            static auto getInstance() -> GraphicManager &;
+            static GraphicManager &getInstance();
             void updateSystems() override;
             void addSystem(std::function<void(std::size_t)> /*sys*/) override;
             void removeSystem(std::size_t /*id*/) override;

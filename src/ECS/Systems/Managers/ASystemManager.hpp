@@ -17,9 +17,9 @@ namespace Systems {
         public:
             virtual ~ASystemManager()              = default;
             ASystemManager(const ASystemManager &) = delete;
-            auto operator=(const ASystemManager &) -> ASystemManager & = delete;
-            ASystemManager(ASystemManager &&)                          = delete;
-            auto operator=(ASystemManager &&) -> ASystemManager      & = delete;
+            ASystemManager & operator=(const ASystemManager &) = delete;
+            ASystemManager(ASystemManager &&)                  = delete;
+            ASystemManager & operator=(ASystemManager &&)      = delete;
 
         protected:
             ASystemManager() = default;
@@ -30,7 +30,7 @@ namespace Systems {
 
             virtual void removeSystem(std::size_t /*id*/);
 
-            auto getSystems() -> std::list<std::function<void(std::size_t)>> &;
+            std::list<std::function<void(std::size_t)>> & getSystems();
 
         private:
             std::list<std::function<void(std::size_t)>> _systems;

@@ -13,7 +13,7 @@ namespace Systems {
     class GameManager : public ASystemManager {
         public:
             ~GameManager() override = default;
-            static auto getInstance() -> GameManager &;
+            static GameManager & getInstance();
             void updateSystems() override;
             void addSystem(std::function<void(std::size_t)> /*sys*/) override;
             void removeSystem(std::size_t /*id*/) override;

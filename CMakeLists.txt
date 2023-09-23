@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 20)
 find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
 
 if(CLANG_TIDY_EXE)
-    set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "--fix" "--fix-notes" "--fix-errors" "-header-filter=(src/ECS/)|(src/Client/)|(src/Server/)" "-checks=-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length")
+    set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "--fix" "--fix-notes" "--fix-errors" "-header-filter=(src/ECS/)|(src/Client/)|(src/Server/)" "-checks=-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type")
     set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
 endif()
 

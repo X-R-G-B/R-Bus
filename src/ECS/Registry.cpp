@@ -11,7 +11,7 @@
 Registry Registry::_instance = Registry();
 // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
-auto Registry::getInstance() -> Registry &
+Registry &Registry::getInstance()
 {
     return _instance;
 }
