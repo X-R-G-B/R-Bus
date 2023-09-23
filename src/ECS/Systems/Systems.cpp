@@ -16,7 +16,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Pixel>();
 
         for (auto begin = arrPixel.begin(); begin != arrPixel.end(); begin++) {
-            if (*begin == std::nullopt) {
+            if (!begin->has_value()) {
                 continue;
             }
             if (begin->value().x < 0)

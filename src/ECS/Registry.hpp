@@ -23,7 +23,7 @@ class Registry {
 
         static Registry &getInstance();
 
-        template <class Component> const components<Component> getComponents()
+        template <class Component> components<Component> getComponents()
         {
             checkAddSparseArray<Component>();
             return castReturn<Component>();

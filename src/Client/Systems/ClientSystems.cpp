@@ -6,7 +6,6 @@
 */
 
 #include "ClientSystems.hpp"
-#include <cstddef>
 #include <iostream>
 #include "raylib.h"
 #include "CustomTypes.hpp"
@@ -17,7 +16,7 @@ void GraphicSystems::pixelRenderer(std::size_t)
     Registry::components<Pixel> arrPixel =
     Registry::getInstance().getComponents<Pixel>();
     for (auto begin = arrPixel.begin(); begin != arrPixel.end(); begin++) {
-        if (*begin == std::nullopt) {
+        if (!begin->has_value()) {
             continue;
         }
         for (int i = 0; i < 50; i++) {
@@ -34,7 +33,7 @@ void EventsSystems::playerMovement(std::size_t)
     Registry::getInstance().getComponents<Pixel>();
 
     for (auto &pixel : arrPixel) {
-        if (pixel == std::nullopt) {
+        if (!pixel.has_value()) {
             continue;
         }
         if (IsKeyDown(KEY_RIGHT))
