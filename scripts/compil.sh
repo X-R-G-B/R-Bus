@@ -12,6 +12,7 @@ if [[ "$1" == "--dry-run" ]]; then
             -format-style=file \
             -header-filter=. \
             -p build \
+            --fix \
             -checks=-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*
 fi
 
