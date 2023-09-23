@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo brew install clang-format
+        run: brew install clang-format
 
       - name: Exec sh
         run: ./scripts/format.sh
