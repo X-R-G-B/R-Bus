@@ -40,8 +40,10 @@ class Registry {
         {
             if (_data.find(typeid(Component)) == _data.end()) {
                 _data[typeid(Component)] = SparseArray<Component>();
-                _addComponentPlaceFunctions.push_back(&Registry::addComponentPlace<Component>);
-                _removeComponentFunctions.push_back(&Registry::removeComponent<Component>);
+                _addComponentPlaceFunctions.push_back(
+                &Registry::addComponentPlace<Component>);
+                _removeComponentFunctions.push_back(
+                &Registry::removeComponent<Component>);
                 for (std::size_t i = 0; i < _entitiesNb; i++) {
                     castReturn<Component>().add();
                 }

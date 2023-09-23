@@ -19,20 +19,22 @@ void GraphicSystems::RectRenderer(std::size_t)
     Registry::getInstance().getComponents<Types::RectangleShape>();
 
     auto positionIt = arrPosition.begin();
-    auto rectIt = arrRect.begin();
+    auto rectIt     = arrRect.begin();
 
     while (positionIt != arrPosition.end() && rectIt != arrRect.end()) {
         if (positionIt->has_value() && rectIt->has_value()) {
-            Types::Position &position = positionIt->value();
+            Types::Position &position        = positionIt->value();
             Types::RectangleShape &rectangle = rectIt->value();
 
             double x = (position.x * GetScreenWidth()) / 100;
             double y = (position.y * GetScreenHeight()) / 100;
 
-            double width = (rectangle.width * GetScreenWidth()) / 100;
+            double width  = (rectangle.width * GetScreenWidth()) / 100;
             double height = (rectangle.height * GetScreenHeight()) / 100;
 
-            DrawRectangle(static_cast<int>(x), static_cast<int>(y), static_cast<int>(width), static_cast<int>(height), PURPLE);
+            DrawRectangle(
+            static_cast<int>(x), static_cast<int>(y), static_cast<int>(width),
+            static_cast<int>(height), PURPLE);
         }
         positionIt++;
         rectIt++;

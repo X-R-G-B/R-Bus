@@ -32,8 +32,8 @@ int main()
     Registry::getInstance().addEntity();
 
     arrCollisionRect.back() = {10, 10};
-    arrRect.back() = {10, 10};
-    arrPosition.back() = {50, 50};
+    arrRect.back()          = {10, 10};
+    arrPosition.back()      = {50, 50};
 
     while (1) {
         systemEventsManager.updateSystems();
