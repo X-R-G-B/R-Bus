@@ -11,7 +11,7 @@
 #include "Registry.hpp"
 
 namespace Systems {
-    void windowCollision(std::size_t)
+    void windowCollision(std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
@@ -19,6 +19,7 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::CollisionRect>();
         Registry::components<Types::Player> arrPlayer =
             Registry::getInstance().getComponents<Types::Player>();
+        const float maxPercent = 100.0F;
 
         auto positionIt  = arrPosition.begin();
         auto collisionIt = arrCollisionRect.begin();
@@ -34,11 +35,15 @@ namespace Systems {
                 if (positionIt->value().y < 0) {
                     positionIt->value().y = 0;
                 }
-                if (positionIt->value().x + collisionIt->value().width > 100) {
-                    positionIt->value().x = 100 - collisionIt->value().width;
+                if (positionIt->value().x + collisionIt->value().width
+                    > maxPercent) {
+                    positionIt->value().x =
+                        maxPercent - collisionIt->value().width;
                 }
-                if (positionIt->value().y + collisionIt->value().height > 100) {
-                    positionIt->value().y = 100 - collisionIt->value().height;
+                if (positionIt->value().y + collisionIt->value().height
+                    > maxPercent) {
+                    positionIt->value().y =
+                        maxPercent - collisionIt->value().height;
                 }
             }
             positionIt++;

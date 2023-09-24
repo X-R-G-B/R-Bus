@@ -39,21 +39,29 @@ int main()
     Registry::components<Types::Player> arrPlayer =
         Registry::getInstance().getComponents<Types::Player>();
 
+    const Types::CollisionRect playerCollisionRect = {10, 20};
+    const Types::Rect playerRect                   = {2.0F, 5.0F, 30.5F, 25.2F};
+    const Types::RectangleShape rectShape          = {10, 10};
+    const Types::Position playerPosition           = {0, 0};
+    const Types::Position squarePosition           = {-5, 45};
+    const Types::Sprite playerSprite               = {
+        LoadTexture("assets/R-TypeSheet/r-typesheet18.gif"),
+        10,
+        20};
+
     // add rectangle shape entity of 10% of the screen at the middle
     Registry::getInstance().addEntity();
-    arrCollisionRect.back() = {10, 10};
-    arrRectShape.back()     = {10, 10};
-    arrPosition.back()      = {-5, 45};
+    arrRectShape.back() = rectShape;
+    arrPosition.back()  = squarePosition;
 
     // add player entity test
     Registry::getInstance().addEntity();
-    arrPosition.back() = {0, 0};
-    arrSprite.back()   = Types::Sprite(
-        {LoadTexture("assets/R-TypeSheet/r-typesheet18.gif"), 10, 20});
-    arrRect.back()          = {2.0f, 5.0f, 30.5f, 25.2f};
+    arrPosition.back()      = playerPosition;
+    arrSprite.back()        = playerSprite;
+    arrRect.back()          = playerRect;
     Types::Player myPlayer  = {true};
     arrPlayer.back()        = myPlayer;
-    arrCollisionRect.back() = {10, 20};
+    arrCollisionRect.back() = playerCollisionRect;
 
     while (true) {
         systemEventsManager.updateSystems();

@@ -11,12 +11,14 @@
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
 
-void GraphicSystems::rectRenderer(std::size_t)
+void GraphicSystems::rectRenderer(std::size_t /*unused*/)
 {
     Registry::components<Types::Position> arrPosition =
         Registry::getInstance().getComponents<Types::Position>();
     Registry::components<Types::RectangleShape> arrRect =
         Registry::getInstance().getComponents<Types::RectangleShape>();
+
+    const float denominator = 100.0;
 
     auto positionIt = arrPosition.begin();
     auto rectIt     = arrRect.begin();
@@ -26,11 +28,17 @@ void GraphicSystems::rectRenderer(std::size_t)
             Types::Position &position        = positionIt->value();
             Types::RectangleShape &rectangle = rectIt->value();
 
-            double x = (position.x * GetScreenWidth()) / 100;
-            double y = (position.y * GetScreenHeight()) / 100;
+            float x = (position.x * static_cast<float>(GetScreenWidth()))
+                / denominator;
+            float y = (position.y * static_cast<float>(GetScreenHeight()))
+                / denominator;
 
-            double width  = (rectangle.width * GetScreenWidth()) / 100;
-            double height = (rectangle.height * GetScreenHeight()) / 100;
+            float width =
+                (rectangle.width * static_cast<float>(GetScreenWidth()))
+                / denominator;
+            float height =
+                (rectangle.height * static_cast<float>(GetScreenHeight()))
+                / denominator;
 
             DrawRectangle(
                 static_cast<int>(x),
@@ -79,15 +87,18 @@ void EventsSystems::playerMovement(std::size_t /*unused*/)
 static void
 drawSpriteWithoutRect(Types::Position &position, Types::Sprite &sprite)
 {
-    float scale       = 1.0f;
-    float rotation    = 0;
-    Color tint        = WHITE;
-    Vector2 spritePos = {0, 0};
+    float scale             = 1.0F;
+    float rotation          = 0;
+    auto tint               = WHITE;
+    Vector2 spritePos       = {0, 0};
+    const float denominator = 100.0;
 
-    float x = (position.x * GetScreenWidth()) / 100;
-    float y = (position.y * GetScreenHeight()) / 100;
+    float x = (position.x * static_cast<float>(GetScreenWidth())) / denominator;
+    float y =
+        (position.y * static_cast<float>(GetScreenHeight())) / denominator;
 
-    scale     = (sprite.width * GetScreenWidth()) / 100 / sprite.sprite.width;
+    scale = (sprite.width * static_cast<float>(GetScreenWidth())) / denominator
+        / static_cast<float>(sprite.sprite.width);
     spritePos = {x, y};
 
     DrawTextureEx(sprite.sprite, spritePos, rotation, scale, tint);
@@ -98,15 +109,19 @@ static void drawSpriteWithRect(
     Types::Sprite &sprite,
     Types::Rect &rect)
 {
-    Vector2 origin = {0, 0};
-    float rotation = 0;
-    Color tint     = WHITE;
+    Vector2 origin          = {0, 0};
+    float rotation          = 0;
+    auto tint               = WHITE;
+    const float denominator = 100.0;
 
-    float x = (position.x * GetScreenWidth()) / 100;
-    float y = (position.y * GetScreenHeight()) / 100;
+    float x = (position.x * static_cast<float>(GetScreenWidth())) / denominator;
+    float y =
+        (position.y * static_cast<float>(GetScreenHeight())) / denominator;
 
-    float width  = (sprite.width * GetScreenWidth()) / 100;
-    float height = (sprite.height * GetScreenHeight()) / 100;
+    float width =
+        (sprite.width * static_cast<float>(GetScreenWidth())) / denominator;
+    float height =
+        (sprite.height * static_cast<float>(GetScreenHeight())) / denominator;
 
     DrawTexturePro(
         sprite.sprite,
@@ -117,7 +132,7 @@ static void drawSpriteWithRect(
         tint);
 }
 
-void GraphicSystems::spriteRenderer(std::size_t)
+void GraphicSystems::spriteRenderer(std::size_t /*unused*/)
 {
     Registry::components<Types::Sprite> arrSprite =
         Registry::getInstance().getComponents<Types::Sprite>();

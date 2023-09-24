@@ -2,13 +2,6 @@ cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_CXX_STANDARD 20)
 
-find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
-
-if(CLANG_TIDY_EXE)
-    set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "--fix" "--fix-notes" "--fix-errors" "-header-filter=(src/ECS/)|(src/Client/)|(src/Server/)" "-checks=-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type")
-    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
-endif()
-
 if(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -47,6 +40,28 @@ add_executable(
 )
 
 add_subdirectory(deps)
+
+# Clang-Tidy
+
+find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+
+if(CLANG_TIDY_EXE)
+    if (MSVC)
+        set_target_properties(${PROJECT_NAME_CLIENT} PROPERTIES
+            VS_GLOBAL_RunCodeAnalysis true
+            VS_GLOBAL_EnableClangTidyCodeAnalysis true
+            VS_GLOBAL_ClangTidyChecks "-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type"
+        )
+        set_target_properties(${PROJECT_NAME_SERVER} PROPERTIES
+            VS_GLOBAL_RunCodeAnalysis true
+            VS_GLOBAL_EnableClangTidyCodeAnalysis true
+            VS_GLOBAL_ClangTidyChecks "-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type"
+        )
+    else()
+        set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "--fix" "--fix-notes" "--fix-errors" "-header-filter=(src/ECS/)|(src/Client/)|(src/Server/)" "-checks=-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type")
+        set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
+    endif()
+endif()
 
 if(MSVC)
     target_compile_options(
