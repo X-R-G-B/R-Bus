@@ -23,25 +23,28 @@ int main()
     Systems::SystemEventsManager &systemEventsManager =
         Systems::SystemEventsManager::getInstance();
 
-    Registry::components<Pixel> arrPixel =
-        Registry::getInstance().getComponents<Pixel>();
-    Registry::components<Sprite> arrSprite =
-        Registry::getInstance().getComponents<Sprite>();
-    Registry::components<Position> arrPosition =
-        Registry::getInstance().getComponents<Position>();
-    Registry::components<Rect> arrRect =
-        Registry::getInstance().getComponents<Rect>();
+    Registry::components<Types::Pixel> arrPixel =
+        Registry::getInstance().getComponents<Types::Pixel>();
+    Registry::components<Types::Sprite> arrSprite =
+        Registry::getInstance().getComponents<Types::Sprite>();
+    Registry::components<Types::Position> arrPosition =
+        Registry::getInstance().getComponents<Types::Position>();
+    Registry::components<Types::Rect> arrRect =
+        Registry::getInstance().getComponents<Types::Rect>();
+    Registry::components<Types::SoundEffect> arrSounds =
+        Registry::getInstance().getComponents<Types::SoundEffect>();
 
     Registry::getInstance().addEntity();
     arrPosition.back() = {sizeArrPix, sizeArrPix};
     arrSprite.back() =
-        Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet10.gif")});
-    arrRect.back() = {sizeArrPix, sizeArrPix, 0, 0};
+        Types::Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet10.gif")});
+    arrRect.back()   = {sizeArrPix, sizeArrPix, 0, 0};
+    arrSounds.back() = Types::SoundEffect("assets/Audio/yes.ogg");
 
     Registry::getInstance().addEntity();
     arrPosition.back() = {sizeArrPixLarge, sizeArrPixLarge};
     arrSprite.back() =
-        Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet11.gif")});
+        Types::Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet11.gif")});
     arrRect.back() = {sizeArrPix, sizeArrPix, 0, 0};
 
     Registry::getInstance().addEntity();

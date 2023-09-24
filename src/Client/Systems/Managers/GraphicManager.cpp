@@ -22,14 +22,17 @@ namespace Systems {
         const int screenHeight = 450;
         const int frameRate    = 60;
         InitWindow(screenWidth, screenHeight, "Poc ECS");
+        InitAudioDevice();
         SetTargetFPS(frameRate);
 
         ASystemManager::addSystem(GraphicSystems::pixelRenderer);
         ASystemManager::addSystem(GraphicSystems::spriteRenderer);
+        ASystemManager::addSystem(GraphicSystems::soundEffectPlayer);
     }
 
     GraphicManager::~GraphicManager()
     {
+        CloseAudioDevice();
         CloseWindow();
     }
 

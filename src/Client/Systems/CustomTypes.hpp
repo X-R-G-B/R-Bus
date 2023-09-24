@@ -5,27 +5,42 @@
 ** Custom Types
 */
 
+#include <iostream>
+#include <string>
 #include "raylib.h"
 
-struct Pixel {
-        int x;
-        int y;
-};
+namespace Types {
+    struct Pixel {
+            int x;
+            int y;
+    };
 
-struct Sprite {
-        Texture2D sprite;
-};
+    struct Sprite {
+            Texture2D sprite;
+    };
 
-struct Position {
-        float x;
-        float y;
-};
+    struct Position {
+            float x;
+            float y;
+    };
 
-struct Rect {
-        float width;
-        float height;
-        float x;
-        float y;
-};
+    struct Rect {
+            float width;
+            float height;
+            float x;
+            float y;
+    };
 
-// sound part
+    struct SoundEffect {
+            SoundEffect(std::string soundPath)
+                : sound(LoadSound(soundPath.c_str())),
+                  needToPlay(false),
+                  path(soundPath)
+            {
+            }
+            Sound sound;
+            bool needToPlay;
+            std::string path;
+    };
+
+} // namespace Types

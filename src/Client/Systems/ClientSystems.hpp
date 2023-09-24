@@ -12,6 +12,7 @@
 namespace GraphicSystems {
     void pixelRenderer(std::size_t /*unused*/);
     void spriteRenderer(std::size_t /*unused*/);
+    void soundEffectPlayer(std::size_t /*unused*/);
 } // namespace GraphicSystems
 
 namespace EventsSystems {

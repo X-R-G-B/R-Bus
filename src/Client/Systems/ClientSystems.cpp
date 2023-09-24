@@ -15,8 +15,8 @@ static const auto pixelRenderNumber = 50;
 
 void GraphicSystems::pixelRenderer(std::size_t /*unused*/)
 {
-    Registry::components<Pixel> arrPixel =
-        Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Types::Pixel> arrPixel =
+        Registry::getInstance().getComponents<Types::Pixel>();
     for (auto &begin : arrPixel) {
         if (!begin.has_value()) {
             continue;
@@ -31,8 +31,8 @@ void GraphicSystems::pixelRenderer(std::size_t /*unused*/)
 
 void EventsSystems::playerMovement(std::size_t /*unused*/)
 {
-    Registry::components<Pixel> arrPixel =
-        Registry::getInstance().getComponents<Pixel>();
+    Registry::components<Types::Pixel> arrPixel =
+        Registry::getInstance().getComponents<Types::Pixel>();
 
     for (auto &pixel : arrPixel) {
         if (!pixel.has_value()) {
@@ -55,12 +55,12 @@ void EventsSystems::playerMovement(std::size_t /*unused*/)
 
 void GraphicSystems::spriteRenderer(std::size_t /*unused*/)
 {
-    Registry::components<Sprite> arrSprite =
-        Registry::getInstance().getComponents<Sprite>();
-    Registry::components<Rect> arrRect =
-        Registry::getInstance().getComponents<Rect>();
-    Registry::components<Position> arrPosition =
-        Registry::getInstance().getComponents<Position>();
+    Registry::components<Types::Sprite> arrSprite =
+        Registry::getInstance().getComponents<Types::Sprite>();
+    Registry::components<Types::Rect> arrRect =
+        Registry::getInstance().getComponents<Types::Rect>();
+    Registry::components<Types::Position> arrPosition =
+        Registry::getInstance().getComponents<Types::Position>();
 
     for (std::size_t i = 0;
          i < arrSprite.size() || i < arrRect.size() || i < arrPosition.size();
@@ -78,5 +78,21 @@ void GraphicSystems::spriteRenderer(std::size_t /*unused*/)
                 arrRect[i].value().height),
             Vector2(arrPosition[i].value().x, arrPosition[i].value().y),
             WHITE);
+    }
+}
+
+void GraphicSystems::soundEffectPlayer(std::size_t /*unused*/)
+{
+    Registry::components<Types::SoundEffect> arrSoundEffect =
+        Registry::getInstance().getComponents<Types::SoundEffect>();
+
+    for (auto &soundEffect : arrSoundEffect) {
+        if (!soundEffect.has_value()) {
+            continue;
+        }
+        if (soundEffect.value().needToPlay) {
+            PlaySound(soundEffect.value().sound);
+            soundEffect.value().needToPlay = false;
+        }
     }
 }
