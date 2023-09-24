@@ -3,7 +3,7 @@
 
 BRANCH="$1"
 
-LAST_TAG=$(git tag | tail -n 1)
+LAST_TAG=$(git tag | sort -t '.' --numeric-sort -k1,1 -k2,2 -k3,3 | tail -n 1)
 LAST_TAG_MAJOR=$(echo "$LAST_TAG" | cut -d'.' -f1)
 LAST_TAG_MINOR=$(echo "$LAST_TAG" | cut -d'.' -f2)
 LAST_TAG_PATCH=$(echo "$LAST_TAG" | cut -d'.' -f3)
