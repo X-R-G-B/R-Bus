@@ -6,12 +6,6 @@ set(PROJECT_NAME_CLIENT r-type_client)
 set(PROJECT_NAME_SERVER r-type_server)
 set(PROJECT_NAME r-type)
 
-project(
-    ${PROJECT_NAME}
-    VERSION 1.0.0
-    DESCRIPTION "r-type"
-    LANGUAGES CXX
-)
 
 find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
 
@@ -25,6 +19,16 @@ if(NOT DEFINED CMAKE_BUILD_TYPE)
 endif()
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+option(WITH_PIC "Build with position independent code" ON)
+
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/deps/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+
+project(
+    ${PROJECT_NAME}
+    VERSION 1.0.0
+    DESCRIPTION "r-type"
+    LANGUAGES CXX
+)
 
 # if(MSVC)
 #     set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")

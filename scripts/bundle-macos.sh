@@ -3,7 +3,7 @@
 
 set -ex
 
-cmake -S . -B build
+cmake -S . -B build -DMACOS_FATLIB=ON
 
 cmake --build build
 

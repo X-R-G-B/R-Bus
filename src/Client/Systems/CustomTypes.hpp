@@ -13,7 +13,7 @@ struct Pixel {
 };
 
 struct Sprite {
-        Texture2D sprite;
+        Texture2D sprite {};
 };
 
 struct Position {

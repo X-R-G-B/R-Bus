@@ -83,5 +83,5 @@ class Registry {
         std::list<std::function<void(Registry &)>> _addComponentPlaceFunctions;
         std::list<std::function<void(Registry &, std::size_t)>>
             _removeComponentFunctions;
-        std::unordered_map<std::type_index, std::any> _data;
+        std::unordered_map<std::type_index, std::any> _data {};
 };
