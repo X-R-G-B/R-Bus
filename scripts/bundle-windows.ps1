@@ -15,6 +15,8 @@ if ($LASTEXITCODE -ne 0) {
     type _CPack_Packages/win64/NSIS/NSISOutput.log
 }
 
+Copy-Item R-Type-*-win64.exe ../r-type-windows.exe
+
 cd ..
 
 New-Item -Name "bundle" -Type Directory
