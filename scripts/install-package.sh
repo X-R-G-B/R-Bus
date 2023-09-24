@@ -2,4 +2,4 @@
 # Install package
 
 ./deps/vcpkg/vcpkg install raylib
-./deps/vcpkg/vcpkg install asio
+./deps/vcpkg/vcpkg install asio boost-coroutine2
