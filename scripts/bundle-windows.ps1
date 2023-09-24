@@ -1,6 +1,8 @@
 #!/bin/pwsh
 # Run cpack
 
+$ErrorActionPreference = "SilentlyContinue"
+
 cmake -S . -B build
 
 cmake --build build
@@ -8,6 +10,10 @@ cmake --build build
 cd build
 
 cpack --config CPackConfig.cmake -G NSIS
+
+if ($LASTEXITCODE -ne 0) {
+    type _CPack_Packages/win64/NSIS/NSISOutput.log
+}
 
 cd ..
 
