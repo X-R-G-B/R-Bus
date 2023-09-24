@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [main]
+    branches: [feature/RB-15]
 
 env:
   RAYLIB_TAG: "4.5.0"
@@ -38,17 +38,23 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Install winget
+      uses: Cyberboss/install-winget@v1
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install dependencies
+      run: ./scripts/install-deps-windows.ps1
+
     - name: Build
-      run: |
-        echo "RType server" > ./r-type_server.exe
-        echo "RType client" > ./r-type_client.exe
+      run: ./scripts/bundle-windows.ps1
 
     - name: Upload To Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload ${{ needs.release-create.outputs.release }} ./r-type_server.exe
-        gh release upload ${{ needs.release-create.outputs.release }} ./r-type_client.exe
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type-windows.zip
+        # gh release upload ${{ needs.release-create.outputs.release }} ./r-type_client.exe
 
   build-linux:
     runs-on: ubuntu-latest
@@ -58,17 +64,42 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Install dependencies
+      run: sudo ./scripts/install-deps-linux.sh
+
     - name: Build
-      run: |
-        echo "RType server" > ./r-type_server
-        echo "RType client" > ./r-type_client
+      run: ./scripts/bundle-linux.sh
+
+    - name: Rename STGZ
+      run: mv build/R-Type-1.0.0-Linux.sh ./r-type-linux.sh
 
     - name: Upload To Release
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload ${{ needs.release-create.outputs.release }} ./r-type_server
-        gh release upload ${{ needs.release-create.outputs.release }} ./r-type_client
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type-linux.tar
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type-linux.sh
+
+  build-macos:
+    runs-on: macos-latest
+    needs: release-create
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: ./scripts/install-deps-macos.sh
+
+    - name: Build
+      run: ./scripts/bundle-macos.sh
+
+    - name: Upload To Release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type-macos.zip
+        # gh release upload ${{ needs.release-create.outputs.release }} ./r-type-linux.sh
 
   asio-to-tar:
     runs-on: ubuntu-latest
