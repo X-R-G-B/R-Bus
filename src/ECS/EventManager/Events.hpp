@@ -13,9 +13,9 @@
 
 namespace Events {
     static const auto events = {
-    KEY_LEFT,
-    KEY_RIGHT,
-    KEY_UP,
-    KEY_DOWN,
+        KEY_LEFT,
+        KEY_RIGHT,
+        KEY_UP,
+        KEY_DOWN,
     };
 }

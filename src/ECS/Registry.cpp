@@ -7,7 +7,9 @@
 
 #include "Registry.hpp"
 
+// NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 Registry Registry::_instance = Registry();
+// NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
 Registry &Registry::getInstance()
 {

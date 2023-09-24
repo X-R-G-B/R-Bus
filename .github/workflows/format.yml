@@ -3,7 +3,7 @@ name: Format
 on: [push, pull_request]
 
 jobs:
-  windows-check:
+  windows-format:
     runs-on: windows-latest
     steps:
       - name: Checkout
@@ -20,19 +20,19 @@ jobs:
       - name: Format
         run: ./scripts/format.ps1 --dry-run
 
-  linux-check:
+  linux-format:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: sudo apt install clang
+        run: sudo apt-get -y install clang
 
-      - name: Exec sh
+      - name: Format
         run: ./scripts/format.sh --dry-run
 
-  macos-check:
+  macos-format:
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -41,5 +41,5 @@ jobs:
       - name: Install dependencies
         run: brew install clang-format
 
-      - name: Exec sh
+      - name: Format
         run: ./scripts/format.sh --dry-run

@@ -10,6 +10,7 @@
 #include <any>
 #include <functional>
 #include <iostream>
+#include <list>
 #include <memory>
 #include <typeindex>
 #include <typeinfo>
@@ -19,11 +20,13 @@
 
 class Registry {
     public:
-        template <class Component> using components = SparseArray<Component> &;
+        template <class Component>
+        using components = SparseArray<Component> &;
 
         static Registry &getInstance();
 
-        template <class Component> components<Component> getComponents()
+        template <class Component>
+        components<Component> getComponents()
         {
             checkAddSparseArray<Component>();
             return castReturn<Component>();
@@ -31,43 +34,54 @@ class Registry {
 
         void addEntity();
 
-        void removeEntity(std::size_t);
+        void removeEntity(std::size_t /*id*/);
+
+        Registry &operator=(const Registry &) = delete;
+        Registry(const Registry &)            = delete;
+        void operator=(const Registry &&)     = delete;
+        Registry(Registry &&)                 = delete;
 
     private:
-        Registry() = default;
+        Registry()  = default;
+        ~Registry() = default;
 
-        template <typename Component> void checkAddSparseArray()
+        template <typename Component>
+        void checkAddSparseArray()
         {
             if (_data.find(typeid(Component)) == _data.end()) {
                 _data[typeid(Component)] = SparseArray<Component>();
                 _addComponentPlaceFunctions.push_back(
-                &Registry::addComponentPlace<Component>);
+                    &Registry::addComponentPlace<Component>);
                 _removeComponentFunctions.push_back(
-                &Registry::removeComponent<Component>);
+                    &Registry::removeComponent<Component>);
             }
         }
 
-        template <typename Component> void addComponentPlace()
+        template <typename Component>
+        void addComponentPlace()
         {
             castReturn<Component>().add();
         }
 
-        template <typename Component> void removeComponent(std::size_t id)
+        template <typename Component>
+        void removeComponent(std::size_t id)
         {
             castReturn<Component>().erase(id);
         }
 
-        template <class Component> components<Component> castReturn()
+        template <class Component>
+        components<Component> castReturn()
         {
             return std::any_cast<components<Component>>(
-            _data[typeid(Component)]);
+                _data[typeid(Component)]);
         }
 
+        // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
         static Registry _instance;
-        Registry &operator=(const Registry &) = delete;
+        // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
         std::list<std::function<void(Registry &)>> _addComponentPlaceFunctions;
         std::list<std::function<void(Registry &, std::size_t)>>
-        _removeComponentFunctions;
+            _removeComponentFunctions;
         std::unordered_map<std::type_index, std::any> _data;
 };

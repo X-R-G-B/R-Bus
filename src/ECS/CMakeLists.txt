@@ -4,13 +4,13 @@ add_subdirectory(EventManager)
 add_subdirectory(Systems)
 
 target_include_directories(
-    ${PROJECT_NAME}
+    ${PROJECT_NAME_CLIENT}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 target_sources(
-    ${PROJECT_NAME}
+    ${PROJECT_NAME_CLIENT}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Registry.cpp
 )
