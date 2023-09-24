@@ -6,12 +6,11 @@
 */
 
 #pragma once
-
 #include <cstddef>
 
 namespace GraphicSystems {
-    void pixelRenderer(std::size_t /*unused*/);
-    void spriteRenderer(std::size_t /*unused*/);
+    void rectRenderer(std::size_t);
+    void spriteRenderer(std::size_t);
 } // namespace GraphicSystems
 
 namespace EventsSystems {

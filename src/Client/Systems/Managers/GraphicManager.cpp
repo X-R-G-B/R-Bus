@@ -21,11 +21,11 @@ namespace Systems {
         const int screenWidth  = 800;
         const int screenHeight = 450;
         const int frameRate    = 60;
-        InitWindow(screenWidth, screenHeight, "Poc ECS");
+        InitWindow(screenWidth, screenHeight, "R-Type");
         SetTargetFPS(frameRate);
 
-        ASystemManager::addSystem(GraphicSystems::pixelRenderer);
-        ASystemManager::addSystem(GraphicSystems::spriteRenderer);
+        addSystem(GraphicSystems::rectRenderer);
+        addSystem(GraphicSystems::spriteRenderer);
     }
 
     GraphicManager::~GraphicManager()

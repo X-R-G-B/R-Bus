@@ -5,34 +5,18 @@
 ** Custom Types
 */
 
-#include "raylib.h"
+#pragma once
+
+// all values are in percentage of the screen
 
 namespace Types {
 
-    struct Pixel {
-            int x;
-            int y;
-    };
-
-    struct Sprite {
-            Texture2D sprite;
-            float width;
-            float height;
-    };
-
-    struct Rect {
-            float x;
-            float y;
+    struct CollisionRect {
             float width;
             float height;
     };
 
     struct RectangleShape {
-            float width;
-            float height;
-    };
-
-    struct CollisionRect {
             float width;
             float height;
     };
