@@ -11,6 +11,8 @@ cd build || exit 14
 
 cpack --config CPackConfig.cmake -G STGZ
 
+mv R-Type-*-Linux.sh ../r-type-linux.sh
+
 cd ..
 
 mkdir bundle
@@ -25,3 +27,5 @@ cp -r LICENSE bundle
 cp -r README.md bundle
 
 tar -cvf r-type-linux.tar bundle
+
+rm -rf bundle

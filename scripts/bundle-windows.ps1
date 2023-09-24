@@ -23,3 +23,5 @@ Copy-Item LICENSE.txt bundle -Recurse -Force
 Copy-Item README.md bundle -Recurse -Force
 
 Compress-Archive -Path bundle -DestinationPath r-type-windows.zip
+
+Remove-Item -Recurse -Force bundle

@@ -25,3 +25,5 @@ cp -r LICENSE bundle
 cp -r README.md bundle
 
 zip -r -9 r-type-macos.zip bundle
+
+rm -rf bundle

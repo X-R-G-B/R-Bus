@@ -24,6 +24,8 @@ if(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+set(BUILD_SHARED_LIBS ON)
+
 # if(MSVC)
 #     set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
 #     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")

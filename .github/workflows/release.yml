@@ -74,9 +74,6 @@ jobs:
     - name: Build
       run: ./scripts/bundle-linux.sh
 
-    - name: Rename STGZ
-      run: mv build/R-Type-*-Linux.sh ./r-type-linux.sh
-
     - name: LIST ALL
       run: ls -Rl build
 
