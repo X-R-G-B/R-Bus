@@ -50,8 +50,7 @@ int main()
     arrRect.back() = {sizeArrPix, sizeArrPix, 0, 0};
 
     Registry::getInstance().addEntity();
-    arrPixel.back() = {sizeArrPix, sizeArrPix};
-
+    arrPixel.back()  = {sizeArrPix, sizeArrPix};
     arrMusics.back() = Types::MusicStream("assets/Audio/Musics/Title.mp3");
 
     while (true) {

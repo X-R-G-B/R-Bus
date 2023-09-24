@@ -49,8 +49,8 @@ namespace Types {
             {
             }
             Music music;
-            bool needToPlay{false};
-            bool isPlaying{false};
+            bool needToPlay {false};
+            bool isPlaying {false};
             std::string path;
     };
 

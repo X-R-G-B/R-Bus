@@ -29,6 +29,7 @@ namespace Systems {
         ASystemManager::addSystem(GraphicSystems::spriteRenderer);
         ASystemManager::addSystem(GraphicSystems::soundEffectPlayer);
         ASystemManager::addSystem(EventsSystems::playerMovement);
+        ASystemManager::addSystem(GraphicSystems::musicPlayer);
     }
 
     GraphicManager::~GraphicManager()
