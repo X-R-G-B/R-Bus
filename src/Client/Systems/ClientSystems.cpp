@@ -46,20 +46,67 @@ void EventsSystems::playerMovement(std::size_t)
     Registry::components<Types::Position> arrPosition =
     Registry::getInstance().getComponents<Types::Position>();
 
-    for (auto &position : arrPosition) {
-        if (IsKeyDown(KEY_RIGHT)) {
-            position.value().x += 1;
+    Registry::components<Types::Player> arrPlayer =
+    Registry::getInstance().getComponents<Types::Player>();
+
+    auto positionIt = arrPosition.begin();
+    auto playerIt   = arrPlayer.begin();
+
+    while (positionIt != arrPosition.end() && playerIt != arrPlayer.end()) {
+        if (
+        playerIt->has_value() && positionIt->has_value()
+        && playerIt->value().isMine) {
+            if (IsKeyDown(KEY_RIGHT)) {
+                positionIt->value().x += 1;
+            }
+            if (IsKeyDown(KEY_LEFT)) {
+                positionIt->value().x -= 1;
+            }
+            if (IsKeyDown(KEY_UP)) {
+                positionIt->value().y -= 1;
+            }
+            if (IsKeyDown(KEY_DOWN)) {
+                positionIt->value().y += 1;
+            }
         }
-        if (IsKeyDown(KEY_LEFT)) {
-            position.value().x -= 1;
-        }
-        if (IsKeyDown(KEY_UP)) {
-            position.value().y -= 1;
-        }
-        if (IsKeyDown(KEY_DOWN)) {
-            position.value().y += 1;
-        }
+        positionIt++;
+        playerIt++;
     }
+}
+
+static void
+drawSpriteWithoutRect(Types::Position &position, Types::Sprite &sprite)
+{
+    float scale       = 1.0f;
+    float rotation    = 0;
+    Color tint        = WHITE;
+    Vector2 spritePos = {0, 0};
+
+    float x = (position.x * GetScreenWidth()) / 100;
+    float y = (position.y * GetScreenHeight()) / 100;
+
+    scale     = (sprite.width * GetScreenWidth()) / 100 / sprite.sprite.width;
+    spritePos = {x, y};
+
+    DrawTextureEx(sprite.sprite, spritePos, rotation, scale, tint);
+}
+
+static void drawSpriteWithRect(
+Types::Position &position, Types::Sprite &sprite, Types::Rect &rect)
+{
+    Vector2 origin = {0, 0};
+    float rotation = 0;
+    Color tint     = WHITE;
+
+    float x = (position.x * GetScreenWidth()) / 100;
+    float y = (position.y * GetScreenHeight()) / 100;
+
+    float width       = (sprite.width * GetScreenWidth()) / 100;
+    float height     = (sprite.height * GetScreenHeight()) / 100;
+
+    DrawTexturePro(
+    sprite.sprite, Rectangle(rect.x, rect.y, rect.width, rect.height),
+    Rectangle(x, y, width, height), origin, rotation, tint);
 }
 
 void GraphicSystems::spriteRenderer(std::size_t)
@@ -71,19 +118,21 @@ void GraphicSystems::spriteRenderer(std::size_t)
     Registry::components<Types::Position> arrPosition =
     Registry::getInstance().getComponents<Types::Position>();
 
-    for (std::size_t i = 0;
-         i < arrSprite.size() || i < arrRect.size() || i < arrPosition.size();
-         i++) {
+    auto positionIt = arrPosition.begin();
+    auto spriteIt   = arrSprite.begin();
+    auto rectIt     = arrRect.begin();
+
+    while (positionIt != arrPosition.end() && spriteIt != arrSprite.end()) {
         if (
-        !arrSprite[i].has_value() || !arrRect[i].has_value()
-        || !arrPosition[i].has_value()) {
-            continue;
+        positionIt->has_value() && spriteIt->has_value()
+        && rectIt->has_value()) {
+            drawSpriteWithRect(
+            positionIt->value(), spriteIt->value(), rectIt->value());
+        } else if (positionIt->has_value() && spriteIt->has_value()) {
+            drawSpriteWithoutRect(positionIt->value(), spriteIt->value());
         }
-        DrawTextureRec(
-        arrSprite[i].value().sprite,
-        Rectangle(
-        arrRect[i].value().x, arrRect[i].value().y, arrRect[i].value().width,
-        arrRect[i].value().height),
-        Vector2(arrPosition[i].value().x, arrPosition[i].value().y), WHITE);
+        positionIt++;
+        spriteIt++;
+        rectIt++;
     }
 }

@@ -16,13 +16,16 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
         Registry::getInstance().getComponents<Types::CollisionRect>();
+        Registry::components<Types::Player> arrPlayer =
+        Registry::getInstance().getComponents<Types::Player>();
 
         auto positionIt  = arrPosition.begin();
         auto collisionIt = arrCollisionRect.begin();
+        auto playerIt    = arrPlayer.begin();
 
-        while (positionIt != arrPosition.end()
+        while (playerIt != arrPlayer.end() && positionIt != arrPosition.end()
                && collisionIt != arrCollisionRect.end()) {
-            if (positionIt->has_value() && collisionIt->has_value()) {
+            if (playerIt->has_value() && positionIt->has_value() && collisionIt->has_value()) {
                 if (positionIt->value().x < 0) {
                     positionIt->value().x = 0;
                 }
@@ -38,6 +41,7 @@ namespace Systems {
             }
             positionIt++;
             collisionIt++;
+            playerIt++;
         }
     }
 } // namespace Systems

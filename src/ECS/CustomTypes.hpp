@@ -26,4 +26,8 @@ namespace Types {
             float y;
     };
 
+    struct Player {
+            bool isMine;
+    };
+
 } // namespace Types

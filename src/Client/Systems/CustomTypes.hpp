@@ -16,6 +16,15 @@ namespace Types {
 
     struct Sprite {
             Texture2D sprite;
+            float width;
+            float height;
+    };
+
+    struct Rect {
+                float x;
+            float y;
+            float width;
+            float height;
     };
 
     struct RectangleShape {
@@ -33,11 +42,8 @@ namespace Types {
             float y;
     };
 
-    struct Rect {
-            float width;
-            float height;
-            float x;
-            float y;
+    struct Player {
+            bool isMine;
     };
 
 } // namespace Types
