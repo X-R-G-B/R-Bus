@@ -29,12 +29,12 @@ class SparseArray {
             return _components[idx];
         }
 
-        std::vector<std::optional<Component>>::iterator begin()
+        typename std::vector<std::optional<Component>>::iterator begin()
         {
             return _components.begin();
         }
 
-        std::vector<std::optional<Component>>::iterator end()
+        typename std::vector<std::optional<Component>>::iterator end()
         {
             return _components.end();
         }
