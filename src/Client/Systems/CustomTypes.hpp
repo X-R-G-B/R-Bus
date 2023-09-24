@@ -34,12 +34,11 @@ namespace Types {
     struct SoundEffect {
             SoundEffect(std::string soundPath)
                 : sound(LoadSound(soundPath.c_str())),
-                  needToPlay(false),
                   path(soundPath)
             {
             }
             Sound sound;
-            bool needToPlay;
+            bool needToPlay{false};
             std::string path;
     };
 
