@@ -2,6 +2,17 @@ cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_CXX_STANDARD 20)
 
+set(PROJECT_NAME_CLIENT r-type_client)
+set(PROJECT_NAME_SERVER r-type_server)
+set(PROJECT_NAME r-type)
+
+project(
+    ${PROJECT_NAME}
+    VERSION 1.0.0
+    DESCRIPTION "r-type"
+    LANGUAGES CXX
+)
+
 find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
 
 if(CLANG_TIDY_EXE)
@@ -23,19 +34,9 @@ endif()
 # endif()
 
 # ----------------------------------------------------------------------------
-# CLIENT
-
-set(PROJECT_NAME_CLIENT r-type_client)
-set(PROJECT_NAME_SERVER r-type_server)
-set(PEOJECT_NAME r-type)
 
 install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/assets/" DESTINATION "share/${PROJECT_NAME_CLIENT}")
 
-project(
-    ${PROJECT_NAME}
-    VERSION 1.0.0
-    LANGUAGES CXX
-)
 
 add_executable(
     ${PROJECT_NAME_CLIENT}
