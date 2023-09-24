@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+env:
+  RAYLIB_TAG: "4.5.0"
+
 jobs:
   release-create:
     permissions: write-all
@@ -111,10 +114,10 @@ jobs:
       run: |
         git clone https://github.com/raysan5/raylib.git raylib-repo
         cd raylib-repo || exit 14
-        git checkout 4.5.0
+        git checkout ${{ env.RAYLIB_TAG }}
         cd ..
 
-    - name: Zip To Tar
+    - name: To Tar
       run: |
         tar -cvf raylib.tar raylib-repo
 

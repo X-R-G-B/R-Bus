@@ -8,6 +8,8 @@
 #pragma once
 #include <cstddef>
 
+#include <cstddef>
+
 namespace Systems {
     void windowCollision(std::size_t);
 }

@@ -14,5 +14,5 @@ namespace GraphicSystems {
 } // namespace GraphicSystems
 
 namespace EventsSystems {
-    void playerMovement(std::size_t);
+    void playerMovement(std::size_t /*unused*/);
 }

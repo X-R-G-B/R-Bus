@@ -5,6 +5,7 @@
 ** Systems implementation
 */
 
+#include <cstddef>
 #include <iostream>
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
@@ -13,11 +14,11 @@ namespace Systems {
     void windowCollision(std::size_t)
     {
         Registry::components<Types::Position> arrPosition =
-        Registry::getInstance().getComponents<Types::Position>();
+            Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
-        Registry::getInstance().getComponents<Types::CollisionRect>();
+            Registry::getInstance().getComponents<Types::CollisionRect>();
         Registry::components<Types::Player> arrPlayer =
-        Registry::getInstance().getComponents<Types::Player>();
+            Registry::getInstance().getComponents<Types::Player>();
 
         auto positionIt  = arrPosition.begin();
         auto collisionIt = arrCollisionRect.begin();
@@ -25,9 +26,8 @@ namespace Systems {
 
         while (playerIt != arrPlayer.end() && positionIt != arrPosition.end()
                && collisionIt != arrCollisionRect.end()) {
-            if (
-            playerIt->has_value() && positionIt->has_value()
-            && collisionIt->has_value()) {
+            if (playerIt->has_value() && positionIt->has_value()
+                && collisionIt->has_value()) {
                 if (positionIt->value().x < 0) {
                     positionIt->value().x = 0;
                 }

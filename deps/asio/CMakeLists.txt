@@ -13,8 +13,10 @@ FetchContent_GetProperties(asio)
 if(NOT asio_POPULATED)
     FetchContent_Populate(asio)
 
-    target_include_directories(${PROJECT_NAME} PRIVATE ${asio_SOURCE_DIR}/include)
+    target_include_directories(${PROJECT_NAME_CLIENT} PRIVATE ${asio_SOURCE_DIR}/include)
+    target_include_directories(${PROJECT_NAME_SERVER} PRIVATE ${asio_SOURCE_DIR}/include)
 
     find_package(Threads)
-    target_link_libraries(${PROJECT_NAME} INTERFACE Threads::Threads)
+    target_link_libraries(${PROJECT_NAME_CLIENT} INTERFACE Threads::Threads)
+    target_link_libraries(${PROJECT_NAME_SERVER} INTERFACE Threads::Threads)
 endif()

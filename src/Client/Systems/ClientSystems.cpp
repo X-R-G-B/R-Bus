@@ -14,9 +14,9 @@
 void GraphicSystems::rectRenderer(std::size_t)
 {
     Registry::components<Types::Position> arrPosition =
-    Registry::getInstance().getComponents<Types::Position>();
+        Registry::getInstance().getComponents<Types::Position>();
     Registry::components<Types::RectangleShape> arrRect =
-    Registry::getInstance().getComponents<Types::RectangleShape>();
+        Registry::getInstance().getComponents<Types::RectangleShape>();
 
     auto positionIt = arrPosition.begin();
     auto rectIt     = arrRect.begin();
@@ -33,29 +33,31 @@ void GraphicSystems::rectRenderer(std::size_t)
             double height = (rectangle.height * GetScreenHeight()) / 100;
 
             DrawRectangle(
-            static_cast<int>(x), static_cast<int>(y), static_cast<int>(width),
-            static_cast<int>(height), PURPLE);
+                static_cast<int>(x),
+                static_cast<int>(y),
+                static_cast<int>(width),
+                static_cast<int>(height),
+                PURPLE);
         }
         positionIt++;
         rectIt++;
     }
 }
 
-void EventsSystems::playerMovement(std::size_t)
+void EventsSystems::playerMovement(std::size_t /*unused*/)
 {
     Registry::components<Types::Position> arrPosition =
-    Registry::getInstance().getComponents<Types::Position>();
+        Registry::getInstance().getComponents<Types::Position>();
 
     Registry::components<Types::Player> arrPlayer =
-    Registry::getInstance().getComponents<Types::Player>();
+        Registry::getInstance().getComponents<Types::Player>();
 
     auto positionIt = arrPosition.begin();
     auto playerIt   = arrPlayer.begin();
 
     while (positionIt != arrPosition.end() && playerIt != arrPlayer.end()) {
-        if (
-        playerIt->has_value() && positionIt->has_value()
-        && playerIt->value().isMine) {
+        if (playerIt->has_value() && positionIt->has_value()
+            && playerIt->value().isMine) {
             if (IsKeyDown(KEY_RIGHT)) {
                 positionIt->value().x += 1;
             }
@@ -92,7 +94,9 @@ drawSpriteWithoutRect(Types::Position &position, Types::Sprite &sprite)
 }
 
 static void drawSpriteWithRect(
-Types::Position &position, Types::Sprite &sprite, Types::Rect &rect)
+    Types::Position &position,
+    Types::Sprite &sprite,
+    Types::Rect &rect)
 {
     Vector2 origin = {0, 0};
     float rotation = 0;
@@ -105,29 +109,34 @@ Types::Position &position, Types::Sprite &sprite, Types::Rect &rect)
     float height = (sprite.height * GetScreenHeight()) / 100;
 
     DrawTexturePro(
-    sprite.sprite, Rectangle(rect.x, rect.y, rect.width, rect.height),
-    Rectangle(x, y, width, height), origin, rotation, tint);
+        sprite.sprite,
+        Rectangle(rect.x, rect.y, rect.width, rect.height),
+        Rectangle(x, y, width, height),
+        origin,
+        rotation,
+        tint);
 }
 
 void GraphicSystems::spriteRenderer(std::size_t)
 {
     Registry::components<Types::Sprite> arrSprite =
-    Registry::getInstance().getComponents<Types::Sprite>();
+        Registry::getInstance().getComponents<Types::Sprite>();
     Registry::components<Types::Rect> arrRect =
-    Registry::getInstance().getComponents<Types::Rect>();
+        Registry::getInstance().getComponents<Types::Rect>();
     Registry::components<Types::Position> arrPosition =
-    Registry::getInstance().getComponents<Types::Position>();
+        Registry::getInstance().getComponents<Types::Position>();
 
     auto positionIt = arrPosition.begin();
     auto spriteIt   = arrSprite.begin();
     auto rectIt     = arrRect.begin();
 
     while (positionIt != arrPosition.end() && spriteIt != arrSprite.end()) {
-        if (
-        positionIt->has_value() && spriteIt->has_value()
-        && rectIt->has_value()) {
+        if (positionIt->has_value() && spriteIt->has_value()
+            && rectIt->has_value()) {
             drawSpriteWithRect(
-            positionIt->value(), spriteIt->value(), rectIt->value());
+                positionIt->value(),
+                spriteIt->value(),
+                rectIt->value());
         } else if (positionIt->has_value() && spriteIt->has_value()) {
             drawSpriteWithoutRect(positionIt->value(), spriteIt->value());
         }

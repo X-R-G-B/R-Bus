@@ -12,14 +12,17 @@
 #include "CustomTypes.hpp"
 
 namespace Systems {
+    // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
     GraphicManager GraphicManager::_instance = GraphicManager();
+    // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
     GraphicManager::GraphicManager()
     {
-        const int screenWidth  = 1280;
-        const int screenHeight = 720;
-        InitWindow(screenWidth, screenHeight, "Poc ECS");
-        SetTargetFPS(60);
+        const int screenWidth  = 800;
+        const int screenHeight = 450;
+        const int frameRate    = 60;
+        InitWindow(screenWidth, screenHeight, "R-Type");
+        SetTargetFPS(frameRate);
 
         addSystem(GraphicSystems::rectRenderer);
         addSystem(GraphicSystems::spriteRenderer);
@@ -41,15 +44,5 @@ namespace Systems {
         ClearBackground(RAYWHITE);
         ASystemManager::updateSystems();
         EndDrawing();
-    }
-
-    void GraphicManager::addSystem(std::function<void(std::size_t)> sys)
-    {
-        ASystemManager::addSystem(sys);
-    }
-
-    void GraphicManager::removeSystem(std::size_t id)
-    {
-        ASystemManager::removeSystem(id);
     }
 } // namespace Systems

@@ -6,10 +6,13 @@
 */
 
 #include "EventManager.hpp"
+#include <algorithm>
 #include "raylib.h"
 #include "Events.hpp"
 
+// NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 EventManager EventManager::instance = EventManager();
+// NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
 EventManager &EventManager::getInstance()
 {
@@ -28,10 +31,10 @@ void EventManager::updateEvents()
 
 bool EventManager::checkEvent(int event)
 {
-    for (auto activeEvent : _activeEvents) {
-        if (activeEvent == event) {
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(
+        _activeEvents.begin(),
+        _activeEvents.end(),
+        [event](int e) {
+            return e == event;
+        });
 }

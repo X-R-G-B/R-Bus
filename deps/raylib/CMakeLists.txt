@@ -18,7 +18,7 @@ if(NOT raylib_POPULATED)
     )
 
     target_link_libraries(
-        ${PROJECT_NAME}
+        ${PROJECT_NAME_CLIENT}
         PRIVATE
         raylib
     )
