@@ -115,8 +115,6 @@ endif()
 
 set(CPACK_PACKAGE_VENDOR "X-L-R-G-B")
 
-install_targets(bin RUNTIME_DIRECTORY bin "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME_CLIENT}" "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME_SERVER}")
-
 include(InstallRequiredSystemLibraries)
 
 set(CPACK_PACKAGE_NAME "R-Type")
