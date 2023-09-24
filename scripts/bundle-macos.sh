@@ -7,7 +7,7 @@ cmake -S . -B build
 
 cd build || exit 14
 
-cpack --config CPackConfig.cmake -G DragNDrop
+cpack --config CPackConfig.cmake -G DragNDrop || (cat "./_CPack_Packages/Darwin/DragNDrop/PreinstallOutput.log" && exit 1)
 
 cd ..
 
