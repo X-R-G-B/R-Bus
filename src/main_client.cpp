@@ -19,29 +19,29 @@ int main()
     const int sizeArrPixLarge         = 100;
     Systems::GameManager &gameManager = Systems::GameManager::getInstance();
     Systems::GraphicManager &graphicManager =
-    Systems::GraphicManager::getInstance();
+        Systems::GraphicManager::getInstance();
     Systems::SystemEventsManager &systemEventsManager =
-    Systems::SystemEventsManager::getInstance();
+        Systems::SystemEventsManager::getInstance();
 
     Registry::components<Pixel> arrPixel =
-    Registry::getInstance().getComponents<Pixel>();
+        Registry::getInstance().getComponents<Pixel>();
     Registry::components<Sprite> arrSprite =
-    Registry::getInstance().getComponents<Sprite>();
+        Registry::getInstance().getComponents<Sprite>();
     Registry::components<Position> arrPosition =
-    Registry::getInstance().getComponents<Position>();
+        Registry::getInstance().getComponents<Position>();
     Registry::components<Rect> arrRect =
-    Registry::getInstance().getComponents<Rect>();
+        Registry::getInstance().getComponents<Rect>();
 
     Registry::getInstance().addEntity();
     arrPosition.back() = {sizeArrPix, sizeArrPix};
     arrSprite.back() =
-    Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet10.gif")});
+        Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet10.gif")});
     arrRect.back() = {sizeArrPix, sizeArrPix, 0, 0};
 
     Registry::getInstance().addEntity();
     arrPosition.back() = {sizeArrPixLarge, sizeArrPixLarge};
     arrSprite.back() =
-    Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet11.gif")});
+        Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet11.gif")});
     arrRect.back() = {sizeArrPix, sizeArrPix, 0, 0};
 
     Registry::getInstance().addEntity();

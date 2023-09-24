@@ -13,6 +13,15 @@ if(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
+# if(MSVC)
+#     set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
+#     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+# else()
+#     set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+#     set(BUILD_SHARED_LIBS OFF)
+#     set(CMAKE_EXE_LINKER_FLAGS "-static")
+# endif()
+
 # ----------------------------------------------------------------------------
 # CLIENT
 

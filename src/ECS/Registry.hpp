@@ -51,9 +51,9 @@ class Registry {
             if (_data.find(typeid(Component)) == _data.end()) {
                 _data[typeid(Component)] = SparseArray<Component>();
                 _addComponentPlaceFunctions.push_back(
-                &Registry::addComponentPlace<Component>);
+                    &Registry::addComponentPlace<Component>);
                 _removeComponentFunctions.push_back(
-                &Registry::removeComponent<Component>);
+                    &Registry::removeComponent<Component>);
             }
         }
 
@@ -73,7 +73,7 @@ class Registry {
         components<Component> castReturn()
         {
             return std::any_cast<components<Component>>(
-            _data[typeid(Component)]);
+                _data[typeid(Component)]);
         }
 
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -82,6 +82,6 @@ class Registry {
 
         std::list<std::function<void(Registry &)>> _addComponentPlaceFunctions;
         std::list<std::function<void(Registry &, std::size_t)>>
-        _removeComponentFunctions;
+            _removeComponentFunctions;
         std::unordered_map<std::type_index, std::any> _data;
 };

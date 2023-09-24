@@ -32,7 +32,9 @@ void EventManager::updateEvents()
 bool EventManager::checkEvent(int event)
 {
     return std::any_of(
-    _activeEvents.begin(), _activeEvents.end(), [event](int e) {
-        return e == event;
-    });
+        _activeEvents.begin(),
+        _activeEvents.end(),
+        [event](int e) {
+            return e == event;
+        });
 }

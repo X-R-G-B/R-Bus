@@ -2,14 +2,19 @@ Language: Cpp
 ColumnLimit: '80'
 ReflowComments: true
 AlignAfterOpenBracket: AlwaysBreak
-AllowAllArgumentsOnNextLine: true
-AllowAllParametersOfDeclarationOnNextLine: true
+AllowAllArgumentsOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
 EmptyLineBeforeAccessModifier: Always
 IndentWrappedFunctionNames: 'false'
 AccessModifierOffset: 0
 IndentAccessModifiers: true
 BinPackParameters: false
+BinPackArguments: false
+InsertTrailingCommas: Wrapped
+PackConstructorInitializers: CurrentLine
 AlwaysBreakTemplateDeclarations: Yes
+DerivePointerAlignment: true
+LambdaBodyIndentation: Signature
 AlignOperands: false
 BreakBeforeBraces: Custom
 
@@ -39,6 +44,7 @@ AlignConsecutiveDeclarations: false
 AlignArrayOfStructures: 'Left'
 Cpp11BracedListStyle: true
 PointerAlignment: Right
+ReferenceAlignment: Right
 SpacesInCStyleCastParentheses: false
 SpaceAfterCStyleCast: true
 SpaceAfterLogicalNot: 'false'
@@ -73,6 +79,8 @@ IncludeCategories:
     Priority:        1
   - Regex:           '"raylib.h"'  # Criterion headers
     Priority:        2
+  - Regex:           '"raylib-cpp.hpp"'  # Criterion headers
+    Priority:        2
   - Regex:           '".+"'       # Any "my_header.h"
     Priority:        3
 
@@ -81,7 +89,8 @@ SortUsingDeclarations: true
 
 BasedOnStyle: LLVM
 AlwaysBreakBeforeMultilineStrings: 'true'
-ContinuationIndentWidth: '0'
+ContinuationIndentWidth: '4'
+SpaceInEmptyBlock: true
 IndentWidth: '4'
 PenaltyBreakAssignment: '0'
 SpaceBeforeCpp11BracedList: 'true'

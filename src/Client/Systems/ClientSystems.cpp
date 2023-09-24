@@ -16,7 +16,7 @@ static const auto pixelRenderNumber = 50;
 void GraphicSystems::pixelRenderer(std::size_t /*unused*/)
 {
     Registry::components<Pixel> arrPixel =
-    Registry::getInstance().getComponents<Pixel>();
+        Registry::getInstance().getComponents<Pixel>();
     for (auto &begin : arrPixel) {
         if (!begin.has_value()) {
             continue;
@@ -32,7 +32,7 @@ void GraphicSystems::pixelRenderer(std::size_t /*unused*/)
 void EventsSystems::playerMovement(std::size_t /*unused*/)
 {
     Registry::components<Pixel> arrPixel =
-    Registry::getInstance().getComponents<Pixel>();
+        Registry::getInstance().getComponents<Pixel>();
 
     for (auto &pixel : arrPixel) {
         if (!pixel.has_value()) {
@@ -56,25 +56,27 @@ void EventsSystems::playerMovement(std::size_t /*unused*/)
 void GraphicSystems::spriteRenderer(std::size_t /*unused*/)
 {
     Registry::components<Sprite> arrSprite =
-    Registry::getInstance().getComponents<Sprite>();
+        Registry::getInstance().getComponents<Sprite>();
     Registry::components<Rect> arrRect =
-    Registry::getInstance().getComponents<Rect>();
+        Registry::getInstance().getComponents<Rect>();
     Registry::components<Position> arrPosition =
-    Registry::getInstance().getComponents<Position>();
+        Registry::getInstance().getComponents<Position>();
 
     for (std::size_t i = 0;
          i < arrSprite.size() || i < arrRect.size() || i < arrPosition.size();
          i++) {
-        if (
-        !arrSprite[i].has_value() || !arrRect[i].has_value()
-        || !arrPosition[i].has_value()) {
+        if (!arrSprite[i].has_value() || !arrRect[i].has_value()
+            || !arrPosition[i].has_value()) {
             continue;
         }
         DrawTextureRec(
-        arrSprite[i].value().sprite,
-        Rectangle(
-        arrRect[i].value().x, arrRect[i].value().y, arrRect[i].value().width,
-        arrRect[i].value().height),
-        Vector2(arrPosition[i].value().x, arrPosition[i].value().y), WHITE);
+            arrSprite[i].value().sprite,
+            Rectangle(
+                arrRect[i].value().x,
+                arrRect[i].value().y,
+                arrRect[i].value().width,
+                arrRect[i].value().height),
+            Vector2(arrPosition[i].value().x, arrPosition[i].value().y),
+            WHITE);
     }
 }
