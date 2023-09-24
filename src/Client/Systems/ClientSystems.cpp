@@ -110,7 +110,8 @@ void GraphicSystems::musicPlayer(std::size_t /*unused*/)
             PlayMusicStream(music.value().music);
             music.value().needToPlay = false;
             music.value().isPlaying  = true;
-        } else if (music.value().isPlaying) {
+        }
+        if (music.value().isPlaying) {
             UpdateMusicStream(music.value().music);
         }
     }
