@@ -27,16 +27,12 @@ endif()
 
 set(PROJECT_NAME_CLIENT r-type_client)
 set(PROJECT_NAME_SERVER r-type_server)
+set(PEOJECT_NAME r-type)
 
-install(DIRECTORY assets/ DESTINATION share/${PROJECT_NAME_CLIENT})
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/assets/" DESTINATION "share/${PROJECT_NAME_CLIENT}")
 
 project(
-    ${PROJECT_NAME_CLIENT}
-    VERSION 1.0.0
-    LANGUAGES CXX
-)
-project(
-    ${PROJECT_NAME_SERVER}
+    ${PROJECT_NAME}
     VERSION 1.0.0
     LANGUAGES CXX
 )

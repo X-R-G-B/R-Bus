@@ -5,6 +5,8 @@ set -ex
 
 cmake -S . -B build
 
+cmake --build build
+
 cd build || exit 14
 
 cpack --config CPackConfig.cmake -G STGZ

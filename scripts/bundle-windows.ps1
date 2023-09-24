@@ -3,6 +3,8 @@
 
 cmake -S . -B build
 
+cmake --build build
+
 cd build
 
 cpack --config CPackConfig.cmake -G NSIS
