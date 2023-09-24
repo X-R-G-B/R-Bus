@@ -1,6 +1,8 @@
 #!/bin/bash
 # Run cpack
 
+set -ex
+
 cmake -S . -B build
 
 cd build || exit 14
@@ -17,6 +19,7 @@ cp -r src bundle
 cp -r deps bundle
 cp -r CMakeLists.txt bundle
 cp -r LICENSE.txt bundle
+cp -r LICENSE bundle
 cp -r README.md bundle
 
 tar -cvf r-type-linux.tar bundle

@@ -17,6 +17,7 @@ Copy-Item src bundle -Recurse -Force
 Copy-Item deps bundle -Recurse -Force
 Copy-Item CMakeLists.txt bundle -Recurse -Force
 Copy-Item LICENSE bundle -Recurse -Force
+Copy-Item LICENSE.txt bundle -Recurse -Force
 Copy-Item README.md bundle -Recurse -Force
 
 Compress-Archive -Path bundle -DestinationPath r-type-windows.zip
