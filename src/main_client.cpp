@@ -33,13 +33,15 @@ int main()
         Registry::getInstance().getComponents<Types::Rect>();
     Registry::components<Types::SoundEffect> arrSounds =
         Registry::getInstance().getComponents<Types::SoundEffect>();
+    Registry::components<Types::MusicStream> arrMusics =
+        Registry::getInstance().getComponents<Types::MusicStream>();
 
     Registry::getInstance().addEntity();
     arrPosition.back() = {sizeArrPix, sizeArrPix};
     arrSprite.back() =
         Types::Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet10.gif")});
     arrRect.back()   = {sizeArrPix, sizeArrPix, 0, 0};
-    arrSounds.back() = Types::SoundEffect("assets/Audio/yes.ogg");
+    arrSounds.back() = Types::SoundEffect("assets/Audio/Sounds/yes.ogg");
 
     Registry::getInstance().addEntity();
     arrPosition.back() = {sizeArrPixLarge, sizeArrPixLarge};
@@ -49,6 +51,8 @@ int main()
 
     Registry::getInstance().addEntity();
     arrPixel.back() = {sizeArrPix, sizeArrPix};
+
+    arrMusics.back() = Types::MusicStream("assets/Audio/Musics/Title.mp3");
 
     while (true) {
         systemEventsManager.updateSystems();

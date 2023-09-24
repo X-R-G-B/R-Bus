@@ -38,7 +38,19 @@ namespace Types {
             {
             }
             Sound sound;
+            bool needToPlay {false};
+            std::string path;
+    };
+
+    struct MusicStream {
+            MusicStream(std::string musicPath)
+                : music(LoadMusicStream(musicPath.c_str())),
+                  path(musicPath)
+            {
+            }
+            Music music;
             bool needToPlay{false};
+            bool isPlaying{false};
             std::string path;
     };
 

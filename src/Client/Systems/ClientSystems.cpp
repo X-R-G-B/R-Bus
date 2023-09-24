@@ -96,3 +96,22 @@ void GraphicSystems::soundEffectPlayer(std::size_t /*unused*/)
         }
     }
 }
+
+void GraphicSystems::musicPlayer(std::size_t /*unused*/)
+{
+    Registry::components<Types::MusicStream> arrMusics =
+        Registry::getInstance().getComponents<Types::MusicStream>();
+
+    for (auto &music : arrMusics) {
+        if (!music.has_value()) {
+            continue;
+        }
+        if (music.value().needToPlay) {
+            PlayMusicStream(music.value().music);
+            music.value().needToPlay = false;
+            music.value().isPlaying  = true;
+        } else if (music.value().isPlaying) {
+            UpdateMusicStream(music.value().music);
+        }
+    }
+}
