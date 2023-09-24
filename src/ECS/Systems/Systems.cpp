@@ -25,7 +25,9 @@ namespace Systems {
 
         while (playerIt != arrPlayer.end() && positionIt != arrPosition.end()
                && collisionIt != arrCollisionRect.end()) {
-            if (playerIt->has_value() && positionIt->has_value() && collisionIt->has_value()) {
+            if (
+            playerIt->has_value() && positionIt->has_value()
+            && collisionIt->has_value()) {
                 if (positionIt->value().x < 0) {
                     positionIt->value().x = 0;
                 }

@@ -38,21 +38,21 @@ int main()
 
     Registry::components<Types::Player> arrPlayer =
     Registry::getInstance().getComponents<Types::Player>();
-    
+
     // add rectangle shape entity of 10% of the screen at the middle
     Registry::getInstance().addEntity();
     arrCollisionRect.back() = {10, 10};
-    arrRectShape.back()          = {10, 10};
+    arrRectShape.back()     = {10, 10};
     arrPosition.back()      = {-5, 45};
 
     // add player entity test
     Registry::getInstance().addEntity();
     arrPosition.back() = {0, 0};
-    arrSprite.back() =
-    Types::Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet18.gif"), 10, 20});
-    arrRect.back() = {2.0f, 5.0f, 30.5f, 25.2f};
-    Types::Player myPlayer = {true};
-    arrPlayer.back() = myPlayer;
+    arrSprite.back()   = Types::Sprite(
+    {LoadTexture("assets/R-TypeSheet/r-typesheet18.gif"), 10, 20});
+    arrRect.back()          = {2.0f, 5.0f, 30.5f, 25.2f};
+    Types::Player myPlayer  = {true};
+    arrPlayer.back()        = myPlayer;
     arrCollisionRect.back() = {10, 20};
 
     while (1) {

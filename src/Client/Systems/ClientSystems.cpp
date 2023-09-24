@@ -101,8 +101,8 @@ Types::Position &position, Types::Sprite &sprite, Types::Rect &rect)
     float x = (position.x * GetScreenWidth()) / 100;
     float y = (position.y * GetScreenHeight()) / 100;
 
-    float width       = (sprite.width * GetScreenWidth()) / 100;
-    float height     = (sprite.height * GetScreenHeight()) / 100;
+    float width  = (sprite.width * GetScreenWidth()) / 100;
+    float height = (sprite.height * GetScreenHeight()) / 100;
 
     DrawTexturePro(
     sprite.sprite, Rectangle(rect.x, rect.y, rect.width, rect.height),

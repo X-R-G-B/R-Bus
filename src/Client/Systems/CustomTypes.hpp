@@ -21,7 +21,7 @@ namespace Types {
     };
 
     struct Rect {
-                float x;
+            float x;
             float y;
             float width;
             float height;
