@@ -44,8 +44,9 @@ class Registry {
                 &Registry::addComponentPlace<Component>);
                 _removeComponentFunctions.push_back(
                 &Registry::removeComponent<Component>);
+                components<Component> componentArray = castReturn<Component>();
                 for (std::size_t i = 0; i < _entitiesNb; i++) {
-                    castReturn<Component>().add();
+                    componentArray.add();
                 }
             }
         }
