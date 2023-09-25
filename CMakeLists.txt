@@ -2,9 +2,27 @@ cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_CXX_STANDARD 20)
 
+set(PROJECT_NAME_CLIENT r-type_client)
+set(PROJECT_NAME_SERVER r-type_server)
+set(PROJECT_NAME r-type)
+
 if(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
+
+option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
+option(WITH_PIC "Build with position independent code" ON)
+
+set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/deps/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
+
+project(
+    ${PROJECT_NAME}
+    VERSION 1.0.0
+    DESCRIPTION "r-type"
+    LANGUAGES CXX
+)
+
+include(GNUInstallDirs)
 
 # if(MSVC)
 #     set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
@@ -16,21 +34,8 @@ endif()
 # endif()
 
 # ----------------------------------------------------------------------------
-# CLIENT
 
-set(PROJECT_NAME_CLIENT r-type_client)
-set(PROJECT_NAME_SERVER r-type_server)
-
-project(
-    ${PROJECT_NAME_CLIENT}
-    VERSION 1.0.0
-    LANGUAGES CXX
-)
-project(
-    ${PROJECT_NAME_SERVER}
-    VERSION 1.0.0
-    LANGUAGES CXX
-)
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/assets/" DESTINATION "share/${PROJECT_NAME_CLIENT}")
 
 add_executable(
     ${PROJECT_NAME_CLIENT}
@@ -38,6 +43,9 @@ add_executable(
 add_executable(
     ${PROJECT_NAME_SERVER}
 )
+
+install(TARGETS ${PROJECT_NAME_CLIENT} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+install(TARGETS ${PROJECT_NAME_SERVER} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 add_subdirectory(deps)
 
@@ -99,12 +107,24 @@ if (WIN32)
         $<TARGET_FILE:${PROJECT_NAME_CLIENT}>
         ${CMAKE_SOURCE_DIR}/${PROJECT_NAME_CLIENT}.exe
     )
+    add_custom_command(
+        TARGET ${PROJECT_NAME_CLIENT} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:${PROJECT_NAME_CLIENT}>
+        "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME_CLIENT}.exe"
+    )
 else()
     add_custom_command(
         TARGET ${PROJECT_NAME_CLIENT} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         $<TARGET_FILE:${PROJECT_NAME_CLIENT}>
         ${CMAKE_SOURCE_DIR}/${PROJECT_NAME_CLIENT}
+    )
+    add_custom_command(
+        TARGET ${PROJECT_NAME_CLIENT} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:${PROJECT_NAME_CLIENT}>
+        "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME_CLIENT}"
     )
 endif()
 if (WIN32)
@@ -114,6 +134,12 @@ if (WIN32)
         $<TARGET_FILE:${PROJECT_NAME_SERVER}>
         ${CMAKE_SOURCE_DIR}/${PROJECT_NAME_SERVER}.exe
     )
+    add_custom_command(
+        TARGET ${PROJECT_NAME_SERVER} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:${PROJECT_NAME_SERVER}>
+        "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME_SERVER}.exe"
+    )
 else()
     add_custom_command(
         TARGET ${PROJECT_NAME_SERVER} POST_BUILD
@@ -121,4 +147,43 @@ else()
         $<TARGET_FILE:${PROJECT_NAME_SERVER}>
         ${CMAKE_SOURCE_DIR}/${PROJECT_NAME_SERVER}
     )
+    add_custom_command(
+        TARGET ${PROJECT_NAME_SERVER} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:${PROJECT_NAME_SERVER}>
+        "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME_SERVER}"
+    )
 endif()
+
+# ----------------------------------------------------------------------------
+# CPACK
+
+set(CPACK_PACKAGE_VENDOR "X-L-R-G-B")
+
+include(InstallRequiredSystemLibraries)
+
+set(CPACK_PACKAGE_NAME "R-Type")
+set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH "${PROJECT_VERSION_PATCH}")
+
+# NSIS
+set(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}/assets/icons/favicon.ico")
+set(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}/assets/icons/favicon.ico")
+set(CPACK_NSIS_PACKAGE_NAME "R-Type")
+
+set(CPACK_RESOURCE_FILE_WELCOME "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+if(NOT WIN32)
+    set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/assets/icons/favicon.bmp")
+endif()
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "R-Type")
+if(WIN32)
+    set(CPACK_CREATE_DESKTOP_LINKS "${CMAKE_BINARY_DIR}/${PROJECT_NAME_CLIENT}.exe" "${CMAKE_BINARY_DIR}/${PROJECT_NAME_SERVER}.exe")
+else()
+    set(CPACK_CREATE_DESKTOP_LINKS "${CMAKE_BINARY_DIR}/${PROJECT_NAME_CLIENT}" "${CMAKE_BINARY_DIR}/${PROJECT_NAME_SERVER}")
+endif()
+
+
+include(CPack)
