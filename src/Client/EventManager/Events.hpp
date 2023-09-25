@@ -12,7 +12,7 @@
 #include "raylib.h"
 
 namespace Events {
-    static const auto events = {
+    static constexpr auto events = {
         KEY_LEFT,
         KEY_RIGHT,
         KEY_UP,

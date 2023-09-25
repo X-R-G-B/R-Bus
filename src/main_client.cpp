@@ -15,8 +15,8 @@
 
 int main()
 {
-    const int sizeArrPix              = 50;
-    const int sizeArrPixLarge         = 100;
+    constexpr int sizeArrPix              = 50;
+    constexpr int sizeArrPixLarge         = 100;
     Systems::GameManager &gameManager = Systems::GameManager::getInstance();
     Systems::GraphicManager &graphicManager =
         Systems::GraphicManager::getInstance();

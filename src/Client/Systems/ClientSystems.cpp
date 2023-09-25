@@ -11,7 +11,7 @@
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
 
-static const auto pixelRenderNumber = 50;
+static constexpr auto pixelRenderNumber = 50;
 
 void GraphicSystems::pixelRenderer(std::size_t /*unused*/)
 {
@@ -25,30 +25,6 @@ void GraphicSystems::pixelRenderer(std::size_t /*unused*/)
             for (int j = 0; j < pixelRenderNumber; j++) {
                 DrawPixel(begin.value().x + i, begin.value().y + j, PURPLE);
             }
-        }
-    }
-}
-
-void EventsSystems::playerMovement(std::size_t /*unused*/)
-{
-    Registry::components<Pixel> arrPixel =
-        Registry::getInstance().getComponents<Pixel>();
-
-    for (auto &pixel : arrPixel) {
-        if (!pixel.has_value()) {
-            continue;
-        }
-        if (IsKeyDown(KEY_RIGHT)) {
-            pixel.value().x += 1;
-        }
-        if (IsKeyDown(KEY_LEFT)) {
-            pixel.value().x -= 1;
-        }
-        if (IsKeyDown(KEY_UP)) {
-            pixel.value().y -= 1;
-        }
-        if (IsKeyDown(KEY_DOWN)) {
-            pixel.value().y += 1;
         }
     }
 }
@@ -79,4 +55,39 @@ void GraphicSystems::spriteRenderer(std::size_t /*unused*/)
             Vector2(arrPosition[i].value().x, arrPosition[i].value().y),
             WHITE);
     }
+}
+
+constexpr std::list<std::function<void(std::size_t)>> graphicSystems
+{
+    pixelRenderer,
+    spriteRenderer
+}
+
+void EventsSystems::playerMovement(std::size_t /*unused*/)
+{
+    Registry::components<Pixel> arrPixel =
+        Registry::getInstance().getComponents<Pixel>();
+
+    for (auto &pixel : arrPixel) {
+        if (!pixel.has_value()) {
+            continue;
+        }
+        if (IsKeyDown(KEY_RIGHT)) {
+            pixel.value().x += 1;
+        }
+        if (IsKeyDown(KEY_LEFT)) {
+            pixel.value().x -= 1;
+        }
+        if (IsKeyDown(KEY_UP)) {
+            pixel.value().y -= 1;
+        }
+        if (IsKeyDown(KEY_DOWN)) {
+            pixel.value().y += 1;
+        }
+    }
+}
+
+constexpr std::list<std::function<void(std::size_t)>> eventSystems
+{
+    playerMovement
 }
