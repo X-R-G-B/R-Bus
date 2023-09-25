@@ -3,7 +3,7 @@
 
 set -ex
 
-cmake -S . -B build -DMACOS_FATLIB=ON
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
 cmake --build build
 
