@@ -9,7 +9,6 @@
 #include <cstddef>
 
 namespace GraphicSystems {
-    void pixelRenderer(std::size_t /*unused*/);
     void spriteRenderer(std::size_t /*unused*/);
     void soundEffectPlayer(std::size_t /*unused*/);
     void musicPlayer(std::size_t /*unused*/);

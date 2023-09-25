@@ -26,7 +26,6 @@ namespace Systems {
         InitAudioDevice();
         SetTargetFPS(frameRate);
 
-        ASystemManager::addSystem(GraphicSystems::pixelRenderer);
         ASystemManager::addSystem(GraphicSystems::spriteRenderer);
         ASystemManager::addSystem(GraphicSystems::soundEffectPlayer);
         ASystemManager::addSystem(EventsSystems::playerMovement);

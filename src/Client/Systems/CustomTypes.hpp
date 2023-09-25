@@ -5,6 +5,8 @@
 ** Custom Types
 */
 
+#pragma once
+
 #include <string>
 #include "raylib.h"
 
@@ -56,13 +58,6 @@ namespace Types {
             std::string path;
     };
 
-    struct Rect {
-            float x;
-            float y;
-            float width;
-            float height;
-    };
-
     struct RectangleShape {
             float width;
             float height;
@@ -71,11 +66,6 @@ namespace Types {
     struct CollisionRect {
             float width;
             float height;
-    };
-
-    struct Position {
-            float x;
-            float y;
     };
 
     struct Player {
