@@ -3,8 +3,6 @@
 
 $ErrorActionPreference = "SilentlyContinue"
 
-./scripts/compil.ps1
-
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release;Release"
 
 cmake --build build
@@ -19,19 +17,6 @@ if ($LASTEXITCODE -ne 0) {
 
 Copy-Item R-Type-*-win64.exe ../r-type-windows.exe
 
-cd ..
+cpack --config CPackSourceConfig.cmake -G ZIP
 
-New-Item -Name "bundle" -Type Directory
-
-Copy-Item assets bundle -Recurse -Force
-Copy-Item scripts bundle -Recurse -Force
-Copy-Item src bundle -Recurse -Force
-Copy-Item deps bundle -Recurse -Force
-Copy-Item CMakeLists.txt bundle -Recurse -Force
-Copy-Item LICENSE bundle -Recurse -Force
-Copy-Item LICENSE.txt bundle -Recurse -Force
-Copy-Item README.md bundle -Recurse -Force
-
-Compress-Archive -Path bundle -DestinationPath r-type-windows.zip
-
-Remove-Item -Recurse -Force bundle
+Copy-Item R-Type-*-win64.zip ../r-type-windows.zip
