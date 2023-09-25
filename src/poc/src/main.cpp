@@ -38,8 +38,7 @@ int main()
 //        sleep(1);
 //    }
 
-    Nitwork::Nitwork network;
-    const bool result = network.initConnection("127.0.0.1", 4242);
-    std::cout << "result: " << result << std::endl;
+    Nitwork::Nitwork nitwork;
+    nitwork.Start();
     return 0;
 }
