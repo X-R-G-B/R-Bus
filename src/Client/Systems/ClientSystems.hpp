@@ -7,15 +7,19 @@
 
 #pragma once
 
+#include <list>
+#include <functional>
 #include <cstddef>
 
-namespace GraphicSystems {
-    void pixelRenderer(std::size_t /*unused*/);
-    void spriteRenderer(std::size_t /*unused*/);
-    extern constexpr std::list<std::function<void(std::size_t)>> graphicSystems;
-} // namespace GraphicSystems
+namespace Systems {
+    namespace GraphicSystems {
+        void rectRenderer(std::size_t);
+        void spriteRenderer(std::size_t /*unused*/);
+        extern const std::list<std::function<void(std::size_t)>> graphicSystems;
+    } // namespace GraphicSystems
 
-namespace EventsSystems {
-    void playerMovement(std::size_t /*unused*/);
-    extern constexpr std::list<std::function<void(std::size_t)>> eventSystems;
+    namespace EventsSystems {
+        void playerMovement(std::size_t /*unused*/);
+        extern const std::list<std::function<void(std::size_t)>> eventSystems;
+    } // namespace EventsSystems
 }

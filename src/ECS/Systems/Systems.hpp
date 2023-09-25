@@ -6,11 +6,12 @@
 */
 
 #pragma once
+#include <cstddef>
 
 #include <cstddef>
 #include <list>
 
 namespace Systems {
-    void collision(std::size_t);
-    extern constexpr std::list<std::function<void(std::size_t)>> ecsSystems;
-}
+    void windowCollision(std::size_t);
+    extern const std::list<std::function<void(std::size_t)>> ecsSystems;
+} // namespace Systems

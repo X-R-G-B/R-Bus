@@ -10,7 +10,8 @@
 
 namespace Systems {
 
-    SystemManagersDirector SystemManagersDirector _instance = SystemManagersDirector();
+    SystemManagersDirector SystemManagersDirector::_instance =
+        SystemManagersDirector();
 
     SystemManagersDirector &SystemManagersDirector::getInstance()
     {
@@ -28,7 +29,8 @@ namespace Systems {
         return _systemManagers.size() - 1;
     }
 
-    std::size_t SystemManagersDirector::addSystemManager(std::list<std::function<void(std::size_t)>> systems)
+    std::size_t SystemManagersDirector::addSystemManager(
+        std::list<std::function<void(std::size_t)>> systems)
     {
         _systemManagers.push_back(SystemManager(systems));
         return _systemManagers.size() - 1;
@@ -46,4 +48,4 @@ namespace Systems {
         addSystemManager(ecsSystems);
     }
 
-}
+} // namespace Systems

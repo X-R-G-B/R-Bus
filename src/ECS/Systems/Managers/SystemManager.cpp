@@ -9,10 +9,14 @@
 
 namespace Systems {
     SystemManager::SystemManager()
-    {}
+    {
+    }
 
-    SystemManager::SystemManager(std::list<std::function<void(std::size_t)>> systems) : _systems(systems)
-    {}
+    SystemManager::SystemManager(
+        std::list<std::function<void(std::size_t)>> systems)
+        : _systems(systems)
+    {
+    }
 
     void ASystemManager::updateSystems()
     {

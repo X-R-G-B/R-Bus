@@ -11,83 +11,166 @@
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
 
-static constexpr auto pixelRenderNumber = 50;
+namespace Systems {
+    static constexpr auto pixelRenderNumber = 50;
 
-void GraphicSystems::pixelRenderer(std::size_t /*unused*/)
-{
-    Registry::components<Pixel> arrPixel =
-        Registry::getInstance().getComponents<Pixel>();
-    for (auto &begin : arrPixel) {
-        if (!begin.has_value()) {
-            continue;
-        }
-        for (int i = 0; i < pixelRenderNumber; i++) {
-            for (int j = 0; j < pixelRenderNumber; j++) {
-                DrawPixel(begin.value().x + i, begin.value().y + j, PURPLE);
+    void GraphicSystems::rectRenderer(std::size_t /*unused*/)
+    {
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::RectangleShape> arrRect =
+            Registry::getInstance().getComponents<Types::RectangleShape>();
+
+        const float denominator = 100.0;
+
+        auto positionIt = arrPosition.begin();
+        auto rectIt     = arrRect.begin();
+
+        while (positionIt != arrPosition.end() && rectIt != arrRect.end()) {
+            if (positionIt->has_value() && rectIt->has_value()) {
+                Types::Position &position        = positionIt->value();
+                Types::RectangleShape &rectangle = rectIt->value();
+
+                float x = (position.x * static_cast<float>(GetScreenWidth()))
+                    / denominator;
+                float y = (position.y * static_cast<float>(GetScreenHeight()))
+                    / denominator;
+
+                float width =
+                    (rectangle.width * static_cast<float>(GetScreenWidth()))
+                    / denominator;
+                float height =
+                    (rectangle.height * static_cast<float>(GetScreenHeight()))
+                    / denominator;
+
+                DrawRectangle(
+                    static_cast<int>(x),
+                    static_cast<int>(y),
+                    static_cast<int>(width),
+                    static_cast<int>(height),
+                    PURPLE);
             }
+            positionIt++;
+            rectIt++;
         }
     }
-}
 
-void GraphicSystems::spriteRenderer(std::size_t /*unused*/)
-{
-    Registry::components<Sprite> arrSprite =
-        Registry::getInstance().getComponents<Sprite>();
-    Registry::components<Rect> arrRect =
-        Registry::getInstance().getComponents<Rect>();
-    Registry::components<Position> arrPosition =
-        Registry::getInstance().getComponents<Position>();
+    static void
+    drawSpriteWithoutRect(Types::Position &position, Types::Sprite &sprite)
+    {
+        float scale             = 1.0F;
+        float rotation          = 0;
+        auto tint               = WHITE;
+        Vector2 spritePos       = {0, 0};
+        const float denominator = 100.0;
 
-    for (std::size_t i = 0;
-         i < arrSprite.size() || i < arrRect.size() || i < arrPosition.size();
-         i++) {
-        if (!arrSprite[i].has_value() || !arrRect[i].has_value()
-            || !arrPosition[i].has_value()) {
-            continue;
-        }
-        DrawTextureRec(
-            arrSprite[i].value().sprite,
-            Rectangle(
-                arrRect[i].value().x,
-                arrRect[i].value().y,
-                arrRect[i].value().width,
-                arrRect[i].value().height),
-            Vector2(arrPosition[i].value().x, arrPosition[i].value().y),
-            WHITE);
+        float x = (position.x * static_cast<float>(GetScreenWidth())) / denominator;
+        float y =
+            (position.y * static_cast<float>(GetScreenHeight())) / denominator;
+
+        scale = (sprite.width * static_cast<float>(GetScreenWidth())) / denominator
+            / static_cast<float>(sprite.sprite.width);
+        spritePos = {x, y};
+
+        DrawTextureEx(sprite.sprite, spritePos, rotation, scale, tint);
     }
-}
 
-constexpr std::list<std::function<void(std::size_t)>> graphicSystems
-{
-    pixelRenderer,
-    spriteRenderer
-}
+    static void drawSpriteWithRect(
+        Types::Position &position,
+        Types::Sprite &sprite,
+        Types::Rect &rect)
+    {
+        Vector2 origin          = {0, 0};
+        float rotation          = 0;
+        auto tint               = WHITE;
+        const float denominator = 100.0;
 
-void EventsSystems::playerMovement(std::size_t /*unused*/)
-{
-    Registry::components<Pixel> arrPixel =
-        Registry::getInstance().getComponents<Pixel>();
+        float x = (position.x * static_cast<float>(GetScreenWidth())) / denominator;
+        float y =
+            (position.y * static_cast<float>(GetScreenHeight())) / denominator;
 
-    for (auto &pixel : arrPixel) {
-        if (!pixel.has_value()) {
-            continue;
-        }
-        if (IsKeyDown(KEY_RIGHT)) {
-            pixel.value().x += 1;
-        }
-        if (IsKeyDown(KEY_LEFT)) {
-            pixel.value().x -= 1;
-        }
-        if (IsKeyDown(KEY_UP)) {
-            pixel.value().y -= 1;
-        }
-        if (IsKeyDown(KEY_DOWN)) {
-            pixel.value().y += 1;
+        float width =
+            (sprite.width * static_cast<float>(GetScreenWidth())) / denominator;
+        float height =
+            (sprite.height * static_cast<float>(GetScreenHeight())) / denominator;
+
+        DrawTexturePro(
+            sprite.sprite,
+            Rectangle(rect.x, rect.y, rect.width, rect.height),
+            Rectangle(x, y, width, height),
+            origin,
+            rotation,
+            tint);
+    }
+
+    void GraphicSystems::spriteRenderer(std::size_t /*unused*/)
+    {
+        Registry::components<Types::Sprite> arrSprite =
+            Registry::getInstance().getComponents<Types::Sprite>();
+        Registry::components<Types::Rect> arrRect =
+            Registry::getInstance().getComponents<Types::Rect>();
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+
+        auto positionIt = arrPosition.begin();
+        auto spriteIt   = arrSprite.begin();
+        auto rectIt     = arrRect.begin();
+
+        while (positionIt != arrPosition.end() && spriteIt != arrSprite.end()) {
+            if (positionIt->has_value() && spriteIt->has_value()
+                && rectIt->has_value()) {
+                drawSpriteWithRect(
+                    positionIt->value(),
+                    spriteIt->value(),
+                    rectIt->value());
+            } else if (positionIt->has_value() && spriteIt->has_value()) {
+                drawSpriteWithoutRect(positionIt->value(), spriteIt->value());
+            }
+            positionIt++;
+            spriteIt++;
+            rectIt++;
         }
     }
-}
 
-constexpr std::list<std::function<void(std::size_t)>> eventSystems
-{
-    playerMovement
+    const std::list<std::function<void(std::size_t)>> GraphicSystems::graphicSystems
+    {
+        rectRenderer, spriteRenderer
+    };
+
+    void EventsSystems::playerMovement(std::size_t /*unused*/)
+    {
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+
+        Registry::components<Types::Player> arrPlayer =
+            Registry::getInstance().getComponents<Types::Player>();
+
+        auto positionIt = arrPosition.begin();
+        auto playerIt   = arrPlayer.begin();
+
+        while (positionIt != arrPosition.end() && playerIt != arrPlayer.end()) {
+            if (playerIt->has_value() && positionIt->has_value()
+                && playerIt->value().isMine) {
+                if (IsKeyDown(KEY_RIGHT)) {
+                    positionIt->value().x += 1;
+                }
+                if (IsKeyDown(KEY_LEFT)) {
+                    positionIt->value().x -= 1;
+                }
+                if (IsKeyDown(KEY_UP)) {
+                    positionIt->value().y -= 1;
+                }
+                if (IsKeyDown(KEY_DOWN)) {
+                    positionIt->value().y += 1;
+                }
+            }
+            positionIt++;
+            playerIt++;
+        }
+    }
+
+    const std::list<std::function<void(std::size_t)>> EventsSystems::eventSystems
+    {
+        playerMovement
+    };
 }
