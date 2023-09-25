@@ -5,6 +5,8 @@ $ErrorActionPreference = "SilentlyContinue"
 
 ./scripts/compil.ps1
 
+Copy-Item build/_deps/raylib-build/raylib/raylib.lib build/_deps/raylib-build/raylib/Release/raylib.lib
+
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release;Release"
 
 cmake --build build
