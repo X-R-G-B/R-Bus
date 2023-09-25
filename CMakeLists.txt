@@ -15,6 +15,8 @@ option(WITH_PIC "Build with position independent code" ON)
 
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/deps/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
 
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 project(
     ${PROJECT_NAME}
     VERSION 1.0.0
@@ -26,10 +28,8 @@ include(GNUInstallDirs)
 
 # if(MSVC)
 #     set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
-#     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 # else()
 #     set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-#     set(BUILD_SHARED_LIBS OFF)
 #     set(CMAKE_EXE_LINKER_FLAGS "-static")
 # endif()
 
