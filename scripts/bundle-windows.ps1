@@ -3,7 +3,7 @@
 
 $ErrorActionPreference = "SilentlyContinue"
 
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release --config Release
 
 cmake --build build
 
