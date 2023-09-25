@@ -7,7 +7,6 @@ on:
 env:
   BRANCH: "feature/RB-15"
   RAYLIB_TAG: "4.5.0"
-  BOOST_TAG: "boost-1.83.0"
 
 jobs:
   release-create:
@@ -34,7 +33,7 @@ jobs:
 
   release-windows:
     runs-on: windows-latest
-    needs: [release-create, boost-to-tar, raylib-to-tar]
+    needs: [release-create, raylib-to-tar]
 
     steps:
     - name: Checkout
@@ -63,7 +62,7 @@ jobs:
 
   release-linux:
     runs-on: ubuntu-latest
-    needs: [release-create, boost-to-tar, raylib-to-tar]
+    needs: [release-create, raylib-to-tar]
 
     steps:
     - name: Checkout
@@ -87,7 +86,7 @@ jobs:
 
   release-macos:
     runs-on: macos-latest
-    needs: [release-create, boost-to-tar, raylib-to-tar]
+    needs: [release-create, raylib-to-tar]
 
     steps:
     - name: Checkout
@@ -108,34 +107,6 @@ jobs:
       run: |
         gh release upload ${{ needs.release-create.outputs.release }} ./r-type-macos.zip
         # gh release upload ${{ needs.release-create.outputs.release }} ./r-type-linux.sh
-
-  boost-to-tar:
-    runs-on: ubuntu-latest
-    needs: release-create
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-
-    - name: Install deps
-      run: sudo apt-get update && sudo apt-get install -y tar git
-
-    - name: Get Boost
-      run: |
-        git clone --recurse-submodules https://github.com/boostorg/boost.git boost-repo
-        cd boost-repo || exit 14
-        git checkout ${{ env.BOOST_TAG }}
-        cd ..
-
-    - name: To Tar
-      run: |
-        tar -cvf ./boost.tar boost-repo
-
-    - name: Upload To Release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        gh release upload ${{ needs.release-create.outputs.release }} ./boost.tar
 
   raylib-to-tar:
     runs-on: ubuntu-latest
