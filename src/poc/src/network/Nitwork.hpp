@@ -131,17 +131,21 @@ namespace Nitwork {
                 _outputThreads = std::array<std::thread, MAX_PLAYERS>();
                 for (int i = 0; i < MAX_PLAYERS; i++) {
                     _outputThreads[i] = std::thread([this]() {
+                        std::unique_lock<std::mutex> lock(_queueMutex);
                         while (true) {
-                            std::unique_lock<std::mutex> lock(_queueMutex);
                             _queueCondVar.wait(lock);
                             // handle actions and send it to the client
                         }
                     });
                 }
             }
+            template<typename T>
+            void sendDatasToEndpoint(asio::ip::udp::endpoint &endpoint, T &datas) {
+                _socket.send_to(asio::buffer(&datas, sizeof(T)), endpoint);
+            }
 
-
-            void readDatasFromEndpoint(asio::ip::udp::endpoint &endpoint) {
+//            template<typename T>
+            void readDataFromEndpoint(asio::ip::udp::endpoint &endpoint) {
                 size_t header_bytes_received;
                 struct Actions::header_s header;
 
@@ -162,7 +166,31 @@ namespace Nitwork {
                     break;
                 }
             }
-            void handleBody(const struct Actions::header_s &header) {
+
+            template<typename T>
+            void sendDatasToAll(T &datas) {
+                for (auto &endpoint : _endpoints) {
+                    sendDatasToEndpoint(endpoint, datas);
+                }
+            }
+            template<typename R, typename B>
+            void handleBody(const struct Actions::header_s &header, const std::function<void(std::any)> &handler) {
+                B body;
+                size_t body_bytes_received;
+
+                _socket.async_receive_from(asio::buffer(&body, sizeof(B)), _endpoint, [this, header, handler, body_bytes_received, body](const asio::error_code &error, size_t bytes_received) {
+                  R resultData;
+                  if (body_bytes_received != sizeof(B)) {
+                      std::cerr << "Error: body not received" << std::endl;
+                      return;
+                  }
+                  resultData.header = header;
+                  resultData.body = body;
+                  _actions.emplace_back(resultData);
+                  _actionsHandler.emplace_back(handler);
+                });
+            }
+            void handleBodyAction(const struct Actions::header_s &header) {
                 size_t body_bytes_received;
                 struct Actions::actionHeader_s action;
 
@@ -171,42 +199,43 @@ namespace Nitwork {
                     std::cerr << "Error: body not received" << std::endl;
                     return;
                 }
-                switch (action.type) {
-                    case '~':
-                        struct Actions::msgInit_s init;
-                        struct Actions::bodyInit_s initBody;
 
-                        body_bytes_received = _socket.receive_from(asio::buffer(&initBody, sizeof(Actions::bodyInit_s)), _endpoint);
-                        if (body_bytes_received != sizeof(Actions::bodyInit_s)) {
-                            std::cerr << "Error: body not received" << std::endl;
-                            return;
-                        }
-                        init.header = header;
-                        init.body = initBody;
-                        _actions.push_back(init);
-                        _actionsHandler.push_back([](const std::any &action) {
-                            // handle init action
-                        });
-                        break;
-                    case '+':
-                        struct Actions::msgReady_s ready;
-                        struct Actions::bodyReady_s readyBody;
-
-                        body_bytes_received = _socket.receive_from(asio::buffer(&readyBody, sizeof(Actions::bodyReady_s)), _endpoint);
-                        if (body_bytes_received != sizeof(Actions::bodyReady_s)) {
-                            std::cerr << "Error: body not received" << std::endl;
-                            return;
-                        }
-                        ready.header = header;
-                        ready.body = readyBody;
-                        _actions.push_back(ready);
-                        _actionsHandler.push_back([](const std::any &action) {
-                            // handle ready action
-                        });
-                        break;
-                    default:
-                        break;
-                }
+//                switch (action.type) {
+//                    case '~':
+//                        struct Actions::msgInit_s init;
+//                        struct Actions::bodyInit_s initBody;
+//
+//                        body_bytes_received = _socket.receive_from(asio::buffer(&initBody, sizeof(Actions::bodyInit_s)), _endpoint);
+//                        if (body_bytes_received != sizeof(Actions::bodyInit_s)) {
+//                            std::cerr << "Error: body not received" << std::endl;
+//                            return;
+//                        }
+//                        init.header = header;
+//                        init.body = initBody;
+//                        _actions.push_back(init);
+//                        _actionsHandler.push_back([](const std::any &action) {
+//                            // handle init action
+//                        });
+//                        break;
+//                    case '+':
+//                        struct Actions::msgReady_s ready;
+//                        struct Actions::bodyReady_s readyBody;
+//
+//                        body_bytes_received = _socket.receive_from(asio::buffer(&readyBody, sizeof(Actions::bodyReady_s)), _endpoint);
+//                        if (body_bytes_received != sizeof(Actions::bodyReady_s)) {
+//                            std::cerr << "Error: body not received" << std::endl;
+//                            return;
+//                        }
+//                        ready.header = header;
+//                        ready.body = readyBody;
+//                        _actions.push_back(ready);
+//                        _actionsHandler.push_back([](const std::any &action) {
+//                            // handle ready action
+//                        });
+//                        break;
+//                    default:
+//                        break;
+//                }
             }
         protected:
         private:
