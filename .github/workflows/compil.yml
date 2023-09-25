@@ -1,0 +1,45 @@
+name: Compil
+
+on: [push, pull_request]
+
+jobs:
+  windows-compil:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install winget
+        uses: Cyberboss/install-winget@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: ./scripts/install-deps-windows.ps1
+
+      - name: Compil
+        run: ./scripts/compil.ps1 --dry-run
+
+  linux-compil:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo ./scripts/install-deps-linux.sh
+
+      - name: Compil
+        run: ./scripts/compil.sh --dry-run
+
+  macos-compil:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: ./scripts/install-deps-macos.sh
+
+      - name: Compil
+        run: ./scripts/compil.sh --dry-run

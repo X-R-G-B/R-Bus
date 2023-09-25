@@ -1,0 +1,45 @@
+name: Format
+
+on: [push, pull_request]
+
+jobs:
+  windows-format:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install winget
+        uses: Cyberboss/install-winget@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: ./scripts/install-deps-windows.ps1
+
+      - name: Format
+        run: ./scripts/format.ps1 --dry-run
+
+  linux-format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo ./scripts/install-deps-linux.sh
+
+      - name: Format
+        run: ./scripts/format.sh --dry-run
+
+  macos-format:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: ./scripts/install-deps-macos.sh
+
+      - name: Format
+        run: ./scripts/format.sh --dry-run
