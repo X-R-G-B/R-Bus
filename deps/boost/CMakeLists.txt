@@ -69,4 +69,5 @@ foreach(lib ${BOOST_INCLUDE_LIBRARIES})
         PRIVATE
         Boost::${lib}
     )
+    install(FILES Boost::${lib} DESTINATION ${CMAKE_INSTALL_BINDIR})
 endforeach()

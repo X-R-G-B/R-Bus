@@ -30,7 +30,7 @@ if(NOT raylib_POPULATED)
             raylib
             ${raylib_BINARY_DIR}/raylib/Release/
         )
-        install(FILES raylib DESTINATION )
     endif()
+    install(FILES raylib DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 endif()
