@@ -6,13 +6,6 @@ set(PROJECT_NAME_CLIENT r-type_client)
 set(PROJECT_NAME_SERVER r-type_server)
 set(PROJECT_NAME r-type)
 
-find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
-
-if(CLANG_TIDY_EXE)
-    set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "--fix" "--fix-notes" "--fix-errors" "-header-filter=(src/ECS/)|(src/Client/)|(src/Server/)" "-checks=-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type")
-    set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
-endif()
-
 if(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -51,10 +44,32 @@ add_executable(
     ${PROJECT_NAME_SERVER}
 )
 
-install(TARGETS ${PROJECT_NAME_SERVER} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+install(TARGETS ${PROJECT_NAME_CLIENT} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 install(TARGETS ${PROJECT_NAME_SERVER} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 add_subdirectory(deps)
+
+# Clang-Tidy
+
+find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
+
+if(CLANG_TIDY_EXE)
+    if (MSVC)
+        set_target_properties(${PROJECT_NAME_CLIENT} PROPERTIES
+            VS_GLOBAL_RunCodeAnalysis true
+            VS_GLOBAL_EnableClangTidyCodeAnalysis true
+            VS_GLOBAL_ClangTidyChecks "-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type"
+        )
+        set_target_properties(${PROJECT_NAME_SERVER} PROPERTIES
+            VS_GLOBAL_RunCodeAnalysis true
+            VS_GLOBAL_EnableClangTidyCodeAnalysis true
+            VS_GLOBAL_ClangTidyChecks "-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type"
+        )
+    else()
+        set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "--fix" "--fix-notes" "--fix-errors" "-header-filter=(src/ECS/)|(src/Client/)|(src/Server/)" "-checks=-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type")
+        set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
+    endif()
+endif()
 
 if(MSVC)
     target_compile_options(
@@ -164,8 +179,11 @@ if(NOT WIN32)
 endif()
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "R-Type")
-set(CPACK_PACKAGE_EXECUTABLES "${PROJECT_NAME_CLIENT}" "${PROJECT_NAME_SERVER}")
-set(CPACK_CREATE_DESKTOP_LINKS "${PROJECT_NAME_CLIENT}" "${PROJECT_NAME_SERVER}")
+if(WIN32)
+    set(CPACK_CREATE_DESKTOP_LINKS "${CMAKE_BINARY_DIR}/${PROJECT_NAME_CLIENT}.exe" "${CMAKE_BINARY_DIR}/${PROJECT_NAME_SERVER}.exe")
+else()
+    set(CPACK_CREATE_DESKTOP_LINKS "${CMAKE_BINARY_DIR}/${PROJECT_NAME_CLIENT}" "${CMAKE_BINARY_DIR}/${PROJECT_NAME_SERVER}")
+endif()
 
 
 include(CPack)

@@ -42,8 +42,7 @@ class Registry {
         Registry(Registry &&)                 = delete;
 
     private:
-        Registry()  = default;
-        ~Registry() = default;
+        Registry();
 
         template <typename Component>
         void checkAddSparseArray()
@@ -54,6 +53,10 @@ class Registry {
                     &Registry::addComponentPlace<Component>);
                 _removeComponentFunctions.push_back(
                     &Registry::removeComponent<Component>);
+                components<Component> componentArray = castReturn<Component>();
+                for (std::size_t i = 0; i < _entitiesNb; i++) {
+                    componentArray.add();
+                }
             }
         }
 
@@ -83,5 +86,6 @@ class Registry {
         std::list<std::function<void(Registry &)>> _addComponentPlaceFunctions;
         std::list<std::function<void(Registry &, std::size_t)>>
             _removeComponentFunctions;
-        std::unordered_map<std::type_index, std::any> _data {};
+        std::unordered_map<std::type_index, std::any> _data;
+        std::size_t _entitiesNb;
 };
