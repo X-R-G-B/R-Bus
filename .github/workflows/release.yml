@@ -127,8 +127,7 @@ jobs:
 
     - name: To Tar
       run: |
-        cd boost-repo || exit 14
-        tar -cvf ../boost.tar boost
+        tar -cvf ../boost.tar boost-repo
 
     - name: Upload To Release
       env:
