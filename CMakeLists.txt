@@ -121,6 +121,14 @@ if (WIN32)
         $<TARGET_FILE:${PROJECT_NAME_CLIENT}>
         "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME_CLIENT}.exe"
     )
+    if(MSVC AND (CONFIG EQUAL "Release"))
+        add_custom_command(
+            TARGET ${PROJECT_NAME_CLIENT} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE:${PROJECT_NAME_CLIENT}>
+            "${CMAKE_BINARY_DIR}/Release/${PROJECT_NAME_CLIENT}.exe"
+        )
+    endif()
 else()
     add_custom_command(
         TARGET ${PROJECT_NAME_CLIENT} POST_BUILD
@@ -148,6 +156,14 @@ if (WIN32)
         $<TARGET_FILE:${PROJECT_NAME_SERVER}>
         "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME_SERVER}.exe"
     )
+    if(MSVC AND (CONFIG EQUAL "Release"))
+        add_custom_command(
+            TARGET ${PROJECT_NAME_CLIENT} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE:${PROJECT_NAME_CLIENT}>
+            "${CMAKE_BINARY_DIR}/Release/${PROJECT_NAME_SERVER}.exe"
+        )
+    endif()
 else()
     add_custom_command(
         TARGET ${PROJECT_NAME_SERVER} POST_BUILD
