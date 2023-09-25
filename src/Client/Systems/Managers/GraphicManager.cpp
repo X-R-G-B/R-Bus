@@ -21,7 +21,8 @@ namespace Systems {
         const int screenWidth  = 800;
         const int screenHeight = 450;
         const int frameRate    = 60;
-        InitWindow(screenWidth, screenHeight, "Poc ECS");
+
+        InitWindow(screenWidth, screenHeight, "R-Type");
         InitAudioDevice();
         SetTargetFPS(frameRate);
 
@@ -30,6 +31,7 @@ namespace Systems {
         ASystemManager::addSystem(GraphicSystems::soundEffectPlayer);
         ASystemManager::addSystem(EventsSystems::playerMovement);
         ASystemManager::addSystem(GraphicSystems::musicPlayer);
+        ASystemManager::addSystem(GraphicSystems::rectRenderer);
     }
 
     GraphicManager::~GraphicManager()
