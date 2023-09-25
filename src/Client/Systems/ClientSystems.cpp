@@ -160,3 +160,38 @@ void GraphicSystems::spriteRenderer(std::size_t /*unused*/)
         rectIt++;
     }
 }
+
+static void drawTextResponsive(
+    Types::Position &position,
+    Types::Text &text
+    )
+{
+    const float denominator = 100.0;
+
+    float x = (position.x * static_cast<float>(GetScreenWidth())) / denominator;
+    float y =
+        (position.y * static_cast<float>(GetScreenHeight())) / denominator;
+
+    float fsz = (text.fontSize * static_cast<float>(GetScreenWidth())) / denominator;
+
+    DrawTextEx(text.font, text.text.data(), Vector2(x, y), fsz, 0, text.color);
+}
+
+void GraphicSystems::textRenderer(std::size_t)
+{
+    Registry::components<Types::Text> arrText =
+        Registry::getInstance().getComponents<Types::Text>();
+    Registry::components<Types::Position> arrPosition =
+        Registry::getInstance().getComponents<Types::Position>();
+
+    auto positionIt = arrPosition.begin();
+    auto textIt   = arrText.begin();
+
+    while (positionIt != arrPosition.end() && textIt != arrText.end()) {
+        if (textIt->has_value() && positionIt->has_value()) {
+            drawTextResponsive(positionIt->value(), textIt->value());
+        }
+        positionIt++;
+        textIt++;
+    }
+}

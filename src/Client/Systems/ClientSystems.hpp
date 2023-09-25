@@ -11,6 +11,7 @@
 namespace GraphicSystems {
     void rectRenderer(std::size_t);
     void spriteRenderer(std::size_t);
+    void textRenderer(std::size_t);
 } // namespace GraphicSystems
 
 namespace EventsSystems {

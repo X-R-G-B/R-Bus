@@ -39,6 +39,9 @@ int main()
     Registry::components<Types::Player> arrPlayer =
         Registry::getInstance().getComponents<Types::Player>();
 
+    Registry::components<Types::Text> arrText =
+        Registry::getInstance().getComponents<Types::Text>();
+
     const Types::CollisionRect playerCollisionRect = {10, 20};
     const Types::Rect playerRect                   = {2.0F, 5.0F, 30.5F, 25.2F};
     const Types::RectangleShape rectShape          = {10, 10};
@@ -48,6 +51,8 @@ int main()
         LoadTexture("assets/R-TypeSheet/r-typesheet18.gif"),
         10,
         20};
+    const Types::Position playerTextPosition       = {40, 40};
+    const Types::Text playerText                   = {"Player", BLACK, LoadFont("assets/Fonts/soliden/SolidenTrial-Black.otf"), 5.5};
 
     // add rectangle shape entity of 10% of the screen at the middle
     Registry::getInstance().addEntity();
@@ -55,13 +60,18 @@ int main()
     arrPosition.back()  = squarePosition;
 
     // add player entity test
-    Registry::getInstance().addEntity();
+    Registry::getInstance().addEntity(); 
     arrPosition.back()      = playerPosition;
     arrSprite.back()        = playerSprite;
     arrRect.back()          = playerRect;
     Types::Player myPlayer  = {true};
     arrPlayer.back()        = myPlayer;
     arrCollisionRect.back() = playerCollisionRect;
+
+    // add text
+    Registry::getInstance().addEntity();
+    arrText.back()          = playerText;
+    arrPosition.back()      = playerTextPosition;
 
     while (true) {
         systemEventsManager.updateSystems();

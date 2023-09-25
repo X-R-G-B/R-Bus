@@ -46,4 +46,11 @@ namespace Types {
             bool isMine;
     };
 
+    struct Text {
+            std::string text;
+            Color color;
+            Font font;
+            float fontSize;
+    };
+
 } // namespace Types
