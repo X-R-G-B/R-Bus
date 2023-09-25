@@ -6,6 +6,8 @@ on:
 
 env:
   BRANCH: "feature/RB-15"
+  RAYLIB_TAG: "4.5.0"
+  BOOST_TAG: "boost-1.83.0"
 
 jobs:
   release-create:
@@ -122,7 +124,7 @@ jobs:
       run: |
         git clone https://github.com/boostorg/boost.git boost-repo
         cd boost-repo || exit 14
-        git checkout $(git describe --tags --abbrev=0)
+        git checkout ${{ env.BOOST_TAG }}
         cd ..
 
     - name: To Tar
