@@ -22,4 +22,9 @@ if(NOT raylib_POPULATED)
         PRIVATE
         raylib
     )
+
+    if(MSVC)
+        install(FILES raylib DESTINATION ${raylib_BINARY_DIR}/raylib/Release)
+    endif()
+
 endif()
