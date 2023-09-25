@@ -3,25 +3,70 @@ cmake_minimum_required(VERSION 3.15)
 # -- Fetch Boost
 include(FetchContent)
 FetchContent_Declare(
-    boost
-    URL "https://github.com/X-R-G-B/R-Bus/releases/latest/download/boost.tar"
-    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+    Boost
+    URL "https://github.com/boostorg/boost/releases/download/boost-1.83.0/boost-1.83.0.tar.xz"
+    DOWNLOAD_EXTRACT_TIMESTAMP ON
 )
 
-FetchContent_GetProperties(boost)
+set(BOOST_RUNTIME_LINK static)
+set(BOOST_INCLUDE_LIBRARIES
+    asio
+    assert
+    align
+    array
 
-if(NOT boost_POPULATED)
-    FetchContent_Populate(boost)
+    bind
 
-    message(WARNING "${boost_SOURCE_DIR}")
+    coroutine
+    config
+    context
+    core
+    chrono
 
-    add_subdirectory(
-        ${boost_SOURCE_DIR}
-        ${boost_BINARY_DIR}
+    date_time
+
+    exception
+
+    function
+
+    move
+
+    system
+    smart_ptr
+
+    throw_exception
+    type_traits
+
+    utility
+)
+FetchContent_MakeAvailable(Boost)
+
+find_package(Threads REQUIRED)
+target_link_libraries(
+    ${PROJECT_NAME_CLIENT}
+    PRIVATE
+    Threads::Threads
+)
+
+foreach(lib ${BOOST_INCLUDE_LIBRARIES})
+    target_link_libraries(
+        ${PROJECT_NAME_CLIENT}
+        PRIVATE
+        Boost::${lib}
     )
-
-
-    find_package(Threads)
-    target_link_libraries(${PROJECT_NAME_CLIENT} INTERFACE Threads::Threads)
-    target_link_libraries(${PROJECT_NAME_SERVER} INTERFACE Threads::Threads)
-endif()
+    target_include_directories(
+        ${PROJECT_NAME_CLIENT}
+        PRIVATE
+        Boost::${lib}
+    )
+    target_link_libraries(
+        ${PROJECT_NAME_SERVER}
+        PRIVATE
+        Boost::${lib}
+    )
+    target_include_directories(
+        ${PROJECT_NAME_SERVER}
+        PRIVATE
+        Boost::${lib}
+    )
+endforeach()
