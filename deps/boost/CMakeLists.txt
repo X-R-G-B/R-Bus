@@ -3,20 +3,23 @@ cmake_minimum_required(VERSION 3.15)
 # -- Fetch Boost
 include(FetchContent)
 FetchContent_Declare(
-    Boost
+    boost
     URL "https://github.com/X-R-G-B/R-Bus/releases/latest/download/boost.tar"
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 
-FetchContent_GetProperties(Boost)
+FetchContent_GetProperties(boost)
 
-if(NOT Boost_POPULATED)
-    FetchContent_Populate(Boost)
+if(NOT boost_POPULATED)
+    FetchContent_Populate(boost)
+
+    message(WARNING "${boost_SOURCE_DIR}")
 
     add_subdirectory(
-        ${Boost_SOURCE_DIR}
-        ${Boost_BINARY_DIR}
+        ${boost_SOURCE_DIR}
+        ${boost_BINARY_DIR}
     )
+
 
     find_package(Threads)
     target_link_libraries(${PROJECT_NAME_CLIENT} INTERFACE Threads::Threads)
