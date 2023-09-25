@@ -6,8 +6,6 @@ set(PROJECT_NAME_CLIENT r-type_client)
 set(PROJECT_NAME_SERVER r-type_server)
 set(PROJECT_NAME r-type)
 
-include(GNUInstallDirs)
-
 find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
 
 if(CLANG_TIDY_EXE)
@@ -31,6 +29,8 @@ project(
     LANGUAGES CXX
 )
 
+include(GNUInstallDirs)
+
 # if(MSVC)
 #     set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
 #     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -51,8 +51,8 @@ add_executable(
     ${PROJECT_NAME_SERVER}
 )
 
-install(TARGETS $<TARGET_FILE:${PROJECT_NAME_SERVER}> RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-install(TARGETS $<TARGET_FILE:${PROJECT_NAME_SERVER}> RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+install(TARGETS ${PROJECT_NAME_SERVER} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+install(TARGETS ${PROJECT_NAME_SERVER} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
 
 add_subdirectory(deps)
 
@@ -92,12 +92,24 @@ if (WIN32)
         $<TARGET_FILE:${PROJECT_NAME_CLIENT}>
         ${CMAKE_SOURCE_DIR}/${PROJECT_NAME_CLIENT}.exe
     )
+    add_custom_command(
+        TARGET ${PROJECT_NAME_CLIENT} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:${PROJECT_NAME_CLIENT}>
+        "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME_CLIENT}.exe"
+    )
 else()
     add_custom_command(
         TARGET ${PROJECT_NAME_CLIENT} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         $<TARGET_FILE:${PROJECT_NAME_CLIENT}>
         ${CMAKE_SOURCE_DIR}/${PROJECT_NAME_CLIENT}
+    )
+    add_custom_command(
+        TARGET ${PROJECT_NAME_CLIENT} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:${PROJECT_NAME_CLIENT}>
+        "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME_CLIENT}"
     )
 endif()
 if (WIN32)
@@ -107,12 +119,24 @@ if (WIN32)
         $<TARGET_FILE:${PROJECT_NAME_SERVER}>
         ${CMAKE_SOURCE_DIR}/${PROJECT_NAME_SERVER}.exe
     )
+    add_custom_command(
+        TARGET ${PROJECT_NAME_SERVER} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:${PROJECT_NAME_SERVER}>
+        "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME_SERVER}.exe"
+    )
 else()
     add_custom_command(
         TARGET ${PROJECT_NAME_SERVER} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         $<TARGET_FILE:${PROJECT_NAME_SERVER}>
         ${CMAKE_SOURCE_DIR}/${PROJECT_NAME_SERVER}
+    )
+    add_custom_command(
+        TARGET ${PROJECT_NAME_SERVER} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        $<TARGET_FILE:${PROJECT_NAME_SERVER}>
+        "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}/${PROJECT_NAME_SERVER}"
     )
 endif()
 
