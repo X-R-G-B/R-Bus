@@ -24,7 +24,13 @@ if(NOT raylib_POPULATED)
     )
 
     if(MSVC)
-        install(FILES raylib DESTINATION ${raylib_BINARY_DIR}/raylib/Release)
+        add_custom_command(
+            TARGET ${PROJECT_NAME_CLIENT} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            raylib
+            ${raylib_BINARY_DIR}/raylib/Release/
+        )
+        install(FILES raylib DESTINATION )
     endif()
 
 endif()
