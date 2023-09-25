@@ -13,8 +13,6 @@ endif()
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 option(WITH_PIC "Build with position independent code" ON)
 
-set(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_SOURCE_DIR}/deps/vcpkg/scripts/buildsystems/vcpkg.cmake" CACHE STRING "Vcpkg toolchain file")
-
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 project(
@@ -199,11 +197,7 @@ if(NOT WIN32)
 endif()
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY "R-Type")
-if(WIN32)
-    set(CPACK_CREATE_DESKTOP_LINKS "${CMAKE_BINARY_DIR}/${PROJECT_NAME_CLIENT}.exe" "${CMAKE_BINARY_DIR}/${PROJECT_NAME_SERVER}.exe")
-else()
-    set(CPACK_CREATE_DESKTOP_LINKS "${CMAKE_BINARY_DIR}/${PROJECT_NAME_CLIENT}" "${CMAKE_BINARY_DIR}/${PROJECT_NAME_SERVER}")
-endif()
+set(CPACK_CREATE_DESKTOP_LINKS ${PROJECT_NAME_CLIENT} ${PROJECT_NAME_SERVER})
 
 
 include(CPack)
