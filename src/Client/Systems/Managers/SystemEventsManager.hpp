@@ -12,7 +12,7 @@
 namespace Systems {
     class SystemEventsManager : public ASystemManager {
         public:
-            ~SystemEventsManager() override = default;
+            ~SystemEventsManager() final = default;
             static SystemEventsManager &getInstance();
 
             SystemEventsManager(SystemEventsManager const &)  = delete;

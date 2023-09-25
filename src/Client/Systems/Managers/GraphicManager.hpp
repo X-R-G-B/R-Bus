@@ -12,9 +12,9 @@
 namespace Systems {
     class GraphicManager : public ASystemManager {
         public:
-            ~GraphicManager() override;
+            ~GraphicManager() final;
             static GraphicManager &getInstance();
-            void updateSystems() override;
+            void updateSystems() final;
 
             GraphicManager(GraphicManager const &)  = delete;
             GraphicManager(GraphicManager const &&) = delete;

@@ -7,25 +7,24 @@
 
 #pragma once
 
-#include <functional>
 #include <list>
 #include <memory>
 #include <vector>
+#include "ISystemManager.hpp"
 
 namespace Systems {
-    class ASystemManager {
+    class ASystemManager : public ISystemManager {
         public:
-            virtual ~ASystemManager()                         = default;
             ASystemManager(const ASystemManager &)            = delete;
             ASystemManager &operator=(const ASystemManager &) = delete;
             ASystemManager(ASystemManager &&)                 = delete;
             ASystemManager &operator=(ASystemManager &&)      = delete;
 
-            virtual void updateSystems();
+            void updateSystems() override;
 
-            virtual void addSystem(std::function<void(std::size_t)> /*sys*/);
+            void addSystem(std::function<void(std::size_t)> /*sys*/) override;
 
-            virtual void removeSystem(std::size_t /*id*/);
+            void removeSystem(std::size_t /*id*/) override;
 
         protected:
             ASystemManager() = default;
