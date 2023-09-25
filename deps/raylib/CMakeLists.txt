@@ -23,10 +23,10 @@ if(NOT raylib_POPULATED)
         raylib
     )
 
-    if(WIN32)
-        install(FILES raylib DESTINATION ${CMAKE_INSTALL_BINDIR})
-    else()
-        install(FILES raylib DESTINATION ${CMAKE_INSTALL_LIBDIR})
-    endif()
+#    if(WIN32)
+#        install(FILES raylib DESTINATION ${CMAKE_INSTALL_BINDIR})
+#    else()
+#        install(FILES raylib DESTINATION ${CMAKE_INSTALL_LIBDIR})
+#    endif()
 
 endif()
