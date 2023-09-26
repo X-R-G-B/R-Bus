@@ -175,7 +175,7 @@ static void drawTextResponsive(Types::Position &position, Types::Text &text)
     DrawTextEx(text.font, text.text.data(), Vector2(x, y), fsz, 0, text.color);
 }
 
-void GraphicSystems::textRenderer(std::size_t)
+void GraphicSystems::textRenderer(std::size_t /*unused*/)
 {
     Registry::components<Types::Text> arrText =
         Registry::getInstance().getComponents<Types::Text>();
