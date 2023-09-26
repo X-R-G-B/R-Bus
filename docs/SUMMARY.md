@@ -6,7 +6,15 @@
 
 # User Guide
 
-- [Installation](user-guide/installation.md)
+- [Installation](user-guide/installation/README.md)
+    - [From packaged binary](user-guide/installation/packaged-binary/README.md)
+        - [GNU/Linux](user-guide/installation/packaged-binary/gnu-linux.md)
+        - [MacOs](user-guide/installation/packaged-binary/macos.md)
+        - [Windows](user-guide/installation/packaged-binary/windows.md)
+    - [From source](user-guide/installation/source/README.md)
+        - [GNU/Linux](user-guide/installation/source/gnu-linux/README.md)
+        - [MacOs](user-guide/installation/source/macos/README.md)
+        - [Windows](user-guide/installation/source/windows/README.md)
 
 - [Usage](user-guide/usage.md)
 

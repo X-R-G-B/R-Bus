@@ -17,10 +17,10 @@ if ($LASTEXITCODE -ne 0) {
     type _CPack_Packages/win64/NSIS/NSISOutput.log
 }
 
-Copy-Item R-Type-*-win64.exe ../r-type-windows.exe
+Copy-Item R-Type-win64.exe ../r-type-windows.exe
 
 cpack --config CPackSourceConfig.cmake -G ZIP
 
-Copy-Item R-Type-*-Source.zip ../r-type-windows.zip
+Copy-Item R-Type-Source.zip ../r-type-windows.zip
 
 cd ..
