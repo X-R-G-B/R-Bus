@@ -5,6 +5,7 @@
 ** Custom Types
 */
 
+#include <string>
 #include "raylib.h"
 
 namespace Types {
@@ -44,6 +45,13 @@ namespace Types {
 
     struct Player {
             bool isMine;
+    };
+
+    struct Text {
+            std::string text;
+            Color color;
+            Font font;
+            float fontSize;
     };
 
 } // namespace Types

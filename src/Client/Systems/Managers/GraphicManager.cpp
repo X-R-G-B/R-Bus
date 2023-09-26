@@ -26,6 +26,7 @@ namespace Systems {
 
         addSystem(GraphicSystems::rectRenderer);
         addSystem(GraphicSystems::spriteRenderer);
+        addSystem(GraphicSystems::textRenderer);
     }
 
     GraphicManager::~GraphicManager()
