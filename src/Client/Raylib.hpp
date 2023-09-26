@@ -7,7 +7,6 @@
 
 #pragma once
 
-// encapsulate raylib in a namespace
 namespace Raylib
 {
     // Window-related functions
@@ -131,4 +130,43 @@ namespace Raylib
     void unloadUTF8(char *text);
     const char *textFormat(const char *text, ...);
     void textAppend(char *text, const char *append, int *position);
+
+    // Audio device management functions
+    void initAudioDevice(void);
+    void closeAudioDevice(void);
+    bool isAudioDeviceReady(void);
+    void setMasterVolume(float volume);
+
+    // Wave/Sound loading/unloading functions
+    Sound loadSound(const char *fileName);
+    Sound loadSoundFromWave(Wave wave);
+    bool isSoundReady(Sound sound);
+    void updateSound(Sound sound, const void *data, int sampleCount);
+    void unloadSound(Sound sound);
+
+    // Wave/Sound management functions
+    void playSound(Sound sound);
+    void stopSound(Sound sound);
+    void pauseSound(Sound sound);
+    void resumeSound(Sound sound);
+    bool isSoundPlaying(Sound sound);
+    void setSoundVolume(Sound sound, float volume);
+    void setSoundPitch(Sound sound, float pitch);
+    void setSoundPan(Sound sound, float pan);
+
+    // Music management functions
+    Music loadMusicStream(const char *fileName);
+    bool isMusicReady(Music music);
+    void unloadMusicStream(Music music);
+    void playMusicStream(Music music);
+    bool isMusicStreamPlaying(Music music);
+    void updateMusicStream(Music music);
+    void stopMusicStream(Music music);
+    void rauseMusicStream(Music music);
+    void resumeMusicStream(Music music);
+    void setMusicVolume(Music music, float volume);
+    void setMusicPitch(Music music, float pitch);
+    void setMusicPan(Music music, float pan);
+    float getMusicTimeLength(Music music);
+    float getMusicTimePlayed(Music music);
 }
