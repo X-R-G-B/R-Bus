@@ -1,10 +1,8 @@
 # Summary
 
-[Introduction](introduction.md)
+[README](README.md)
 
 [Screenshots](screenshots.md)
-
-[Github Readme](../README.md)
 
 # User Guide
 
@@ -16,12 +14,20 @@
 
 # Developer Guide
 
+- [CONTRIBUTING](CONTRIBUTING.md)
+
 - [Common logic](developer-guide/common-logic.md)
 
-- [Network RFC](developer-guide/network-rfc.md)
+- [Network](developer-guide/network/README.md)
+    - [RFC](developer-guide/network/rfc.md)
+
+- [ECS](developer-guide/ecs/README.md)
+    - [UML](developer-guide/ecs/uml.md)
 
 - [Server](developer-guide/server/README.md)
-    - [logic]()
 
 - [Client](developer-guide/client/README.md)
-    - [logic]()
+
+-----------
+
+[Contributors](contributors.md)

@@ -1,3 +1,1 @@
-# R-Bus
-
-## [mdbook](https://mdbook.org/)
+docs/README.md
