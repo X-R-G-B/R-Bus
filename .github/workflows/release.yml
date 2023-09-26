@@ -2,10 +2,10 @@ name: Release
 
 on:
   push:
-    branches: [feature/RB-15]
+    branches: [main]
 
 env:
-  BRANCH: "feature/RB-15"
+  BRANCH: "main"
   RAYLIB_TAG: "4.5.0"
 
 jobs:

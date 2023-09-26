@@ -13,8 +13,9 @@
 
 namespace Systems {
     namespace GraphicSystems {
-        void rectRenderer(std::size_t);
+        void rectRenderer(std::size_t /*unused*/);
         void spriteRenderer(std::size_t /*unused*/);
+        void textRenderer(std::size_t /*unused*/);
         extern const std::list<std::function<void(std::size_t)>> graphicSystems;
     } // namespace GraphicSystems
 

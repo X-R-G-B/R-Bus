@@ -12,7 +12,7 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
-void beautyCode()
+void init()
 {
     Registry &registry = Registry::getInstance();
     registry.addEntity();
@@ -24,6 +24,14 @@ void beautyCode()
     registry.getComponents<Types::Sprite>().back() = {LoadTexture("./assets/R-TypeSheet/r-typesheet18.gif"), 10, 20};
     registry.getComponents<Types::Rect>().back() = {2.0F, 5.0F, 30.5F, 25.2F};
     registry.getComponents<Types::Player>().back() = Types::Player(true);
+    registry.addEntity();
+    registry.getComponents<Types::Position>().back() = {40, 40};
+    registry.getComponents<Types::Text>().back() = {
+        "Player",
+        BLACK,
+        LoadFont("assets/Fonts/soliden/SolidenTrial-Black.otf"),
+        5.5
+    };
 }
 
 const int screenWidth = 1920;
@@ -39,7 +47,7 @@ int main()
 
     InitWindow(screenWidth, screenHeight, "raylib [textures] examples - texture source and destination rectangles");
     SetTargetFPS(fps);
-    beautyCode();
+    init();
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
