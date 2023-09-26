@@ -5,6 +5,7 @@
 ** Custom Types
 */
 
+#include <string>
 #include "raylib.h"
 
 namespace Types {
