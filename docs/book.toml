@@ -1,0 +1,23 @@
+[book]
+title = "R-Bus (RType like game)"
+authors = ["@Saverio976", "@TTENSHII", "@guillaumeAbel", "@KitetsuK", "@romainpanno"]
+description = "Documentation of R-Bus"
+
+[build]
+build-dir = "book"
+create-missing = false
+use-default-preprocessors = true
+
+[output.html]
+additional-css = ["custom.css"]
+git-repository-url = "https://github.com/X-R-G-B/R-Bus"
+edit-url-template = "https://github.com/X-R-G-B/R-Bus/edit/dev/{path}"
+
+[output.html.search]
+enable = true
+use-boolean-and = true
+limit-results = 15
+
+[output.html.print]
+enable = true
+page-break = true
