@@ -2,12 +2,12 @@
 title = "R-Bus (RType like game)"
 authors = ["@Saverio976", "@TTENSHII", "@guillaumeAbel", "@KitetsuK", "@romainpanno"]
 description = "Documentation of R-Bus"
+src = "docs"
 
 [build]
 build-dir = "book"
 create-missing = false
 use-default-preprocessors = true
-src = "docs"
 
 [output.html]
 additional-css = ["custom.css"]
