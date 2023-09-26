@@ -12,4 +12,5 @@ target_sources(
     ${CMAKE_CURRENT_SOURCE_DIR}/ClientSystems.cpp
 )
 
-add_subdirectory(Managers)
+add_subdirectory(Graphic)
+add_subdirectory(Events)

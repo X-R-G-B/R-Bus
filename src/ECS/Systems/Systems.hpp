@@ -8,7 +8,12 @@
 #pragma once
 
 #include <cstddef>
+#include <functional>
+#include <vector>
 
 namespace Systems {
-    void collision(std::size_t);
-}
+    void windowCollision(std::size_t);
+    const std::vector<std::function<void(std::size_t)>> ecsSystems {
+        windowCollision
+    };
+} // namespace Systems

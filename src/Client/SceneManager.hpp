@@ -7,25 +7,37 @@
 
 #pragma once
 
-#include <list>
-#include "ISystemManager.hpp"
-#include "GraphicManager.hpp"
+#include <vector>
+#include <functional>
+#include <array>
+#include <cstddef>
 
 enum Scene {
-    GAME,
-    Scene_max
+    MAIN_GAME,
+    SCENE_MAX
 };
+
+enum SystemManagers {
+    GAME,
+    EVENTS,
+    DISPLAY,
+    MANAGER_MAX
+};
+
 
 class SceneManager {
     public:
         static SceneManager &getInstance();
-        void changeScene();
+        void changeScene(Scene scene);
+        void stop();
     private:
         SceneManager();
-        std::list<ISystemManager> _logicManagers;
-        std::list<ISystemManager> _eventManagers;
-        GraphicManager _graphicManager;
+
         Scene _currentScene;
+        bool _stop;
+        const std::array<std::vector<SystemManagers>, 1> _scenes = {
+            std::vector<SystemManagers>{EVENTS, GAME, DISPLAY}
+        };
 
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
         static SceneManager _instance;

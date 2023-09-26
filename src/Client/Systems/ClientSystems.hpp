@@ -7,13 +7,15 @@
 
 #pragma once
 
-#include <cstddef>
+#include <array>
+#include "Systems.hpp"
+#include "GraphicSystems.hpp"
+#include "EventsSystems.hpp"
 
-namespace GraphicSystems {
-    void pixelRenderer(std::size_t /*unused*/);
-    void spriteRenderer(std::size_t /*unused*/);
-} // namespace GraphicSystems
-
-namespace EventsSystems {
-    void playerMovement(std::size_t /*unused*/);
-}
+namespace Systems {
+    const std::array<std::vector<std::function<void(std::size_t)>>, 3> systemsGroups {
+        ecsSystems,
+        EventsSystems::eventSystems,
+        GraphicSystems::graphicSystems
+    };
+} // namespace Systems
