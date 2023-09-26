@@ -43,3 +43,32 @@ jobs:
 
       - name: Format
         run: ./scripts/format.sh --dry-run
+
+  auto-format:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.event_name != 'pull_request' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Install dependencies
+        run: sudo ./scripts/install-deps-linux.sh
+
+      - name: Format
+        run: ./scripts/format.sh
+
+      - name: Check for modified files
+        id: git-check
+        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
+
+      - name: Push changes
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          git config --global user.name 'Github Actions'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          git commit -am "FORMAT-AUTO: automatic format on pull request #${{ github.event.number }}"
+          git push
