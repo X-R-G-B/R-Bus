@@ -6,7 +6,6 @@
 */
 
 #pragma once
-#include <cstddef>
 
 #include <cstddef>
 #include <list>

@@ -13,7 +13,7 @@
 namespace Systems {
     class SystemManager {
         public:
-            SystemManager();
+            SystemManager() = default;
             SystemManager(std::list<std::function<void(std::size_t)>> systems);
             void updateSystems();
             void addSystem(std::function<void(std::size_t)> /*sys*/);

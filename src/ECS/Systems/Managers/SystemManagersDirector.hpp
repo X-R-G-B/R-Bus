@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <vector>
 #include "SystemManager.hpp"
 
 namespace Systems {
@@ -20,9 +21,12 @@ namespace Systems {
             void removeSystem(std::size_t);
 
         private:
-            static SystemManagersDirector _instance;
+            std::vector<SystemManager> _systemManagers;
+
             SystemManagersDirector();
 
-            std::list<SystemManager> _systemManagers;
+            // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
+            static SystemManagersDirector _instance;
+            // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
     };
 } // namespace Systems

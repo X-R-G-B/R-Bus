@@ -14,9 +14,6 @@
 
 void uglyCode()
 {
-    constexpr int sizeArrPix         = 50;
-    constexpr int sizeArrPixLarge    = 100;
-
     Registry::components<Types::RectangleShape> arrRectShape =
         Registry::getInstance().getComponents<Types::RectangleShape>();
 
@@ -62,6 +59,7 @@ void uglyCode()
 
 int main()
 {
+    std::cout << "Enculé" << std::endl;
     Systems::SystemManagersDirector &director = Systems::SystemManagersDirector::getInstance();
     director.addSystemManager(Systems::EventsSystems::eventSystems);
     director.addSystemManager(Systems::GraphicSystems::graphicSystems);

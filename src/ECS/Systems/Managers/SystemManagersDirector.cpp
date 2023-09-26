@@ -10,29 +10,31 @@
 
 namespace Systems {
 
+    // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
     SystemManagersDirector SystemManagersDirector::_instance =
         SystemManagersDirector();
+    // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
     SystemManagersDirector &SystemManagersDirector::getInstance()
     {
         return _instance;
     }
 
-    SystemManager &getSystemManager(std::size_t id)
+    SystemManager &SystemManagersDirector::getSystemManager(std::size_t id)
     {
         return _systemManagers[id];
     }
 
     std::size_t SystemManagersDirector::addSystemManager()
     {
-        _systemManagers.push_back(SystemManager());
+        _systemManagers.emplace_back();
         return _systemManagers.size() - 1;
     }
 
     std::size_t SystemManagersDirector::addSystemManager(
         std::list<std::function<void(std::size_t)>> systems)
     {
-        _systemManagers.push_back(SystemManager(systems));
+        _systemManagers.emplace_back(systems);
         return _systemManagers.size() - 1;
     }
 
