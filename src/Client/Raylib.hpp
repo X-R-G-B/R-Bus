@@ -6,6 +6,8 @@
 */
 
 #pragma once
+#include "raylib.h"
+#include <iostream>
 
 namespace Raylib
 {

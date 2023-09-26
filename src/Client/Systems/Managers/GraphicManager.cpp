@@ -10,6 +10,7 @@
 #include "raylib.h"
 #include "ClientSystems.hpp"
 #include "CustomTypes.hpp"
+#include "Raylib.hpp"
 
 namespace Systems {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -21,7 +22,7 @@ namespace Systems {
         const int screenWidth  = 800;
         const int screenHeight = 450;
         const int frameRate    = 60;
-        InitWindow(screenWidth, screenHeight, "R-Type");
+        Raylib::initWindow(screenWidth, screenHeight, "R-Type");
         SetTargetFPS(frameRate);
 
         addSystem(GraphicSystems::rectRenderer);
