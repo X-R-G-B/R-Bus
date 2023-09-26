@@ -9,7 +9,7 @@ target_include_directories(
 target_sources(
     ${PROJECT_NAME_CLIENT}
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/Raylib.cpp
 )
 
 add_subdirectory(Systems)
