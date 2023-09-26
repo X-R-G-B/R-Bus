@@ -5,11 +5,11 @@
 ** Systems implementation
 */
 
+#include "Systems.hpp"
 #include <cstddef>
 #include <iostream>
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
-#include "Systems.hpp"
 
 namespace Systems {
     void windowCollision(std::size_t /*unused*/)

@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <list>
-#include <functional>
 #include <cstddef>
+#include <functional>
+#include <list>
 
 namespace Systems {
     namespace GraphicSystems {
@@ -23,4 +23,4 @@ namespace Systems {
         void playerMovement(std::size_t /*unused*/);
         extern const std::list<std::function<void(std::size_t)>> eventSystems;
     } // namespace EventsSystems
-}
+} // namespace Systems

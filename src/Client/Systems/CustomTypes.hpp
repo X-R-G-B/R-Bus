@@ -7,7 +7,6 @@
 
 #include <string>
 #include "raylib.h"
-#include <string>
 
 namespace Types {
 
@@ -16,7 +15,7 @@ namespace Types {
             int y;
     };
 
-        //Size in %
+    // Size in %
     struct Sprite {
             Texture2D sprite;
             float width;

@@ -64,12 +64,13 @@ namespace Systems {
         Vector2 spritePos       = {0, 0};
         const float denominator = 100.0;
 
-        float x = (position.x * static_cast<float>(GetScreenWidth())) / denominator;
+        float x =
+            (position.x * static_cast<float>(GetScreenWidth())) / denominator;
         float y =
             (position.y * static_cast<float>(GetScreenHeight())) / denominator;
 
-        scale = (sprite.width * static_cast<float>(GetScreenWidth())) / denominator
-            / static_cast<float>(sprite.sprite.width);
+        scale = (sprite.width * static_cast<float>(GetScreenWidth()))
+            / denominator / static_cast<float>(sprite.sprite.width);
         spritePos = {x, y};
 
         DrawTextureEx(sprite.sprite, spritePos, rotation, scale, tint);
@@ -85,14 +86,15 @@ namespace Systems {
         auto tint               = WHITE;
         const float denominator = 100.0;
 
-        float x = (position.x * static_cast<float>(GetScreenWidth())) / denominator;
+        float x =
+            (position.x * static_cast<float>(GetScreenWidth())) / denominator;
         float y =
             (position.y * static_cast<float>(GetScreenHeight())) / denominator;
 
         float width =
             (sprite.width * static_cast<float>(GetScreenWidth())) / denominator;
-        float height =
-            (sprite.height * static_cast<float>(GetScreenHeight())) / denominator;
+        float height = (sprite.height * static_cast<float>(GetScreenHeight()))
+            / denominator;
 
         DrawTexturePro(
             sprite.sprite,
@@ -136,14 +138,21 @@ namespace Systems {
     {
         const float denominator = 100.0;
 
-        float x = (position.x * static_cast<float>(GetScreenWidth())) / denominator;
+        float x =
+            (position.x * static_cast<float>(GetScreenWidth())) / denominator;
         float y =
             (position.y * static_cast<float>(GetScreenHeight())) / denominator;
 
-        float fsz =
-            (text.fontSize * static_cast<float>(GetScreenWidth())) / denominator;
+        float fsz = (text.fontSize * static_cast<float>(GetScreenWidth()))
+            / denominator;
 
-        DrawTextEx(text.font, text.text.data(), Vector2(x, y), fsz, 0, text.color);
+        DrawTextEx(
+            text.font,
+            text.text.data(),
+            Vector2(x, y),
+            fsz,
+            0,
+            text.color);
     }
 
     void GraphicSystems::textRenderer(std::size_t /*unused*/)
@@ -165,10 +174,11 @@ namespace Systems {
         }
     }
 
-    const std::list<std::function<void(std::size_t)>> GraphicSystems::graphicSystems
-    {
-        rectRenderer, spriteRenderer, textRenderer
-    };
+    const std::list<std::function<void(std::size_t)>>
+        GraphicSystems::graphicSystems {
+            rectRenderer,
+            spriteRenderer,
+            textRenderer};
 
     void EventsSystems::playerMovement(std::size_t /*unused*/)
     {
@@ -202,8 +212,6 @@ namespace Systems {
         }
     }
 
-    const std::list<std::function<void(std::size_t)>> EventsSystems::eventSystems
-    {
-        playerMovement
-    };
-}
+    const std::list<std::function<void(std::size_t)>>
+        EventsSystems::eventSystems {playerMovement};
+} // namespace Systems
