@@ -1,7 +1,7 @@
 name: Documentation
 on:
   push:
-    branches: [feature/RB-49]
+    branches: [main, dev]
 
 jobs:
   deploy:
@@ -26,7 +26,7 @@ jobs:
               - 'docs/**'
 
       - name: Install latest mdbook
-        if: steps.filter.outputs.docs == 'true'
+        if: steps.filter.outputs.docs == 'true' || github.ref == 'refs/heads/dev'
         run: |
           tag=$(curl 'https://api.github.com/repos/rust-lang/mdbook/releases/latest' | jq -r '.tag_name')
           url="https://github.com/rust-lang/mdbook/releases/download/${tag}/mdbook-${tag}-x86_64-unknown-linux-gnu.tar.gz"
@@ -35,7 +35,7 @@ jobs:
           echo `pwd`/mdbook >> $GITHUB_PATH
 
       - name: Build Book
-        if: steps.filter.outputs.docs == 'true'
+        if: steps.filter.outputs.docs == 'true' || github.ref == 'refs/heads/dev'
         run: mdbook build
 
       - name: Setup Pages
