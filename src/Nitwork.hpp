@@ -7,15 +7,20 @@
 
 #pragma once
 
+#include <iostream>
 #include <list>
+#include <map>
+#include <any>
 #include <condition_variable>
 #include <mutex>
-#include <boost/bind.hpp>
+#include <boost/bind/bind.hpp>
+#include <boost/asio/placeholders.hpp>
 #include <asio.hpp>
 
 #define MAX_ACTIONS 16
 #define MAX_PLAYERS 4
 #define HEADER_SIZE sizeof(int) * 4
+#define TICKS_PER_SECOND 128
 
 namespace Nitwork {
     namespace Actions {
@@ -37,46 +42,17 @@ namespace Nitwork {
 
             typedef char actionType_t;
 
-            struct actionHeader_s {
-                    actionType_t type;
+            struct action_s {
+                    actionType_t magick;
             } __attribute__((packed));
-            typedef char magick_t;
-
-            typedef char anyAction;
-
             // Init action structs
-            struct bodyInit_s {
-                    struct actionHeader_s header;
-            } __attribute__((packed));
-
-            typedef char anyAction;
 
             struct msgInit_s {
-                    struct header_s header;
-                    bodyInit_s body; // mais en fait c’est any_action[]
-            } __attribute__((packed));
-
-            // Ready action structs
-            struct bodyReady_s {
-                    struct actionHeader_s header;
+                    actionType_t magick; // type of the action
             } __attribute__((packed));
 
             struct msgReady_s {
-                    struct header_s header;
-                    struct bodyReady_s body; // mais en fait c’est any_action[]
-            } __attribute__((packed));
-
-            struct maxStruct_s {
-                    int one;
-                    int two;
-                    int three;
-                    int four;
-                    int five;
-                    int six;
-                    int seven;
-                    int eight;
-                    int nine;
-                    int ten;
+                    actionType_t magick; // type of the action
             } __attribute__((packed));
         }
     }
@@ -123,7 +99,7 @@ namespace Nitwork {
             void ClockThread(int tick) {
                 _clockThread = std::thread([this]() {
                     while (true) {
-                        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+                        std::this_thread::sleep_for(std::chrono::milliseconds(1000 / TICKS_PER_SECOND));
                         _queueCondVar.notify_all();
                     }
                 });
@@ -145,7 +121,50 @@ namespace Nitwork {
                 _socket.send_to(asio::buffer(&datas, sizeof(T)), endpoint);
             }
 
-//            template<typename T>
+            template<typename T>
+            void sendDatasToAll(T &datas) {
+                for (auto &endpoint : _endpoints) {
+                    sendDatasToEndpoint(endpoint, datas);
+                }
+            }
+            template<typename B>
+            void handleBodyDatas(const struct Actions::header_s &header, const std::function<void(std::any)> &handler, B body, const asio::error_code& error, const std::size_t bytes_received) {
+                if (error) {
+                    std::cerr << "Error: " << error.message() << std::endl;
+                    return;
+                } else if (bytes_received != sizeof(B)) {
+                    std::cerr << "Error: body not received" << std::endl;
+                    return;
+                }
+                _actions.emplace_back(body);
+                _actionsHandler.emplace_back(handler);
+            }
+            template<typename B>
+            void handleBody(const Actions::header_s &header, const std::function<void(const std::any &)> &handler) {
+                B body;
+
+                _socket.async_receive_from(asio::buffer(&body, sizeof(B)), _endpoint, boost::bind(&Nitwork::handleBodyDatas<B>, this, header, handler, body, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+            }
+            void handleBodyActionDatas(const Actions::action_s &action, const Actions::header_s &header, const asio::error_code& error, const std::size_t bytes_received) {
+                if (error) {
+                    std::cerr << "Error: " << error.message() << std::endl;
+                    return;
+                } else if (bytes_received != sizeof(Actions::actionType_t)) {
+                    std::cerr << "Error: body not received" << std::endl;
+                    return;
+                }
+                auto it = _actionsHandlers.find(action.magick);
+                if (it == _actionsHandlers.end()) {
+                    std::cerr << "Error: action not found" << std::endl;
+                    return;
+                }
+                it->second.first(header, it->second.second);
+            }
+            void handleBodyAction(const Actions::header_s &header) {
+                Actions::action_s action;
+
+                _socket.async_receive_from(asio::buffer(&action, sizeof(Actions::action_s)), _endpoint, boost::bind(&Nitwork::handleBodyActionDatas, this, action, header, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+            }
             void readDataFromEndpoint(asio::ip::udp::endpoint &endpoint) {
                 size_t header_bytes_received;
                 struct Actions::header_s header;
@@ -162,82 +181,20 @@ namespace Nitwork {
                         continue;
                     }
                     for (int i = 0; i < header.nb_action; i++) {
-                        handleBody(header);
+                        handleBodyAction(header);
                     }
                     break;
                 }
             }
-
-            template<typename T>
-            void sendDatasToAll(T &datas) {
-                for (auto &endpoint : _endpoints) {
-                    sendDatasToEndpoint(endpoint, datas);
-                }
+            void handleInitMsg(const std::any &msg) {
+                const Actions::msgInit_s &initMsg = std::any_cast<Actions::msgInit_s>(msg);
+                std::cout << "init" << std::endl;
             }
-            template<typename R, typename B>
-            void handleBody(const struct Actions::header_s &header, const std::function<void(std::any)> &handler) {
-                B body;
-                size_t body_bytes_received;
-
-                _socket.async_receive_from(asio::buffer(&body, sizeof(B)), _endpoint, boost::bind([this, header, handler, body_bytes_received, body](const asio::error_code &error, size_t bytes_received) {
-                  R resultData;
-                  if (body_bytes_received != sizeof(B)) {
-                      std::cerr << "Error: body not received" << std::endl;
-                      return;
-                  }
-                  resultData.header = header;
-                  resultData.body = body;
-                  _actions.emplace_back(resultData);
-                  _actionsHandler.emplace_back(handler);
-                }), asio::placeholders::error, asio::placeholders::bytes_transferred);
+            void handleReadyMsg(const std::any &msg) {
+                const Actions::msgReady_s &readyMsg = std::any_cast<Actions::msgReady_s>(msg);
+                std::cout << "ready" << std::endl;
             }
-            void handleBodyAction(const struct Actions::header_s &header) {
-                size_t body_bytes_received;
-                struct Actions::actionHeader_s action;
 
-                body_bytes_received = _socket.receive_from(asio::buffer(&action, sizeof(Actions::actionHeader_s)), _endpoint);
-                if (body_bytes_received != sizeof(Actions::actionHeader_s)) {
-                    std::cerr << "Error: body not received" << std::endl;
-                    return;
-                }
-
-//                switch (action.type) {
-//                    case '~':
-//                        struct Actions::msgInit_s init;
-//                        struct Actions::bodyInit_s initBody;
-//
-//                        body_bytes_received = _socket.receive_from(asio::buffer(&initBody, sizeof(Actions::bodyInit_s)), _endpoint);
-//                        if (body_bytes_received != sizeof(Actions::bodyInit_s)) {
-//                            std::cerr << "Error: body not received" << std::endl;
-//                            return;
-//                        }
-//                        init.header = header;
-//                        init.body = initBody;
-//                        _actions.push_back(init);
-//                        _actionsHandler.push_back([](const std::any &action) {
-//                            // handle init action
-//                        });
-//                        break;
-//                    case '+':
-//                        struct Actions::msgReady_s ready;
-//                        struct Actions::bodyReady_s readyBody;
-//
-//                        body_bytes_received = _socket.receive_from(asio::buffer(&readyBody, sizeof(Actions::bodyReady_s)), _endpoint);
-//                        if (body_bytes_received != sizeof(Actions::bodyReady_s)) {
-//                            std::cerr << "Error: body not received" << std::endl;
-//                            return;
-//                        }
-//                        ready.header = header;
-//                        ready.body = readyBody;
-//                        _actions.push_back(ready);
-//                        _actionsHandler.push_back([](const std::any &action) {
-//                            // handle ready action
-//                        });
-//                        break;
-//                    default:
-//                        break;
-//                }
-            }
         protected:
         private:
             asio::io_context _context; // second context which will handle the outputs (handle actions and send it, each n ticks
@@ -255,5 +212,27 @@ namespace Nitwork {
             std::array<Actions::id_t, MAX_ACTIONS> _ids; // An array of ids which will be used to identify the actions
             asio::ip::udp::socket _socket; // The socket which will be used to send and receive the actions
             asio::ip::udp::endpoint _endpoint; // The endpoint which will be used to send and receive the actions
+
+            std::map<
+                Actions::actionType_t,
+                std::pair<
+                    std::function<void(const Actions::header_s &, const std::function<void(const std::any &)> &)>,
+                    std::function<void(const std::any &)>
+                    >
+                > _actionsHandlers = {
+                    {'~',
+                        std::make_pair(
+                            std::function<void(const Actions::header_s &, const std::function<void(const std::any &)> &)>(std::bind(&Nitwork::handleBody<Actions::msgInit_s>, this, std::placeholders::_1, std::placeholders::_2)),
+                            std::function<void(const std::any &)>(std::bind(&Nitwork::handleInitMsg, this, std::placeholders::_1))
+                        )
+                    },
+                    {'#',
+                        std::make_pair(
+                            std::function<void(const Actions::header_s &, const std::function<void(const std::any &)> &)>(std::bind(&Nitwork::handleBody<Actions::msgReady_s>, this, std::placeholders::_1, std::placeholders::_2)),
+                            std::function<void(const std::any &)>(std::bind(&Nitwork::handleReadyMsg, this, std::placeholders::_1))
+                        )
+                    }
+                };
+
     };
 }
