@@ -12,12 +12,12 @@
 
 namespace Types {
 
-    struct Pixel {
-            int x;
-            int y;
-    };
-
+    // Size in %
     struct Sprite {
+            Sprite(const std::string path, float _width, float _height)
+                : sprite(LoadTexture(path.c_str())),
+                  width(_width),
+                  height(_height) {};
             Texture2D sprite;
             float width;
             float height;
@@ -29,10 +29,10 @@ namespace Types {
     };
 
     struct Rect {
-            float width;
-            float height;
             float x;
             float y;
+            float width;
+            float height;
     };
 
     struct SoundEffect {
@@ -53,7 +53,7 @@ namespace Types {
             {
             }
             Music music;
-            bool needToPlay {true};
+            bool needToPlay {false};
             bool isPlaying {false};
             std::string path;
     };

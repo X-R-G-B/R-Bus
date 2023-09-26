@@ -6,10 +6,12 @@
 */
 
 #pragma once
-#include <cstddef>
 
 #include <cstddef>
+#include <functional>
+#include <vector>
 
 namespace Systems {
     void windowCollision(std::size_t);
-}
+    extern const std::vector<std::function<void(std::size_t)>> ecsSystems;
+} // namespace Systems

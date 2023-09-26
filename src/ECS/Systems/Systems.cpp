@@ -5,6 +5,7 @@
 ** Systems implementation
 */
 
+#include "Systems.hpp"
 #include <cstddef>
 #include <iostream>
 #include "CustomTypes.hpp"
@@ -51,4 +52,6 @@ namespace Systems {
             playerIt++;
         }
     }
+    const std::vector<std::function<void(std::size_t)>> ecsSystems {
+        windowCollision};
 } // namespace Systems

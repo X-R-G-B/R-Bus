@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <list>
+#include <vector>
 
 class EventManager {
     public:
@@ -21,5 +21,5 @@ class EventManager {
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
         static EventManager instance;
         // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
-        std::list<int> _activeEvents;
+        std::vector<int> _activeEvents;
 };

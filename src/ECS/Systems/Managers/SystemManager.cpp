@@ -2,13 +2,19 @@
 ** EPITECH PROJECT, 2023
 ** R-Bus
 ** File description:
-** ASystemManager implementation
+** SystemManager implementation
 */
 
-#include "ASystemManager.hpp"
+#include "SystemManager.hpp"
 
 namespace Systems {
-    void ASystemManager::updateSystems()
+    SystemManager::SystemManager(
+        std::vector<std::function<void(std::size_t)>> systems)
+        : _systems(std::move(systems))
+    {
+    }
+
+    void SystemManager::updateSystems()
     {
         std::size_t i = 0;
 
@@ -18,12 +24,12 @@ namespace Systems {
         }
     }
 
-    void ASystemManager::addSystem(std::function<void(std::size_t)> sys)
+    void SystemManager::addSystem(std::function<void(std::size_t)> sys)
     {
         _systems.push_back(sys);
     }
 
-    void ASystemManager::removeSystem(std::size_t id)
+    void SystemManager::removeSystem(std::size_t id)
     {
         auto it = _systems.begin();
         std::advance(it, id);

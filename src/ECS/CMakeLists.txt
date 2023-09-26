@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
 
-add_subdirectory(EventManager)
 add_subdirectory(Systems)
 
 target_include_directories(
