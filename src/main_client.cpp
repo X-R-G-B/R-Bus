@@ -21,11 +21,7 @@ void beautyCode()
     registry.addEntity();
     registry.getComponents<Types::Position>().back() = {0, 0};
     registry.getComponents<Types::CollisionRect>().back() = {10, 20};
-    std::cout << "before Sprite" << std::endl;
-    Registry::components<Types::Sprite> sprites = registry.getComponents<Types::Sprite>();
-    std::cout << "mid" << std::endl;
-    sprites.back() = {LoadTexture("./assets/R-TypeSheet/r-typesheet1.gif"), 10, 20};
-    std::cout << "after sprite" << std::endl;
+    registry.getComponents<Types::Sprite>().back() = {LoadTexture("./assets/R-TypeSheet/r-typesheet18.gif"), 10, 20};
     registry.getComponents<Types::Rect>().back() = {2.0F, 5.0F, 30.5F, 25.2F};
     registry.getComponents<Types::Player>().back() = Types::Player(true);
 }
