@@ -40,6 +40,7 @@ void init()
     registry.addEntity();
     registry.getComponents<Types::MusicStream>().back() =
         Types::MusicStream("assets/Audio/Musics/Title.mp3");
+    registry.getComponents<Types::MusicStream>().back().needToPlay = True;
 }
 
 const int screenWidth  = 1920;
