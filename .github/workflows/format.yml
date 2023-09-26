@@ -3,43 +3,72 @@ name: Format
 on: [push, pull_request]
 
 jobs:
-  windows-format:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+  # windows-format:
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Install winget
+  #       uses: Cyberboss/install-winget@v1
+  #       with:
+  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #
+  #     - name: Install dependencies
+  #       run: ./scripts/install-deps-windows.ps1
+  #
+  #     - name: Format
+  #       run: ./scripts/format.ps1 --dry-run
+  #
+  # linux-format:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Install dependencies
+  #       run: sudo ./scripts/install-deps-linux.sh
+  #
+  #     - name: Format
+  #       run: ./scripts/format.sh --dry-run
+  #
+  # macos-format:
+  #   runs-on: macos-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Install dependencies
+  #       run: ./scripts/install-deps-macos.sh
+  #
+  #     - name: Format
+  #       run: ./scripts/format.sh --dry-run
 
-      - name: Install winget
-        uses: Cyberboss/install-winget@v1
-        with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install dependencies
-        run: winget install --accept-package-agreements --accept-source-agreements LLVM
-
-      - name: Format
-        run: ./scripts/format.ps1 --dry-run
-
-  linux-format:
+  auto-format:
     runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.event_name == 'pull_request' }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - name: Install dependencies
-        run: sudo apt-get -y install clang
+        run: sudo ./scripts/install-deps-linux.sh
 
       - name: Format
-        run: ./scripts/format.sh --dry-run
+        run: ./scripts/format.sh
 
-  macos-format:
-    runs-on: macos-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Check for modified files
+        id: git-check
+        run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
 
-      - name: Install dependencies
-        run: brew install clang-format
-
-      - name: Format
-        run: ./scripts/format.sh --dry-run
+      - name: Push changes
+        if: steps.git-check.outputs.modified == 'true'
+        run: |
+          git config --global user.name 'Github Actions'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          git commit -am "FORMAT-AUTO: automatic format on pull request #${{ github.event.number }}"
+          git push
