@@ -6,23 +6,23 @@ labels: [
 ]
 body:
   - type: textarea
-    label: "Operating System"
     id: os
     attributes:
+      label: "Operating System"
       description: "What operating system do you use"
     validations:
       required: true
   - type: textarea
     id: error
-    lable: "Errors"
     attributes:
+      label: "Errors"
       description: "Errors"
     validations:
       required: true
   - type: textarea
     id: step
-    label: "Steps"
     attributes:
+      label: "Steps"
       description: "Steps to reproduce"
     validations:
       required: true
