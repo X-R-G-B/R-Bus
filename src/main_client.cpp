@@ -41,10 +41,9 @@ int main()
     director.addSystemManager(Systems::GraphicSystems::graphicSystems);
     std::list<std::size_t> managersIds = {1, 0, 2};
 
-    beautyCode();
-
     InitWindow(screenWidth, screenHeight, "raylib [textures] examples - texture source and destination rectangles");
     SetTargetFPS(fps);
+    beautyCode();
     while (!WindowShouldClose()) {
         BeginDrawing();
         ClearBackground(RAYWHITE);
