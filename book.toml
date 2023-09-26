@@ -10,7 +10,6 @@ create-missing = false
 use-default-preprocessors = true
 
 [output.html]
-additional-css = ["custom.css"]
 git-repository-url = "https://github.com/X-R-G-B/R-Bus"
 edit-url-template = "https://github.com/X-R-G-B/R-Bus/edit/dev/{path}"
 

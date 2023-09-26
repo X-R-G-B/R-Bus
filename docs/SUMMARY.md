@@ -1,27 +1,27 @@
 # Summary
 
-[Introduction](docs/introduction.md)
+[Introduction](introduction.md)
 
-[Screenshots](docs/screenshots.md)
+[Screenshots](screenshots.md)
 
-[Github Readme](README.md)
+[Github Readme](../README.md)
 
 # User Guide
 
-- [Installation](docs/user-guide/installation.md)
+- [Installation](user-guide/installation.md)
 
-- [Usage](docs/user-guide/usage.md)
+- [Usage](user-guide/usage.md)
 
-- [Troubleshooting](docs/user-guide/troubleshooting.md)
+- [Troubleshooting](user-guide/troubleshooting.md)
 
 # Developer Guide
 
-- [Common logic](docs/developer-guide/common-logic.md)
+- [Common logic](developer-guide/common-logic.md)
 
-- [Network RFC](docs/developer-guide/network-rfc.md)
+- [Network RFC](developer-guide/network-rfc.md)
 
-- [Server](docs/developer-guide/server/README.md)
+- [Server](developer-guide/server/README.md)
     - [logic]()
 
-- [Client](docs/developer-guide/client/README.md)
+- [Client](developer-guide/client/README.md)
     - [logic]()
