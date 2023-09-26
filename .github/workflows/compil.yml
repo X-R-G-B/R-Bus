@@ -3,8 +3,33 @@ name: Compil
 on: [push, pull_request]
 
 jobs:
+  compil-check-job-run:
+    runs-on: ubuntu-latest
+
+    outputs:
+      workflows: ${{ steps.filter.outputs.workflows }}
+      src: ${{ steps.filter.outputs.workflows }}
+      combined: ${{ steps.filter.outputs.workflows == 'true' || steps.filter.outputs.src == 'true' }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check modified files need re run
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          filters: |
+            workflows:
+              - '.github/workflows/**'
+            src:
+              - 'src/**'
+
   windows-compil:
     runs-on: windows-latest
+    needs: [compil-check-job-run]
+    if: needs.paths-filter.outputs.combined || github.event_name == 'pull_request'
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -22,6 +47,9 @@ jobs:
 
   linux-compil:
     runs-on: ubuntu-latest
+    needs: [compil-check-job-run]
+    if: needs.paths-filter.outputs.combined || github.event_name == 'pull_request'
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -34,6 +62,9 @@ jobs:
 
   macos-compil:
     runs-on: macos-latest
+    needs: [compil-check-job-run]
+    if: needs.paths-filter.outputs.combined || github.event_name == 'pull_request'
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
