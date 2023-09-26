@@ -43,12 +43,12 @@ int main()
     const Types::RectangleShape rectShape          = {10, 10};
     const Types::Position playerPosition           = {0, 0};
     const Types::Position squarePosition           = {-5, 45};
-    const Types::Position playerTextPosition = {40, 40};
-    const Types::Text playerText             = {
-                    "Player",
-                    BLACK,
-                    LoadFont("assets/Fonts/soliden/SolidenTrial-Black.otf"),
-                    5.5};
+    const Types::Position playerTextPosition       = {40, 40};
+    const Types::Text playerText                   = {
+                          "Player",
+                          BLACK,
+                          LoadFont("assets/Fonts/soliden/SolidenTrial-Black.otf"),
+                          5.5};
 
     // add rectangle shape entity of 10% of the screen at the middle
     Registry::getInstance().addEntity();

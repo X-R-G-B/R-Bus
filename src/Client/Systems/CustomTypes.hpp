@@ -11,7 +11,7 @@
 #include "raylib.h"
 
 namespace Types {
- 
+
     struct Pixel {
             int x;
             int y;
