@@ -12,9 +12,9 @@
         - [MacOs](user-guide/installation/packaged-binary/macos.md)
         - [Windows](user-guide/installation/packaged-binary/windows.md)
     - [From source](user-guide/installation/source/README.md)
-        - [GNU/Linux](user-guide/installation/source/gnu-linux/README.md)
-        - [MacOs](user-guide/installation/source/macos/README.md)
-        - [Windows](user-guide/installation/source/windows/README.md)
+        - [GNU/Linux](user-guide/installation/source/gnu-linux.md)
+        - [MacOs](user-guide/installation/source/macos.md)
+        - [Windows](user-guide/installation/source/windows.md)
 
 - [Usage](user-guide/usage.md)
 
