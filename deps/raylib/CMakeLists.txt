@@ -4,29 +4,15 @@ include(FetchContent)
 
 FetchContent_Declare(
     raylib
+    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_CONFIGURATION_TYPES=\"Release;Release\"" "-DCONFIG=Release"
     URL "https://github.com/X-R-G-B/R-Bus/releases/latest/download/raylib.tar"
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 
-FetchContent_GetProperties(raylib)
+FetchContent_MakeAvailable(raylib)
 
-if(NOT raylib_POPULATED)
-    FetchContent_Populate(raylib)
-    add_subdirectory(
-        ${raylib_SOURCE_DIR}
-        ${raylib_BINARY_DIR}
-    )
-
-    target_link_libraries(
-        ${PROJECT_NAME_CLIENT}
-        PRIVATE
-        raylib
-    )
-
-#    if(WIN32)
-#        install(FILES raylib DESTINATION ${CMAKE_INSTALL_BINDIR})
-#    else()
-#        install(FILES raylib DESTINATION ${CMAKE_INSTALL_LIBDIR})
-#    endif()
-
-endif()
+target_link_libraries(
+    ${PROJECT_NAME_CLIENT}
+    PRIVATE
+    raylib
+)
