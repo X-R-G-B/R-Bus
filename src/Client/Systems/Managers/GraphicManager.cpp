@@ -31,6 +31,7 @@ namespace Systems {
         ASystemManager::addSystem(EventsSystems::playerMovement);
         ASystemManager::addSystem(GraphicSystems::musicPlayer);
         ASystemManager::addSystem(GraphicSystems::rectRenderer);
+        ASystemManager::addSystem(GraphicSystems::textRenderer);
     }
 
     GraphicManager::~GraphicManager()

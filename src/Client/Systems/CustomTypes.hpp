@@ -53,7 +53,7 @@ namespace Types {
             {
             }
             Music music;
-            bool needToPlay {false};
+            bool needToPlay {true};
             bool isPlaying {false};
             std::string path;
     };
@@ -70,6 +70,13 @@ namespace Types {
 
     struct Player {
             bool isMine;
+    };
+
+    struct Text {
+            std::string text;
+            Color color;
+            Font font;
+            float fontSize;
     };
 
 } // namespace Types

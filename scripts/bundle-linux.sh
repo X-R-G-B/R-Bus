@@ -3,7 +3,7 @@
 
 set -ex
 
-cmake -S . -B build
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
 cmake --build build
 
@@ -13,19 +13,6 @@ cpack --config CPackConfig.cmake -G STGZ
 
 mv R-Type-*-Linux.sh ../r-type-linux.sh
 
-cd ..
+cpack --config CPackSourceConfig.cmake -G TGZ
 
-mkdir bundle
-
-cp -r assets bundle
-cp -r scripts bundle
-cp -r src bundle
-cp -r deps bundle
-cp -r CMakeLists.txt bundle
-cp -r LICENSE.txt bundle
-cp -r LICENSE bundle
-cp -r README.md bundle
-
-tar -cvf r-type-linux.tar bundle
-
-rm -rf bundle
+mv R-Type-*-Source.tar.gz ../r-type-linux.tar.gz

@@ -11,9 +11,3 @@ else
     echo "Unsupported package manager"
     exit 12
 fi
-
-./deps/vcpkg/bootstrap-vcpkg.sh
-
-./deps/vcpkg/vcpkg integrate install
-
-./scripts/install-package.sh
