@@ -17,6 +17,10 @@ namespace Types {
 
     // Size in %
     struct Sprite {
+            Sprite(const std::string path, float _width, float _height)
+                : sprite(LoadTexture(path.c_str())),
+                  width(_width),
+                  height(_height) {};
             Texture2D sprite;
             float width;
             float height;

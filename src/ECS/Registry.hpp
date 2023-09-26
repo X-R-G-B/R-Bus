@@ -10,11 +10,11 @@
 #include <any>
 #include <functional>
 #include <iostream>
-#include <list>
 #include <memory>
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>
+#include <vector>
 #include "raylib.h"
 #include "SparseArray.hpp"
 
@@ -83,8 +83,9 @@ class Registry {
         static Registry _instance;
         // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
-        std::list<std::function<void(Registry &)>> _addComponentPlaceFunctions;
-        std::list<std::function<void(Registry &, std::size_t)>>
+        std::vector<std::function<void(Registry &)>>
+            _addComponentPlaceFunctions;
+        std::vector<std::function<void(Registry &, std::size_t)>>
             _removeComponentFunctions;
         std::unordered_map<std::type_index, std::any> _data;
         std::size_t _entitiesNb;

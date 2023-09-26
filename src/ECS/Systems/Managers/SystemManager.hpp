@@ -8,18 +8,19 @@
 #pragma once
 
 #include <functional>
-#include <list>
+#include <vector>
 
 namespace Systems {
     class SystemManager {
         public:
             SystemManager() = default;
-            SystemManager(std::list<std::function<void(std::size_t)>> systems);
+            SystemManager(
+                std::vector<std::function<void(std::size_t)>> systems);
             void updateSystems();
             void addSystem(std::function<void(std::size_t)> /*sys*/);
             void removeSystem(std::size_t /*id*/);
 
         private:
-            std::list<std::function<void(std::size_t)>> _systems;
+            std::vector<std::function<void(std::size_t)>> _systems;
     };
 } // namespace Systems

@@ -32,7 +32,7 @@ namespace Systems {
     }
 
     std::size_t SystemManagersDirector::addSystemManager(
-        std::list<std::function<void(std::size_t)>> systems)
+        std::vector<std::function<void(std::size_t)>> systems)
     {
         _systemManagers.emplace_back(systems);
         return _systemManagers.size() - 1;

@@ -8,9 +8,10 @@
 #pragma once
 
 #include <cstddef>
-#include <list>
+#include <functional>
+#include <vector>
 
 namespace Systems {
     void windowCollision(std::size_t);
-    extern const std::list<std::function<void(std::size_t)>> ecsSystems;
+    extern const std::vector<std::function<void(std::size_t)>> ecsSystems;
 } // namespace Systems

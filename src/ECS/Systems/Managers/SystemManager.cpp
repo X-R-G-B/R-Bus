@@ -9,7 +9,7 @@
 
 namespace Systems {
     SystemManager::SystemManager(
-        std::list<std::function<void(std::size_t)>> systems)
+        std::vector<std::function<void(std::size_t)>> systems)
         : _systems(std::move(systems))
     {
     }

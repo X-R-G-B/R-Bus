@@ -174,7 +174,7 @@ namespace Systems {
         }
     }
 
-    const std::list<std::function<void(std::size_t)>>
+    const std::vector<std::function<void(std::size_t)>>
         GraphicSystems::graphicSystems {
             rectRenderer,
             spriteRenderer,
@@ -212,6 +212,6 @@ namespace Systems {
         }
     }
 
-    const std::list<std::function<void(std::size_t)>>
+    const std::vector<std::function<void(std::size_t)>>
         EventsSystems::eventSystems {playerMovement};
 } // namespace Systems

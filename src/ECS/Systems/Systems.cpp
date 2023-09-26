@@ -52,6 +52,6 @@ namespace Systems {
             playerIt++;
         }
     }
-    const std::list<std::function<void(std::size_t)>> ecsSystems {
+    const std::vector<std::function<void(std::size_t)>> ecsSystems {
         windowCollision};
 } // namespace Systems
