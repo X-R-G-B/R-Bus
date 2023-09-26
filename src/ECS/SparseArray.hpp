@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <iostream>
 #include <iterator>
 #include <optional>
 #include <vector>
@@ -40,6 +41,7 @@ class SparseArray {
         }
         std::optional<Component> &back()
         {
+            std::cout << "BACK" << std::endl;
             return _components.back();
         }
         std::size_t size()

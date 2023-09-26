@@ -12,64 +12,46 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
-void uglyCode()
+void beautyCode()
 {
-    Registry::components<Types::RectangleShape> arrRectShape =
-        Registry::getInstance().getComponents<Types::RectangleShape>();
-
-    Registry::components<Types::Position> arrPosition =
-        Registry::getInstance().getComponents<Types::Position>();
-
-    Registry::components<Types::CollisionRect> arrCollisionRect =
-        Registry::getInstance().getComponents<Types::CollisionRect>();
-
-    Registry::components<Types::Sprite> arrSprite =
-        Registry::getInstance().getComponents<Types::Sprite>();
-
-    Registry::components<Types::Rect> arrRect =
-        Registry::getInstance().getComponents<Types::Rect>();
-
-    Registry::components<Types::Player> arrPlayer =
-        Registry::getInstance().getComponents<Types::Player>();
-
-    const Types::CollisionRect playerCollisionRect = {10, 20};
-    const Types::Rect playerRect                   = {2.0F, 5.0F, 30.5F, 25.2F};
-    const Types::RectangleShape rectShape          = {10, 10};
-    const Types::Position playerPosition           = {0, 0};
-    const Types::Position squarePosition           = {-5, 45};
-    const Types::Sprite playerSprite               = {
-        LoadTexture("assets/R-TypeSheet/r-typesheet18.gif"),
-        10,
-        20};
-
-    // add rectangle shape entity of 10% of the screen at the middle
-    Registry::getInstance().addEntity();
-    arrRectShape.back() = rectShape;
-    arrPosition.back()  = squarePosition;
-
-    // add player entity test
-    Registry::getInstance().addEntity();
-    arrPosition.back()      = playerPosition;
-    arrSprite.back()        = playerSprite;
-    arrRect.back()          = playerRect;
-    Types::Player myPlayer  = {true};
-    arrPlayer.back()        = myPlayer;
-    arrCollisionRect.back() = playerCollisionRect;
+    Registry &registry = Registry::getInstance();
+    registry.addEntity();
+    registry.getComponents<Types::RectangleShape>().back() = {10, 10};
+    registry.getComponents<Types::Position>().back() = {-5, 45};
+    registry.addEntity();
+    registry.getComponents<Types::Position>().back() = {0, 0};
+    registry.getComponents<Types::CollisionRect>().back() = {10, 20};
+    std::cout << "before Sprite" << std::endl;
+    Registry::components<Types::Sprite> sprites = registry.getComponents<Types::Sprite>();
+    std::cout << "mid" << std::endl;
+    sprites.back() = {LoadTexture("./assets/R-TypeSheet/r-typesheet1.gif"), 10, 20};
+    std::cout << "after sprite" << std::endl;
+    registry.getComponents<Types::Rect>().back() = {2.0F, 5.0F, 30.5F, 25.2F};
+    registry.getComponents<Types::Player>().back() = Types::Player(true);
 }
+
+const int screenWidth = 1920;
+const int screenHeight = 1080;
+const int fps = 60;
 
 int main()
 {
-    std::cout << "Enculé" << std::endl;
     Systems::SystemManagersDirector &director = Systems::SystemManagersDirector::getInstance();
     director.addSystemManager(Systems::EventsSystems::eventSystems);
     director.addSystemManager(Systems::GraphicSystems::graphicSystems);
     std::list<std::size_t> managersIds = {1, 0, 2};
 
-    uglyCode();
+    beautyCode();
 
-    while (true) {
+    InitWindow(screenWidth, screenHeight, "raylib [textures] examples - texture source and destination rectangles");
+    SetTargetFPS(fps);
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
         for (auto id : managersIds) {
             director.getSystemManager(id).updateSystems();
         }
+        EndDrawing();
     }
+    CloseWindow();
 }
