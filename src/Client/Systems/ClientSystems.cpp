@@ -12,8 +12,6 @@
 #include "Registry.hpp"
 
 namespace Systems {
-    static constexpr auto pixelRenderNumber = 50;
-
     void GraphicSystems::rectRenderer(std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
@@ -134,6 +132,42 @@ namespace Systems {
         }
     }
 
+    void GraphicSystems::soundEffectPlayer(std::size_t /*unused*/)
+    {
+        Registry::components<Types::SoundEffect> arrSoundEffect =
+            Registry::getInstance().getComponents<Types::SoundEffect>();
+
+        for (auto &soundEffect : arrSoundEffect) {
+            if (!soundEffect.has_value()) {
+                continue;
+            }
+            if (soundEffect.value().needToPlay) {
+                PlaySound(soundEffect.value().sound);
+                soundEffect.value().needToPlay = false;
+            }
+        }
+    }
+
+    void GraphicSystems::musicPlayer(std::size_t /*unused*/)
+    {
+        Registry::components<Types::MusicStream> arrMusics =
+            Registry::getInstance().getComponents<Types::MusicStream>();
+
+        for (auto &music : arrMusics) {
+            if (!music.has_value()) {
+                continue;
+            }
+            if (music.value().needToPlay) {
+                PlayMusicStream(music.value().music);
+                music.value().needToPlay = false;
+                music.value().isPlaying  = true;
+            }
+            if (music.value().isPlaying) {
+                UpdateMusicStream(music.value().music);
+            }
+        }
+    }
+
     static void drawTextResponsive(Types::Position &position, Types::Text &text)
     {
         const float denominator = 100.0;
@@ -178,7 +212,9 @@ namespace Systems {
         GraphicSystems::graphicSystems {
             rectRenderer,
             spriteRenderer,
-            textRenderer};
+            textRenderer,
+            musicPlayer,
+            soundEffectPlayer};
 
     void EventsSystems::playerMovement(std::size_t /*unused*/)
     {

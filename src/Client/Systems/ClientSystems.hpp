@@ -16,6 +16,8 @@ namespace Systems {
         void rectRenderer(std::size_t /*unused*/);
         void spriteRenderer(std::size_t /*unused*/);
         void textRenderer(std::size_t /*unused*/);
+        void soundEffectPlayer(std::size_t /*unused*/);
+        void musicPlayer(std::size_t /*unused*/);
         extern const std::vector<std::function<void(std::size_t)>>
             graphicSystems;
     } // namespace GraphicSystems
