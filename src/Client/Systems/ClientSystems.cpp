@@ -161,6 +161,42 @@ void GraphicSystems::spriteRenderer(std::size_t /*unused*/)
     }
 }
 
+void GraphicSystems::soundEffectPlayer(std::size_t /*unused*/)
+{
+    Registry::components<Types::SoundEffect> arrSoundEffect =
+        Registry::getInstance().getComponents<Types::SoundEffect>();
+
+    for (auto &soundEffect : arrSoundEffect) {
+        if (!soundEffect.has_value()) {
+            continue;
+        }
+        if (soundEffect.value().needToPlay) {
+            PlaySound(soundEffect.value().sound);
+            soundEffect.value().needToPlay = false;
+        }
+    }
+}
+
+void GraphicSystems::musicPlayer(std::size_t /*unused*/)
+{
+    Registry::components<Types::MusicStream> arrMusics =
+        Registry::getInstance().getComponents<Types::MusicStream>();
+
+    for (auto &music : arrMusics) {
+        if (!music.has_value()) {
+            continue;
+        }
+        if (music.value().needToPlay) {
+            PlayMusicStream(music.value().music);
+            music.value().needToPlay = false;
+            music.value().isPlaying  = true;
+        }
+        if (music.value().isPlaying) {
+            UpdateMusicStream(music.value().music);
+        }
+    }
+}
+
 static void drawTextResponsive(Types::Position &position, Types::Text &text)
 {
     const float denominator = 100.0;

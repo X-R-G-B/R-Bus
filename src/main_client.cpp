@@ -15,30 +15,26 @@
 
 int main()
 {
+    const int sizeArrPix              = 50;
+    const int sizeArrPixLarge         = 100;
     Systems::GameManager &gameManager = Systems::GameManager::getInstance();
     Systems::GraphicManager &graphicManager =
         Systems::GraphicManager::getInstance();
     Systems::SystemEventsManager &systemEventsManager =
         Systems::SystemEventsManager::getInstance();
 
-    Registry::components<Types::RectangleShape> arrRectShape =
-        Registry::getInstance().getComponents<Types::RectangleShape>();
-
-    Registry::components<Types::Position> arrPosition =
-        Registry::getInstance().getComponents<Types::Position>();
-
-    Registry::components<Types::CollisionRect> arrCollisionRect =
-        Registry::getInstance().getComponents<Types::CollisionRect>();
-
+    Registry::components<Types::Pixel> arrPixel =
+        Registry::getInstance().getComponents<Types::Pixel>();
     Registry::components<Types::Sprite> arrSprite =
         Registry::getInstance().getComponents<Types::Sprite>();
-
+    Registry::components<Types::Position> arrPosition =
+        Registry::getInstance().getComponents<Types::Position>();
     Registry::components<Types::Rect> arrRect =
         Registry::getInstance().getComponents<Types::Rect>();
-
-    Registry::components<Types::Player> arrPlayer =
-        Registry::getInstance().getComponents<Types::Player>();
-
+    Registry::components<Types::SoundEffect> arrSounds =
+        Registry::getInstance().getComponents<Types::SoundEffect>();
+    Registry::components<Types::MusicStream> arrMusics =
+        Registry::getInstance().getComponents<Types::MusicStream>();
     Registry::components<Types::Text> arrText =
         Registry::getInstance().getComponents<Types::Text>();
 
@@ -47,30 +43,30 @@ int main()
     const Types::RectangleShape rectShape          = {10, 10};
     const Types::Position playerPosition           = {0, 0};
     const Types::Position squarePosition           = {-5, 45};
-    const Types::Sprite playerSprite               = {
-                      LoadTexture("assets/R-TypeSheet/r-typesheet18.gif"),
-                      10,
-                      20};
-    const Types::Position playerTextPosition = {40, 40};
-    const Types::Text playerText             = {
-                    "Player",
-                    BLACK,
-                    LoadFont("assets/Fonts/soliden/SolidenTrial-Black.otf"),
-                    5.5};
+    const Types::Position playerTextPosition       = {40, 40};
+    const Types::Text playerText                   = {
+                          "Player",
+                          BLACK,
+                          LoadFont("assets/Fonts/soliden/SolidenTrial-Black.otf"),
+                          5.5};
 
     // add rectangle shape entity of 10% of the screen at the middle
     Registry::getInstance().addEntity();
-    arrRectShape.back() = rectShape;
-    arrPosition.back()  = squarePosition;
+    arrPosition.back() = {sizeArrPix, sizeArrPix};
+    arrSprite.back() =
+        Types::Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet10.gif")});
+    arrRect.back()   = {sizeArrPix, sizeArrPix, 0, 0};
+    arrSounds.back() = Types::SoundEffect("assets/Audio/Sounds/yes.ogg");
 
-    // add player entity test
     Registry::getInstance().addEntity();
-    arrPosition.back()      = playerPosition;
-    arrSprite.back()        = playerSprite;
-    arrRect.back()          = playerRect;
-    Types::Player myPlayer  = {true};
-    arrPlayer.back()        = myPlayer;
-    arrCollisionRect.back() = playerCollisionRect;
+    arrPosition.back() = {sizeArrPixLarge, sizeArrPixLarge};
+    arrSprite.back() =
+        Types::Sprite({LoadTexture("assets/R-TypeSheet/r-typesheet11.gif")});
+    arrRect.back() = {sizeArrPix, sizeArrPix, 0, 0};
+
+    Registry::getInstance().addEntity();
+    arrPixel.back()  = {sizeArrPix, sizeArrPix};
+    arrMusics.back() = Types::MusicStream("assets/Audio/Musics/Title.mp3");
 
     // add text
     Registry::getInstance().addEntity();

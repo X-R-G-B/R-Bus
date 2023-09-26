@@ -9,9 +9,11 @@
 #include <cstddef>
 
 namespace GraphicSystems {
-    void rectRenderer(std::size_t);
-    void spriteRenderer(std::size_t);
-    void textRenderer(std::size_t);
+    void spriteRenderer(std::size_t /*unused*/);
+    void soundEffectPlayer(std::size_t /*unused*/);
+    void musicPlayer(std::size_t /*unused*/);
+    void rectRenderer(std::size_t /*unused*/);
+    void textRenderer(std::size_t /*unused*/);
 } // namespace GraphicSystems
 
 namespace EventsSystems {

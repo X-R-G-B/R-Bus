@@ -5,6 +5,8 @@
 ** Custom Types
 */
 
+#pragma once
+
 #include <string>
 #include "raylib.h"
 
@@ -21,11 +23,39 @@ namespace Types {
             float height;
     };
 
-    struct Rect {
+    struct Position {
             float x;
             float y;
+    };
+
+    struct Rect {
             float width;
             float height;
+            float x;
+            float y;
+    };
+
+    struct SoundEffect {
+            SoundEffect(std::string soundPath)
+                : sound(LoadSound(soundPath.c_str())),
+                  path(soundPath)
+            {
+            }
+            Sound sound;
+            bool needToPlay {false};
+            std::string path;
+    };
+
+    struct MusicStream {
+            MusicStream(std::string musicPath)
+                : music(LoadMusicStream(musicPath.c_str())),
+                  path(musicPath)
+            {
+            }
+            Music music;
+            bool needToPlay {true};
+            bool isPlaying {false};
+            std::string path;
     };
 
     struct RectangleShape {
@@ -36,11 +66,6 @@ namespace Types {
     struct CollisionRect {
             float width;
             float height;
-    };
-
-    struct Position {
-            float x;
-            float y;
     };
 
     struct Player {
