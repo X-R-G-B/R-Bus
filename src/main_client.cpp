@@ -13,17 +13,17 @@ void init()
     const int initialEntityPositionY = 0;
     const int collisionRectWidth     = 10;
     const int collisionRectHeight    = 20;
-    const std::string spriteImagePath      = "./assets/R-TypeSheet/r-typesheet18r.gif";
-    const int spriteWidth            = 10;
-    const int spriteHeight           = 20;
-    const float rectX                = 2.0F;
-    const float rectY                = 5.0F;
-    const float rectWidth            = 30.5F;
-    const float rectHeight           = 25.2F;
-    const int textPositionX          = 40;
-    const int textPositionY          = 40;
-    const std::string fontPath        = "assets/Fonts/soliden/SolidenTrial-Black.otf";
-    const float textFontSize    = 5.5F;
+    const std::string spriteImagePath =
+        "./assets/R-TypeSheet/r-typesheet18.gif";
+    const int spriteWidth      = 10;
+    const int spriteHeight     = 20;
+    const float rectX          = 2.0F;
+    const float rectY          = 5.0F;
+    const float rectWidth      = 30.5F;
+    const float rectHeight     = 25.2F;
+    const Raylib::Vector2 textPosition = {50, 50};
+    const float fontSize = 5.0F;
+    const std::string fontPath = "assets/Fonts/soliden/SolidenTrial-Black.otf";
     const std::string soundEffectPath = "assets/Audio/Sounds/yes.ogg";
     const std::string musicStreamPath = "assets/Audio/Musics/Title.mp3";
 
@@ -49,11 +49,11 @@ void init()
         collisionRectWidth,
         collisionRectHeight};
     registry.addEntity();
-    registry.getComponents<Types::Position>().back() = {
-        textPositionX,
-        textPositionY};
-    registry.getComponents<Types::Text>()
-        .back() = {"Player", BLACK, LoadFont(fontPath.c_str()), textFontSize};
+    registry.getComponents<Raylib::Text>().back() = {
+        std::string("Hello World!"),
+        textPosition,
+        fontSize,
+        Raylib::Purple};
     registry.addEntity();
     registry.getComponents<Raylib::Sound>().back() =
         Raylib::Sound(soundEffectPath);
@@ -66,7 +66,8 @@ int main()
 {
     const int screenWidth  = 800;
     const int screenHeight = 600;
-    const int fps          = 60;
+    int monitor            = 0;
+    int fps                = 0;
 
     Raylib::setConfigFlags(FLAG_WINDOW_RESIZABLE);
 
@@ -76,22 +77,23 @@ int main()
     director.addSystemManager(Systems::GraphicSystems::graphicSystems);
     std::vector<std::size_t> managersIds = {1, 0, 2};
 
-    InitWindow(
+    Raylib::initWindow(
         screenWidth,
         screenHeight,
-        "raylib [textures] examples - texture source and destination "
-        "rectangles");
-    SetTargetFPS(fps);
-    InitAudioDevice();
+        "R-Type");
+    monitor = Raylib::getCurrentMonitor();
+    fps = Raylib::getMonitorRefreshRate(monitor);
+    Raylib::setTargetFPS(fps);
+    Raylib::initAudioDevice();
     init();
     while (!WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
+        Raylib::beginDrawing();
+        Raylib::clearBackground(Raylib::Green);
         for (auto id : managersIds) {
             director.getSystemManager(id).updateSystems();
         }
-        EndDrawing();
+        Raylib::endDrawing();
     }
-    CloseAudioDevice();
-    CloseWindow();
+    Raylib::closeAudioDevice();
+    Raylib::closeWindow();
 }

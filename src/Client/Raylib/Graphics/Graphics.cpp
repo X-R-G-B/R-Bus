@@ -130,6 +130,11 @@ namespace Raylib {
         return GetMonitorRefreshRate(monitor);
     }
 
+    int getCurrentMonitor()
+    {
+        return GetCurrentMonitor();
+    }
+
     void setClipboardText(std::string text)
     {
         SetClipboardText(text.c_str());
@@ -609,6 +614,75 @@ namespace Raylib {
     int measureText(const std::string text, int fontSize)
     {
         return MeasureText(text.c_str(), fontSize);
+    }
+
+    Text::Text(std::string text, Vector2 position, float fontSize, Color color)
+        : _text(text), _position(position), _fontSize(fontSize), _color(color), _pixelPosition(position)
+    {
+    }
+
+    void Text::draw()
+    {
+        DrawText(
+            _text.c_str(),
+            static_cast<int>(_pixelPosition.X()),
+            static_cast<int>(_pixelPosition.Y()),
+            static_cast<int>(_fontSize),
+            {_color.R(), _color.G(), _color.B(), _color.A()});
+    }
+
+    void Text::drawEx(float spacing)
+    {
+        DrawTextEx(
+            GetFontDefault(),
+            _text.c_str(),
+            {_pixelPosition.X(), _pixelPosition.Y()},
+            _fontSize,
+            spacing,
+            {_color.R(), _color.G(), _color.B(), _color.A()});
+    }
+
+    void Text::drawPro(Vector2 origin, float rotation, float spacing)
+    {
+        DrawTextPro(
+            GetFontDefault(),
+            _text.c_str(),
+            {_pixelPosition.X(), _pixelPosition.Y()},
+            {origin.X(), origin.Y()},
+            rotation,
+            _fontSize,
+            spacing,
+            {_color.R(), _color.G(), _color.B(), _color.A()});
+    }
+
+    float Text::x() const
+    {
+        return _position.X();
+    }
+
+    float Text::y() const
+    {
+        return _position.Y();
+    }
+
+    float Text::getFontSize() const
+    {
+        return _fontSize;
+    }
+
+    void Text::setFontSize(float fontSize)
+    {
+        _fontSize = fontSize;
+    }
+
+    Vector2 Text::getPosition() const
+    {
+        return _position;
+    }
+
+    void Text::setPixelPosition(Vector2 position)
+    {
+        _pixelPosition = position;
     }
 
 } // namespace Raylib

@@ -204,42 +204,32 @@ namespace Systems {
         }
     }
 
-    static void drawTextResponsive(Types::Position &position, Types::Text &text)
+    static void drawTextResponsive(Raylib::Text &text)
     {
         const float denominator = 100.0;
 
         float x =
-            (position.x * static_cast<float>(GetScreenWidth())) / denominator;
+            (text.x() * static_cast<float>(GetScreenWidth())) / denominator;
         float y =
-            (position.y * static_cast<float>(GetScreenHeight())) / denominator;
+            (text.y() * static_cast<float>(GetScreenHeight())) / denominator;
 
-        float fsz = (text.fontSize * static_cast<float>(GetScreenWidth()))
-            / denominator;
-
-        DrawTextEx(
-            text.font,
-            text.text.data(),
-            Vector2(x, y),
-            fsz,
-            0,
-            text.color);
+        
+        text.setPixelPosition({x, y});
+        text.draw();
+        std::cout << "text drawn at " << x << " " << y << std::endl;
     }
 
     void GraphicSystems::textRenderer(std::size_t /*unused*/)
     {
-        Registry::components<Types::Text> arrText =
-            Registry::getInstance().getComponents<Types::Text>();
-        Registry::components<Types::Position> arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Raylib::Text> arrText =
+            Registry::getInstance().getComponents<Raylib::Text>();
 
-        auto positionIt = arrPosition.begin();
-        auto textIt     = arrText.begin();
+        auto textIt = arrText.begin();
 
-        while (positionIt != arrPosition.end() && textIt != arrText.end()) {
-            if (textIt->has_value() && positionIt->has_value()) {
-                drawTextResponsive(positionIt->value(), textIt->value());
+        while (textIt != arrText.end()) {
+            if (textIt->has_value()) {
+                drawTextResponsive(textIt->value());
             }
-            positionIt++;
             textIt++;
         }
     }

@@ -33,6 +33,7 @@ namespace Raylib {
     int getMonitorWidth(int monitor);
     int getMonitorHeight(int monitor);
     int getMonitorRefreshRate(int monitor);
+    int getCurrentMonitor();
     void setClipboardText(std::string);
     std::string getClipboardText();
     void setWindowIcon(Image image);
@@ -96,12 +97,6 @@ namespace Raylib {
     Color colorFromNormalized(Vector4 normalized);
     Color getColor(unsigned int hexValue);
 
-    // Text functions
-    void drawFPS(int posX, int posY);
-    void
-    drawText(std::string text, int posX, int posY, int fontSize, Color color);
-    int measureText(const std::string text, int fontSize);
-
     // Graphic classes
 
     class Image {
@@ -155,5 +150,32 @@ namespace Raylib {
             float _width;
             float _height;
     };
+
+    // Text functions and classes
+
+    class Text {
+        public:
+            Text(std::string text, Vector2 position = {0, 0}, float fontSize = 5.0F, Color color = BLACK);
+            void draw();
+            void drawEx(float spacing);
+            void drawPro(Vector2 origin, float rotation, float spacing);
+
+            float x() const;
+            float y() const;
+            float getFontSize() const;
+            void setFontSize(float fontSize);
+            Vector2 getPosition() const;
+            void setPixelPosition(Vector2 position);
+
+        private:
+            std::string _text;
+            float _fontSize;
+            Color _color;
+            Vector2 _position;
+            Vector2 _pixelPosition;
+    };
+
+    void drawFPS(int posX, int posY);
+
 
 } // namespace Raylib
