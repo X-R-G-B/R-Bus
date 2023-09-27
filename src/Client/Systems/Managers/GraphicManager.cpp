@@ -7,7 +7,6 @@
 
 #include "GraphicManager.hpp"
 #include <iostream>
-#include "raylib.h"
 #include "ClientSystems.hpp"
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
@@ -23,7 +22,7 @@ namespace Systems {
         const int screenHeight = 450;
         const int frameRate    = 60;
         Raylib::initWindow(screenWidth, screenHeight, "R-Type");
-        SetTargetFPS(frameRate);
+        Raylib::setTargetFPS(frameRate);
 
         addSystem(GraphicSystems::rectRenderer);
         addSystem(GraphicSystems::spriteRenderer);
@@ -31,7 +30,7 @@ namespace Systems {
 
     GraphicManager::~GraphicManager()
     {
-        CloseWindow();
+        Raylib::closeWindow();
     }
 
     GraphicManager &GraphicManager::getInstance()
@@ -41,9 +40,9 @@ namespace Systems {
 
     void GraphicManager::updateSystems()
     {
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
+        Raylib::beginDrawing();
+        Raylib::clearBackground(Raylib::Black);
         ASystemManager::updateSystems();
-        EndDrawing();
+        Raylib::endDrawing();
     }
 } // namespace Systems

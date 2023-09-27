@@ -7,7 +7,7 @@
 
 #include "EventManager.hpp"
 #include <algorithm>
-#include "raylib.h"
+#include "Raylib.hpp"
 #include "Events.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -23,7 +23,7 @@ void EventManager::updateEvents()
 {
     _activeEvents.clear();
     for (auto event : Events::events) {
-        if (IsKeyDown(event)) {
+        if (Raylib::isKeyDown(event)) {
             _activeEvents.push_back(event);
         }
     }

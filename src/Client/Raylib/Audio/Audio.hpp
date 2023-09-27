@@ -45,7 +45,8 @@ namespace Raylib {
             void setPan(float pan) const;
             float getTimeLength() const;
             float getTimePlayed() const;
+
         private:
             ::Music music;
     };
-}
+} // namespace Raylib

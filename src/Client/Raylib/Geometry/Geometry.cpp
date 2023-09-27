@@ -1,5 +1,4 @@
 #include "Geometry.hpp"
-#include "raylib.h"
 
 namespace Raylib {
     Vector2::Vector2(float x, float y) : _x(x), _y(y)

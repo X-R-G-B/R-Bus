@@ -94,11 +94,11 @@ namespace Raylib {
             ~Image();
             bool isImageReady();
             void unloadImage();
-            int getWidth();
-            int getHeight();
-            int getMipmaps();
-            int getFormat();
-            void *getData();
+            int getWidth() const;
+            int getHeight() const;
+            int getMipmaps() const;
+            int getFormat() const;
+            void *getData() const;
 
         private:
             ::Image _image;
@@ -109,23 +109,29 @@ namespace Raylib {
             Texture2D(std::string fileName);
             Texture2D(Image image);
             ~Texture2D();
-            int getId();
-            int getWidth();
-            int getHeight();
-            int getMipmaps();
-            int getFormat();
+            unsigned int getId() const;
+            int getWidth() const;
+            int getHeight() const;
+            int getMipmaps() const;
+            int getFormat() const;
 
-            //draw texture functions
+            // draw texture functions
 
             void draw(int posX, int posY, Color tint);
             void drawV(Vector2 position, Color tint);
-            void drawEx(Vector2 position, float rotation, float scale, Color tint);
+            void
+            drawEx(Vector2 position, float rotation, float scale, Color tint);
             void drawRec(Rectangle source, Vector2 position, Color tint);
-            void drawPro(Rectangle source, Rectangle dest, Vector2 origin, float rotation, Color tint);
+            void drawPro(
+                Rectangle source,
+                Rectangle dest,
+                Vector2 origin,
+                float rotation,
+                Color tint);
 
         private:
             void loadTextureFromImage(Image image);
-            ::Texture2D _texture; 
+            ::Texture2D _texture;
     };
 
     // Color/pixel related functions
@@ -137,7 +143,8 @@ namespace Raylib {
 
     // Text functions
     void drawFPS(int posX, int posY);
-    void drawText(std::string text, int posX, int posY, int fontSize, Color color);
+    void
+    drawText(std::string text, int posX, int posY, int fontSize, Color color);
     int measureText(const std::string text, int fontSize);
 
 } // namespace Raylib

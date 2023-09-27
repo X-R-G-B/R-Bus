@@ -287,7 +287,7 @@ namespace Raylib {
     Vector2 getMousePosition()
     {
         ::Vector2 position = GetMousePosition();
-        return Vector2(position.x, position.y);
+        return Vector2 {position.x, position.y};
     }
 
     int getMouseX()
@@ -308,7 +308,7 @@ namespace Raylib {
     Vector2 getMouseDelta()
     {
         ::Vector2 delta = GetMouseDelta();
-        return Vector2(delta.x, delta.y);
+        return Vector2 {delta.x, delta.y};
     }
 
     void setMouseOffset(int offsetX, int offsetY)
@@ -329,7 +329,7 @@ namespace Raylib {
     Vector2 getMouseWheelMoveV()
     {
         ::Vector2 move = GetMouseWheelMoveV();
-        return Vector2(move.x, move.y);
+        return Vector2 {move.x, move.y};
     }
 
     void setMouseCursor(int cursor)
@@ -362,23 +362,21 @@ namespace Raylib {
             {color.R(), color.G(), color.B(), color.A()});
     }
 
-    Image::Image(std::string fileName)
+    Image::Image(std::string fileName) : _image(LoadImage(fileName.c_str()))
     {
-        _image = LoadImage(fileName.c_str());
-
         if (!isImageReady()) {
-            ::Color badTexture                = {255, 16, 240, 255};
+            const ::Color badTexture          = {255, 16, 240, 255};
             static constexpr int badImageSize = 50;
             _image = GenImageColor(badImageSize, badImageSize, badTexture);
         }
     }
 
     Image::Image(int width, int height, Color color)
-    {
-        _image = GenImageColor(
+        : _image(GenImageColor(
             width,
             height,
-            {color.R(), color.G(), color.B(), color.A()});
+            {color.R(), color.G(), color.B(), color.A()}))
+    {
     }
 
     Image::~Image()
@@ -400,27 +398,27 @@ namespace Raylib {
         }
     }
 
-    int Image::getWidth()
+    int Image::getWidth() const
     {
         return _image.width;
     }
 
-    int Image::getHeight()
+    int Image::getHeight() const
     {
         return _image.height;
     }
 
-    int Image::getMipmaps()
+    int Image::getMipmaps() const
     {
         return _image.mipmaps;
     }
 
-    int Image::getFormat()
+    int Image::getFormat() const
     {
         return _image.format;
     }
 
-    void *Image::getData()
+    void *Image::getData() const
     {
         return _image.data;
     }
@@ -428,17 +426,17 @@ namespace Raylib {
     // Texture functions
 
     Texture2D::Texture2D(std::string fileName)
+        : _texture(LoadTexture(fileName.c_str()))
     {
-        _texture = LoadTexture(fileName.c_str());
         if (!IsTextureReady(_texture)) {
-            ::Color badTexture                = {255, 16, 240, 255};
+            static const ::Color badTexture   = {255, 16, 240, 255};
             static constexpr int badImageSize = 50;
             _texture                          = LoadTextureFromImage(
                 GenImageColor(badImageSize, badImageSize, badTexture));
         }
     }
 
-    Texture2D::Texture2D(Image image)
+    Texture2D::Texture2D(Image image) : _texture {0, 0, 0, 0, 0}
     {
         loadTextureFromImage(image);
     }
@@ -459,27 +457,27 @@ namespace Raylib {
         UnloadTexture(_texture);
     }
 
-    int Texture2D::getId()
+    unsigned int Texture2D::getId() const
     {
         return _texture.id;
     }
 
-    int Texture2D::getWidth()
+    int Texture2D::getWidth() const
     {
         return _texture.width;
     }
 
-    int Texture2D::getHeight()
+    int Texture2D::getHeight() const
     {
         return _texture.height;
     }
 
-    int Texture2D::getMipmaps()
+    int Texture2D::getMipmaps() const
     {
         return _texture.mipmaps;
     }
 
-    int Texture2D::getFormat()
+    int Texture2D::getFormat() const
     {
         return _texture.format;
     }
@@ -550,7 +548,7 @@ namespace Raylib {
     {
         ::Color c = {color.R(), color.G(), color.B(), color.A()};
         ::Color f = Fade(c, alpha);
-        return Color(f.r, f.g, f.b, f.a);
+        return Color {f.r, f.g, f.b, f.a};
     }
 
     int colorToInt(Color color)
@@ -563,7 +561,7 @@ namespace Raylib {
     {
         ::Color c   = {color.R(), color.G(), color.B(), color.A()};
         ::Vector4 v = ColorNormalize(c);
-        return Vector4(v.x, v.y, v.z, v.w);
+        return Vector4 {v.x, v.y, v.z, v.w};
     }
 
     Color colorFromNormalized(Vector4 normalized)
@@ -571,13 +569,13 @@ namespace Raylib {
         ::Vector4 v =
             {normalized.X(), normalized.Y(), normalized.Z(), normalized.W()};
         ::Color c = ColorFromNormalized(v);
-        return Color(c.r, c.g, c.b, c.a);
+        return Color {c.r, c.g, c.b, c.a};
     }
 
     Color getColor(unsigned int hexValue)
     {
         ::Color c = GetColor(hexValue);
-        return Color(c.r, c.g, c.b, c.a);
+        return Color {c.r, c.g, c.b, c.a};
     }
 
     // Text functions

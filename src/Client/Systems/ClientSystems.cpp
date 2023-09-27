@@ -7,9 +7,9 @@
 
 #include "ClientSystems.hpp"
 #include <iostream>
-#include "raylib.h"
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
+#include "Raylib.hpp"
 
 void GraphicSystems::rectRenderer(std::size_t /*unused*/)
 {
@@ -28,16 +28,16 @@ void GraphicSystems::rectRenderer(std::size_t /*unused*/)
             Types::Position &position        = positionIt->value();
             Types::RectangleShape &rectangle = rectIt->value();
 
-            float x = (position.x * static_cast<float>(GetScreenWidth()))
+            float x = (position.x * static_cast<float>(Raylib::getScreenWidth()))
                 / denominator;
-            float y = (position.y * static_cast<float>(GetScreenHeight()))
+            float y = (position.y * static_cast<float>(Raylib::getScreenHeight()))
                 / denominator;
 
             float width =
-                (rectangle.width * static_cast<float>(GetScreenWidth()))
+                (rectangle.width * static_cast<float>(Raylib::getScreenWidth()))
                 / denominator;
             float height =
-                (rectangle.height * static_cast<float>(GetScreenHeight()))
+                (rectangle.height * static_cast<float>(Raylib::getScreenHeight()))
                 / denominator;
 
             DrawRectangle(
@@ -66,16 +66,16 @@ void EventsSystems::playerMovement(std::size_t /*unused*/)
     while (positionIt != arrPosition.end() && playerIt != arrPlayer.end()) {
         if (playerIt->has_value() && positionIt->has_value()
             && playerIt->value().isMine) {
-            if (IsKeyDown(KEY_RIGHT)) {
+            if (Raylib::isKeyDown(KEY_RIGHT)) {
                 positionIt->value().x += 1;
             }
-            if (IsKeyDown(KEY_LEFT)) {
+            if (Raylib::isKeyDown(KEY_LEFT)) {
                 positionIt->value().x -= 1;
             }
-            if (IsKeyDown(KEY_UP)) {
+            if (Raylib::isKeyDown(KEY_UP)) {
                 positionIt->value().y -= 1;
             }
-            if (IsKeyDown(KEY_DOWN)) {
+            if (Raylib::isKeyDown(KEY_DOWN)) {
                 positionIt->value().y += 1;
             }
         }
@@ -89,19 +89,19 @@ drawSpriteWithoutRect(Types::Position &position, Types::Sprite &sprite)
 {
     float scale             = 1.0F;
     float rotation          = 0;
-    auto tint               = WHITE;
+    // Raylib::Color tint              = Raylib::White;
     Vector2 spritePos       = {0, 0};
     const float denominator = 100.0;
 
-    float x = (position.x * static_cast<float>(GetScreenWidth())) / denominator;
+    float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
     float y =
-        (position.y * static_cast<float>(GetScreenHeight())) / denominator;
+        (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
-    scale = (sprite.width * static_cast<float>(GetScreenWidth())) / denominator
+    scale = (sprite.width * static_cast<float>(Raylib::getScreenWidth())) / denominator
         / static_cast<float>(sprite.sprite.width);
     spritePos = {x, y};
 
-    DrawTextureEx(sprite.sprite, spritePos, rotation, scale, tint);
+    DrawTextureEx(sprite.sprite, spritePos, rotation, scale, WHITE);
 }
 
 static void drawSpriteWithRect(
@@ -111,17 +111,17 @@ static void drawSpriteWithRect(
 {
     Vector2 origin          = {0, 0};
     float rotation          = 0;
-    auto tint               = WHITE;
+    // Raylib::Color tint              = Raylib::White;
     const float denominator = 100.0;
 
-    float x = (position.x * static_cast<float>(GetScreenWidth())) / denominator;
+    float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
     float y =
-        (position.y * static_cast<float>(GetScreenHeight())) / denominator;
+        (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
     float width =
-        (sprite.width * static_cast<float>(GetScreenWidth())) / denominator;
+        (sprite.width * static_cast<float>(Raylib::getScreenWidth())) / denominator;
     float height =
-        (sprite.height * static_cast<float>(GetScreenHeight())) / denominator;
+        (sprite.height * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
     DrawTexturePro(
         sprite.sprite,
@@ -129,7 +129,7 @@ static void drawSpriteWithRect(
         Rectangle(x, y, width, height),
         origin,
         rotation,
-        tint);
+        WHITE);
 }
 
 void GraphicSystems::spriteRenderer(std::size_t /*unused*/)

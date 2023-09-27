@@ -45,9 +45,9 @@ int main()
     const Types::Position playerPosition           = {0, 0};
     const Types::Position squarePosition           = {-5, 45};
     const Types::Sprite playerSprite               = {
-                      LoadTexture("assets/R-TypeSheet/r-typesheet18.gif"),
-                      10,
-                      20};
+        LoadTexture("assets/R-TypeSheet/r-typesheet18.gif"),
+        10,
+        20};
 
     // add rectangle shape entity of 10% of the screen at the middle
     Registry::getInstance().addEntity();

@@ -15,7 +15,6 @@
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>
-#include "raylib.h"
 #include "SparseArray.hpp"
 
 class Registry {
