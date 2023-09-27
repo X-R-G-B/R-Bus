@@ -9,7 +9,7 @@ Here is the instructions if you want to contribute to the project
 ## Submitting a pull request
 
 1. [Fork][fork] and clone the repository
-2. Create a new branch: See '[creating a branch](#)'
+2. Create a new branch: See '[creating a branch](#creating-a-branch)'
 3. Make your change, add tests, and make sure the tests still pass
 4. Make sure that the code is codeQL compliant
 5. Make sure that you had documentation to the new added code (obviously compliant with our doc)
@@ -22,12 +22,12 @@ Here are a few things you can do that will increase the likelihood of your pull 
 - The style of your code must respect the clang-format style.  
   Normally we have the .clang-format if you want for your IDE.
   If you don't want to use the .clang-format,  
-  launch the script format.sh (Linux) or format.ps1 (Windows), this will format automaticlly your code.  
+  launch the script format.sh (Linux and MacOs) or format.ps1 (Windows), this will format automaticlly your code.  
 **/!\ Warning ! If your code is not clang format compliant your CI will fail and your pr will be refused.**
 - Write tests.
 - Keep your change as focused as possible.  
   If there are multiple changes you would like to make that are not dependent upon each other, consider submitting them as separate pull requests.
-- Write a commit message that respect the commit norm that you have set up.
+- Write a commit message that respect the commit norm that we have, see '[Commit message norm](#commit-message-norm).
 
 
 ## Commit message norm
@@ -37,6 +37,7 @@ Here are a few things you can do that will increase the likelihood of your pull 
 - DOCUMENTATION
 - POC
 - NETWORK
+- SERVER
 2. Followed by ":" + "action verb"
 - : Add
 - : Fix
