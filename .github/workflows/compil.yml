@@ -8,8 +8,9 @@ jobs:
 
     outputs:
       workflows: ${{ steps.filter.outputs.workflows }}
-      src: ${{ steps.filter.outputs.workflows }}
-      combined: ${{ steps.filter.outputs.workflows == 'true' || steps.filter.outputs.src == 'true' }}
+      src: ${{ steps.filter.outputs.src }}
+      cmake: ${{ steps.filter.outputs.cmake }}
+      combined: ${{ steps.filter.outputs.workflows == 'true' || steps.filter.outputs.src == 'true' || steps.filter.outputs.cmake == 'true' }}
 
     steps:
       - name: Checkout
@@ -24,6 +25,8 @@ jobs:
               - '.github/workflows/**'
             src:
               - 'src/**'
+            cmake:
+              - 'CMakeLists.txt'
 
   windows-compil:
     runs-on: windows-latest
