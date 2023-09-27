@@ -21,8 +21,8 @@ Here are a few things you can do that will increase the likelihood of your pull 
 - The security of your code is analysed by [codeQL][doc-codeQL] the CI might fail if it's not secure.  
 - The style of your code must respect the clang-format style.  
   Normally we have the .clang-format if you want for your IDE.
-  If you don't want to use the .clang-format,  
-  launch the script format.sh (Linux and MacOs) or format.ps1 (Windows), this will format automaticlly your code.  
+  If you don't want to use the .clang-format intergration in your IDE, you can still   
+  launch the script format.sh (Linux) or format.ps1 (Windows), this will format automaticlly your code.  
 **/!\ Warning ! If your code is not clang format compliant your CI will fail and your pr will be refused.**
 - Write tests.
 - Keep your change as focused as possible.  
