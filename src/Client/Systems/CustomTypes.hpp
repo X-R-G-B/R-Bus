@@ -19,6 +19,11 @@ namespace Types {
             float height;
     };
 
+    struct Position {
+            float x;
+            float y;
+    };
+
     struct SoundEffect {
             SoundEffect(std::string soundPath)
                 : sound(LoadSound(soundPath.c_str())),
