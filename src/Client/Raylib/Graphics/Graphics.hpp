@@ -3,6 +3,7 @@
 #include <string>
 #include "raylib.h"
 #include "Geometry.hpp"
+#include "Inputs.hpp"
 
 namespace Raylib {
 
@@ -58,19 +59,19 @@ namespace Raylib {
     void takeScreenshot(std::string fileName);
 
     // Input-related functions: keyboard
-    bool isKeyPressed(int key);
-    bool isKeyDown(int key);
-    bool isKeyReleased(int key);
-    bool isKeyUp(int key);
-    void setExitKey(int key);
+    bool isKeyPressed(KeyboardKey key);
+    bool isKeyDown(KeyboardKey key);
+    bool isKeyReleased(KeyboardKey key);
+    bool isKeyUp(KeyboardKey key);
+    void setExitKey(KeyboardKey key);
     int getKeyPressed();
     int getCharPressed();
 
     // Input-related functions: mouse
-    bool isMouseButtonPressed(int button);
-    bool isMouseButtonDown(int button);
-    bool isMouseButtonReleased(int button);
-    bool isMouseButtonUp(int button);
+    bool isMouseButtonPressed(MouseButton button);
+    bool isMouseButtonDown(MouseButton button);
+    bool isMouseButtonReleased(MouseButton button);
+    bool isMouseButtonUp(MouseButton button);
     int getMouseX();
     int getMouseY();
     Vector2 getMousePosition();
@@ -104,24 +105,26 @@ namespace Raylib {
             ::Image _image;
     };
 
-    class Texture2D {
+    class Sprite {
         public:
-            Texture2D(std::string fileName);
-            Texture2D(Image image);
-            ~Texture2D();
+            Sprite(std::string fileName, float width, float height);
+            Sprite(Image image, float width, float height);
+            ~Sprite();
             unsigned int getId() const;
-            int getWidth() const;
-            int getHeight() const;
+            float getWidth() const;
+            float getHeight() const;
+            int getTextureWidth() const;
+            int getTextureHeight() const;
             int getMipmaps() const;
             int getFormat() const;
 
             // draw texture functions
 
             void draw(int posX, int posY, Color tint);
-            void drawV(Vector2 position, Color tint);
+            void drawV(Raylib::Vector2 position, Color tint);
             void
-            drawEx(Vector2 position, float rotation, float scale, Color tint);
-            void drawRec(Rectangle source, Vector2 position, Color tint);
+            drawEx(Raylib::Vector2 position, float rotation, float scale, Color tint);
+            void drawRec(Raylib::Rectangle source, Raylib::Vector2 position, Color tint);
             void drawPro(
                 Rectangle source,
                 Rectangle dest,
@@ -132,6 +135,9 @@ namespace Raylib {
         private:
             void loadTextureFromImage(Image image);
             ::Texture2D _texture;
+            // width and height in percentage of the screen
+            float _width;
+            float _height;
     };
 
     // Color/pixel related functions

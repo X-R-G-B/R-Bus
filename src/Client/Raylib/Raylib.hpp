@@ -3,3 +3,4 @@
 #include "Audio.hpp"
 #include "Geometry.hpp"
 #include "Graphics.hpp"
+#include "Inputs.hpp"

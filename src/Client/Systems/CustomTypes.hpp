@@ -14,12 +14,6 @@ namespace Types {
             int y;
     };
 
-    struct Sprite {
-            Texture2D sprite;
-            float width;
-            float height;
-    };
-
     struct Rect {
             float x;
             float y;

@@ -24,7 +24,7 @@ void EventManager::updateEvents()
     _activeEvents.clear();
     for (auto event : Events::events) {
         if (Raylib::isKeyDown(event)) {
-            _activeEvents.push_back(event);
+            _activeEvents.push_back(static_cast<int>(event));
         }
     }
 }

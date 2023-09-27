@@ -1,5 +1,5 @@
 #include "Graphics.hpp"
-#include "raylib.h"
+#include "Inputs.hpp"
 
 namespace Raylib {
 
@@ -227,29 +227,29 @@ namespace Raylib {
 
     // Input-related functions: keyboard
 
-    bool isKeyPressed(int key)
+    bool isKeyPressed(KeyboardKey key)
     {
-        return IsKeyPressed(key);
+        return IsKeyPressed(static_cast<int>(key));
     }
 
-    bool isKeyDown(int key)
+    bool isKeyDown(KeyboardKey key)
     {
-        return IsKeyDown(key);
+        return IsKeyDown(static_cast<int>(key));
     }
 
-    bool isKeyReleased(int key)
+    bool isKeyReleased(KeyboardKey key)
     {
-        return IsKeyReleased(key);
+        return IsKeyReleased(static_cast<int>(key));
     }
 
-    bool isKeyUp(int key)
+    bool isKeyUp(KeyboardKey key)
     {
-        return IsKeyUp(key);
+        return IsKeyUp(static_cast<int>(key));
     }
 
-    void setExitKey(int key)
+    void setExitKey(KeyboardKey key)
     {
-        SetExitKey(key);
+        SetExitKey(static_cast<int>(key));
     }
 
     int getKeyPressed()
@@ -264,24 +264,24 @@ namespace Raylib {
 
     // Input-related functions: mouse
 
-    bool isMouseButtonPressed(int button)
+    bool isMouseButtonPressed(MouseButton button)
     {
-        return IsMouseButtonPressed(button);
+        return IsMouseButtonPressed(static_cast<int>(button));
     }
 
-    bool isMouseButtonDown(int button)
+    bool isMouseButtonDown(MouseButton button)
     {
-        return IsMouseButtonDown(button);
+        return IsMouseButtonDown(static_cast<int>(button));
     }
 
-    bool isMouseButtonReleased(int button)
+    bool isMouseButtonReleased(MouseButton button)
     {
-        return IsMouseButtonReleased(button);
+        return IsMouseButtonReleased(static_cast<int>(button));
     }
 
-    bool isMouseButtonUp(int button)
+    bool isMouseButtonUp(MouseButton button)
     {
-        return IsMouseButtonUp(button);
+        return IsMouseButtonUp(static_cast<int>(button));
     }
 
     Vector2 getMousePosition()
@@ -425,8 +425,7 @@ namespace Raylib {
 
     // Texture functions
 
-    Texture2D::Texture2D(std::string fileName)
-        : _texture(LoadTexture(fileName.c_str()))
+    Sprite::Sprite(std::string fileName, float width, float height): _texture(LoadTexture(fileName.c_str())), _width(width), _height(height)
     {
         if (!IsTextureReady(_texture)) {
             static const ::Color badTexture   = {255, 16, 240, 255};
@@ -436,12 +435,13 @@ namespace Raylib {
         }
     }
 
-    Texture2D::Texture2D(Image image) : _texture {0, 0, 0, 0, 0}
+    Sprite::Sprite(Image image, float width, float height)
+        : _texture({0, 0, 0, 0}), _width(width), _height(height)
     {
         loadTextureFromImage(image);
     }
 
-    void Texture2D::loadTextureFromImage(Image image)
+    void Sprite::loadTextureFromImage(Image image)
     {
         ::Image img;
         img.data    = image.getData();
@@ -452,39 +452,49 @@ namespace Raylib {
         _texture    = LoadTextureFromImage(img);
     }
 
-    Texture2D::~Texture2D()
+    Sprite::~Sprite()
     {
         UnloadTexture(_texture);
     }
 
-    unsigned int Texture2D::getId() const
+    unsigned int Sprite::getId() const
     {
         return _texture.id;
     }
 
-    int Texture2D::getWidth() const
+    float Sprite::getWidth() const
+    {
+        return _width;
+    }
+
+    float Sprite::getHeight() const
+    {
+        return _height;
+    }
+
+    int Sprite::getTextureWidth() const
     {
         return _texture.width;
     }
 
-    int Texture2D::getHeight() const
+    int Sprite::getTextureHeight() const
     {
         return _texture.height;
     }
 
-    int Texture2D::getMipmaps() const
+    int Sprite::getMipmaps() const
     {
         return _texture.mipmaps;
     }
 
-    int Texture2D::getFormat() const
+    int Sprite::getFormat() const
     {
         return _texture.format;
     }
 
     // Texture drawing functions
 
-    void Texture2D::draw(int posX, int posY, Color tint)
+    void Sprite::draw(int posX, int posY, Color tint)
     {
         DrawTexture(
             _texture,
@@ -493,14 +503,14 @@ namespace Raylib {
             {tint.R(), tint.G(), tint.B(), tint.A()});
     }
 
-    void Texture2D::drawV(Vector2 position, Color tint)
+    void Sprite::drawV(Vector2 position, Color tint)
     {
         ::Vector2 pos = {position.X(), position.Y()};
         DrawTextureV(_texture, pos, {tint.R(), tint.G(), tint.B(), tint.A()});
     }
 
     void
-    Texture2D::drawEx(Vector2 position, float rotation, float scale, Color tint)
+    Sprite::drawEx(Vector2 position, float rotation, float scale, Color tint)
     {
         ::Vector2 pos = {position.X(), position.Y()};
         DrawTextureEx(
@@ -511,7 +521,7 @@ namespace Raylib {
             {tint.R(), tint.G(), tint.B(), tint.A()});
     }
 
-    void Texture2D::drawRec(Rectangle source, Vector2 position, Color tint)
+    void Sprite::drawRec(Rectangle source, Vector2 position, Color tint)
     {
         ::Rectangle src =
             {source.X(), source.Y(), source.Width(), source.Height()};
@@ -523,22 +533,18 @@ namespace Raylib {
             {tint.R(), tint.G(), tint.B(), tint.A()});
     }
 
-    void Texture2D::drawPro(
+    void Sprite::drawPro(
         Rectangle source,
         Rectangle dest,
         Vector2 origin,
         float rotation,
         Color tint)
     {
-        ::Rectangle src =
-            {source.X(), source.Y(), source.Width(), source.Height()};
-        ::Rectangle dst = {dest.X(), dest.Y(), dest.Width(), dest.Height()};
-        ::Vector2 ori   = {origin.X(), origin.Y()};
         DrawTexturePro(
             _texture,
-            src,
-            dst,
-            ori,
+            {source.X(), source.Y(), source.Width(), source.Height()},
+            {dest.X(), dest.Y(), dest.Width(), dest.Height()},
+            {origin.X(), origin.Y()},
             rotation,
             {tint.R(), tint.G(), tint.B(), tint.A()});
     }

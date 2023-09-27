@@ -5,8 +5,3 @@ target_include_directories(
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
-add_subdirectory(Geometry)
-add_subdirectory(Graphics)
-add_subdirectory(Audio)
-add_subdirectory(Events)

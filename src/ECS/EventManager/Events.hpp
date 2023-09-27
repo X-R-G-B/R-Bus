@@ -9,13 +9,13 @@
 
 #include <array>
 #include <list>
-#include "raylib.h"
+#include "Raylib.hpp"
 
 namespace Events {
     static const auto events = {
-        KEY_LEFT,
-        KEY_RIGHT,
-        KEY_UP,
-        KEY_DOWN,
+        Raylib::KeyboardKey::KB_LEFT,
+        Raylib::KeyboardKey::KB_RIGHT,
+        Raylib::KeyboardKey::KB_UP,
+        Raylib::KeyboardKey::KB_DOWN,
     };
 }

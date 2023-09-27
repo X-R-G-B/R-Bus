@@ -5,13 +5,12 @@
 ** main
 */
 
-#include <iostream>
-#include "raylib.h"
 #include "CustomTypes.hpp"
 #include "GameManager.hpp"
 #include "GraphicManager.hpp"
 #include "Registry.hpp"
 #include "SystemEventsManager.hpp"
+#include "Raylib.hpp"
 
 int main()
 {
@@ -30,8 +29,8 @@ int main()
     Registry::components<Types::CollisionRect> arrCollisionRect =
         Registry::getInstance().getComponents<Types::CollisionRect>();
 
-    Registry::components<Types::Sprite> arrSprite =
-        Registry::getInstance().getComponents<Types::Sprite>();
+    Registry::components<Raylib::Sprite> arrSprite =
+        Registry::getInstance().getComponents<Raylib::Sprite>();
 
     Registry::components<Types::Rect> arrRect =
         Registry::getInstance().getComponents<Types::Rect>();
@@ -44,8 +43,8 @@ int main()
     const Types::RectangleShape rectShape          = {10, 10};
     const Types::Position playerPosition           = {0, 0};
     const Types::Position squarePosition           = {-5, 45};
-    const Types::Sprite playerSprite               = {
-        LoadTexture("assets/R-TypeSheet/r-typesheet18.gif"),
+    const Raylib::Sprite playerSprite               = {
+        "assets/R-TypeSheet/r-typesheet18.gif",
         10,
         20};
 

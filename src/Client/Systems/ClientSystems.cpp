@@ -66,16 +66,16 @@ void EventsSystems::playerMovement(std::size_t /*unused*/)
     while (positionIt != arrPosition.end() && playerIt != arrPlayer.end()) {
         if (playerIt->has_value() && positionIt->has_value()
             && playerIt->value().isMine) {
-            if (Raylib::isKeyDown(KEY_RIGHT)) {
+            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
                 positionIt->value().x += 1;
             }
-            if (Raylib::isKeyDown(KEY_LEFT)) {
+            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
                 positionIt->value().x -= 1;
             }
-            if (Raylib::isKeyDown(KEY_UP)) {
+            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
                 positionIt->value().y -= 1;
             }
-            if (Raylib::isKeyDown(KEY_DOWN)) {
+            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
                 positionIt->value().y += 1;
             }
         }
@@ -85,33 +85,33 @@ void EventsSystems::playerMovement(std::size_t /*unused*/)
 }
 
 static void
-drawSpriteWithoutRect(Types::Position &position, Types::Sprite &sprite)
+drawSpriteWithoutRect(Types::Position &position, Raylib::Sprite &sprite)
 {
     float scale             = 1.0F;
     float rotation          = 0;
-    // Raylib::Color tint              = Raylib::White;
-    Vector2 spritePos       = {0, 0};
+    Raylib::Color tint              = Raylib::White;
+    Raylib::Vector2 spritePos       = {0, 0};
     const float denominator = 100.0;
 
     float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
     float y =
         (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
-    scale = (sprite.width * static_cast<float>(Raylib::getScreenWidth())) / denominator
-        / static_cast<float>(sprite.sprite.width);
+    scale = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator
+        / static_cast<float>(sprite.getTextureWidth());
     spritePos = {x, y};
 
-    DrawTextureEx(sprite.sprite, spritePos, rotation, scale, WHITE);
+    sprite.drawEx(spritePos, rotation, scale, tint);
 }
 
 static void drawSpriteWithRect(
     Types::Position &position,
-    Types::Sprite &sprite,
+    Raylib::Sprite &sprite,
     Types::Rect &rect)
 {
-    Vector2 origin          = {0, 0};
+    Raylib::Vector2 origin          = {0, 0};
     float rotation          = 0;
-    // Raylib::Color tint              = Raylib::White;
+    Raylib::Color tint              = Raylib::White;
     const float denominator = 100.0;
 
     float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
@@ -119,23 +119,22 @@ static void drawSpriteWithRect(
         (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
     float width =
-        (sprite.width * static_cast<float>(Raylib::getScreenWidth())) / denominator;
+        (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator;
     float height =
-        (sprite.height * static_cast<float>(Raylib::getScreenHeight())) / denominator;
+        (sprite.getHeight() * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
-    DrawTexturePro(
-        sprite.sprite,
-        Rectangle(rect.x, rect.y, rect.width, rect.height),
-        Rectangle(x, y, width, height),
+    sprite.drawPro(
+        Raylib::Rectangle(rect.x, rect.y, rect.width, rect.height),
+        Raylib::Rectangle(x, y, width, height),
         origin,
         rotation,
-        WHITE);
+        tint);
 }
 
 void GraphicSystems::spriteRenderer(std::size_t /*unused*/)
 {
-    Registry::components<Types::Sprite> arrSprite =
-        Registry::getInstance().getComponents<Types::Sprite>();
+    Registry::components<Raylib::Sprite> arrSprite =
+        Registry::getInstance().getComponents<Raylib::Sprite>();
     Registry::components<Types::Rect> arrRect =
         Registry::getInstance().getComponents<Types::Rect>();
     Registry::components<Types::Position> arrPosition =
