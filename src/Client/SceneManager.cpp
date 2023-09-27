@@ -38,8 +38,7 @@ static void initRaylib()
     InitWindow(
         screenWidth,
         screenHeight,
-        "raylib [textures] examples - texture source and destination "
-        "rectangles");
+        "R-Bus");
     SetTargetFPS(fps);
     InitAudioDevice();
 }
