@@ -22,11 +22,7 @@ SceneManager SceneManager::_instance = SceneManager();
 
 static void initRaylib()
 {
-    InitWindow(
-        screenWidth,
-        screenHeight,
-        "raylib [textures] examples - texture source and destination "
-        "rectangles");
+    InitWindow(screenWidth, screenHeight, "R-Bus");
     SetTargetFPS(fps);
     InitAudioDevice();
 }
