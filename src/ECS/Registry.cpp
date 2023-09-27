@@ -31,6 +31,13 @@ void Registry::removeEntity(std::size_t id)
     }
 }
 
+void Registry::clear()
+{
+    _data.clear();
+    _addComponentPlaceFunctions.clear();
+    _removeComponentFunctions.clear();
+}
+
 Registry::Registry() : _entitiesNb(0)
 {
 }

@@ -5,6 +5,9 @@
 ** main
 */
 
+#include "SceneManager.hpp"
+
 int main()
 {
+    SceneManager::getInstance();
 }

@@ -18,9 +18,17 @@ constexpr int screenWidth = 1920;
 constexpr int screenHeight = 1080;
 constexpr int fps = 60;
 
-// NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
-SceneManager SceneManager::_instance = SceneManager();
-// NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
+std::optional<SceneManager> SceneManager::_instance = std::nullopt;
+
+SceneManager &SceneManager::getInstance()
+{
+    if (_instance == std::nullopt) {
+        std::cout << "SCENE CONTRUCTION" << std::endl;
+        const std::optional<SceneManager> a = SceneManager();
+        _instance = a;
+    }
+    return _instance.value();
+}
 
 static void initRaylib()
 {
@@ -33,17 +41,15 @@ static void initRaylib()
     InitAudioDevice();
     Registry &registry = Registry::getInstance();
     registry.addEntity();
-    std::cout << "init2" << std::endl;
     Registry::components<Types::CollisionRect> res = registry.getComponents<Types::CollisionRect>();
-    std::cout << "init3" << std::endl;
     res.back() = {10, 20};
+    registry.getComponents<Types::Player>().back() = Types::Player(true);
     registry.getComponents<Types::Position>().back()      = {0, 0};
     registry.getComponents<Types::Sprite>().back()        = {
                "./assets/R-TypeSheet/r-typesheet18.gif",
                10,
                20};
     registry.getComponents<Types::Rect>().back()   = {2.0F, 5.0F, 30.5F, 25.2F};
-    registry.getComponents<Types::Player>().back() = Types::Player(true);
     registry.addEntity();
     registry.getComponents<Types::Position>().back()       = {0, 0};
     registry.getComponents<Types::RectangleShape>().back() = {10, 10};
@@ -57,7 +63,6 @@ static void initRaylib()
     registry.addEntity();
     registry.getComponents<Types::SoundEffect>().back() =
         Types::SoundEffect("assets/Audio/Sounds/yes.ogg");
-    std::cout << "init4" << std::endl;
     registry.addEntity();
     registry.getComponents<Types::MusicStream>().back() =
         Types::MusicStream("assets/Audio/Musics/Title.mp3");
@@ -74,18 +79,14 @@ static void destroyRaylib()
 
 SceneManager::SceneManager() : _currentScene(Scene::MAIN_GAME), _stop(false)
 {
-    std::cout << "start" << std::endl;
+    std::cout << "CONSTRUCTEUR" << std::endl;
     auto &director = Systems::SystemManagersDirector::getInstance();
 
     for (auto systems : Systems::getSystemsGroups()) {
-        std::cout << "loop" << std::endl;
         director.addSystemManager(systems);
     }
-    std::cout << "before" << std::endl;
     initRaylib();
-    std::cout << "after" << std::endl;
     while (!_stop && !WindowShouldClose()) {
-        std::cout << "main loop" << std::endl;
         BeginDrawing();
         ClearBackground(RAYWHITE);
         auto scene = _scenes.at(_currentScene);
@@ -97,14 +98,18 @@ SceneManager::SceneManager() : _currentScene(Scene::MAIN_GAME), _stop(false)
     destroyRaylib();
 }
 
-SceneManager &SceneManager::getInstance()
-{
-    return _instance;
-}
 
 void SceneManager::changeScene(Scene scene)
 {
+    std::cout << "changeScene ";
+    std::cout << static_cast<int>(scene) << " " << static_cast<int>(_currentScene) << std::endl;
     _currentScene = scene;
+    Registry::getInstance().clear();
+    Registry &registry = Registry::getInstance();
+    registry.addEntity();
+    registry.getComponents<Types::Position>().back()       = {0, 0};
+    registry.getComponents<Types::RectangleShape>().back() = {10, 10};
+    registry.getComponents<Types::Player>().back() = Types::Player(true);
 }
 
 void SceneManager::stop()

@@ -5,16 +5,15 @@
 ** EventsSystems implementation
 */
 
-#include <iostream>
-
 #include "EventsSystems.hpp"
 #include "Registry.hpp"
 #include "CustomTypes.hpp"
 
+#include "SceneManager.hpp"
+
 namespace Systems {
     void EventsSystems::playerMovement(std::size_t /*unused*/)
     {
-        std::cout << "movement" << std::endl;
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
 
@@ -34,9 +33,13 @@ namespace Systems {
                     positionIt->value().x -= 1;
                 }
                 if (IsKeyDown(KEY_UP)) {
+                    std::cout << "UP" << std::endl;
+                    SceneManager::getInstance().changeScene(Scene::MENU);
                     positionIt->value().y -= 1;
                 }
                 if (IsKeyDown(KEY_DOWN)) {
+                    std::cout << "DOWN" << std::endl;
+                    SceneManager::getInstance().changeScene(Scene::MAIN_GAME);
                     positionIt->value().y += 1;
                 }
             }

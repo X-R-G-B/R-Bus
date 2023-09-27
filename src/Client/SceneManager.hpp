@@ -11,9 +11,13 @@
 #include <functional>
 #include <array>
 #include <cstddef>
+#include <optional>
+
+#include <iostream>
 
 enum Scene {
     MAIN_GAME,
+    MENU,
     SCENE_MAX
 };
 
@@ -34,11 +38,9 @@ class SceneManager {
 
         Scene _currentScene;
         bool _stop;
-        const std::array<std::vector<SystemManagers>, 1> _scenes = {
-            std::vector<SystemManagers>{EVENTS, GAME, DISPLAY}
+        static std::optional<SceneManager> _instance;
+        const std::array<std::vector<SystemManagers>, 2> _scenes = {
+            std::vector<SystemManagers>{EVENTS, GAME, DISPLAY},
+            std::vector<SystemManagers>{EVENTS, DISPLAY}
         };
-
-        // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
-        static SceneManager _instance;
-        // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 };
