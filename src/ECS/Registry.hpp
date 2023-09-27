@@ -36,6 +36,8 @@ class Registry {
 
         void removeEntity(std::size_t /*id*/);
 
+        void clear();
+
         Registry &operator=(const Registry &) = delete;
         Registry(const Registry &)            = delete;
         void operator=(const Registry &&)     = delete;

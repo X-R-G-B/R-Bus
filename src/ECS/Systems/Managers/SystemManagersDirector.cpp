@@ -44,10 +44,4 @@ namespace Systems {
         std::advance(it, id);
         _systemManagers.erase(it);
     }
-
-    SystemManagersDirector::SystemManagersDirector()
-    {
-        addSystemManager(ecsSystems);
-    }
-
 } // namespace Systems

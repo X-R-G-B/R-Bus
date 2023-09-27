@@ -23,7 +23,7 @@ namespace Systems {
         private:
             std::vector<SystemManager> _systemManagers;
 
-            SystemManagersDirector();
+            SystemManagersDirector() = default;
 
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static SystemManagersDirector _instance;

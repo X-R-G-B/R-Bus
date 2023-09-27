@@ -9,6 +9,7 @@
 
 #include <string>
 #include "raylib.h"
+#include "ECSCustomTypes.hpp"
 
 namespace Types {
 
@@ -21,11 +22,6 @@ namespace Types {
             Texture2D sprite;
             float width;
             float height;
-    };
-
-    struct Position {
-            float x;
-            float y;
     };
 
     struct Rect {
@@ -56,20 +52,6 @@ namespace Types {
             bool needToPlay {false};
             bool isPlaying {false};
             std::string path;
-    };
-
-    struct RectangleShape {
-            float width;
-            float height;
-    };
-
-    struct CollisionRect {
-            float width;
-            float height;
-    };
-
-    struct Player {
-            bool isMine;
     };
 
     struct Text {

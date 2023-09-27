@@ -9,8 +9,5 @@ target_include_directories(
 target_sources(
     ${PROJECT_NAME_CLIENT}
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/SceneManager.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/EventsSystems.cpp
 )
-
-add_subdirectory(Systems)
-add_subdirectory(EventManager)
