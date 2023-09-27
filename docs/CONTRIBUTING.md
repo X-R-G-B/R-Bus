@@ -27,7 +27,7 @@ Here are a few things you can do that will increase the likelihood of your pull 
 - Write tests.
 - Keep your change as focused as possible.  
   If there are multiple changes you would like to make that are not dependent upon each other, consider submitting them as separate pull requests.
-- Write a commit message that respect the commit norm that we have, see '[Commit message norm](#commit-message-norm).
+- Write a commit message that respect the commit norm that we have, see '[Commit message norm](#commit-message-norm)'.
 
 
 ## Commit message norm
