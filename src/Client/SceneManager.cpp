@@ -11,9 +11,15 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
+// to suppr
+#include "CustomTypes.hpp"
+
 constexpr int screenWidth  = 1920;
 constexpr int screenHeight = 1080;
 constexpr int fps          = 60;
+
+// to suppr
+constexpr int playerData = 10;
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 bool SceneManager::_init             = false;
@@ -25,6 +31,22 @@ static void initRaylib()
     InitWindow(screenWidth, screenHeight, "R-Bus");
     SetTargetFPS(fps);
     InitAudioDevice();
+    Registry::getInstance().addEntity();
+    Registry::getInstance().getComponents<Types::Position>().back() = {
+        playerData,
+        playerData};
+    Registry::getInstance().getComponents<Types::RectangleShape>().back() = {
+        playerData,
+        playerData};
+    Registry::getInstance().getComponents<Types::CollisionRect>().back() = {
+        playerData,
+        playerData};
+    SparseArray<std::size_t> &playerId =
+        Registry::getInstance().getCustomSparseArray<std::size_t>(
+            CustomIndex::PLAYER);
+    playerId.add();
+    playerId.back() =
+        std::optional<std::size_t>(Registry::getInstance().getEntitiesNb() - 1);
 }
 
 static void initSystemManagers()

@@ -11,20 +11,15 @@
 #include <functional>
 #include <iostream>
 #include <memory>
+#include <stdexcept>
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>
-#include <stdexcept>
 #include <vector>
 #include "raylib.h"
 #include "SparseArray.hpp"
 
-enum CustomIndex {
-    PLAYER,
-    BULLET,
-    ENNEMY,
-    MAX
-};
+enum CustomIndex { PLAYER, BULLET, ENNEMY, MAX };
 
 class Registry {
     public:
@@ -49,19 +44,21 @@ class Registry {
         template <class Component>
         components<Component> getCustomSparseArray(std::size_t id)
         {
-
             if (id > _customSparseArrays.size()) {
                 throw std::runtime_error("ID not in ");
             }
             try {
-                components<Component> castedComponent = std::any_cast<components<Component>>(
-                    _customSparseArrays[id]);
+                components<Component> castedComponent =
+                    std::any_cast<components<Component>>(
+                        _customSparseArrays[id]);
 
                 return castedComponent;
-            } catch (const std::bad_any_cast& e) {
+            } catch (const std::bad_any_cast &e) {
                 throw std::runtime_error("Bad any cast");
             }
         }
+
+        std::size_t getEntitiesNb();
 
         Registry &operator=(const Registry &) = delete;
         Registry(const Registry &)            = delete;

@@ -39,9 +39,14 @@ void Registry::clear()
     _entitiesNb = 0;
 }
 
+std::size_t Registry::getEntitiesNb()
+{
+    return (_entitiesNb);
+}
+
 Registry::Registry() : _entitiesNb(0)
 {
     for (std::size_t i = 0; i < MAX; i++) {
-        addCustomSparseArray<int>();
+        addCustomSparseArray<std::size_t>();
     }
 }
