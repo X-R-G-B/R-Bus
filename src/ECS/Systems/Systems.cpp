@@ -17,38 +17,34 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
             Registry::getInstance().getComponents<Types::CollisionRect>();
-        Registry::components<Types::Player> arrPlayer =
-            Registry::getInstance().getComponents<Types::Player>();
+
+        SparseArray<std::size_t> &playerId =
+            Registry::getInstance().getCustomSparseArray<std::size_t>(
+                CustomIndex::PLAYER);
+
         const float maxPercent = 100.0F;
-
-        auto positionIt  = arrPosition.begin();
-        auto collisionIt = arrCollisionRect.begin();
-        auto playerIt    = arrPlayer.begin();
-
-        while (playerIt != arrPlayer.end() && positionIt != arrPosition.end()
-               && collisionIt != arrCollisionRect.end()) {
-            if (playerIt->has_value() && positionIt->has_value()
-                && collisionIt->has_value()) {
-                if (positionIt->value().x < 0) {
-                    positionIt->value().x = 0;
+        for (std::optional<std::size_t> id : playerId) {
+            if (id.has_value() && arrPosition[id.value()].has_value()
+                && arrCollisionRect[id.value()].has_value()) {
+                if (arrPosition[id.value()].value().x < 0) {
+                    arrPosition[id.value()].value().x = 0;
                 }
-                if (positionIt->value().y < 0) {
-                    positionIt->value().y = 0;
+                if (arrPosition[id.value()].value().y < 0) {
+                    arrPosition[id.value()].value().y = 0;
                 }
-                if (positionIt->value().x + collisionIt->value().width
+                if (arrPosition[id.value()].value().x
+                        + arrCollisionRect[id.value()].value().width
                     > maxPercent) {
-                    positionIt->value().x =
-                        maxPercent - collisionIt->value().width;
+                    arrPosition[id.value()].value().x =
+                        maxPercent - arrCollisionRect[id.value()].value().width;
                 }
-                if (positionIt->value().y + collisionIt->value().height
+                if (arrPosition[id.value()].value().y
+                        + arrCollisionRect[id.value()].value().height
                     > maxPercent) {
-                    positionIt->value().y =
-                        maxPercent - collisionIt->value().height;
+                    arrPosition[id.value()].value().y = maxPercent
+                        - arrCollisionRect[id.value()].value().height;
                 }
             }
-            positionIt++;
-            collisionIt++;
-            playerIt++;
         }
     }
 
