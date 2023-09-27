@@ -83,3 +83,4 @@ r-type-linux.sh
 r-type-linux.tar
 r-type-windows.zip
 r-type-macos.zip
+cmake-build-debug/
