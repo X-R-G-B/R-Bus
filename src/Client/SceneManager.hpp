@@ -33,7 +33,7 @@ class SceneManager {
         bool _stop;
         const std::array<std::vector<SystemManagers>, 2> _scenes = {
             std::vector<SystemManagers> {EVENTS, GAME, DISPLAY},
-            std::vector<SystemManagers> {EVENTS, DISPLAY}
+            std::vector<SystemManagers> {EVENTS,      DISPLAY    }
         };
 
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
