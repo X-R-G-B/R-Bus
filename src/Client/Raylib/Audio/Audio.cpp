@@ -26,11 +26,11 @@ namespace Raylib {
 
     // Sounds
     Sound::Sound(const std::string& fileName)
-        : sound(LoadSound(fileName.c_str()))
+        : sound(LoadSound(fileName.c_str())), _path(fileName)
     {
     }
 
-    Sound::~Sound()
+    void Sound::unload()
     {
         UnloadSound(sound);
     }
@@ -75,14 +75,29 @@ namespace Raylib {
         SetSoundPitch(sound, pan);
     }
 
+    bool Sound::NeedToPlay() const
+    {
+        return _needToPlay;
+    }
+
+    void Sound::setNeedToPlay(bool needToPlay)
+    {
+        _needToPlay = needToPlay;
+    }
+
+    std::string Sound::getPath() const
+    {
+        return _path;
+    }
+
     // Music
 
     Music::Music(const std::string& fileName)
-        : music(LoadMusicStream(fileName.c_str()))
+        : music(LoadMusicStream(fileName.c_str())), _path(fileName)
     {
     }
 
-    Music::~Music()
+    void Music::unload()
     {
         UnloadMusicStream(music);
     }
@@ -145,5 +160,20 @@ namespace Raylib {
     float Music::getTimePlayed() const
     {
         return GetMusicTimePlayed(music);
+    }
+
+    bool Music::NeedToPlay() const
+    {
+        return _needToPlay;
+    }
+
+    void Music::setNeedToPlay(bool needToPlay)
+    {
+        _needToPlay = needToPlay;
+    }
+
+    std::string Music::getPath() const
+    {
+        return _path;
     }
 } // namespace Raylib

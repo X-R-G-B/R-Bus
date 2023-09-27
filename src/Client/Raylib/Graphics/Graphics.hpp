@@ -17,6 +17,7 @@ namespace Raylib {
     bool isWindowMinimized();
     bool isWindowMaximized();
     bool isWindowFocused();
+    void setConfigFlags(size_t flags);
     bool isWindowResized();
     bool isWindowState(size_t flag);
     void setWindowState(size_t flags);
@@ -88,6 +89,21 @@ namespace Raylib {
     void drawCircle(int centerX, int centerY, float radius, Color color);
     void drawRectangle(int posX, int posY, int width, int height, Color color);
 
+    // Color/pixel related functions
+    Color fade(Color color, float alpha);
+    int colorToInt(Color color);
+    Vector4 colorNormalize(Color color);
+    Color colorFromNormalized(Vector4 normalized);
+    Color getColor(unsigned int hexValue);
+
+    // Text functions
+    void drawFPS(int posX, int posY);
+    void
+    drawText(std::string text, int posX, int posY, int fontSize, Color color);
+    int measureText(const std::string text, int fontSize);
+
+    // Graphic classes
+
     class Image {
         public:
             Image(std::string fileName);
@@ -109,7 +125,6 @@ namespace Raylib {
         public:
             Sprite(std::string fileName, float width, float height);
             Sprite(Image image, float width, float height);
-            ~Sprite();
             unsigned int getId() const;
             float getWidth() const;
             float getHeight() const;
@@ -117,6 +132,7 @@ namespace Raylib {
             int getTextureHeight() const;
             int getMipmaps() const;
             int getFormat() const;
+            void unloadSprite();
 
             // draw texture functions
 
@@ -139,18 +155,5 @@ namespace Raylib {
             float _width;
             float _height;
     };
-
-    // Color/pixel related functions
-    Color fade(Color color, float alpha);
-    int colorToInt(Color color);
-    Vector4 colorNormalize(Color color);
-    Color colorFromNormalized(Vector4 normalized);
-    Color getColor(unsigned int hexValue);
-
-    // Text functions
-    void drawFPS(int posX, int posY);
-    void
-    drawText(std::string text, int posX, int posY, int fontSize, Color color);
-    int measureText(const std::string text, int fontSize);
 
 } // namespace Raylib

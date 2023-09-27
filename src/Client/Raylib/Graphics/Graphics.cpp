@@ -50,6 +50,11 @@ namespace Raylib {
         return IsWindowFocused();
     }
 
+    void setConfigFlags(size_t flags)
+    {
+        SetConfigFlags(static_cast<unsigned int>(flags));
+    }
+
     bool isWindowResized()
     {
         return IsWindowResized();
@@ -452,7 +457,7 @@ namespace Raylib {
         _texture    = LoadTextureFromImage(img);
     }
 
-    Sprite::~Sprite()
+    void Sprite::unloadSprite()
     {
         UnloadTexture(_texture);
     }

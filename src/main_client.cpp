@@ -13,7 +13,7 @@ void init()
     const int initialEntityPositionY = 0;
     const int collisionRectWidth     = 10;
     const int collisionRectHeight    = 20;
-    const std::string spriteImagePath      = "./assets/R-TypeSheet/r-typesheet18.gif";
+    const std::string spriteImagePath      = "./assets/R-TypeSheet/r-typesheet18r.gif";
     const int spriteWidth            = 10;
     const int spriteHeight           = 20;
     const float rectX                = 2.0F;
@@ -55,18 +55,20 @@ void init()
     registry.getComponents<Types::Text>()
         .back() = {"Player", BLACK, LoadFont(fontPath.c_str()), textFontSize};
     registry.addEntity();
-    registry.getComponents<Types::SoundEffect>().back() =
-        Types::SoundEffect(soundEffectPath);
+    registry.getComponents<Raylib::Sound>().back() =
+        Raylib::Sound(soundEffectPath);
     registry.addEntity();
-    registry.getComponents<Types::MusicStream>().back() =
-        Types::MusicStream(musicStreamPath);
+    registry.getComponents<Raylib::Music>().back() =
+        Raylib::Music(musicStreamPath);
 }
 
 int main()
 {
-    const int screenWidth  = 1920;
-    const int screenHeight = 1080;
+    const int screenWidth  = 800;
+    const int screenHeight = 600;
     const int fps          = 60;
+
+    Raylib::setConfigFlags(FLAG_WINDOW_RESIZABLE);
 
     Systems::SystemManagersDirector& director =
         Systems::SystemManagersDirector::getInstance();
