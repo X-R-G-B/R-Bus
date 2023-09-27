@@ -11,7 +11,8 @@ namespace Systems {
     SystemManager::SystemManager(
         std::vector<std::function<void(std::size_t)>> systems)
         : _systems(std::move(systems))
-    {}
+    {
+    }
 
     void SystemManager::updateSystems()
     {

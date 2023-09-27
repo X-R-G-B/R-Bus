@@ -5,8 +5,8 @@
 ** GraphicSystems
 */
 
-#include "raylib.h"
 #include "GraphicSystems.hpp"
+#include "raylib.h"
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
 
@@ -206,14 +206,14 @@ namespace Systems {
             textIt++;
         }
     }
-    const std::vector<std::function<void(std::size_t)>> GraphicSystems::getGraphicsSystems()
+    std::vector<std::function<void(std::size_t)>>
+    GraphicSystems::getGraphicsSystems()
     {
         return {
             rectRenderer,
             spriteRenderer,
             textRenderer,
             musicPlayer,
-            soundEffectPlayer
-        };
+            soundEffectPlayer};
     }
 } // namespace Systems

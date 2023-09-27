@@ -8,8 +8,8 @@
 #pragma once
 
 #include <cstddef>
-#include <vector>
 #include <functional>
+#include <vector>
 
 namespace Systems {
     namespace GraphicSystems {
@@ -18,6 +18,6 @@ namespace Systems {
         void textRenderer(std::size_t /*unused*/);
         void soundEffectPlayer(std::size_t /*unused*/);
         void musicPlayer(std::size_t /*unused*/);
-        const std::vector<std::function<void(std::size_t)>> getGraphicsSystems();
+        std::vector<std::function<void(std::size_t)>> getGraphicsSystems();
     } // namespace GraphicSystems
-}
+} // namespace Systems

@@ -7,14 +7,13 @@
 
 #include "ClientSystems.hpp"
 
-
 namespace Systems {
-    const std::array<std::vector<std::function<void(std::size_t)>>, 3> getSystemsGroups()
+    std::array<std::vector<std::function<void(std::size_t)>>, 3>
+    getSystemsGroups()
     {
         return {
             getECSSystems(),
             EventsSystems::getEventSystems(),
-            GraphicSystems::getGraphicsSystems()
-        };
+            GraphicSystems::getGraphicsSystems()};
     }
-}
+} // namespace Systems

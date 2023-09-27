@@ -6,10 +6,8 @@
 */
 
 #include "EventsSystems.hpp"
-#include "Registry.hpp"
 #include "CustomTypes.hpp"
-
-#include "SceneManager.hpp"
+#include "Registry.hpp"
 
 namespace Systems {
     void EventsSystems::playerMovement(std::size_t /*unused*/)
@@ -33,13 +31,9 @@ namespace Systems {
                     positionIt->value().x -= 1;
                 }
                 if (IsKeyDown(KEY_UP)) {
-                    std::cout << "UP" << std::endl;
-                    SceneManager::getInstance().changeScene(Scene::MENU);
                     positionIt->value().y -= 1;
                 }
                 if (IsKeyDown(KEY_DOWN)) {
-                    std::cout << "DOWN" << std::endl;
-                    SceneManager::getInstance().changeScene(Scene::MAIN_GAME);
                     positionIt->value().y += 1;
                 }
             }
@@ -47,10 +41,9 @@ namespace Systems {
             playerIt++;
         }
     }
-    const std::vector<std::function<void(std::size_t)>> EventsSystems::getEventSystems()
+    std::vector<std::function<void(std::size_t)>>
+    EventsSystems::getEventSystems()
     {
-        return {
-            playerMovement
-        };
+        return {playerMovement};
     }
-}
+} // namespace Systems

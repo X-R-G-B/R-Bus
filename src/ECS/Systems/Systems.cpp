@@ -7,7 +7,6 @@
 
 #include "Systems.hpp"
 #include <cstddef>
-#include <iostream>
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
 
@@ -53,9 +52,8 @@ namespace Systems {
         }
     }
 
-    const std::vector<std::function<void(std::size_t)>> getECSSystems() {
-        return {
-            windowCollision
-        };
+    std::vector<std::function<void(std::size_t)>> getECSSystems()
+    {
+        return {windowCollision};
     }
 } // namespace Systems

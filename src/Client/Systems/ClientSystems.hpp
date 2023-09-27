@@ -8,10 +8,11 @@
 #pragma once
 
 #include <array>
-#include "Systems.hpp"
-#include "GraphicSystems.hpp"
 #include "EventsSystems.hpp"
+#include "GraphicSystems.hpp"
+#include "Systems.hpp"
 
 namespace Systems {
-    const std::array<std::vector<std::function<void(std::size_t)>>, 3> getSystemsGroups();
+    std::array<std::vector<std::function<void(std::size_t)>>, 3>
+    getSystemsGroups();
 } // namespace Systems
