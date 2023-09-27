@@ -5,11 +5,16 @@
 ** EventsSystems implementation
 */
 
+#include <iostream>
+
 #include "EventsSystems.hpp"
+#include "Registry.hpp"
+#include "CustomTypes.hpp"
 
 namespace Systems {
     void EventsSystems::playerMovement(std::size_t /*unused*/)
     {
+        std::cout << "movement" << std::endl;
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
 
@@ -38,5 +43,11 @@ namespace Systems {
             positionIt++;
             playerIt++;
         }
+    }
+    const std::vector<std::function<void(std::size_t)>> EventsSystems::getEventSystems()
+    {
+        return {
+            playerMovement
+        };
     }
 }

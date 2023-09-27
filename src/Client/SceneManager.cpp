@@ -33,8 +33,11 @@ static void initRaylib()
     InitAudioDevice();
     Registry &registry = Registry::getInstance();
     registry.addEntity();
+    std::cout << "init2" << std::endl;
+    Registry::components<Types::CollisionRect> res = registry.getComponents<Types::CollisionRect>();
+    std::cout << "init3" << std::endl;
+    res.back() = {10, 20};
     registry.getComponents<Types::Position>().back()      = {0, 0};
-    registry.getComponents<Types::CollisionRect>().back() = {10, 20};
     registry.getComponents<Types::Sprite>().back()        = {
                "./assets/R-TypeSheet/r-typesheet18.gif",
                10,
@@ -54,6 +57,7 @@ static void initRaylib()
     registry.addEntity();
     registry.getComponents<Types::SoundEffect>().back() =
         Types::SoundEffect("assets/Audio/Sounds/yes.ogg");
+    std::cout << "init4" << std::endl;
     registry.addEntity();
     registry.getComponents<Types::MusicStream>().back() =
         Types::MusicStream("assets/Audio/Musics/Title.mp3");
@@ -70,14 +74,18 @@ static void destroyRaylib()
 
 SceneManager::SceneManager() : _currentScene(Scene::MAIN_GAME), _stop(false)
 {
+    std::cout << "start" << std::endl;
     auto &director = Systems::SystemManagersDirector::getInstance();
 
-    for (auto systems : Systems::systemsGroups) {
-        std::cout << systems.size() << std::endl;
+    for (auto systems : Systems::getSystemsGroups()) {
+        std::cout << "loop" << std::endl;
         director.addSystemManager(systems);
     }
+    std::cout << "before" << std::endl;
     initRaylib();
+    std::cout << "after" << std::endl;
     while (!_stop && !WindowShouldClose()) {
+        std::cout << "main loop" << std::endl;
         BeginDrawing();
         ClearBackground(RAYWHITE);
         auto scene = _scenes.at(_currentScene);

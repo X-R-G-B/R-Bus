@@ -18,12 +18,6 @@ namespace Systems {
         void textRenderer(std::size_t /*unused*/);
         void soundEffectPlayer(std::size_t /*unused*/);
         void musicPlayer(std::size_t /*unused*/);
-        const std::vector<std::function<void(std::size_t)>> graphicSystems {
-            rectRenderer,
-            spriteRenderer,
-            textRenderer,
-            musicPlayer,
-            soundEffectPlayer
-        };
+        const std::vector<std::function<void(std::size_t)>> getGraphicsSystems();
     } // namespace GraphicSystems
 }

@@ -206,4 +206,14 @@ namespace Systems {
             textIt++;
         }
     }
+    const std::vector<std::function<void(std::size_t)>> GraphicSystems::getGraphicsSystems()
+    {
+        return {
+            rectRenderer,
+            spriteRenderer,
+            textRenderer,
+            musicPlayer,
+            soundEffectPlayer
+        };
+    }
 } // namespace Systems

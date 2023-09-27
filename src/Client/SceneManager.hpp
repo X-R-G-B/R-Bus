@@ -24,7 +24,6 @@ enum SystemManagers {
     MANAGER_MAX
 };
 
-
 class SceneManager {
     public:
         static SceneManager &getInstance();

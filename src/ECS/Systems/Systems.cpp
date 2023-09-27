@@ -52,4 +52,10 @@ namespace Systems {
             playerIt++;
         }
     }
+
+    const std::vector<std::function<void(std::size_t)>> getECSSystems() {
+        return {
+            windowCollision
+        };
+    }
 } // namespace Systems
