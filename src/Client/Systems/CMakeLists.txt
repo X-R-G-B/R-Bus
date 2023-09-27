@@ -11,3 +11,6 @@ target_sources(
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/ClientSystems.cpp
 )
+
+add_subdirectory(Graphic)
+add_subdirectory(Events)

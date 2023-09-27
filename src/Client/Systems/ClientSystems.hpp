@@ -2,28 +2,17 @@
 ** EPITECH PROJECT, 2023
 ** R-Bus
 ** File description:
-** Systems
+** ClientSystems
 */
 
 #pragma once
 
-#include <cstddef>
-#include <functional>
-#include <vector>
+#include <array>
+#include "EventsSystems.hpp"
+#include "GraphicSystems.hpp"
+#include "Systems.hpp"
 
 namespace Systems {
-    namespace GraphicSystems {
-        void rectRenderer(std::size_t /*unused*/);
-        void spriteRenderer(std::size_t /*unused*/);
-        void textRenderer(std::size_t /*unused*/);
-        void soundEffectPlayer(std::size_t /*unused*/);
-        void musicPlayer(std::size_t /*unused*/);
-        extern const std::vector<std::function<void(std::size_t)>>
-            graphicSystems;
-    } // namespace GraphicSystems
-
-    namespace EventsSystems {
-        void playerMovement(std::size_t /*unused*/);
-        extern const std::vector<std::function<void(std::size_t)>> eventSystems;
-    } // namespace EventsSystems
+    std::array<std::vector<std::function<void(std::size_t)>>, 3>
+    getSystemsGroups();
 } // namespace Systems

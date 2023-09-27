@@ -31,6 +31,22 @@ void Registry::removeEntity(std::size_t id)
     }
 }
 
+void Registry::clear()
+{
+    _data.clear();
+    _addComponentPlaceFunctions.clear();
+    _removeComponentFunctions.clear();
+    _entitiesNb = 0;
+}
+
+std::size_t Registry::getEntitiesNb()
+{
+    return (_entitiesNb);
+}
+
 Registry::Registry() : _entitiesNb(0)
 {
+    for (std::size_t i = 0; i < MAX; i++) {
+        addCustomSparseArray<std::size_t>();
+    }
 }

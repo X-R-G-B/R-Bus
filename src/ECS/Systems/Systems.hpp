@@ -13,5 +13,5 @@
 
 namespace Systems {
     void windowCollision(std::size_t);
-    extern const std::vector<std::function<void(std::size_t)>> ecsSystems;
+    std::vector<std::function<void(std::size_t)>> getECSSystems();
 } // namespace Systems
