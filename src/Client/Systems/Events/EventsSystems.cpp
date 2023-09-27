@@ -7,8 +7,8 @@
 
 #include "EventsSystems.hpp"
 #include "CustomTypes.hpp"
-#include "Registry.hpp"
 #include "Raylib.hpp"
+#include "Registry.hpp"
 
 namespace Systems {
 

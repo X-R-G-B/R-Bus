@@ -26,7 +26,8 @@ namespace Raylib {
 
     // Sounds
     Sound::Sound(const std::string& fileName)
-        : sound(LoadSound(fileName.c_str())), _path(fileName)
+        : sound(LoadSound(fileName.c_str())),
+          _path(fileName)
     {
     }
 
@@ -93,7 +94,8 @@ namespace Raylib {
     // Music
 
     Music::Music(const std::string& fileName)
-        : music(LoadMusicStream(fileName.c_str())), _path(fileName)
+        : music(LoadMusicStream(fileName.c_str())),
+          _path(fileName)
     {
     }
 

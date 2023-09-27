@@ -7,9 +7,9 @@
 
 #include "SceneManager.hpp"
 #include "ClientSystems.hpp"
+#include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
-#include "Raylib.hpp"
 
 // to suppr
 #include "CustomTypes.hpp"
@@ -28,7 +28,8 @@ SceneManager SceneManager::_instance = SceneManager();
 static void initRaylib()
 {
     Raylib::initWindow(screenWidth, screenHeight, "R-Bus");
-    Raylib::setTargetFPS(Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
+    Raylib::setTargetFPS(
+        Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
     Raylib::initAudioDevice();
     Registry::getInstance().addEntity();
     Registry::getInstance().getComponents<Types::Position>().back() = {

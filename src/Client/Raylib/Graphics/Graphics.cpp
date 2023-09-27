@@ -435,7 +435,10 @@ namespace Raylib {
 
     // Texture functions
 
-    Sprite::Sprite(std::string fileName, float width, float height): _texture(LoadTexture(fileName.c_str())), _width(width), _height(height)
+    Sprite::Sprite(std::string fileName, float width, float height)
+        : _texture(LoadTexture(fileName.c_str())),
+          _width(width),
+          _height(height)
     {
         if (!IsTextureReady(_texture)) {
             static const ::Color badTexture   = {255, 16, 240, 255};
@@ -446,7 +449,9 @@ namespace Raylib {
     }
 
     Sprite::Sprite(Image image, float width, float height)
-        : _texture({0, 0, 0, 0}), _width(width), _height(height)
+        : _texture({0, 0, 0, 0}),
+          _width(width),
+          _height(height)
     {
         loadTextureFromImage(image);
     }
@@ -617,7 +622,11 @@ namespace Raylib {
     }
 
     Text::Text(std::string text, Vector2 position, float fontSize, Color color)
-        : _text(text), _position(position), _fontSize(fontSize), _color(color), _pixelPosition(position)
+        : _text(text),
+          _position(position),
+          _fontSize(fontSize),
+          _color(color),
+          _pixelPosition(position)
     {
     }
 

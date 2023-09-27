@@ -7,8 +7,8 @@
 
 #include "GraphicSystems.hpp"
 #include "CustomTypes.hpp"
-#include "Registry.hpp"
 #include "Raylib.hpp"
+#include "Registry.hpp"
 
 namespace Systems {
 
@@ -180,7 +180,6 @@ namespace Systems {
         float y =
             (text.y() * static_cast<float>(GetScreenHeight())) / denominator;
 
-        
         text.setPixelPosition({x, y});
         text.draw();
         std::cout << "text drawn at " << x << " " << y << std::endl;

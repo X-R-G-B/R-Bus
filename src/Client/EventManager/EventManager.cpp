@@ -7,8 +7,8 @@
 
 #include "EventManager.hpp"
 #include <algorithm>
-#include "Raylib.hpp"
 #include "Events.hpp"
+#include "Raylib.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 EventManager EventManager::instance = EventManager();
