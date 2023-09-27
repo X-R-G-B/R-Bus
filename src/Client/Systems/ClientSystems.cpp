@@ -253,4 +253,7 @@ namespace Systems {
             musicPlayer,
             soundEffectPlayer};
 
+    const std::vector<std::function<void(std::size_t)>>
+        EventsSystems::eventSystems {playerMovement};
+
 } // namespace Systems
