@@ -24,7 +24,7 @@
 
 - [CONTRIBUTING](CONTRIBUTING.md)
 
-- [CICD](developer-guide/cicd.md)
+- [CICD](developer-guide/CICD.md)
 
 - [Common logic](developer-guide/common-logic.md)
 
