@@ -20,19 +20,6 @@ bool SceneManager::_init             = false;
 SceneManager SceneManager::_instance = SceneManager();
 // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
-SceneManager &SceneManager::getInstance()
-{
-    if (!_init) {
-        _init = true;
-        _instance.init();
-    }
-    return _instance;
-}
-
-SceneManager::SceneManager() : _currentScene(Scene::MAIN_GAME), _stop(false)
-{
-}
-
 static void initRaylib()
 {
     InitWindow(
@@ -44,13 +31,7 @@ static void initRaylib()
     InitAudioDevice();
 }
 
-static void destroyRaylib()
-{
-    CloseAudioDevice();
-    CloseWindow();
-}
-
-void SceneManager::init()
+static void initSystemManagers()
 {
     auto &director = Systems::SystemManagersDirector::getInstance();
 
@@ -58,16 +39,47 @@ void SceneManager::init()
         director.addSystemManager(systems);
     }
     initRaylib();
-    while (!_stop && !WindowShouldClose()) {
-        BeginDrawing();
-        ClearBackground(RAYWHITE);
-        auto scene = _scenes.at(_currentScene);
-        for (auto &systemManager : scene) {
-            director.getSystemManager(systemManager).updateSystems();
-        }
-        EndDrawing();
+}
+
+SceneManager &SceneManager::getInstance()
+{
+    if (!_init) {
+        _init = true;
+        initSystemManagers();
     }
-    destroyRaylib();
+    return _instance;
+}
+
+SceneManager::SceneManager() : _currentScene(Scene::MAIN_GAME), _stop(false)
+{
+}
+
+static void destroyRaylib()
+{
+    CloseAudioDevice();
+    CloseWindow();
+}
+
+int SceneManager::run()
+{
+    auto &director = Systems::SystemManagersDirector::getInstance();
+
+    try {
+        while (!_stop && !WindowShouldClose()) {
+            BeginDrawing();
+            ClearBackground(RAYWHITE);
+            auto scene = _scenes.at(_currentScene);
+            for (auto &systemManager : scene) {
+                director.getSystemManager(systemManager).updateSystems();
+            }
+            EndDrawing();
+        }
+        destroyRaylib();
+    } catch (std::exception &e) {
+        std::cout << e.what() << std::endl;
+        return ReturnValue::ERROR;
+    }
+    return ReturnValue::OK;
 }
 
 void SceneManager::changeScene(Scene scene)

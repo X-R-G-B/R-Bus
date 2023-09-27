@@ -9,5 +9,9 @@
 
 int main()
 {
-    SceneManager::getInstance();
+    SceneManager &sceneManager = SceneManager::getInstance();
+
+    int res = sceneManager.run();
+
+    return res;
 }

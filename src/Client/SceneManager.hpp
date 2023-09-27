@@ -13,6 +13,8 @@
 #include <optional>
 #include <vector>
 
+enum ReturnValue { OK = 0, ERROR = 84 };
+
 enum Scene { MAIN_GAME, MENU, SCENE_MAX };
 
 enum SystemManagers { GAME, EVENTS, DISPLAY, MANAGER_MAX };
@@ -20,12 +22,12 @@ enum SystemManagers { GAME, EVENTS, DISPLAY, MANAGER_MAX };
 class SceneManager {
     public:
         static SceneManager &getInstance();
+        int run();
         void changeScene(Scene scene);
         void stop();
 
     private:
         SceneManager();
-        void init();
 
         Scene _currentScene;
         bool _stop;
