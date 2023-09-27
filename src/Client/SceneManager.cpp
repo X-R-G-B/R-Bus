@@ -35,10 +35,7 @@ SceneManager::SceneManager() : _currentScene(Scene::MAIN_GAME), _stop(false)
 
 static void initRaylib()
 {
-    InitWindow(
-        screenWidth,
-        screenHeight,
-        "R-Bus");
+    InitWindow(screenWidth, screenHeight, "R-Bus");
     SetTargetFPS(fps);
     InitAudioDevice();
 }
