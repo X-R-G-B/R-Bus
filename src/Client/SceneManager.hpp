@@ -13,8 +13,6 @@
 #include <optional>
 #include <vector>
 
-#include <iostream>
-
 enum Scene { MAIN_GAME, MENU, SCENE_MAX };
 
 enum SystemManagers { GAME, EVENTS, DISPLAY, MANAGER_MAX };
