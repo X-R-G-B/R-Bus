@@ -8,3 +8,4 @@ target_include_directories(
 
 add_subdirectory(Systems)
 add_subdirectory(Raylib)
+add_subdirectory(EventManager)
