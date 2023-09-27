@@ -41,4 +41,7 @@ void Registry::clear()
 
 Registry::Registry() : _entitiesNb(0)
 {
+    for (std::size_t i = 0; i < MAX; i++) {
+        addCustomSparseArray<int>();
+    }
 }
