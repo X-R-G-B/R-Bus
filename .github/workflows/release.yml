@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [main, feature/RB-52]
+    branches: [main, dev]
 
 env:
   BRANCH: "main"
