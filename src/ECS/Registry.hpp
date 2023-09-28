@@ -16,7 +16,6 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
-#include "raylib.h"
 #include "SparseArray.hpp"
 
 enum CustomIndex { PLAYER, BULLET, ENNEMY, MAX };
@@ -54,11 +53,11 @@ class Registry {
 
                 return castedComponent;
             } catch (const std::bad_any_cast &e) {
-                throw std::runtime_error("Bad any cast");
+                throw std::runtime_error("Bad cast: " + std::string(e.what()));
             }
         }
 
-        std::size_t getEntitiesNb();
+        std::size_t getEntitiesNb() const;
 
         Registry &operator=(const Registry &) = delete;
         Registry(const Registry &)            = delete;
