@@ -39,7 +39,7 @@ void Registry::clear()
     _entitiesNb = 0;
 }
 
-std::size_t Registry::getEntitiesNb()
+std::size_t Registry::getEntitiesNb() const
 {
     return (_entitiesNb);
 }

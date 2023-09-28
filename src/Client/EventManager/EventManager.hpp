@@ -8,12 +8,13 @@
 #pragma once
 
 #include <vector>
+#include "Raylib.hpp"
 
 class EventManager {
     public:
         static EventManager &getInstance();
         void updateEvents();
-        bool checkEvent(int event);
+        bool checkEvent(Raylib::KeyboardKey event);
 
     private:
         EventManager() = default;
@@ -21,5 +22,5 @@ class EventManager {
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
         static EventManager instance;
         // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
-        std::vector<int> _activeEvents;
+        std::vector<Raylib::KeyboardKey> _activeEvents;
 };

@@ -7,9 +7,11 @@
 
 #include "EventsSystems.hpp"
 #include "CustomTypes.hpp"
+#include "Raylib.hpp"
 #include "Registry.hpp"
 
 namespace Systems {
+
     void EventsSystems::playerMovement(std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
@@ -21,21 +23,22 @@ namespace Systems {
 
         for (std::optional<std::size_t> id : playerId) {
             if (id.has_value() && arrPosition[id.value()].has_value()) {
-                if (IsKeyDown(KEY_RIGHT)) {
+                if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
                     arrPosition[id.value()].value().x += 1;
                 }
-                if (IsKeyDown(KEY_LEFT)) {
+                if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
                     arrPosition[id.value()].value().x -= 1;
                 }
-                if (IsKeyDown(KEY_UP)) {
+                if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
                     arrPosition[id.value()].value().y -= 1;
                 }
-                if (IsKeyDown(KEY_DOWN)) {
+                if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
                     arrPosition[id.value()].value().y += 1;
                 }
             }
         }
     }
+
     std::vector<std::function<void(std::size_t)>>
     EventsSystems::getEventSystems()
     {
