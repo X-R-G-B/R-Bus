@@ -28,8 +28,8 @@ constexpr float soundVolume              = 0.1F;
 constexpr float fontScale                = 2.0F;
 const float playerWidth                  = 50.0F;
 const float playerHeight                 = 50.0F;
-const Raylib::Color darkBlue                   = {0, 0, 139, 255};
-const Raylib::Color darkGray                   = {169, 169, 169, 255};
+const Raylib::Color darkBlue             = {0, 0, 139, 255};
+const Raylib::Color darkGray             = {169, 169, 169, 255};
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 bool SceneManager::_init             = false;

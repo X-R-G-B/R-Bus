@@ -60,7 +60,7 @@ namespace Systems {
     {
         float scale               = 1.0F;
         float rotation            = 0;
-        const Raylib::Color tint        = {255, 255, 255, 255};
+        const Raylib::Color tint  = {255, 255, 255, 255};
         Raylib::Vector2 spritePos = {0, 0};
         const float denominator   = 100.0;
 
@@ -82,10 +82,10 @@ namespace Systems {
         Raylib::Sprite &sprite,
         Types::Rect &rect)
     {
-        Raylib::Vector2 origin  = {0, 0};
-        float rotation          = 0;
-        const Raylib::Color tint      = {255, 255, 255, 255};
-        const float denominator = 100.0;
+        Raylib::Vector2 origin   = {0, 0};
+        float rotation           = 0;
+        const Raylib::Color tint = {255, 255, 255, 255};
+        const float denominator  = 100.0;
 
         float x = (position.x * static_cast<float>(Raylib::getScreenWidth()))
             / denominator;
