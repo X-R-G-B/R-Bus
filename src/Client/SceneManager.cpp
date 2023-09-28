@@ -28,6 +28,8 @@ constexpr float soundVolume              = 0.1F;
 constexpr float fontScale                = 2.0F;
 const float playerWidth                  = 50.0F;
 const float playerHeight                 = 50.0F;
+const Raylib::Color darkBlue                   = {0, 0, 139, 255};
+const Raylib::Color darkGray                   = {169, 169, 169, 255};
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 bool SceneManager::_init             = false;
@@ -91,7 +93,7 @@ static void addTestComponents()
         "Press space to play music, enter to play sound",
         textPos,
         fontScale,
-        Raylib::DarkBlue};
+        darkBlue};
 }
 
 static void initRaylib()
@@ -141,7 +143,7 @@ int SceneManager::run()
     try {
         while (!_stop && !Raylib::windowShouldClose()) {
             Raylib::beginDrawing();
-            Raylib::clearBackground(Raylib::DarkGray);
+            Raylib::clearBackground(darkGray);
             auto scene = _scenes.at(_currentScene);
             // to remove
             playSoundWithKey();
