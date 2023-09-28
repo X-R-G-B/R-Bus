@@ -26,4 +26,12 @@ namespace Types {
             float y;
     };
 
+    struct Health {
+            int hp;
+    };
+
+    struct Dammage {
+            int dammage;
+    };
+
 } // namespace Types

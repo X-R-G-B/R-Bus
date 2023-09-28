@@ -48,8 +48,91 @@ namespace Systems {
         }
     }
 
+    static void giveDamages(std::size_t firstEntity, std::size_t secondEntity)
+    {
+        std::optional<Types::Health> &firstEntityHealth =
+            Registry::getInstance().getComponents<Types::Health>()[firstEntity];
+        std::optional<Types::Dammage> &firstEntityDammage =
+            Registry::getInstance()
+                .getComponents<Types::Dammage>()[firstEntity];
+        std::optional<Types::Health> &secondEntityHealth =
+            Registry::getInstance()
+                .getComponents<Types::Health>()[secondEntity];
+        std::optional<Types::Dammage> &secondEntityDammage =
+            Registry::getInstance()
+                .getComponents<Types::Dammage>()[secondEntity];
+
+        if (firstEntityDammage.has_value() && secondEntityHealth.has_value()) {
+            secondEntityHealth->hp -= firstEntityDammage->dammage;
+        }
+        if (secondEntityDammage.has_value() && firstEntityHealth.has_value()) {
+            firstEntityHealth->hp -= secondEntityDammage->dammage;
+        }
+    }
+
+    static void checkCollisionEntity(
+        std::vector<std::optional<Types::CollisionRect>>::iterator collisionIt,
+        std::vector<std::optional<Types::Position>>::iterator positionIt,
+        Registry::components<Types::Position> arrPosition,
+        Registry::components<Types::CollisionRect> arrCollision
+
+    )
+    {
+        auto tmpCollisionIt = collisionIt;
+        auto tmpPositionIt  = positionIt;
+
+        tmpPositionIt++;
+        tmpCollisionIt++;
+        while (tmpCollisionIt != arrCollision.end()
+               && tmpPositionIt != arrPosition.end()) {
+            if (tmpCollisionIt->has_value() && tmpPositionIt->has_value()) {
+                if (positionIt->value().x < tmpPositionIt->value().x
+                            + tmpCollisionIt->value().width
+                    && positionIt->value().x + collisionIt->value().width
+                        > tmpPositionIt->value().x
+                    && positionIt->value().y < tmpPositionIt->value().y
+                            + tmpCollisionIt->value().height
+                    && positionIt->value().y + collisionIt->value().height
+                        > tmpPositionIt->value().y) {
+                    giveDamages(
+                        std::distance(arrPosition.begin(), positionIt),
+                        std::distance(arrPosition.begin(), tmpPositionIt));
+                    tmpCollisionIt++;
+                    tmpPositionIt++;
+                } else {
+                    tmpCollisionIt++;
+                    tmpPositionIt++;
+                }
+            }
+        }
+    }
+
+    void entitiesCollision(std::size_t /*unused*/)
+    {
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::CollisionRect> arrCollisionRect =
+            Registry::getInstance().getComponents<Types::CollisionRect>();
+
+        auto collisionIt = arrCollisionRect.begin();
+        auto positionIt  = arrPosition.begin();
+
+        while (collisionIt != arrCollisionRect.end()
+               && positionIt != arrPosition.end()) {
+            if (collisionIt->has_value() && positionIt->has_value()) {
+                checkCollisionEntity(
+                    collisionIt,
+                    positionIt,
+                    arrPosition,
+                    arrCollisionRect);
+                collisionIt++;
+                positionIt++;
+            }
+        }
+    }
+
     std::vector<std::function<void(std::size_t)>> getECSSystems()
     {
-        return {windowCollision};
+        return {windowCollision, entitiesCollision};
     }
 } // namespace Systems
