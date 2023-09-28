@@ -9,17 +9,16 @@
 
 #include <any>
 #include <functional>
-#include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
 #include "raylib.h"
+#include "SceneManager.hpp"
 #include "SparseArray.hpp"
-
-enum CustomIndex { PLAYER, BULLET, ENNEMY, MAX };
 
 class Registry {
     public:
@@ -39,13 +38,14 @@ class Registry {
 
         void removeEntity(std::size_t /*id*/);
 
-        void clear();
+        void clear(std::vector<CustomIndex>);
 
         template <class Component>
         components<Component> getCustomSparseArray(std::size_t id)
         {
-            if (id > _customSparseArrays.size()) {
-                throw std::runtime_error("ID not in ");
+            if (_customSparseArrays.find(id) == _customSparseArrays.end()) {
+                throw std::runtime_error(
+                    "getCustomSparseArray ID not in :" + std::to_string(id));
             }
             try {
                 components<Component> castedComponent =
@@ -53,12 +53,26 @@ class Registry {
                         _customSparseArrays[id]);
 
                 return castedComponent;
-            } catch (const std::bad_any_cast &e) {
-                throw std::runtime_error("Bad any cast");
+            } catch (const std::bad_any_cast e) {
+                throw std::runtime_error(
+                    "getCustomSparseArray: Bad any cast. ID: "
+                    + std::to_string(id));
             }
         }
 
-        std::size_t getEntitiesNb();
+        template <class Component>
+        std::size_t addCustomSparseArray()
+        {
+            _maxCustomId++;
+            std::size_t id = _maxCustomId;
+
+            _customSparseArrays[id] = SparseArray<Component>();
+            return (id);
+        }
+
+        std::size_t getEntitiesNb() const;
+
+        void initCustomSparseArrays(std::vector<CustomIndex> indexes);
 
         Registry &operator=(const Registry &) = delete;
         Registry(const Registry &)            = delete;
@@ -67,15 +81,6 @@ class Registry {
 
     private:
         Registry();
-
-        template <class Component>
-        std::size_t addCustomSparseArray()
-        {
-            std::size_t id = _customSparseArrays.size();
-
-            _customSparseArrays.push_back(SparseArray<Component>());
-            return (id);
-        }
 
         template <typename Component>
         void checkAddSparseArray()
@@ -112,6 +117,8 @@ class Registry {
                 _data[typeid(Component)]);
         }
 
+        void addCustomSparseIndex(std::size_t id);
+
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
         static Registry _instance;
         // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
@@ -121,6 +128,9 @@ class Registry {
         std::vector<std::function<void(Registry &, std::size_t)>>
             _removeComponentFunctions;
         std::unordered_map<std::type_index, std::any> _data;
-        std::vector<std::any> _customSparseArrays;
+
+        std::unordered_map<std::size_t, std::any> _customSparseArrays;
+        std::size_t _maxCustomId;
+
         std::size_t _entitiesNb;
 };

@@ -10,8 +10,10 @@
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
 
+#include "SystemManagersDirector.hpp"
+
 namespace Systems {
-    void windowCollision(std::size_t /*unused*/)
+    void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
@@ -48,8 +50,32 @@ namespace Systems {
         }
     }
 
-    std::vector<std::function<void(std::size_t)>> getECSSystems()
+    constexpr int playerData = 10;
+
+    void initPlayer(std::size_t managerId, std::size_t systemId)
     {
-        return {windowCollision};
+        Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Types::Position>().back() = {
+            playerData,
+            playerData};
+        Registry::getInstance().getComponents<Types::RectangleShape>().back() =
+            {playerData, playerData};
+        Registry::getInstance().getComponents<Types::CollisionRect>().back() = {
+            playerData,
+            playerData};
+        SparseArray<std::size_t> &playerId =
+            Registry::getInstance().getCustomSparseArray<std::size_t>(
+                CustomIndex::PLAYER);
+        playerId.add();
+        playerId.back() = std::optional<std::size_t>(
+            Registry::getInstance().getEntitiesNb() - 1);
+        SystemManagersDirector::getInstance()
+            .getSystemManager(managerId)
+            .removeSystem(systemId);
+    }
+
+    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
+    {
+        return {windowCollision, initPlayer};
     }
 } // namespace Systems

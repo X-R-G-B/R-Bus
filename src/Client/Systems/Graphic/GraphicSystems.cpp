@@ -11,7 +11,8 @@
 #include "Registry.hpp"
 
 namespace Systems {
-    void GraphicSystems::rectRenderer(std::size_t /*unused*/)
+    void
+    GraphicSystems::rectRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
@@ -102,7 +103,9 @@ namespace Systems {
             tint);
     }
 
-    void GraphicSystems::spriteRenderer(std::size_t /*unused*/)
+    void GraphicSystems::spriteRenderer(
+        std::size_t /*unused*/,
+        std::size_t /*unused*/)
     {
         Registry::components<Types::Sprite> arrSprite =
             Registry::getInstance().getComponents<Types::Sprite>();
@@ -131,7 +134,9 @@ namespace Systems {
         }
     }
 
-    void GraphicSystems::soundEffectPlayer(std::size_t /*unused*/)
+    void GraphicSystems::soundEffectPlayer(
+        std::size_t /*unused*/,
+        std::size_t /*unused*/)
     {
         Registry::components<Types::SoundEffect> arrSoundEffect =
             Registry::getInstance().getComponents<Types::SoundEffect>();
@@ -147,7 +152,8 @@ namespace Systems {
         }
     }
 
-    void GraphicSystems::musicPlayer(std::size_t /*unused*/)
+    void
+    GraphicSystems::musicPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::MusicStream> arrMusics =
             Registry::getInstance().getComponents<Types::MusicStream>();
@@ -188,7 +194,8 @@ namespace Systems {
             text.color);
     }
 
-    void GraphicSystems::textRenderer(std::size_t /*unused*/)
+    void
+    GraphicSystems::textRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Text> arrText =
             Registry::getInstance().getComponents<Types::Text>();
@@ -206,7 +213,7 @@ namespace Systems {
             textIt++;
         }
     }
-    std::vector<std::function<void(std::size_t)>>
+    std::vector<std::function<void(std::size_t, std::size_t)>>
     GraphicSystems::getGraphicsSystems()
     {
         return {

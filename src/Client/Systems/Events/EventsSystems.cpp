@@ -8,9 +8,12 @@
 #include "EventsSystems.hpp"
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
+#include "SceneManager.hpp"
 
 namespace Systems {
-    void EventsSystems::playerMovement(std::size_t /*unused*/)
+    void EventsSystems::playerMovement(
+        std::size_t /*unused*/,
+        std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
@@ -36,9 +39,23 @@ namespace Systems {
             }
         }
     }
-    std::vector<std::function<void(std::size_t)>>
+
+    void
+    EventsSystems::changeScene(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        if (IsKeyDown(KEY_J)) {
+            SceneManager &sceneManager = SceneManager::getInstance();
+            if (sceneManager.getCurrentScene() == MAIN_GAME) {
+                sceneManager.changeScene(MENU);
+            } else {
+                sceneManager.changeScene(MAIN_GAME);
+            }
+        }
+    }
+
+    std::vector<std::function<void(std::size_t, std::size_t)>>
     EventsSystems::getEventSystems()
     {
-        return {playerMovement};
+        return {playerMovement, changeScene};
     }
 } // namespace Systems

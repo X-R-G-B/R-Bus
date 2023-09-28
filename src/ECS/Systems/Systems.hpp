@@ -12,6 +12,7 @@
 #include <vector>
 
 namespace Systems {
-    void windowCollision(std::size_t);
-    std::vector<std::function<void(std::size_t)>> getECSSystems();
+    void windowCollision(std::size_t, std::size_t);
+    void initPlayer(std::size_t, std::size_t);
+    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems();
 } // namespace Systems
