@@ -21,6 +21,14 @@
 #define MAX_CLIENTS 4
 
 namespace Nitwork {
+    struct clientData_s {
+        boost::asio::ip::udp::endpoint &endpoint;
+        std::any data;
+    };
+    struct packet_s {
+        n_actionType_t action;
+        std::any body;
+    };
     class Nitwork {
         public:
             Nitwork()
@@ -31,7 +39,7 @@ namespace Nitwork {
             // start the server
             bool Start(int port);
 
-            bool Stop();
+            void Stop();
 
             void ContinuousReception();
 
@@ -53,7 +61,7 @@ namespace Nitwork {
             }
 
             template<typename B>
-            void handleBodyDatas(const struct header_s &header, const std::function<void(std::any)> &handler, B body, const boost::system::error_code& error, const std::size_t bytes_received) {
+            void handleBodyDatas(const struct header_s &header, const std::function<void(const std::any &, boost::asio::ip::udp::endpoint &)> &handler, B body, const boost::system::error_code& error, const std::size_t bytes_received) {
                 if (error) {
                     std::cerr << "Error: " << error.message() << std::endl;
                     return;
@@ -62,7 +70,8 @@ namespace Nitwork {
                     std::cerr << "Error: body not received" << std::endl;
                     return;
                 }
-                _actions.emplace_back(std::make_pair(std::any(body), handler));
+                clientData_s clientData = { _endpoint, std::any(body) };
+                _actions.emplace_back(clientData, handler);
             }
 
             template<typename B>
@@ -92,10 +101,11 @@ namespace Nitwork {
             boost::asio::io_context _context; // second context which will handle the outputs (handle actions and send it, each n ticks
             std::thread _inputThread; // A thread for the first context
             std::thread _clockThread; // A thread for the clock which is in the second context
-            std::thread _outputThread; // A thread for each player which is in the second context
+            std::thread _outputThread; // A thread which will send the actions to the clients from the output queue
 
             // Body handler var
-            std::list<std::pair<std::any, std::function<void(const std::any &)>>> _actions; // A list of actions which will be handled by the second context
+            std::list<std::pair<struct clientData_s, const std::function<void(const std::any &, boost::asio::ip::udp::endpoint &)> &>> _actions; // A list of actions which will be handled by the second context
+            std::list<std::pair<boost::asio::ip::udp::endpoint &, struct packet_s &>> _outputQueue; // A queue of actions which will be sent to the clients
 
             std::mutex _queueMutex; // A mutex to lock the queue which will be used by both contexts
             std::condition_variable _queueCondVar; // A condition variable to wait for the queue to be used by the second context
@@ -104,7 +114,7 @@ namespace Nitwork {
             boost::asio::ip::udp::socket _socket; // The socket which will be used to send and receive the actions
             boost::asio::ip::udp::endpoint _endpoint; // The endpoint which will be used to send and receive the actions
 
-            const std::map<
+            std::map<
                 enum n_actionType_t,
                 std::pair<
                     std::function<void(const struct header_s &, const std::function<void(const std::any &, boost::asio::ip::udp::endpoint &)> &)>,

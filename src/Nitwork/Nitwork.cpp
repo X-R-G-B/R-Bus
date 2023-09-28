@@ -31,7 +31,7 @@ namespace Nitwork {
         }
     }
 
-    bool Nitwork::Stop() {
+    void Nitwork::Stop() {
         _context.stop();
         _inputThread.join();
         _clockThread.join();
@@ -42,6 +42,9 @@ namespace Nitwork {
         _inputThread = std::thread([this]() {
             while (true) {
                 readDataFromEndpoint();
+                for (auto &action : _actions) {
+                    action.second(action.first.data, action.first.endpoint);
+                }
             }
         });
     }
@@ -60,9 +63,7 @@ namespace Nitwork {
             std::unique_lock<std::mutex> lock(_queueMutex);
             while (true) {
                 _queueCondVar.wait(lock);
-                for (auto &action : _actions) {
-                    action.second(action.first);
-                }
+                // send datas to clients from output queue
             }
         });
     }
@@ -99,8 +100,8 @@ namespace Nitwork {
                 &Nitwork::handleBodyActionData,
                 this,
                 action,
-                endpoint,
                 header,
+                endpoint,
                 boost::asio::placeholders::error,
                 boost::asio::placeholders::bytes_transferred
             )
@@ -129,7 +130,7 @@ namespace Nitwork {
         struct header_s header = {0, 0, 0, 0, 0, 0};
         boost::asio::ip::udp::endpoint endpoint;
 
-        _socket.async_receive_from(boost::asio::buffer(&header, HEADER_SIZE), endpoint, boost::bind(&Nitwork::readDataFromEndpointHandler, this, endpoint, header, boost::asio::placeholders::bytes_transferred, boost::asio::placeholders::error));
+        _socket.async_receive_from(boost::asio::buffer(&header, HEADER_SIZE), endpoint, boost::bind(&Nitwork::readDataFromEndpointHandler, this, header, endpoint, boost::asio::placeholders::bytes_transferred, boost::asio::placeholders::error));
     }
 
     void Nitwork::handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
