@@ -26,7 +26,7 @@ class SceneManager {
         static SceneManager &getInstance();
         int run();
         void changeScene(Scene scene);
-        Scene getCurrentScene();
+        Scene getCurrentScene() const;
         void stop();
 
     private:

@@ -91,7 +91,7 @@ void SceneManager::changeScene(Scene scene)
     Systems::SystemManagersDirector::getInstance().resetChanges();
 }
 
-Scene SceneManager::getCurrentScene()
+Scene SceneManager::getCurrentScene() const
 {
     return _currentScene;
 }
