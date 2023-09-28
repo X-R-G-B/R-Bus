@@ -182,7 +182,6 @@ namespace Systems {
 
         text.setPixelPosition({x, y});
         text.draw();
-        std::cout << "text drawn at " << x << " " << y << std::endl;
     }
 
     void GraphicSystems::textRenderer(std::size_t /*unused*/)

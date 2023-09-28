@@ -53,11 +53,11 @@ class Registry {
 
                 return castedComponent;
             } catch (const std::bad_any_cast &e) {
-                throw std::runtime_error("Bad any cast");
+                throw std::runtime_error("Bad cast: " + std::string(e.what()));
             }
         }
 
-        std::size_t getEntitiesNb();
+        std::size_t getEntitiesNb() const;
 
         Registry &operator=(const Registry &) = delete;
         Registry(const Registry &)            = delete;

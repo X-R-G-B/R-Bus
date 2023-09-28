@@ -50,7 +50,7 @@ namespace Raylib {
         return IsWindowFocused();
     }
 
-    void setConfigFlags(size_t flags)
+    void setConfigFlags(ConfigFlags flags)
     {
         SetConfigFlags(static_cast<unsigned int>(flags));
     }
@@ -60,17 +60,17 @@ namespace Raylib {
         return IsWindowResized();
     }
 
-    bool isWindowState(size_t flag)
+    bool isWindowState(ConfigFlags flag)
     {
         return IsWindowState(static_cast<unsigned int>(flag));
     }
 
-    void setWindowState(size_t flags)
+    void setWindowState(ConfigFlags flags)
     {
         SetWindowState(static_cast<unsigned int>(flags));
     }
 
-    void clearWindowState(size_t flags)
+    void clearWindowState(ConfigFlags flags)
     {
         ClearWindowState(static_cast<unsigned int>(flags));
     }
@@ -622,7 +622,7 @@ namespace Raylib {
     }
 
     Text::Text(std::string text, Vector2 position, float fontSize, Color color)
-        : _text(text),
+        : _text(std::move(text)),
           _position(position),
           _fontSize(fontSize),
           _color(color),

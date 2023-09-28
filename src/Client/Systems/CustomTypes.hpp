@@ -33,8 +33,4 @@ namespace Types {
             float height;
     };
 
-    struct Player {
-            bool isMine;
-    };
-
 } // namespace Types

@@ -25,10 +25,11 @@ namespace Raylib {
     }
 
     // Sounds
-    Sound::Sound(const std::string& fileName)
+    Sound::Sound(const std::string& fileName, float volume)
         : sound(LoadSound(fileName.c_str())),
           _path(fileName)
     {
+        SetSoundVolume(sound, volume);
     }
 
     void Sound::unload()
@@ -93,10 +94,11 @@ namespace Raylib {
 
     // Music
 
-    Music::Music(const std::string& fileName)
+    Music::Music(const std::string& fileName, float volume)
         : music(LoadMusicStream(fileName.c_str())),
           _path(fileName)
     {
+        SetMusicVolume(music, volume);
     }
 
     void Music::unload()
