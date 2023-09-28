@@ -25,7 +25,7 @@ const Types::CollisionRect collisionRect = {46, 46};
 const Raylib::Vector2 textPos            = {20, 50};
 constexpr float musicVolume              = 0.02F;
 constexpr float soundVolume              = 0.1F;
-constexpr float fontScale                = 20.0F;
+constexpr float fontScale                = 2.0F;
 const float playerWidth                  = 50.0F;
 const float playerHeight                 = 50.0F;
 

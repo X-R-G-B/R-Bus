@@ -201,10 +201,12 @@ namespace Raylib {
             void setFontSize(float fontSize);
             Vector2 getPosition() const;
             void setPixelPosition(Vector2 position);
+            void setCurrentFontSize(float fontSize);
 
         private:
             std::string _text;
             float _fontSize;
+            float _currentFontSize;
             Color _color;
             Vector2 _position;
             Vector2 _pixelPosition;

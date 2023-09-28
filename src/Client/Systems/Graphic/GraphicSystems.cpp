@@ -179,8 +179,11 @@ namespace Systems {
             (text.x() * static_cast<float>(GetScreenWidth())) / denominator;
         float y =
             (text.y() * static_cast<float>(GetScreenHeight())) / denominator;
+        float fsz = (text.getFontSize() * static_cast<float>(GetScreenWidth()))
+            / denominator;
 
         text.setPixelPosition({x, y});
+        text.setCurrentFontSize(fsz);
         text.draw();
     }
 

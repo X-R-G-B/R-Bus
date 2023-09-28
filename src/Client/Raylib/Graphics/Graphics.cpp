@@ -633,7 +633,8 @@ namespace Raylib {
           _position(position),
           _fontSize(fontSize),
           _color(color),
-          _pixelPosition(position)
+          _pixelPosition(position),
+          _currentFontSize(fontSize)
     {
     }
 
@@ -643,7 +644,7 @@ namespace Raylib {
             _text.c_str(),
             static_cast<int>(_pixelPosition.X()),
             static_cast<int>(_pixelPosition.Y()),
-            static_cast<int>(_fontSize),
+            static_cast<int>(_currentFontSize),
             {_color.R(), _color.G(), _color.B(), _color.A()});
     }
 
@@ -653,7 +654,7 @@ namespace Raylib {
             GetFontDefault(),
             _text.c_str(),
             {_pixelPosition.X(), _pixelPosition.Y()},
-            _fontSize,
+            _currentFontSize,
             spacing,
             {_color.R(), _color.G(), _color.B(), _color.A()});
     }
@@ -666,7 +667,7 @@ namespace Raylib {
             {_pixelPosition.X(), _pixelPosition.Y()},
             {origin.X(), origin.Y()},
             rotation,
-            _fontSize,
+            _currentFontSize,
             spacing,
             {_color.R(), _color.G(), _color.B(), _color.A()});
     }
@@ -699,6 +700,11 @@ namespace Raylib {
     void Text::setPixelPosition(Vector2 position)
     {
         _pixelPosition = position;
+    }
+
+    void Text::setCurrentFontSize(float fontSize)
+    {
+        _currentFontSize = fontSize;
     }
 
 } // namespace Raylib
