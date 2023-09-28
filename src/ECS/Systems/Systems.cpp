@@ -7,7 +7,7 @@
 
 #include "Systems.hpp"
 #include <cstddef>
-#include "CustomTypes.hpp"
+#include "ECSCustomTypes.hpp"
 #include "Registry.hpp"
 
 namespace Systems {
