@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2023
+** R-Bus
+** File description:
+** Graphics
+*/
+
 #pragma once
 
 #include <string>
