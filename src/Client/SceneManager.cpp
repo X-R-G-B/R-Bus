@@ -14,20 +14,20 @@
 // to suppr
 #include "CustomTypes.hpp"
 
-constexpr int screenWidth   = 800;
-constexpr int screenHeight  = 600;
-constexpr int playerData    = 10;
-const std::string musicPath = "assets/Audio/Musics/Title.mp3";
-const std::string soundPath = "assets/Audio/Sounds/fire.ogg";
+constexpr int screenWidth    = 800;
+constexpr int screenHeight   = 600;
+constexpr int playerData     = 10;
+const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
+const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
 const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
 const Types::Rect spriteRect = {2, 2, 48, 48};
 const Types::CollisionRect collisionRect = {46, 46};
-const Raylib::Vector2 textPos = {20, 50};
-constexpr float musicVolume = 0.02F;
-constexpr float soundVolume = 0.1F;
-constexpr float fontScale = 20.0F;
-const float playerWidth = 50.0F;
-const float playerHeight = 50.0F;
+const Raylib::Vector2 textPos            = {20, 50};
+constexpr float musicVolume              = 0.02F;
+constexpr float soundVolume              = 0.1F;
+constexpr float fontScale                = 20.0F;
+const float playerWidth                  = 50.0F;
+const float playerHeight                 = 50.0F;
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 bool SceneManager::_init             = false;
@@ -70,9 +70,11 @@ static void addTestComponents()
         playerData};
     Registry::getInstance().getComponents<Raylib::Sprite>().back() = {
         playerPath,
-        playerWidth, playerHeight};
+        playerWidth,
+        playerHeight};
     Registry::getInstance().getComponents<Types::Rect>().back() = spriteRect;
-    Registry::getInstance().getComponents<Types::CollisionRect>().back() = collisionRect;
+    Registry::getInstance().getComponents<Types::CollisionRect>().back() =
+        collisionRect;
     SparseArray<std::size_t> &playerId =
         Registry::getInstance().getCustomSparseArray<std::size_t>(
             CustomIndex::PLAYER);
@@ -89,8 +91,7 @@ static void addTestComponents()
         "Press space to play music, enter to play sound",
         textPos,
         fontScale,
-        Raylib::DarkBlue
-    };
+        Raylib::DarkBlue};
 }
 
 static void initRaylib()
@@ -110,7 +111,7 @@ static void initSystemManagers()
         director.addSystemManager(systems);
     }
     initRaylib();
-    //to remove
+    // to remove
     addTestComponents();
 }
 
@@ -142,7 +143,7 @@ int SceneManager::run()
             Raylib::beginDrawing();
             Raylib::clearBackground(Raylib::DarkGray);
             auto scene = _scenes.at(_currentScene);
-            //to remove
+            // to remove
             playSoundWithKey();
             for (auto &systemManager : scene) {
                 director.getSystemManager(systemManager).updateSystems();
