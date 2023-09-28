@@ -366,26 +366,18 @@ namespace Raylib {
     {
         ::Color c = {color.r, color.g, color.b, color.a};
 
-        DrawCircle(
-            centerX,
-            centerY,
-            radius,
-            c);
+        DrawCircle(centerX, centerY, radius, c);
     }
 
     void drawRectangle(int posX, int posY, int width, int height, Color color)
     {
         ::Color c = {color.r, color.g, color.b, color.a};
 
-        DrawRectangle(
-            posX,
-            posY,
-            width,
-            height,
-            c);
+        DrawRectangle(posX, posY, width, height, c);
     }
 
-    Image::Image(const std::string &fileName) : _image(LoadImage(fileName.c_str()))
+    Image::Image(const std::string &fileName)
+        : _image(LoadImage(fileName.c_str()))
     {
         if (!isImageReady()) {
             const ::Color badTexture          = {255, 16, 240, 255};
@@ -395,10 +387,8 @@ namespace Raylib {
     }
 
     Image::Image(int width, int height, Color color)
-        : _image(GenImageColor(
-            width,
-            height,
-            {color.r, color.g, color.b, color.a}))
+        : _image(
+            GenImageColor(width, height, {color.r, color.g, color.b, color.a}))
     {
     }
 
@@ -526,17 +516,13 @@ namespace Raylib {
     {
         ::Color tnt = {tint.r, tint.g, tint.b, tint.a};
 
-        DrawTexture(
-            _texture,
-            posX,
-            posY,
-            tnt);
+        DrawTexture(_texture, posX, posY, tnt);
     }
 
     void Sprite::drawV(Vector2 position, Color tint)
     {
         ::Vector2 pos = {position.x, position.y};
-        ::Color tnt    = {tint.r, tint.g, tint.b, tint.a};
+        ::Color tnt   = {tint.r, tint.g, tint.b, tint.a};
 
         DrawTextureV(_texture, pos, tnt);
     }
@@ -545,28 +531,18 @@ namespace Raylib {
     Sprite::drawEx(Vector2 position, float rotation, float scale, Color tint)
     {
         ::Vector2 pos = {position.x, position.y};
-        ::Color tnt    = {tint.r, tint.g, tint.b, tint.a};
+        ::Color tnt   = {tint.r, tint.g, tint.b, tint.a};
 
-        DrawTextureEx(
-            _texture,
-            pos,
-            rotation,
-            scale,
-            tnt);
+        DrawTextureEx(_texture, pos, rotation, scale, tnt);
     }
 
     void Sprite::drawRec(Rectangle source, Vector2 position, Color tint)
     {
-        ::Rectangle src =
-            {source.x, source.y, source.width, source.height};
-        ::Vector2 pos = {position.x, position.y};
-        ::Color tnt    = {tint.r, tint.g, tint.b, tint.a};
+        ::Rectangle src = {source.x, source.y, source.width, source.height};
+        ::Vector2 pos   = {position.x, position.y};
+        ::Color tnt     = {tint.r, tint.g, tint.b, tint.a};
 
-        DrawTextureRec(
-            _texture,
-            src,
-            pos,
-            tnt);
+        DrawTextureRec(_texture, src, pos, tnt);
     }
 
     void Sprite::drawPro(
@@ -576,18 +552,12 @@ namespace Raylib {
         float rotation,
         Color tint)
     {
-        ::Rectangle src  = {source.x, source.y, source.width, source.height};
-        ::Rectangle dst  = {dest.x, dest.y, dest.width, dest.height};
-        ::Vector2 org = {origin.x, origin.y};
-        ::Color tnt      = {tint.r, tint.g, tint.b, tint.a};
+        ::Rectangle src = {source.x, source.y, source.width, source.height};
+        ::Rectangle dst = {dest.x, dest.y, dest.width, dest.height};
+        ::Vector2 org   = {origin.x, origin.y};
+        ::Color tnt     = {tint.r, tint.g, tint.b, tint.a};
 
-        DrawTexturePro(
-            _texture,
-            src,
-            dst,
-            org,
-            rotation,
-            tnt);
+        DrawTexturePro(_texture, src, dst, org, rotation, tnt);
     }
 
     // Color/pixel related functions
@@ -613,9 +583,8 @@ namespace Raylib {
 
     Color colorFromNormalized(Vector4 normalized)
     {
-        ::Vector4 v =
-            {normalized.x, normalized.y, normalized.z, normalized.w};
-        ::Color c = ColorFromNormalized(v);
+        ::Vector4 v = {normalized.x, normalized.y, normalized.z, normalized.w};
+        ::Color c   = ColorFromNormalized(v);
         return Color {c.r, c.g, c.b, c.a};
     }
 
@@ -631,12 +600,7 @@ namespace Raylib {
     {
         ::Color textColor = {color.r, color.g, color.b, color.a};
 
-        DrawText(
-            text.c_str(),
-            posX,
-            posY,
-            fontSize,
-            textColor);
+        DrawText(text.c_str(), posX, posY, fontSize, textColor);
     }
 
     void drawFPS(int posX, int posY)
@@ -673,8 +637,8 @@ namespace Raylib {
 
     void Text::drawEx(float spacing)
     {
-        ::Color textColor    = {_color.r, _color.g, _color.b, _color.a};
-        ::Vector2 pos    = {_pixelPosition.x, _pixelPosition.y};
+        ::Color textColor = {_color.r, _color.g, _color.b, _color.a};
+        ::Vector2 pos     = {_pixelPosition.x, _pixelPosition.y};
 
         DrawTextEx(
             GetFontDefault(),
@@ -688,7 +652,7 @@ namespace Raylib {
     void Text::drawPro(Vector2 origin, float rotation, float spacing)
     {
         ::Vector2 textOrigin = {origin.x, origin.y};
-        ::Vector2 pos    = {_pixelPosition.x, _pixelPosition.y};
+        ::Vector2 pos        = {_pixelPosition.x, _pixelPosition.y};
         ::Color textColor    = {_color.r, _color.g, _color.b, _color.a};
 
         DrawTextPro(
