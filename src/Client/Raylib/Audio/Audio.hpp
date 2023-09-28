@@ -35,7 +35,7 @@ namespace Raylib {
             std::string getPath() const;
 
         private:
-            ::Sound sound;
+            ::Sound _sound;
             bool _needToPlay {false};
             std::string _path;
     };
@@ -61,7 +61,7 @@ namespace Raylib {
             std::string getPath() const;
 
         private:
-            ::Music music;
+            ::Music _music;
             bool _needToPlay {false};
             std::string _path;
     };

@@ -175,10 +175,8 @@ namespace Systems {
     {
         const float denominator = 100.0;
 
-        float x =
-            (text.x() * static_cast<float>(GetScreenWidth())) / denominator;
-        float y =
-            (text.y() * static_cast<float>(GetScreenHeight())) / denominator;
+        float x = (text.x() * static_cast<float>(GetScreenWidth())) / denominator;
+        float y = (text.y() * static_cast<float>(GetScreenHeight())) / denominator;
         float fsz = (text.getFontSize() * static_cast<float>(GetScreenWidth()))
             / denominator;
 

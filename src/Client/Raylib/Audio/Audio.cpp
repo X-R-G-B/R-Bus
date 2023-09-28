@@ -33,55 +33,55 @@ namespace Raylib {
 
     // Sounds
     Sound::Sound(const std::string& fileName, float volume)
-        : sound(LoadSound(fileName.c_str())),
+        : _sound(LoadSound(fileName.c_str())),
           _path(fileName)
     {
-        SetSoundVolume(sound, volume);
+        SetSoundVolume(_sound, volume);
     }
 
     void Sound::unload()
     {
-        UnloadSound(sound);
+        UnloadSound(_sound);
     }
 
     void Sound::play() const
     {
-        PlaySound(sound);
+        PlaySound(_sound);
     }
 
     void Sound::stop() const
     {
-        StopSound(sound);
+        StopSound(_sound);
     }
 
     void Sound::pause() const
     {
-        PauseSound(sound);
+        PauseSound(_sound);
     }
 
     void Sound::resume() const
     {
-        ResumeSound(sound);
+        ResumeSound(_sound);
     }
 
     bool Sound::isPlaying() const
     {
-        return IsSoundPlaying(sound);
+        return IsSoundPlaying(_sound);
     }
 
     void Sound::setVolume(float volume) const
     {
-        SetSoundVolume(sound, volume);
+        SetSoundVolume(_sound, volume);
     }
 
     void Sound::setPitch(float pitch) const
     {
-        SetSoundPitch(sound, pitch);
+        SetSoundPitch(_sound, pitch);
     }
 
     void Sound::setPan(float pan) const
     {
-        SetSoundPitch(sound, pan);
+        SetSoundPitch(_sound, pan);
     }
 
     bool Sound::NeedToPlay() const
@@ -102,75 +102,75 @@ namespace Raylib {
     // Music
 
     Music::Music(const std::string& fileName, float volume)
-        : music(LoadMusicStream(fileName.c_str())),
+        : _music(LoadMusicStream(fileName.c_str())),
           _path(fileName)
     {
-        SetMusicVolume(music, volume);
+        SetMusicVolume(_music, volume);
     }
 
     void Music::unload()
     {
-        UnloadMusicStream(music);
+        UnloadMusicStream(_music);
     }
 
     bool Music::isReady() const
     {
-        return IsMusicStreamPlaying(music);
+        return IsMusicStreamPlaying(_music);
     }
 
     void Music::play() const
     {
-        PlayMusicStream(music);
+        PlayMusicStream(_music);
     }
 
     bool Music::isPlaying() const
     {
-        return IsMusicStreamPlaying(music);
+        return IsMusicStreamPlaying(_music);
     }
 
     void Music::update() const
     {
-        UpdateMusicStream(music);
+        UpdateMusicStream(_music);
     }
 
     void Music::stop() const
     {
-        StopMusicStream(music);
+        StopMusicStream(_music);
     }
 
     void Music::pause() const
     {
-        PauseMusicStream(music);
+        PauseMusicStream(_music);
     }
 
     void Music::resume() const
     {
-        ResumeMusicStream(music);
+        ResumeMusicStream(_music);
     }
 
     void Music::setVolume(float volume) const
     {
-        SetMusicVolume(music, volume);
+        SetMusicVolume(_music, volume);
     }
 
     void Music::setPitch(float pitch) const
     {
-        SetMusicPitch(music, pitch);
+        SetMusicPitch(_music, pitch);
     }
 
     void Music::setPan(float pan) const
     {
-        SetMusicPitch(music, pan);
+        SetMusicPitch(_music, pan);
     }
 
     float Music::getTimeLength() const
     {
-        return GetMusicTimeLength(music);
+        return GetMusicTimeLength(_music);
     }
 
     float Music::getTimePlayed() const
     {
-        return GetMusicTimePlayed(music);
+        return GetMusicTimePlayed(_music);
     }
 
     bool Music::NeedToPlay() const

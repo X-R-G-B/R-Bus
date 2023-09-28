@@ -15,25 +15,25 @@
 namespace Raylib {
 
     enum class ConfigFlags {
-        VSYNC_HINT               = 0x00000040,
-        FULLSCREEN_MODE          = 0x00000002,
-        WINDOW_RESIZABLE         = 0x00000004,
-        WINDOW_UNDECORATED       = 0x00000008,
-        WINDOW_HIDDEN            = 0x00000080,
-        WINDOW_MINIMIZED         = 0x00000200,
-        WINDOW_MAXIMIZED         = 0x00000400,
-        WINDOW_UNFOCUSED         = 0x00000800,
-        WINDOW_TOPMOST           = 0x00001000,
-        WINDOW_ALWAYS_RUN        = 0x00000100,
-        WINDOW_TRANSPARENT       = 0x00000010,
-        WINDOW_HIGHDPI           = 0x00002000,
-        WINDOW_MOUSE_PASSTHROUGH = 0x00004000,
-        MSAA_4X_HINT             = 0x00000020,
-        INTERLACED_HINT          = 0x00010000
+        VSYNC_HINT               = FLAG_VSYNC_HINT,
+        FULLSCREEN_MODE          = FLAG_FULLSCREEN_MODE,
+        WINDOW_RESIZABLE         = FLAG_WINDOW_RESIZABLE,
+        WINDOW_UNDECORATED       = FLAG_WINDOW_UNDECORATED,
+        WINDOW_HIDDEN            = FLAG_WINDOW_HIDDEN,
+        WINDOW_MINIMIZED         = FLAG_WINDOW_MINIMIZED,
+        WINDOW_MAXIMIZED         = FLAG_WINDOW_MAXIMIZED,
+        WINDOW_UNFOCUSED         = FLAG_WINDOW_UNFOCUSED,
+        WINDOW_TOPMOST           = FLAG_WINDOW_TOPMOST,
+        WINDOW_ALWAYS_RUN        = FLAG_WINDOW_ALWAYS_RUN,
+        WINDOW_TRANSPARENT       = FLAG_WINDOW_TRANSPARENT,
+        WINDOW_HIGHDPI           = FLAG_WINDOW_HIGHDPI,
+        WINDOW_MOUSE_PASSTHROUGH = FLAG_WINDOW_MOUSE_PASSTHROUGH,
+        MSAA_4X_HINT             = FLAG_MSAA_4X_HINT,
+        INTERLACED_HINT          = FLAG_INTERLACED_HINT,
     };
 
     // Window-related functions
-    void initWindow(int width, int height, std::string title);
+    void initWindow(int width, int height, const std::string &title);
     bool windowShouldClose();
     void closeWindow();
     bool isWindowReady();
@@ -50,7 +50,7 @@ namespace Raylib {
     void toggleFullscreen();
     void maximizeWindow();
     void minimizeWindow();
-    void setWindowTitle(std::string title);
+    void setWindowTitle(const std::string &title);
     int getScreenWidth();
     int getScreenHeight();
     int getRenderWidth();
@@ -59,7 +59,7 @@ namespace Raylib {
     int getMonitorHeight(int monitor);
     int getMonitorRefreshRate(int monitor);
     int getCurrentMonitor();
-    void setClipboardText(std::string);
+    void setClipboardText(const std::string &text);
     std::string getClipboardText();
     void setWindowIcon(Image image);
 
@@ -83,7 +83,7 @@ namespace Raylib {
     double getTime();
 
     // Misc. functions
-    void takeScreenshot(std::string fileName);
+    void takeScreenshot(const std::string &fileName);
 
     // Input-related functions: keyboard
     bool isKeyPressed(KeyboardKey key);
@@ -126,7 +126,7 @@ namespace Raylib {
 
     class Image {
         public:
-            Image(std::string fileName);
+            Image(const std::string &fileName);
             Image(int width, int height, Color color);
             ~Image();
             bool isImageReady();
@@ -143,7 +143,7 @@ namespace Raylib {
 
     class Sprite {
         public:
-            Sprite(std::string fileName, float width, float height);
+            Sprite(const std::string &fileName, float width, float height);
             Sprite(Image image, float width, float height);
             unsigned int getId() const;
             float getWidth() const;
