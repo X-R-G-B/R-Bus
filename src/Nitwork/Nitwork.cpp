@@ -16,14 +16,20 @@ namespace Nitwork {
         return _instance;
     }
 
-    bool Nitwork::Start(int port) {
+    bool Nitwork::isRunning() const {
+        return _isRunning;
+    }
+
+    bool Nitwork::start(int port) {
         try {
             _endpoint = boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port);
             _socket.open(boost::asio::ip::udp::v4());
             _socket.bind(_endpoint);
-            ContinuousReception();
-            ClockThread(TICKS_PER_SECOND);
-            ClientsDatasHandler();
+            inputHandler();
+            clockThread(TICKS_PER_SECOND);
+            outputHandler();
+            _isRunning = true;
+            std::cout << "Server started" << std::endl;
             return true;
         } catch (std::exception &e) {
             std::cerr << e.what() << std::endl;
@@ -31,16 +37,20 @@ namespace Nitwork {
         }
     }
 
-    void Nitwork::Stop() {
-        _context.stop();
+    void Nitwork::stop() {
         _inputThread.join();
         _clockThread.join();
         _outputThread.join();
+        _isRunning = false;
+        std::cout << "Server stopped" << std::endl;
     }
 
-    void Nitwork::ContinuousReception() {
+    void Nitwork::inputHandler() {
         _inputThread = std::thread([this]() {
+            std::unique_lock<std::mutex> lock(_queueMutex);
             while (true) {
+                _queueCondVar.wait(lock);
+//                std::cout << "input handler" << std::endl;
                 readDataFromEndpoint();
                 for (auto &action : _actions) {
                     action.second(action.first.data, action.first.endpoint);
@@ -49,7 +59,7 @@ namespace Nitwork {
         });
     }
 
-    void Nitwork::ClockThread(int tick) {
+    void Nitwork::clockThread(int tick) {
         _clockThread = std::thread([this, tick]() {
             while (true) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(1000 / tick));
@@ -58,12 +68,21 @@ namespace Nitwork {
         });
     }
 
-    void Nitwork::ClientsDatasHandler() {
+    void Nitwork::outputHandler() {
         _outputThread = std::thread([this]() {
             std::unique_lock<std::mutex> lock(_queueMutex);
+            std::size_t size = 0;
             while (true) {
                 _queueCondVar.wait(lock);
-                // send datas to clients from output queue
+//                std::cout << "output handler" << std::endl;
+                size = _outputQueue.size();
+                for (std::size_t i = 0; i < size; i++) {
+                    lock.unlock();
+                    auto &data = _outputQueue.front();
+                    _outputQueue.pop_front();
+                    _actionToSendHandlers[data.second.action](data.first, data.second.body);
+                    lock.lock();
+                }
             }
         });
     }
@@ -121,6 +140,7 @@ namespace Nitwork {
             std::cerr << "Error: too many actions received or no action" << std::endl;
             return;
         }
+        std::cout << "header received" << std::endl;
         for (int i = 0; i < header.nb_action; i++) {
             handleBodyAction(header, endpoint);
         }
@@ -147,6 +167,9 @@ namespace Nitwork {
             return;
         }
         _endpoints.emplace_back(endpoint);
+
+        /// A SUPPRIMER
+        stop();
     }
 
     void Nitwork::handleReadyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
