@@ -18,6 +18,7 @@ namespace Systems {
         void textRenderer(std::size_t /*unused*/, std::size_t /*unused*/);
         void soundEffectPlayer(std::size_t /*unused*/, std::size_t /*unused*/);
         void musicPlayer(std::size_t /*unused*/, std::size_t /*unused*/);
+        void playSoundWithKey(std::size_t, std::size_t);
         std::vector<std::function<void(std::size_t, std::size_t)>>
         getGraphicsSystems();
     } // namespace GraphicSystems

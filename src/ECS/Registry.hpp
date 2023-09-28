@@ -16,7 +16,6 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
-#include "raylib.h"
 #include "SceneManager.hpp"
 #include "SparseArray.hpp"
 
@@ -53,10 +52,8 @@ class Registry {
                         _customSparseArrays[id]);
 
                 return castedComponent;
-            } catch (const std::bad_any_cast e) {
-                throw std::runtime_error(
-                    "getCustomSparseArray: Bad any cast. ID: "
-                    + std::to_string(id));
+            } catch (const std::bad_any_cast &e) {
+                throw std::runtime_error("Bad cast: " + std::string(e.what()));
             }
         }
 

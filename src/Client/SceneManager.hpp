@@ -39,8 +39,8 @@ class SceneManager {
             std::vector<SystemManagers> {EVENTS, GAME, DISPLAY}
         };
         const std::array<std::vector<CustomIndex>, 2> _scenesCustomIndexes = {
-            std::vector<CustomIndex> {PLAYER },
-            std::vector<CustomIndex> { PLAYER, BULLET, ENNEMY}
+            std::vector<CustomIndex> {PLAYER},
+            std::vector<CustomIndex> {PLAYER, BULLET, ENNEMY}
         };
 
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
