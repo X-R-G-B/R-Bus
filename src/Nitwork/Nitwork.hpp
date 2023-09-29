@@ -55,7 +55,7 @@ namespace Nitwork {
             // start receive handler
             bool startReceiveHandler();
             // handler func for receive handler which handle the header
-            void headerHandler(const boost::asio::ip::udp::endpoint &endpoint, const std::size_t bytes_received, const boost::system::error_code& error);
+            void headerHandler(std::size_t bytes_received, const boost::system::error_code& error);
             // handler func for headerHandler which handle the action
             void handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint);
             // handler func for handleBodyAction which handle the body
@@ -166,6 +166,7 @@ namespace Nitwork {
             struct action_s _actionPacket = { NO_ACTION }; // A packet which will be used to receive the action
             struct msgInit_s _initPacket = { 'N' }; // A packet which will be used to receive the init message
             struct msgReady_s _readyPacket = { 'N' }; // A packet which will be used to receive the ready message
+            boost::asio::ip::udp::endpoint _clientEndpoint; // An endpoint which will be used to receive the actions
 
             // Actions ids
             std::array<id_t, MAX_NB_ACTION> _ids{}; // An array of ids which will be used to identify the actions

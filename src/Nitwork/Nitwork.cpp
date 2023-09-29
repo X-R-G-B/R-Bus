@@ -23,12 +23,13 @@ namespace Nitwork {
                 std::cerr << "Error: server config failed" << std::endl;
                 return false;
             }
-            startInputHandler();
-            startOutputHandler();
             if (!startServerThreads(threadNb, tick)) {
                 std::cerr << "Error: server threads failed" << std::endl;
                 return false;
             }
+            startInputHandler();
+            startOutputHandler();
+            startReceiveHandler();
             std::cout << "Server started on port " << port << " on " << boost::asio::ip::host_name() << " with ip " << _endpoint.address().to_string() << std::endl;
         } catch (std::exception &e) {
             std::cerr << "Nitwork Error : " << e.what() << std::endl;
@@ -97,7 +98,9 @@ namespace Nitwork {
             std::cout << std::endl << "Starting input handler" << std::endl;
             try {
                 while (true) {
+                    std::cout << "Waiting for input" << std::endl;
                     _tickConvVar.wait(lockTick);
+                    std::cout << "Input received" << std::endl;
                     for (auto &action : _actions) {
                         action.second(action.first.data, action.first.endpoint);
                     }
@@ -109,7 +112,7 @@ namespace Nitwork {
     }
 
     void Nitwork::startOutputHandler() {
-        boost::asio::post([this]() {
+        boost::asio::post(_context, [this]() {
             std::unique_lock<std::mutex> lockQueue(_outputQueueMutex);
             std::unique_lock<std::mutex> lockTick(_tickMutex);
             std::size_t size = 0;
@@ -136,23 +139,21 @@ namespace Nitwork {
 
     /* Receive Section */
     bool Nitwork::startReceiveHandler() {
-        boost::asio::ip::udp::endpoint endpoint;
 
         std::cout << "Starting receive handler" << std::endl;
         _socket.async_receive_from(
             boost::asio::buffer(&_headerPacket, HEADER_SIZE),
-            endpoint,
+            _clientEndpoint,
             boost::bind(
                 &Nitwork::headerHandler,
                 this,
-                endpoint,
                 boost::asio::placeholders::bytes_transferred,
                 boost::asio::placeholders::error
-            )
+                )
         );
     }
 
-    void Nitwork::headerHandler(const boost::asio::ip::udp::endpoint &endpoint, const std::size_t bytes_received, const boost::system::error_code& error) {
+    void Nitwork::headerHandler(std::size_t bytes_received, const boost::system::error_code& error) {
         if (error) {
             std::cerr << "Error: " << error.message() << std::endl;
             startReceiveHandler();
@@ -170,7 +171,7 @@ namespace Nitwork {
         }
         std::cout << "header received" << std::endl;
         for (int i = 0; i < _headerPacket.nb_action; i++) {
-            handleBodyAction(endpoint);
+            handleBodyAction(_clientEndpoint);
         }
     }
 
