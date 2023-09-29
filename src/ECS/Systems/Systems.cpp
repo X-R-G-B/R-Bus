@@ -62,29 +62,35 @@ namespace Systems {
             Registry::getInstance()
                 .getComponents<Types::Dammage>()[secondEntity];
 
-        if (firstEntityDammage.has_value() && secondEntityHealth.has_value()) {
-            secondEntityHealth->hp -= firstEntityDammage->dammage;
+        if (firstEntityDammage.has_value() && secondEntityHealth.has_value()
+            && secondEntityHealth->hp > 0 && firstEntityDammage->dammage > 0) {
+            if (firstEntityHealth->hp != 0) {
+                secondEntityHealth->hp -= firstEntityDammage->dammage;
+            }
         }
-        if (secondEntityDammage.has_value() && firstEntityHealth.has_value()) {
-            firstEntityHealth->hp -= secondEntityDammage->dammage;
+        if (secondEntityDammage.has_value() && firstEntityHealth.has_value()
+            && secondEntityHealth->hp > 0 && firstEntityHealth->hp > 0) {
+            if (secondEntityHealth->hp != 0) {
+                firstEntityHealth->hp -= secondEntityDammage->dammage;
+            }
         }
     }
 
     static void checkCollisionEntity(
-        std::vector<std::optional<Types::CollisionRect>>::iterator collisionIt,
-        std::vector<std::optional<Types::Position>>::iterator positionIt,
-        Registry::components<Types::Position> arrPosition,
-        Registry::components<Types::CollisionRect> arrCollision
+        std::vector<std::optional<Types::CollisionRect>>::iterator &collisionIt,
+        std::vector<std::optional<Types::Position>>::iterator &positionIt,
+        Registry::components<Types::Position> &arrPosition,
+        Registry::components<Types::CollisionRect> &arrCollision
 
     )
     {
         auto tmpCollisionIt = collisionIt;
         auto tmpPositionIt  = positionIt;
 
-        tmpPositionIt++;
-        tmpCollisionIt++;
         while (tmpCollisionIt != arrCollision.end()
                && tmpPositionIt != arrPosition.end()) {
+            tmpCollisionIt++;
+            tmpPositionIt++;
             if (tmpCollisionIt->has_value() && tmpPositionIt->has_value()) {
                 if (positionIt->value().x < tmpPositionIt->value().x
                             + tmpCollisionIt->value().width
@@ -97,11 +103,6 @@ namespace Systems {
                     giveDamages(
                         std::distance(arrPosition.begin(), positionIt),
                         std::distance(arrPosition.begin(), tmpPositionIt));
-                    tmpCollisionIt++;
-                    tmpPositionIt++;
-                } else {
-                    tmpCollisionIt++;
-                    tmpPositionIt++;
                 }
             }
         }
@@ -125,9 +126,9 @@ namespace Systems {
                     positionIt,
                     arrPosition,
                     arrCollisionRect);
-                collisionIt++;
-                positionIt++;
             }
+            collisionIt++;
+            positionIt++;
         }
     }
 
