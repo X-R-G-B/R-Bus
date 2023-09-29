@@ -14,6 +14,7 @@
 #include <condition_variable>
 #include <mutex>
 #include <boost/bind/bind.hpp>
+#include <boost/array.hpp>
 #include <boost/asio/placeholders.hpp>
 #include <boost/asio.hpp>
 #include "Nitwork.h"
@@ -53,13 +54,11 @@ namespace Nitwork {
             void startOutputHandler();
 
             // start receive handler
-            bool startReceiveHandler();
+            void startReceiveHandler();
             // handler func for receive handler which handle the header
             void headerHandler(std::size_t bytes_received, const boost::system::error_code& error);
             // handler func for headerHandler which handle the action
-            void handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint);
-            // handler func for handleBodyAction which handle the body
-            void handleBodyActionData(const boost::asio::ip::udp::endpoint &endpoint, const boost::system::error_code& error, const std::size_t bytes_received);
+            void handleBodyAction(const struct header_s header, const boost::asio::ip::udp::endpoint &endpoint);
         public:
 
             void stop();
@@ -68,9 +67,6 @@ namespace Nitwork {
 
 
             // Method which handle clock and unlock client threads each n ticks
-            void clockThread(int tick);
-
-            void clientsDatasHandler();
 
             template<typename T>
             void sendDatasToEndpoint(boost::asio::ip::udp::endpoint &endpoint, T &datas) {
@@ -88,24 +84,26 @@ namespace Nitwork {
             void handleBodyDatas(const struct header_s &header, const std::function<void(const std::any &, boost::asio::ip::udp::endpoint &)> &handler, B body, const boost::system::error_code& error, const std::size_t bytes_received) {
                 if (error) {
                     std::cerr << "Error: " << error.message() << std::endl;
+                    startReceiveHandler();
                     return;
                 }
                 if (bytes_received != sizeof(B)) {
                     std::cerr << "Error: body not received" << std::endl;
+                    startReceiveHandler();
                     return;
                 }
-                std::unique_lock<std::mutex> lock(_inputQueueMutex);
+                std::lock_guard<std::mutex> lock(_inputQueueMutex);
                 clientData_s clientData = { _endpoint, std::any(body) };
-                lock.unlock();
+                std::cout << "adding action to queue" << std::endl;
                 _actions.emplace_back(clientData, handler);
-                lock.lock();
+                std::cout << "action added to queue" << std::endl;
+                startReceiveHandler();
             }
 
             template<typename B>
             void handleBody(const struct header_s &header, const std::function<void(const std::any &, boost::asio::ip::udp::endpoint &)> &handler) {
-                B body;
-
-                _socket.async_receive_from(boost::asio::buffer(&body, sizeof(B)), _endpoint, boost::bind(&Nitwork::handleBodyDatas<B>, this, header, handler, body, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
+                    B *body = reinterpret_cast<B *>(_receiveBuffer.data() + sizeof(struct header_s) + sizeof(struct action_s));
+                    handleBodyDatas<B>(header, handler, *body, boost::system::error_code(), sizeof(B));
             }
 
 
@@ -126,8 +124,6 @@ namespace Nitwork {
                     }
                 });
             }
-
-            void outputHandler();
 
             void handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
@@ -167,6 +163,7 @@ namespace Nitwork {
             struct msgInit_s _initPacket = { 'N' }; // A packet which will be used to receive the init message
             struct msgReady_s _readyPacket = { 'N' }; // A packet which will be used to receive the ready message
             boost::asio::ip::udp::endpoint _clientEndpoint; // An endpoint which will be used to receive the actions
+            boost::array<char, 1024> _receiveBuffer; // A buffer which will be used to receive the actions
 
             // Actions ids
             std::array<id_t, MAX_NB_ACTION> _ids{}; // An array of ids which will be used to identify the actions
