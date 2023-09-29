@@ -44,7 +44,7 @@ namespace Systems {
     void
     EventsSystems::changeScene(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        if (Raylib::IsKeyDown(Raylib::KeyboardKey::KB_J)) {
+        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
             SceneManager &sceneManager = SceneManager::getInstance();
             if (sceneManager.getCurrentScene() == MAIN_GAME) {
                 sceneManager.changeScene(MENU);
