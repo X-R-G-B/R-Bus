@@ -9,6 +9,7 @@ set(PROJECT_NAME r-type)
 if(NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
+SET(CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING "" FORCE)
 
 option(BUILD_SHARED_LIBS "Build using shared libraries" OFF)
 option(WITH_PIC "Build with position independent code" ON)

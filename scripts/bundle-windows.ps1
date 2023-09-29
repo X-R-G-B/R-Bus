@@ -5,7 +5,7 @@ $ErrorActionPreference = "SilentlyContinue"
 
 ./scripts/compil.ps1
 
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release;Release" -DCONFIG=Release
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release"
 
 cmake --build build
 
