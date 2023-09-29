@@ -11,8 +11,8 @@
 #include "Registry.hpp"
 
 namespace Systems {
-
-    void GraphicSystems::rectRenderer(std::size_t /*unused*/)
+    void
+    GraphicSystems::rectRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
@@ -107,7 +107,9 @@ namespace Systems {
             tint);
     }
 
-    void GraphicSystems::spriteRenderer(std::size_t /*unused*/)
+    void GraphicSystems::spriteRenderer(
+        std::size_t /*unused*/,
+        std::size_t /*unused*/)
     {
         Registry::components<Raylib::Sprite> arrSprite =
             Registry::getInstance().getComponents<Raylib::Sprite>();
@@ -136,7 +138,9 @@ namespace Systems {
         }
     }
 
-    void GraphicSystems::soundEffectPlayer(std::size_t /*unused*/)
+    void GraphicSystems::soundEffectPlayer(
+        std::size_t /*unused*/,
+        std::size_t /*unused*/)
     {
         Registry::components<Raylib::Sound> arrSoundEffect =
             Registry::getInstance().getComponents<Raylib::Sound>();
@@ -152,7 +156,8 @@ namespace Systems {
         }
     }
 
-    void GraphicSystems::musicPlayer(std::size_t /*unused*/)
+    void
+    GraphicSystems::musicPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Raylib::Music> arrMusics =
             Registry::getInstance().getComponents<Raylib::Music>();
@@ -187,7 +192,8 @@ namespace Systems {
         text.draw();
     }
 
-    void GraphicSystems::textRenderer(std::size_t /*unused*/)
+    void
+    GraphicSystems::textRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Raylib::Text> arrText =
             Registry::getInstance().getComponents<Raylib::Text>();
@@ -202,7 +208,43 @@ namespace Systems {
         }
     }
 
-    std::vector<std::function<void(std::size_t)>>
+    const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
+    const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
+    const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
+    const Types::Rect spriteRect = {2, 2, 48, 48};
+    const Types::CollisionRect collisionRect = {46, 46};
+    const Raylib::Vector2 textPos            = {20, 50};
+
+    void GraphicSystems::playSoundWithKey(
+        std::size_t /*unused*/,
+        std::size_t /*unused*/)
+    {
+        Registry::components<Raylib::Music> arrMusics =
+            Registry::getInstance().getComponents<Raylib::Music>();
+        Registry::components<Raylib::Sound> arrSounds =
+            Registry::getInstance().getComponents<Raylib::Sound>();
+
+        for (auto &music : arrMusics) {
+            if (!music.has_value()) {
+                continue;
+            }
+            if (music.value().getPath() == musicPath
+                && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_SPACE)) {
+                music.value().setNeedToPlay(true);
+            }
+        }
+        for (auto &sound : arrSounds) {
+            if (!sound.has_value()) {
+                continue;
+            }
+            if (sound.value().getPath() == soundPath
+                && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_ENTER)) {
+                sound.value().setNeedToPlay(true);
+            }
+        }
+    }
+
+    std::vector<std::function<void(std::size_t, std::size_t)>>
     GraphicSystems::getGraphicsSystems()
     {
         return {
@@ -210,6 +252,7 @@ namespace Systems {
             spriteRenderer,
             textRenderer,
             musicPlayer,
-            soundEffectPlayer};
+            soundEffectPlayer,
+            playSoundWithKey};
     }
 } // namespace Systems

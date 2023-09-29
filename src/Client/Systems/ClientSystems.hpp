@@ -13,6 +13,6 @@
 #include "Systems.hpp"
 
 namespace Systems {
-    std::array<std::vector<std::function<void(std::size_t)>>, 3>
+    std::array<std::vector<std::function<void(std::size_t, std::size_t)>>, 3>
     getSystemsGroups();
 } // namespace Systems
