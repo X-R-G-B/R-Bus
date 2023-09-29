@@ -37,11 +37,35 @@ namespace Nitwork {
             static Nitwork &getInstance();
 
             // start the server
-            bool start(int port);
+            bool start(int port, int threadNb = 4, int tick = TICKS_PER_SECOND);
+        private:
+            // start the server config
+            bool startServerConfig(int port);
+            // start the server threads (context threads, clock thread, input thread and output thread)
+            bool startServerThreads(int threadNb, int tick);
+            // start the context threads
+            bool startContextThreads(int threadNb);
+            // start the clock thread
+            bool startClockThread(int tick);
+            // start the input thread inside the context (post)
+            void startInputHandler();
+            // start the output thread inside the context (post)
+            void startOutputHandler();
+
+            // start receive handler
+            bool startReceiveHandler();
+            // handler func for receive handler which handle the header
+            void headerHandler(const boost::asio::ip::udp::endpoint &endpoint, const std::size_t bytes_received, const boost::system::error_code& error);
+            // handler func for headerHandler which handle the action
+            void handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint);
+            // handler func for handleBodyAction which handle the body
+            void handleBodyActionData(const boost::asio::ip::udp::endpoint &endpoint, const boost::system::error_code& error, const std::size_t bytes_received);
+        public:
 
             void stop();
 
-            void inputHandler();
+
+
 
             // Method which handle clock and unlock client threads each n ticks
             void clockThread(int tick);
@@ -70,8 +94,11 @@ namespace Nitwork {
                     std::cerr << "Error: body not received" << std::endl;
                     return;
                 }
+                std::unique_lock<std::mutex> lock(_inputQueueMutex);
                 clientData_s clientData = { _endpoint, std::any(body) };
+                lock.unlock();
                 _actions.emplace_back(clientData, handler);
+                lock.lock();
             }
 
             template<typename B>
@@ -81,13 +108,8 @@ namespace Nitwork {
                 _socket.async_receive_from(boost::asio::buffer(&body, sizeof(B)), _endpoint, boost::bind(&Nitwork::handleBodyDatas<B>, this, header, handler, body, boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
             }
 
-            void handleBodyActionData(const struct action_s &action, const struct header_s &header, const boost::asio::ip::udp::endpoint &endpoint, const boost::system::error_code& error, std::size_t bytes_received);
 
-            void handleBodyAction(const struct header_s &header, const boost::asio::ip::udp::endpoint &endpoint);
 
-            void readDataFromEndpointHandler(const struct header_s &header, const boost::asio::ip::udp::endpoint &endpoint, std::size_t bytes_received, const boost::system::error_code& error);
-
-            void readDataFromEndpoint();
 
             template<typename T>
             void sendDataFromQueue(const boost::asio::ip::udp::endpoint &endpoint, std::any &rawData) {
@@ -111,29 +133,45 @@ namespace Nitwork {
 
             void handleReadyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
-            bool isRunning() const;
         protected:
         private:
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static Nitwork _instance;
-            bool _isRunning = false;
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
-            boost::asio::io_context _context; // second context which will handle the outputs (handle actions and send it, each n ticks
-            std::thread _inputThread; // A thread for the first context
+
+            // Main vars for the server
+            boost::asio::ip::udp::endpoint _endpoint; // The endpoint which will be used to send and receive the actions
+            boost::asio::io_context _context; // The main context
+            boost::asio::ip::udp::socket _socket; // The socket which will be used to send and receive the actions
+            std::list<boost::asio::ip::udp::endpoint> _endpoints; // A vector of endpoints which will be used to send the actions to the clients and identify them
+
+            // contexts threads, clock thread, input thread and output thread(s)
+            std::vector<std::thread> _pool; // A pool of threads which will be used to handle the clients
             std::thread _clockThread; // A thread for the clock which is in the second context
-            std::thread _outputThread; // A thread which will send the actions to the clients from the output queue
+            std::thread _inputThread; // A thread for the input handler which is in the second context
+            std::thread _outputThread; // A thread for the output handler which is in the second context
 
             // Body handler var
             std::list<std::pair<struct clientData_s, const std::function<void(const std::any &, boost::asio::ip::udp::endpoint &)> &>> _actions; // A list of actions which will be handled by the second context
             std::list<std::pair<boost::asio::ip::udp::endpoint &, struct packet_s &>> _outputQueue; // A queue of actions which will be sent to the clients
 
-            std::mutex _queueMutex; // A mutex to lock the queue which will be used by both contexts
-            std::condition_variable _queueCondVar; // A condition variable to wait for the queue to be used by the second context
-            std::list<boost::asio::ip::udp::endpoint> _endpoints; // A vector of endpoints which will be used to send the actions to the clients and identify them
-            std::array<id_t, MAX_NB_ACTION> _ids{}; // An array of ids which will be used to identify the actions
-            boost::asio::ip::udp::socket _socket; // The socket which will be used to send and receive the actions
-            boost::asio::ip::udp::endpoint _endpoint; // The endpoint which will be used to send and receive the actions
+            // Mutex and condition variables
+            std::mutex _inputQueueMutex; // A mutex to lock the input queue
+            std::mutex _outputQueueMutex; // A mutex to lock the output queue
+            std::mutex _tickMutex; // A mutex to lock the tick condition variable
+            std::condition_variable _tickConvVar; // A condition variable which will be handled by the clock thread to unlock the clients threads each n ticks
 
+            // Packets vars
+            struct header_s _headerPacket = { 'N', 0, 0, 0, 0, 'N' }; // A packet which will be used to receive the header
+            struct action_s _actionPacket = { NO_ACTION }; // A packet which will be used to receive the action
+            struct msgInit_s _initPacket = { 'N' }; // A packet which will be used to receive the init message
+            struct msgReady_s _readyPacket = { 'N' }; // A packet which will be used to receive the ready message
+
+            // Actions ids
+            std::array<id_t, MAX_NB_ACTION> _ids{}; // An array of ids which will be used to identify the actions
+
+
+            // maps that will be used to handle the actions, in order to send or receive them
             std::map<
                 enum n_actionType_t,
                 std::pair<
@@ -168,4 +206,4 @@ namespace Nitwork {
 
 
     };
-}
+} // namespace Nitwork

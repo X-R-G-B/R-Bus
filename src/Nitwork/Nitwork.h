@@ -10,6 +10,7 @@
 
     #define HEADER_SIZE sizeof(struct header_s)
     #define TICKS_PER_SECOND 20
+    #define ONE_SECOND 1000
     #define MAX_NB_ACTION 16
 
 typedef char n_magick_t;

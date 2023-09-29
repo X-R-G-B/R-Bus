@@ -4,8 +4,10 @@
 int main()
 {
     try {
+        std::cout << "Starting server..." << std::endl;
         Nitwork::Nitwork::getInstance().start(4242);
-        while (Nitwork::Nitwork::getInstance().isRunning());
+        std::cout << "Server started." << std::endl;
+        while (true);
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
     }

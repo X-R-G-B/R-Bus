@@ -39,21 +39,29 @@ int main()
     try {
         // Initialisation de Boost.Asio
         boost::asio::io_context io_context;
-        boost::asio::ip::udp::socket socket(io_context);
 
         // Adresse et port du serveur
-        boost::asio::ip::udp::endpoint server_endpoint(boost::asio::ip::address::from_string("127.0.0.1"), 4242);
+        boost::asio::ip::udp::resolver resolver(io_context);
+        boost::asio::ip::udp::endpoint client_endpoint = *resolver.resolve(boost::asio::ip::udp::v4(), "127.0.0.1", std::to_string(port)).begin();
 
         // Ouvrir le socket UDP
+        boost::asio::ip::udp::socket socket(io_context);
         socket.open(boost::asio::ip::udp::v4());
+        std::thread t([&io_context](){ io_context.run(); });
+
+        if (!socket.is_open()) {
+            std::cerr << "Error: socket not open" << std::endl;
+            return 84;
+        }
 
         // Envoi de la structure
-        socket.send_to(boost::asio::buffer(&packetData, sizeof(struct packetData_s)), server_endpoint);
+        socket.send_to(boost::asio::buffer(&packetData, sizeof(struct packetData_s)), client_endpoint);
 
-        std::cout << "Structure envoyée avec succès au serveur." << std::endl;
+        std::cout << "Structure envoyée avec succès au serveur. au port " << port << std::endl;
 
         // Fermer le socket
         socket.close();
+        t.join();
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
     }
