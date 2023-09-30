@@ -16,12 +16,11 @@ namespace Systems {
         std::size_t /*unused*/,
         std::size_t /*unused*/)
     {
+        Registry &registry = Registry::getInstance();
         Registry::components<Types::Position> arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
-
-        std::vector<std::size_t> playerId = Registry::getInstance()
-                                                .getComponents<Types::Player>()
-                                                .getExistingsId();
+            registry.getComponents<Types::Position>();
+        std::vector<std::size_t> playerId =
+            registry.getComponents<Types::Player>().getExistingsId();
 
         for (std::size_t id : playerId) {
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {

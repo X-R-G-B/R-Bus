@@ -14,10 +14,11 @@ namespace Systems {
     void
     GraphicSystems::rectRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        Registry &registry = Registry::getInstance();
         Registry::components<Types::Position> arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
+            registry.getComponents<Types::Position>();
         Registry::components<Types::RectangleShape> arrRect =
-            Registry::getInstance().getComponents<Types::RectangleShape>();
+            registry.getComponents<Types::RectangleShape>();
         std::vector<std::size_t> rectShapeIndexes = arrRect.getExistingsId();
 
         const float denominator = 100.0;
@@ -104,24 +105,47 @@ namespace Systems {
             tint);
     }
 
+    static void renderEntityList(std::vector<std::size_t> list)
+    {
+        Registry &registry = Registry::getInstance();
+        Registry::components<Raylib::Sprite> arrSprite =
+            registry.getComponents<Raylib::Sprite>();
+        Registry::components<Types::Rect> arrRect =
+            registry.getComponents<Types::Rect>();
+        Registry::components<Types::Position> arrPosition =
+            registry.getComponents<Types::Position>();
+
+        for (auto id : list) {
+            if (arrPosition.exist(id)) {
+                if (arrRect.exist(id)) {
+                    drawSpriteWithRect(
+                        arrPosition[id],
+                        arrSprite[id],
+                        arrRect[id]);
+                } else {
+                    drawSpriteWithoutRect(arrPosition[id], arrSprite[id]);
+                }
+            }
+        }
+    }
+
     void GraphicSystems::spriteRenderer(
         std::size_t /*unused*/,
         std::size_t /*unused*/)
     {
-        Registry::components<Raylib::Sprite> arrSprite =
-            Registry::getInstance().getComponents<Raylib::Sprite>();
-        Registry::components<Types::Rect> arrRect =
-            Registry::getInstance().getComponents<Types::Rect>();
-        Registry::components<Types::Position> arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
-        std::vector<std::size_t> spriteIndexes = arrSprite.getExistingsId();
+        Registry &registry = Registry::getInstance();
+        std::vector<std::vector<std::size_t>> backLayers =
+            registry.getBackLayers();
+        std::vector<std::size_t> defaultLayer = registry.getDefaultLayer();
+        std::vector<std::vector<std::size_t>> frontLayers =
+            registry.getFrontLayers();
 
-        for (auto id : spriteIndexes) {
-            if (arrRect.exist(id) && arrPosition.exist(id)) {
-                drawSpriteWithRect(arrPosition[id], arrSprite[id], arrRect[id]);
-            } else if (arrPosition.exist(id)) {
-                drawSpriteWithoutRect(arrPosition[id], arrSprite[id]);
-            }
+        for (auto list : backLayers) {
+            renderEntityList(list);
+        }
+        renderEntityList(defaultLayer);
+        for (auto list : frontLayers) {
+            renderEntityList(list);
         }
     }
 
@@ -195,10 +219,11 @@ namespace Systems {
         std::size_t /*unused*/,
         std::size_t /*unused*/)
     {
+        Registry &registry = Registry::getInstance();
         Registry::components<Raylib::Music> arrMusics =
-            Registry::getInstance().getComponents<Raylib::Music>();
+            registry.getComponents<Raylib::Music>();
         Registry::components<Raylib::Sound> arrSounds =
-            Registry::getInstance().getComponents<Raylib::Sound>();
+            registry.getComponents<Raylib::Sound>();
 
         for (auto &music : arrMusics) {
             if (music.getPath() == musicPath
