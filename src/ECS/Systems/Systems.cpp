@@ -58,7 +58,6 @@ namespace Systems {
     }
 
     static void checkCollisionEntity(
-        std::size_t &id,
         std::vector<size_t>::iterator itIds,
         std::vector<std::size_t> &ids)
     {
@@ -67,6 +66,7 @@ namespace Systems {
         Registry::components<Types::CollisionRect> arrCollisionRect =
             Registry::getInstance().getComponents<Types::CollisionRect>();
 
+        std::size_t id = *itIds;
         Types::Position entityPos       = arrPosition[id];
         Types::CollisionRect entityColl = arrCollisionRect[id];
 
@@ -99,7 +99,7 @@ namespace Systems {
 
         while (itIds != ids.end()) {
             if (arrCollisionRect.exist(*itIds)) {
-                checkCollisionEntity(*itIds, itIds, ids);
+                checkCollisionEntity(itIds, ids);
             }
             itIds++;
         }
