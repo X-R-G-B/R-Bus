@@ -50,8 +50,7 @@ namespace Systems {
 
         if (arrDammage.exist(firstEntity)
             && arrDammage[firstEntity].dammage > 0) {
-            if (arrHealth.exist(secondEntity)
-                && arrHealth[secondEntity].hp > 0) {
+            if (arrHealth.exist(secondEntity)) {
                 arrHealth[secondEntity].hp -= arrDammage[firstEntity].dammage;
             }
         }
