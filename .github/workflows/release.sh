@@ -1,8 +1,9 @@
 #!/bin/bash
 # Release script run in Github CI
 
+BRANCH="$1"
 
-LAST_TAG=$(git describe --tags --abbrev=0)
+LAST_TAG=$(git tag | sort -t '.' --numeric-sort -k1,1 -k2,2 -k3,3 | tail -n 1)
 LAST_TAG_MAJOR=$(echo "$LAST_TAG" | cut -d'.' -f1)
 LAST_TAG_MINOR=$(echo "$LAST_TAG" | cut -d'.' -f2)
 LAST_TAG_PATCH=$(echo "$LAST_TAG" | cut -d'.' -f3)
@@ -39,7 +40,7 @@ TAG="$TAG_MAJOR.$TAG_MINOR.$TAG_PATCH"
 gh release create "$TAG"           \
   --title "v$TAG"                  \
   --generate-notes                 \
-  --target main
+  --target "$BRANCH"
 
 echo "release_tag=$TAG" >> $GITHUB_OUTPUT
 echo "$WARNINGS"

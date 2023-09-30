@@ -7,6 +7,12 @@
 
 #pragma once
 
+#include <cstddef>
+#include <functional>
+#include <vector>
+
 namespace Systems {
-    void collision(std::size_t);
-}
+    void windowCollision(std::size_t, std::size_t);
+    void init(std::size_t, std::size_t);
+    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems();
+} // namespace Systems

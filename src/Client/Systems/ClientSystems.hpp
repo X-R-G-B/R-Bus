@@ -2,15 +2,17 @@
 ** EPITECH PROJECT, 2023
 ** R-Bus
 ** File description:
-** Systems
+** ClientSystems
 */
 
 #pragma once
 
-namespace GraphicSystems {
-    void pixelRenderer(std::size_t);
-}
+#include <array>
+#include "EventsSystems.hpp"
+#include "GraphicSystems.hpp"
+#include "Systems.hpp"
 
-namespace EventsSystems {
-    void playerMovement(std::size_t);
-}
+namespace Systems {
+    std::array<std::vector<std::function<void(std::size_t, std::size_t)>>, 3>
+    getSystemsGroups();
+} // namespace Systems

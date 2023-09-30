@@ -48,3 +48,16 @@ cmake_*
 *.dir/
 *.sln
 x64/
+
+.cache/*
+r-type_client
+r-type_server
+
+r-type-linux.sh
+r-type-linux.tar
+r-type-windows.zip
+r-type-macos.zip
+
+*~
+
+vgcore*

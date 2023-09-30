@@ -2,7 +2,11 @@ name: Release
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
+
+env:
+  BRANCH: "main"
+  RAYLIB_TAG: "4.5.0"
 
 jobs:
   release-create:
@@ -24,77 +28,125 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        export GITHUB_OUTPUT=$GITHUB_OUTPUT
-        bash ./.github/workflows/release.sh
+        if [[ "${{ github.ref }}" == 'refs/heads/main' ]]; then
+          export GITHUB_OUTPUT=$GITHUB_OUTPUT
+          bash ./.github/workflows/release.sh "${{ env.BRANCH }}"
+        else
+          echo "release_tag=0.0.0" >> $GITHUB_OUTPUT
+        fi
 
-  build-windows:
+  release-windows:
     runs-on: windows-latest
-    needs: release-create
+    needs: [release-create, raylib-to-tar]
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    - name: Install winget
+      uses: Cyberboss/install-winget@v1
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install dependencies
+      run: ./scripts/install-deps-windows.ps1
 
     - name: Build
-      run: |
-        echo "RType server" > ./r-type_server.exe
-        echo "RType client" > ./r-type_client.exe
+      run: ./scripts/bundle-windows.ps1
 
     - name: Upload To Release
+      if: github.ref == 'refs/heads/main'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload ${{ needs.release-create.outputs.release }} ./r-type_server.exe
-        gh release upload ${{ needs.release-create.outputs.release }} ./r-type_client.exe
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type-windows.zip
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type-windows.exe
 
-  build-linux:
+    - name: Upload To Artifact
+      if: github.ref != 'refs/heads/main'
+      uses: actions/upload-artifact@v3
+      with:
+        name: r-type-windows.zip
+        path: ./r-type-windows.zip
+
+    - name: Upload To Artifact
+      if: github.ref != 'refs/heads/main'
+      uses: actions/upload-artifact@v3
+      with:
+        name: r-type-windows.exe
+        path: ./r-type-windows.exe
+
+  release-linux:
     runs-on: ubuntu-latest
-    needs: release-create
+    needs: [release-create, raylib-to-tar]
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: sudo ./scripts/install-deps-linux.sh
 
     - name: Build
-      run: |
-        echo "RType server" > ./r-type_server
-        echo "RType client" > ./r-type_client
+      run: ./scripts/bundle-linux.sh
 
     - name: Upload To Release
+      if: github.ref == 'refs/heads/main'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload ${{ needs.release-create.outputs.release }} ./r-type_server
-        gh release upload ${{ needs.release-create.outputs.release }} ./r-type_client
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type-linux.tar.gz
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type-linux.sh
 
-  asio-to-tar:
-    runs-on: ubuntu-latest
-    needs: release-create
+    - name: Upload To Artifact
+      if: github.ref != 'refs/heads/main'
+      uses: actions/upload-artifact@v3
+      with:
+        name: r-type-linux.tar.gz
+        path: ./r-type-linux.tar.gz
+
+    - name: Upload To Artifact
+      if: github.ref != 'refs/heads/main'
+      uses: actions/upload-artifact@v3
+      with:
+        name: r-type-linux.sh
+        path: ./r-type-linux.sh
+
+  release-macos:
+    runs-on: macos-latest
+    needs: [release-create, raylib-to-tar]
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Install deps
-      run: sudo apt-get update && sudo apt-get install -y tar git
+    - name: Install dependencies
+      run: ./scripts/install-deps-macos.sh
 
-    - name: Get Asio
-      run: |
-        git clone https://github.com/chriskohlhoff/asio.git asio-repo
-        cd asio-repo || exit 14
-        git checkout $(git describe --tags --abbrev=0)
-        cd ..
-
-    - name: To Tar
-      run: |
-        cd asio-repo || exit 14
-        tar -cvf ../asio.tar asio
+    - name: Build
+      run: ./scripts/bundle-macos.sh
 
     - name: Upload To Release
+      if: github.ref == 'refs/heads/main'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        gh release upload ${{ needs.release-create.outputs.release }} ./asio.tar
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type-macos.zip
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type-macos.dmg
+
+    - name: Upload To Artifact
+      if: github.ref != 'refs/heads/main'
+      uses: actions/upload-artifact@v3
+      with:
+        name: r-type-macos.dmg
+        path: ./r-type-macos.dmg
+
+    - name: Upload To Artifact
+      if: github.ref != 'refs/heads/main'
+      uses: actions/upload-artifact@v3
+      with:
+        name: r-type-macos.zip
+        path: ./r-type-macos.zip
 
   raylib-to-tar:
     runs-on: ubuntu-latest
@@ -111,15 +163,23 @@ jobs:
       run: |
         git clone https://github.com/raysan5/raylib.git raylib-repo
         cd raylib-repo || exit 14
-        git checkout 4.5.0
+        git checkout ${{ env.RAYLIB_TAG }}
         cd ..
 
-    - name: Zip To Tar
+    - name: To Tar
       run: |
         tar -cvf raylib.tar raylib-repo
 
     - name: Upload To Release
+      if: github.ref == 'refs/heads/main'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         gh release upload ${{ needs.release-create.outputs.release }} ./raylib.tar
+
+    - name: Upload To Artifact
+      if: github.ref != 'refs/heads/main'
+      uses: actions/upload-artifact@v3
+      with:
+        name: raylib.tar
+        path: ./raylib.tar
