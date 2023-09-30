@@ -66,7 +66,7 @@ namespace Systems {
         Registry::components<Types::CollisionRect> arrCollisionRect =
             Registry::getInstance().getComponents<Types::CollisionRect>();
 
-        std::size_t id = *itIds;
+        std::size_t id                  = *itIds;
         Types::Position entityPos       = arrPosition[id];
         Types::CollisionRect entityColl = arrCollisionRect[id];
 
