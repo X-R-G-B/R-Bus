@@ -5,8 +5,8 @@
 ** Systems implementation
 */
 
-#include <cstddef>
 #include "Systems.hpp"
+#include <cstddef>
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
