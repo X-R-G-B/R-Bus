@@ -7,133 +7,153 @@
 
 #include "Systems.hpp"
 #include <cstddef>
-#include "ECSCustomTypes.hpp"
+#include "CustomTypes.hpp"
+#include "Raylib.hpp"
 #include "Registry.hpp"
+#include "SystemManagersDirector.hpp"
 
 namespace Systems {
-    void windowCollision(std::size_t /*unused*/)
+    void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
             Registry::getInstance().getComponents<Types::CollisionRect>();
 
-        SparseArray<std::size_t> &playerId =
-            Registry::getInstance().getCustomSparseArray<std::size_t>(
-                CustomIndex::PLAYER);
+        std::vector<std::size_t> playerIdx = Registry::getInstance()
+                                                 .getComponents<Types::Player>()
+                                                 .getExistingsId();
 
         const float maxPercent = 100.0F;
-        for (std::optional<std::size_t> id : playerId) {
-            if (id.has_value() && arrPosition[id.value()].has_value()
-                && arrCollisionRect[id.value()].has_value()) {
-                if (arrPosition[id.value()].value().x < 0) {
-                    arrPosition[id.value()].value().x = 0;
-                }
-                if (arrPosition[id.value()].value().y < 0) {
-                    arrPosition[id.value()].value().y = 0;
-                }
-                if (arrPosition[id.value()].value().x
-                        + arrCollisionRect[id.value()].value().width
-                    > maxPercent) {
-                    arrPosition[id.value()].value().x =
-                        maxPercent - arrCollisionRect[id.value()].value().width;
-                }
-                if (arrPosition[id.value()].value().y
-                        + arrCollisionRect[id.value()].value().height
-                    > maxPercent) {
-                    arrPosition[id.value()].value().y = maxPercent
-                        - arrCollisionRect[id.value()].value().height;
-                }
+        for (std::size_t id : playerIdx) {
+            if (arrPosition[id].x < 0) {
+                arrPosition[id].x = 0;
+            }
+            if (arrPosition[id].y < 0) {
+                arrPosition[id].y = 0;
+            }
+            if (arrPosition[id].x + arrCollisionRect[id].width > maxPercent) {
+                arrPosition[id].x = maxPercent - arrCollisionRect[id].width;
+            }
+            if (arrPosition[id].y + arrCollisionRect[id].height > maxPercent) {
+                arrPosition[id].y = maxPercent - arrCollisionRect[id].height;
             }
         }
     }
 
     static void giveDamages(std::size_t firstEntity, std::size_t secondEntity)
     {
-        std::optional<Types::Health> &firstEntityHealth =
-            Registry::getInstance().getComponents<Types::Health>()[firstEntity];
-        std::optional<Types::Dammage> &firstEntityDammage =
-            Registry::getInstance()
-                .getComponents<Types::Dammage>()[firstEntity];
-        std::optional<Types::Health> &secondEntityHealth =
-            Registry::getInstance()
-                .getComponents<Types::Health>()[secondEntity];
-        std::optional<Types::Dammage> &secondEntityDammage =
-            Registry::getInstance()
-                .getComponents<Types::Dammage>()[secondEntity];
+        Registry::components<Types::Dammage> arrDammage =
+            Registry::getInstance().getComponents<Types::Dammage>();
+        Registry::components<Types::Health> arrHealth =
+            Registry::getInstance().getComponents<Types::Health>();
 
-        if (firstEntityDammage.has_value() && secondEntityHealth.has_value()
-            && secondEntityHealth->hp > 0 && firstEntityDammage->dammage > 0) {
-            if (firstEntityHealth->hp != 0) {
-                secondEntityHealth->hp -= firstEntityDammage->dammage;
-            }
-        }
-        if (secondEntityDammage.has_value() && firstEntityHealth.has_value()
-            && secondEntityHealth->hp > 0 && firstEntityHealth->hp > 0) {
-            if (secondEntityHealth->hp != 0) {
-                firstEntityHealth->hp -= secondEntityDammage->dammage;
+        if (arrDammage.exist(firstEntity)
+            && arrDammage[firstEntity].dammage > 0) {
+            if (arrHealth.exist(secondEntity)
+                && arrHealth[secondEntity].hp > 0) {
+                arrHealth[secondEntity].hp -= arrDammage[firstEntity].dammage;
             }
         }
     }
 
     static void checkCollisionEntity(
-        std::vector<std::optional<Types::CollisionRect>>::iterator &collisionIt,
-        std::vector<std::optional<Types::Position>>::iterator &positionIt,
-        Registry::components<Types::Position> &arrPosition,
-        Registry::components<Types::CollisionRect> &arrCollision
-
-    )
-    {
-        auto tmpCollisionIt = collisionIt;
-        auto tmpPositionIt  = positionIt;
-
-        while (tmpCollisionIt != arrCollision.end()
-               && tmpPositionIt != arrPosition.end()) {
-            tmpCollisionIt++;
-            tmpPositionIt++;
-            if (tmpCollisionIt->has_value() && tmpPositionIt->has_value()) {
-                if (positionIt->value().x < tmpPositionIt->value().x
-                            + tmpCollisionIt->value().width
-                    && positionIt->value().x + collisionIt->value().width
-                        > tmpPositionIt->value().x
-                    && positionIt->value().y < tmpPositionIt->value().y
-                            + tmpCollisionIt->value().height
-                    && positionIt->value().y + collisionIt->value().height
-                        > tmpPositionIt->value().y) {
-                    giveDamages(
-                        std::distance(arrPosition.begin(), positionIt),
-                        std::distance(arrPosition.begin(), tmpPositionIt));
-                }
-            }
-        }
-    }
-
-    void entitiesCollision(std::size_t /*unused*/)
+        std::size_t &id,
+        std::vector<size_t>::iterator itIds,
+        std::vector<std::size_t> &ids)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
             Registry::getInstance().getComponents<Types::CollisionRect>();
 
-        auto collisionIt = arrCollisionRect.begin();
-        auto positionIt  = arrPosition.begin();
+        Types::Position entityPos       = arrPosition[id];
+        Types::CollisionRect entityColl = arrCollisionRect[id];
 
-        while (collisionIt != arrCollisionRect.end()
-               && positionIt != arrPosition.end()) {
-            if (collisionIt->has_value() && positionIt->has_value()) {
-                checkCollisionEntity(
-                    collisionIt,
-                    positionIt,
-                    arrPosition,
-                    arrCollisionRect);
+        itIds++;
+        while (itIds != ids.end()) {
+            if (arrCollisionRect.exist(*itIds)) {
+                Types::CollisionRect sndEntityRect = arrCollisionRect[*itIds];
+                Types::Position sndEntityPos       = arrPosition[*itIds];
+                if (entityPos.x < sndEntityPos.x + sndEntityRect.width
+                    && entityPos.x + entityColl.width > sndEntityPos.x
+                    && entityPos.y < sndEntityPos.y + sndEntityRect.height
+                    && entityPos.y + entityColl.height > sndEntityPos.y) {
+                    giveDamages(id, *itIds);
+                    giveDamages(*itIds, id);
+                }
             }
-            collisionIt++;
-            positionIt++;
+            itIds++;
         }
     }
 
-    std::vector<std::function<void(std::size_t)>> getECSSystems()
+    void entitiesCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        return {windowCollision, entitiesCollision};
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::CollisionRect> arrCollisionRect =
+            Registry::getInstance().getComponents<Types::CollisionRect>();
+
+        std::vector<std::size_t> ids = arrPosition.getExistingsId();
+        auto itIds                   = ids.begin();
+
+        while (itIds != ids.end()) {
+            if (arrCollisionRect.exist(*itIds)) {
+                checkCollisionEntity(*itIds, itIds, ids);
+            }
+            itIds++;
+        }
+    }
+
+    const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
+    const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
+    const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
+    const Types::Rect spriteRect = {2, 2, 48, 48};
+    const Types::CollisionRect collisionRect = {46, 46};
+    const Raylib::Vector2 textPos            = {20, 50};
+    constexpr int playerData                 = 10;
+    constexpr int playerDammage              = 10;
+    constexpr int playerHealth               = 1;
+    constexpr float musicVolume              = 0.02F;
+    constexpr float soundVolume              = 0.1F;
+    constexpr float fontScale                = 2.0F;
+    const float playerWidth                  = 50.0F;
+    const float playerHeight                 = 50.0F;
+
+    void init(std::size_t managerId, std::size_t systemId)
+    {
+        Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Types::Position>().insertBack(
+            {playerData, playerData});
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
+            {playerPath, playerWidth, playerHeight});
+        Registry::getInstance().getComponents<Types::Rect>().insertBack(
+            spriteRect);
+        Registry::getInstance()
+            .getComponents<Types::CollisionRect>()
+            .insertBack(collisionRect);
+        Registry::getInstance().getComponents<Types::Player>().insertBack({});
+        Registry::getInstance().getComponents<Raylib::Music>().insertBack(
+            {musicPath, musicVolume});
+        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(
+            {soundPath, soundVolume});
+        Registry::getInstance().getComponents<Raylib::Text>().insertBack(
+            {"Press SPACE to play music, ENTER to play sound, J to reset "
+             "scene, ARROWS to move",
+             textPos,
+             fontScale,
+             Raylib::DarkBlue});
+        Registry::getInstance().getComponents<Types::Dammage>().insertBack(
+            {playerDammage});
+        Registry::getInstance().getComponents<Types::Health>().insertBack(
+            {playerHealth});
+        SystemManagersDirector::getInstance()
+            .getSystemManager(managerId)
+            .removeSystem(systemId);
+    }
+
+    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
+    {
+        return {windowCollision, init, entitiesCollision};
     }
 } // namespace Systems

@@ -34,4 +34,6 @@ namespace Types {
             int dammage;
     };
 
+    struct Player { };
+
 } // namespace Types

@@ -9,16 +9,15 @@
 
 #include <any>
 #include <functional>
-#include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <string>
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
+#include "SceneManager.hpp"
 #include "SparseArray.hpp"
-
-enum CustomIndex { PLAYER, BULLET, ENNEMY, MAX };
 
 class Registry {
     public:
@@ -40,25 +39,6 @@ class Registry {
 
         void clear();
 
-        template <class Component>
-        components<Component> getCustomSparseArray(std::size_t id)
-        {
-            if (id > _customSparseArrays.size()) {
-                throw std::runtime_error("ID not in ");
-            }
-            try {
-                components<Component> castedComponent =
-                    std::any_cast<components<Component>>(
-                        _customSparseArrays[id]);
-
-                return castedComponent;
-            } catch (const std::bad_any_cast &e) {
-                throw std::runtime_error("Bad cast: " + std::string(e.what()));
-            }
-        }
-
-        std::size_t getEntitiesNb() const;
-
         Registry &operator=(const Registry &) = delete;
         Registry(const Registry &)            = delete;
         void operator=(const Registry &&)     = delete;
@@ -66,15 +46,6 @@ class Registry {
 
     private:
         Registry();
-
-        template <class Component>
-        std::size_t addCustomSparseArray()
-        {
-            std::size_t id = _customSparseArrays.size();
-
-            _customSparseArrays.push_back(SparseArray<Component>());
-            return (id);
-        }
 
         template <typename Component>
         void checkAddSparseArray()
@@ -120,6 +91,6 @@ class Registry {
         std::vector<std::function<void(Registry &, std::size_t)>>
             _removeComponentFunctions;
         std::unordered_map<std::type_index, std::any> _data;
-        std::vector<std::any> _customSparseArrays;
+
         std::size_t _entitiesNb;
 };

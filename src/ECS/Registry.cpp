@@ -6,6 +6,7 @@
 */
 
 #include "Registry.hpp"
+#include <string>
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 Registry Registry::_instance = Registry();
@@ -39,14 +40,6 @@ void Registry::clear()
     _entitiesNb = 0;
 }
 
-std::size_t Registry::getEntitiesNb() const
-{
-    return (_entitiesNb);
-}
-
 Registry::Registry() : _entitiesNb(0)
 {
-    for (std::size_t i = 0; i < MAX; i++) {
-        addCustomSparseArray<std::size_t>();
-    }
 }

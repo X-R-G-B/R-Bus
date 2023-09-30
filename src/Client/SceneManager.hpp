@@ -10,20 +10,20 @@
 #include <array>
 #include <cstddef>
 #include <functional>
-#include <optional>
 #include <vector>
 
 enum ReturnValue { OK = 0, ERROR = 84 };
 
-enum Scene { MAIN_GAME, MENU, SCENE_MAX };
+enum Scene { MENU, MAIN_GAME, SCENE_MAX };
 
-enum SystemManagers { GAME, EVENTS, DISPLAY, MANAGER_MAX };
+enum SystemManagers { GAME, EVENTS, DISPLAY };
 
 class SceneManager {
     public:
         static SceneManager &getInstance();
         int run();
         void changeScene(Scene scene);
+        Scene getCurrentScene() const;
         void stop();
 
     private:
@@ -33,7 +33,7 @@ class SceneManager {
         bool _stop;
         const std::array<std::vector<SystemManagers>, 2> _scenes = {
             std::vector<SystemManagers> {EVENTS, GAME, DISPLAY},
-            std::vector<SystemManagers> {EVENTS,      DISPLAY    }
+            std::vector<SystemManagers> {EVENTS, GAME, DISPLAY}
         };
 
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
