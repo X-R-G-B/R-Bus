@@ -8,7 +8,6 @@
 #pragma once
 
 #include <iterator>
-#include <optional>
 #include <vector>
 
 template <typename Component>
@@ -16,19 +15,23 @@ class SparseArray {
     public:
         void add()
         {
-            _sparse.push_back(-1);
+            _sparse.push_back(std::size_t(-1));
         }
+
         void insertBack(const Component &value)
         {
             insert(_sparse.size() - 1, value);
         }
-        void insert(size_t id, const Component &value) {
-            if (id >= sparse.size()) {
-                throw std::runtime_error("SparseArrays::insert: ID out of bounds!");
+
+        void insert(size_t id, const Component &value)
+        {
+            if (id >= _sparse.size()) {
+                throw std::runtime_error(
+                    "SparseArrays::insert: ID out of bounds!");
             }
 
             if (_sparse[id] > -1) {
-                _dense[_sparse[id]] = value;
+                _dense[_sparse[id]]     = value;
                 _revSparse[_sparse[id]] = id;
                 return;
             }
@@ -37,10 +40,12 @@ class SparseArray {
             _dense.push_back(value);
             _revSparse.push_back(id);
         }
+
         void erase(std::size_t id)
         {
-            if (id >= sparse.size()) {
-                throw std::runtime_error("SparseArrays::erase: ID out of bounds!");
+            if (id >= _sparse.size()) {
+                throw std::runtime_error(
+                    "SparseArrays::erase: ID out of bounds!");
             }
             if (_sparse[id] != -1) {
                 auto it = _dense.begin();
@@ -54,6 +59,7 @@ class SparseArray {
             std::advance(it, id);
             _sparse.erase(it);
         };
+
         Component &operator[](size_t id)
         {
             throwIfDontExist(id);
@@ -65,13 +71,16 @@ class SparseArray {
             return _dense.begin();
         }
 
-        typename std::vector<std::optional<Component>>::iterator end()
+        typename std::vector<Component>::iterator end()
         {
             return _dense.end();
         }
-        bool exist(std::size_t id) {
+
+        bool exist(std::size_t id)
+        {
             return id < _sparse.size() && _sparse[id] != -1;
         }
+
         std::vector<std::size_t> getExistingsId()
         {
             return _revSparse;

@@ -20,7 +20,9 @@ namespace Systems {
         Registry::components<Types::CollisionRect> arrCollisionRect =
             Registry::getInstance().getComponents<Types::CollisionRect>();
 
-        std::vector<std::size_t> playerIdx = Registry::getInstance().getCustomSparseArray<Types::Player>().getExistingsId();
+        std::vector<std::size_t> playerIdx = Registry::getInstance()
+                                                 .getComponents<Types::Player>()
+                                                 .getExistingsId();
 
         const float maxPercent = 100.0F;
         for (std::size_t id : playerIdx) {
@@ -30,17 +32,11 @@ namespace Systems {
             if (arrPosition[id].y < 0) {
                 arrPosition[id].y = 0;
             }
-            if (arrPosition[id].x
-                    + arrCollisionRect[id].width
-                > maxPercent) {
-                arrPosition[id].x =
-                    maxPercent - arrCollisionRect[id].width;
+            if (arrPosition[id].x + arrCollisionRect[id].width > maxPercent) {
+                arrPosition[id].x = maxPercent - arrCollisionRect[id].width;
             }
-            if (arrPosition[id].y
-                    + arrCollisionRect[id].height
-                > maxPercent) {
-                arrPosition[id].y = maxPercent
-                    - arrCollisionRect[id].height;
+            if (arrPosition[id].y + arrCollisionRect[id].height > maxPercent) {
+                arrPosition[id].y = maxPercent - arrCollisionRect[id].height;
             }
         }
     }
@@ -61,29 +57,26 @@ namespace Systems {
     void init(std::size_t managerId, std::size_t systemId)
     {
         Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Types::Position>().insertBack({
-            playerData,
-            playerData});
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack({
-            playerPath,
-            playerWidth,
-            playerHeight});
+        Registry::getInstance().getComponents<Types::Position>().insertBack(
+            {playerData, playerData});
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
+            {playerPath, playerWidth, playerHeight});
         Registry::getInstance().getComponents<Types::Rect>().insertBack(
             spriteRect);
-        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
-            collisionRect);
-        Registry::getInstance().getComponents<Types::Player>().insertBack();
-        Registry::getInstance().getComponents<Raylib::Music>().insertBack({
-            musicPath,
-            musicVolume});
-        Registry::getInstance().getComponents<Raylib::Sound>().insertBack({
-            soundPath,
-            soundVolume});
-        Registry::getInstance().getComponents<Raylib::Text>().insertBack({
-            "Press space to play music, enter to play sound",
-            textPos,
-            fontScale,
-            Raylib::DarkBlue});
+        Registry::getInstance()
+            .getComponents<Types::CollisionRect>()
+            .insertBack(collisionRect);
+        Registry::getInstance().getComponents<Types::Player>().insertBack({});
+        Registry::getInstance().getComponents<Raylib::Music>().insertBack(
+            {musicPath, musicVolume});
+        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(
+            {soundPath, soundVolume});
+        Registry::getInstance().getComponents<Raylib::Text>().insertBack(
+            {"Press SPACE to play music, ENTER to play sound, J to reset "
+             "scene, ARROWS to move",
+             textPos,
+             fontScale,
+             Raylib::DarkBlue});
         SystemManagersDirector::getInstance()
             .getSystemManager(managerId)
             .removeSystem(systemId);

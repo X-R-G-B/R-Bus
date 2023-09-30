@@ -26,7 +26,6 @@ namespace Types {
             float y;
     };
 
-    struct Player {
-    };
+    struct Player { };
 
 } // namespace Types

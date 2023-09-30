@@ -36,8 +36,8 @@ namespace Systems {
                 (position.y * static_cast<float>(Raylib::getScreenHeight()))
                 / denominator;
 
-            float width = (rectangle.width
-                            * static_cast<float>(Raylib::getScreenWidth()))
+            float width =
+                (rectangle.width * static_cast<float>(Raylib::getScreenWidth()))
                 / denominator;
             float height = (rectangle.height
                             * static_cast<float>(Raylib::getScreenHeight()))
@@ -118,10 +118,7 @@ namespace Systems {
 
         for (auto id : spriteIndexes) {
             if (arrRect.exist(id) && arrPosition.exist(id)) {
-                drawSpriteWithRect(
-                    arrPosition[id],
-                    arrSprite[id],
-                    arrRect[id]);
+                drawSpriteWithRect(arrPosition[id], arrSprite[id], arrRect[id]);
             } else if (arrPosition.exist(id)) {
                 drawSpriteWithoutRect(arrPosition[id], arrSprite[id]);
             }
@@ -182,7 +179,7 @@ namespace Systems {
         Registry::components<Raylib::Text> arrText =
             Registry::getInstance().getComponents<Raylib::Text>();
 
-        for (auto &textIt: arrText) {
+        for (auto &textIt : arrText) {
             drawTextResponsive(textIt);
         }
     }

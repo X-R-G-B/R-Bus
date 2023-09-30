@@ -19,7 +19,9 @@ namespace Systems {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
 
-        std::vector<std::size_t> playerId = Registry::getInstance().getCustomSparseArray<Types::Player>().getExistingsId();
+        std::vector<std::size_t> playerId = Registry::getInstance()
+                                                .getComponents<Types::Player>()
+                                                .getExistingsId();
 
         for (std::size_t id : playerId) {
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
