@@ -5,8 +5,8 @@
 ** Systems implementation
 */
 
-#include "Systems.hpp"
 #include <cstddef>
+#include "Systems.hpp"
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
@@ -141,6 +141,8 @@ namespace Systems {
             .getComponents<Types::CollisionRect>()
             .insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
+        Registry::getInstance().getComponents<Types::Health>().insertBack(
+            {playerHealth});
 
         id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Types::Position>().insertBack(
