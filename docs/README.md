@@ -1,5 +1,8 @@
 # R-Bus
 
+[![Release](https://github.com/X-R-G-B/R-Bus/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/X-R-G-B/R-Bus/actions/workflows/release.yml)
+
+[![Compil](https://github.com/X-R-G-B/R-Bus/actions/workflows/compil.yml/badge.svg?branch=main)](https://github.com/X-R-G-B/R-Bus/actions/workflows/compil.yml)
 
 ```
 R-Type[a] is a horizontally scrolling shooter arcade video game developed
