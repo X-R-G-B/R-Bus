@@ -12,12 +12,14 @@ namespace Nitwork {
     Nitwork Nitwork::_instance = Nitwork();
     // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
-    Nitwork &Nitwork::getInstance() {
+    Nitwork &Nitwork::getInstance()
+    {
         return _instance;
     }
 
     /* Start Section */
-    bool Nitwork::start(int port, int threadNb, int tick) {
+    bool Nitwork::start(int port, int threadNb, int tick)
+    {
         try {
             startReceiveHandler();
             startInputHandler();
@@ -30,7 +32,9 @@ namespace Nitwork {
                 std::cerr << "Error: server threads failed" << std::endl;
                 return false;
             }
-            std::cout << "Server started on port " << port << " on " << boost::asio::ip::host_name() << " with ip " << _endpoint.address().to_string() << std::endl;
+            std::cout << "Server started on port " << port << " on "
+                      << boost::asio::ip::host_name() << " with ip "
+                      << _endpoint.address().to_string() << std::endl;
         } catch (std::exception &e) {
             std::cerr << "Nitwork Error : " << e.what() << std::endl;
             return false;
@@ -40,7 +44,8 @@ namespace Nitwork {
 
     bool Nitwork::startServerConfig(int port)
     {
-        _endpoint = boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port);
+        _endpoint =
+            boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port);
         _socket.open(boost::asio::ip::udp::v4());
         if (!_socket.is_open()) {
             std::cerr << "Error: socket not open" << std::endl;
@@ -50,10 +55,12 @@ namespace Nitwork {
         return true;
     }
 
-    bool Nitwork::startClockThread(int tick) {
+    bool Nitwork::startClockThread(int tick)
+    {
         _clockThread = std::thread([this, tick]() {
             while (true) {
-                std::this_thread::sleep_for(std::chrono::milliseconds(ONE_SECOND / tick));
+                std::this_thread::sleep_for(
+                    std::chrono::milliseconds(ONE_SECOND / tick));
                 _tickConvVar.notify_all();
             }
         });
@@ -77,7 +84,8 @@ namespace Nitwork {
         return true;
     }
 
-    bool Nitwork::startContextThreads(int threadNb) {
+    bool Nitwork::startContextThreads(int threadNb)
+    {
         std::cout << "Starting context threads" << std::endl;
         for (int i = 0; i < threadNb; i++) {
             _pool.emplace_back([this]() {
@@ -88,14 +96,16 @@ namespace Nitwork {
                 }
             });
             if (!_pool.back().joinable()) {
-                std::cerr << "Error: thread nb: " << i << " not joinable" << std::endl;
+                std::cerr << "Error: thread nb: " << i << " not joinable"
+                          << std::endl;
                 return false;
             }
         }
         return true;
     }
 
-    void Nitwork::startInputHandler() {
+    void Nitwork::startInputHandler()
+    {
         boost::asio::post(_context, [this]() {
             std::unique_lock<std::mutex> lockTick(_tickMutex);
 
@@ -114,7 +124,8 @@ namespace Nitwork {
         });
     }
 
-    void Nitwork::startOutputHandler() {
+    void Nitwork::startOutputHandler()
+    {
         boost::asio::post(_context, [this]() {
             std::unique_lock<std::mutex> lockQueue(_outputQueueMutex);
             std::unique_lock<std::mutex> lockTick(_tickMutex);
@@ -125,7 +136,9 @@ namespace Nitwork {
                     _tickConvVar.wait(lockTick);
                     for (auto &data : _outputQueue) {
                         lockQueue.lock();
-                        _actionToSendHandlers[data.second.action](data.first, data.second.body);
+                        _actionToSendHandlers[data.second.action](
+                            data.first,
+                            data.second.body);
                         lockQueue.unlock();
                     }
                     _outputQueue.clear();
@@ -138,8 +151,8 @@ namespace Nitwork {
     /* End Start Section */
 
     /* Receive Section */
-    void Nitwork::startReceiveHandler() {
-
+    void Nitwork::startReceiveHandler()
+    {
         std::cout << "Starting receive handler" << std::endl;
         _socket.async_receive_from(
             boost::asio::buffer(_receiveBuffer),
@@ -148,12 +161,13 @@ namespace Nitwork {
                 &Nitwork::headerHandler,
                 this,
                 boost::asio::placeholders::bytes_transferred,
-                boost::asio::placeholders::error
-            )
-        );
+                boost::asio::placeholders::error));
     }
 
-    void Nitwork::headerHandler(std::size_t bytes_received, const boost::system::error_code& error) {
+    void Nitwork::headerHandler(
+        std::size_t bytes_received,
+        const boost::system::error_code &error)
+    {
         if (error) {
             std::cerr << "Error: " << error.message() << std::endl;
             startReceiveHandler();
@@ -182,10 +196,15 @@ namespace Nitwork {
         }
     }
 
-    void Nitwork::handleBodyAction(const struct header_s header, const boost::asio::ip::udp::endpoint &endpoint) {
-        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
+    void Nitwork::handleBodyAction(
+        const struct header_s header,
+        const boost::asio::ip::udp::endpoint &endpoint)
+    {
+        auto *action = reinterpret_cast<struct action_s *>(
+            _receiveBuffer.data() + sizeof(struct header_s));
         std::cout << "action.magick: " << action->magick << std::endl;
-        auto endPointIt = std::find(_endpoints.begin(), _endpoints.end(), endpoint);
+        auto endPointIt =
+            std::find(_endpoints.begin(), _endpoints.end(), endpoint);
         if (endPointIt == _endpoints.end() && action->magick != INIT) {
             std::cerr << "Error: endpoint not found" << std::endl;
             startReceiveHandler();
@@ -203,7 +222,8 @@ namespace Nitwork {
     /* End Receive Section */
 
     /* Stop Section */
-    void Nitwork::stop() {
+    void Nitwork::stop()
+    {
         _inputThread.join();
         _clockThread.join();
         _outputThread.join();
@@ -213,7 +233,10 @@ namespace Nitwork {
     /* End Stop Section */
 
     /* Handle packet (msg) Section */
-    void Nitwork::handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+    void Nitwork::handleInitMsg(
+        const std::any &msg,
+        boost::asio::ip::udp::endpoint &endpoint)
+    {
         const struct msgInit_s &initMsg = std::any_cast<struct msgInit_s>(msg);
 
         std::cout << "init" << std::endl;
@@ -221,18 +244,22 @@ namespace Nitwork {
             std::cerr << "Error: too many clients" << std::endl;
             return;
         }
-        auto endPointIt = std::find(_endpoints.begin(), _endpoints.end(), endpoint);
+        auto endPointIt =
+            std::find(_endpoints.begin(), _endpoints.end(), endpoint);
         if (endPointIt != _endpoints.end()) {
             std::cerr << "Error: endpoint already init" << std::endl;
             return;
         }
         _endpoints.emplace_back(endpoint);
-
     }
 
-    void Nitwork::handleReadyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
-        const struct msgReady_s &readyMsg = std::any_cast<struct msgReady_s>(msg);
+    void Nitwork::handleReadyMsg(
+        const std::any &msg,
+        boost::asio::ip::udp::endpoint &endpoint)
+    {
+        const struct msgReady_s &readyMsg =
+            std::any_cast<struct msgReady_s>(msg);
         std::cout << "ready" << std::endl;
     }
     /* End Handle packet (msg) Section */
-}
+} // namespace Nitwork

@@ -1,5 +1,5 @@
-#include "boost/asio.hpp"
 #include "Nitwork.hpp"
+#include "boost/asio.hpp"
 
 int main()
 {
@@ -7,7 +7,8 @@ int main()
         std::cout << "Starting server..." << std::endl;
         Nitwork::Nitwork::getInstance().start(4242);
         std::cout << "Server started." << std::endl;
-        while (true);
+        while (true)
+            ;
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
     }
