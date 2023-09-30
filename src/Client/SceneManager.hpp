@@ -10,7 +10,6 @@
 #include <array>
 #include <cstddef>
 #include <functional>
-#include <optional>
 #include <vector>
 
 enum CustomIndex { BULLET, PLAYER, ENNEMY };
