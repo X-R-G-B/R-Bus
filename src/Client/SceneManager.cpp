@@ -65,8 +65,6 @@ int SceneManager::run()
     auto &director = Systems::SystemManagersDirector::getInstance();
 
     try {
-        Registry::getInstance().initCustomSparseArrays(
-            _scenesCustomIndexes.at(_currentScene));
         while (!_stop && !Raylib::windowShouldClose()) {
             Raylib::beginDrawing();
             Raylib::clearBackground(Raylib::DarkGray);
@@ -87,7 +85,7 @@ int SceneManager::run()
 void SceneManager::changeScene(Scene scene)
 {
     _currentScene = scene;
-    Registry::getInstance().clear(_scenesCustomIndexes.at(_currentScene));
+    Registry::getInstance().clear();
     Systems::SystemManagersDirector::getInstance().resetChanges();
 }
 

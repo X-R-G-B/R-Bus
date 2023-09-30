@@ -10,10 +10,7 @@
 #include <array>
 #include <cstddef>
 #include <functional>
-#include <optional>
 #include <vector>
-
-enum CustomIndex { BULLET, PLAYER, ENNEMY };
 
 enum ReturnValue { OK = 0, ERROR = 84 };
 
@@ -37,10 +34,6 @@ class SceneManager {
         const std::array<std::vector<SystemManagers>, 2> _scenes = {
             std::vector<SystemManagers> {EVENTS, GAME, DISPLAY},
             std::vector<SystemManagers> {EVENTS, GAME, DISPLAY}
-        };
-        const std::array<std::vector<CustomIndex>, 2> _scenesCustomIndexes = {
-            std::vector<CustomIndex> {PLAYER },
-            std::vector<CustomIndex> { PLAYER, BULLET, ENNEMY}
         };
 
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)

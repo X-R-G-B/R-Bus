@@ -37,39 +37,7 @@ class Registry {
 
         void removeEntity(std::size_t /*id*/);
 
-        void clear(std::vector<CustomIndex>);
-
-        template <class Component>
-        components<Component> getCustomSparseArray(std::size_t id)
-        {
-            if (_customSparseArrays.find(id) == _customSparseArrays.end()) {
-                throw std::runtime_error(
-                    "getCustomSparseArray ID not in :" + std::to_string(id));
-            }
-            try {
-                components<Component> castedComponent =
-                    std::any_cast<components<Component>>(
-                        _customSparseArrays[id]);
-
-                return castedComponent;
-            } catch (const std::bad_any_cast &e) {
-                throw std::runtime_error("Bad cast: " + std::string(e.what()));
-            }
-        }
-
-        template <class Component>
-        std::size_t addCustomSparseArray()
-        {
-            _maxCustomId++;
-            std::size_t id = _maxCustomId;
-
-            _customSparseArrays[id] = SparseArray<Component>();
-            return (id);
-        }
-
-        std::size_t getEntitiesNb() const;
-
-        void initCustomSparseArrays(std::vector<CustomIndex> indexes);
+        void clear();
 
         Registry &operator=(const Registry &) = delete;
         Registry(const Registry &)            = delete;
@@ -114,8 +82,6 @@ class Registry {
                 _data[typeid(Component)]);
         }
 
-        void addCustomSparseIndex(std::size_t id);
-
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
         static Registry _instance;
         // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
@@ -125,9 +91,6 @@ class Registry {
         std::vector<std::function<void(Registry &, std::size_t)>>
             _removeComponentFunctions;
         std::unordered_map<std::type_index, std::any> _data;
-
-        std::unordered_map<std::size_t, std::any> _customSparseArrays;
-        std::size_t _maxCustomId;
 
         std::size_t _entitiesNb;
 };

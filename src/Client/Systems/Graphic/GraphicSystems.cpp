@@ -18,40 +18,37 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::RectangleShape> arrRect =
             Registry::getInstance().getComponents<Types::RectangleShape>();
+        std::vector<std::size_t> rectShapeIndexes = arrRect.getExistingsId();
 
         const float denominator = 100.0;
 
-        auto positionIt = arrPosition.begin();
-        auto rectIt     = arrRect.begin();
-
-        while (positionIt != arrPosition.end() && rectIt != arrRect.end()) {
-            if (positionIt->has_value() && rectIt->has_value()) {
-                Types::Position &position        = positionIt->value();
-                Types::RectangleShape &rectangle = rectIt->value();
-
-                float x =
-                    (position.x * static_cast<float>(Raylib::getScreenWidth()))
-                    / denominator;
-                float y =
-                    (position.y * static_cast<float>(Raylib::getScreenHeight()))
-                    / denominator;
-
-                float width = (rectangle.width
-                               * static_cast<float>(Raylib::getScreenWidth()))
-                    / denominator;
-                float height = (rectangle.height
-                                * static_cast<float>(Raylib::getScreenHeight()))
-                    / denominator;
-
-                DrawRectangle(
-                    static_cast<int>(x),
-                    static_cast<int>(y),
-                    static_cast<int>(width),
-                    static_cast<int>(height),
-                    PURPLE);
+        for (auto id : rectShapeIndexes) {
+            if (!arrPosition.exist(id)) {
+                continue;
             }
-            positionIt++;
-            rectIt++;
+            Types::Position &position        = arrPosition[id];
+            Types::RectangleShape &rectangle = arrRect[id];
+
+            float x =
+                (position.x * static_cast<float>(Raylib::getScreenWidth()))
+                / denominator;
+            float y =
+                (position.y * static_cast<float>(Raylib::getScreenHeight()))
+                / denominator;
+
+            float width =
+                (rectangle.width * static_cast<float>(Raylib::getScreenWidth()))
+                / denominator;
+            float height = (rectangle.height
+                            * static_cast<float>(Raylib::getScreenHeight()))
+                / denominator;
+
+            DrawRectangle(
+                static_cast<int>(x),
+                static_cast<int>(y),
+                static_cast<int>(width),
+                static_cast<int>(height),
+                PURPLE);
         }
     }
 
@@ -117,24 +114,14 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Rect>();
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
+        std::vector<std::size_t> spriteIndexes = arrSprite.getExistingsId();
 
-        auto positionIt = arrPosition.begin();
-        auto spriteIt   = arrSprite.begin();
-        auto rectIt     = arrRect.begin();
-
-        while (positionIt != arrPosition.end() && spriteIt != arrSprite.end()) {
-            if (positionIt->has_value() && spriteIt->has_value()
-                && rectIt->has_value()) {
-                drawSpriteWithRect(
-                    positionIt->value(),
-                    spriteIt->value(),
-                    rectIt->value());
-            } else if (positionIt->has_value() && spriteIt->has_value()) {
-                drawSpriteWithoutRect(positionIt->value(), spriteIt->value());
+        for (auto id : spriteIndexes) {
+            if (arrRect.exist(id) && arrPosition.exist(id)) {
+                drawSpriteWithRect(arrPosition[id], arrSprite[id], arrRect[id]);
+            } else if (arrPosition.exist(id)) {
+                drawSpriteWithoutRect(arrPosition[id], arrSprite[id]);
             }
-            positionIt++;
-            spriteIt++;
-            rectIt++;
         }
     }
 
@@ -146,12 +133,9 @@ namespace Systems {
             Registry::getInstance().getComponents<Raylib::Sound>();
 
         for (auto &soundEffect : arrSoundEffect) {
-            if (!soundEffect.has_value()) {
-                continue;
-            }
-            if (soundEffect.value().NeedToPlay()) {
-                soundEffect.value().play();
-                soundEffect.value().setNeedToPlay(false);
+            if (soundEffect.NeedToPlay()) {
+                soundEffect.play();
+                soundEffect.setNeedToPlay(false);
             }
         }
     }
@@ -163,15 +147,12 @@ namespace Systems {
             Registry::getInstance().getComponents<Raylib::Music>();
 
         for (auto &music : arrMusics) {
-            if (!music.has_value()) {
-                continue;
+            if (music.NeedToPlay()) {
+                music.play();
+                music.setNeedToPlay(false);
             }
-            if (music.value().NeedToPlay()) {
-                music.value().play();
-                music.value().setNeedToPlay(false);
-            }
-            if (music.value().isPlaying()) {
-                music.value().update();
+            if (music.isPlaying()) {
+                music.update();
             }
         }
     }
@@ -198,13 +179,8 @@ namespace Systems {
         Registry::components<Raylib::Text> arrText =
             Registry::getInstance().getComponents<Raylib::Text>();
 
-        auto textIt = arrText.begin();
-
-        while (textIt != arrText.end()) {
-            if (textIt->has_value()) {
-                drawTextResponsive(textIt->value());
-            }
-            textIt++;
+        for (auto &textIt : arrText) {
+            drawTextResponsive(textIt);
         }
     }
 
@@ -225,21 +201,15 @@ namespace Systems {
             Registry::getInstance().getComponents<Raylib::Sound>();
 
         for (auto &music : arrMusics) {
-            if (!music.has_value()) {
-                continue;
-            }
-            if (music.value().getPath() == musicPath
+            if (music.getPath() == musicPath
                 && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_SPACE)) {
-                music.value().setNeedToPlay(true);
+                music.setNeedToPlay(true);
             }
         }
         for (auto &sound : arrSounds) {
-            if (!sound.has_value()) {
-                continue;
-            }
-            if (sound.value().getPath() == soundPath
+            if (sound.getPath() == soundPath
                 && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_ENTER)) {
-                sound.value().setNeedToPlay(true);
+                sound.setNeedToPlay(true);
             }
         }
     }
