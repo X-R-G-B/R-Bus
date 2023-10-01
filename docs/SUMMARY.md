@@ -37,6 +37,10 @@
 - [Server](developer-guide/server/README.md)
 
 - [Client](developer-guide/client/README.md)
+    - [Audio](developer-guide/client/audio/README.md)
+    - [Events](developer-guide/client/events/README.md)
+    - [Geometry](developer-guide/client/geometry/README.md)
+    - [Graphic](developer-guide/client/graphic/README.md)
 
 -----------
 
