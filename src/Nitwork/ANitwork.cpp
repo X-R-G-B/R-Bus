@@ -118,10 +118,15 @@ namespace Nitwork {
             return;
         }
         try {
-            auto *header =
-                reinterpret_cast<struct header_s *>(_receiveBuffer.data());
             if (bytes_received < sizeof(struct header_s)) {
                 std::cerr << "Error: header not received" << std::endl;
+                startReceiveHandler();
+                return;
+            }
+            auto *header =
+                reinterpret_cast<struct header_s *>(_receiveBuffer.data());
+            if (header->magick1 != HEADER_CODE1 || header->magick2 != HEADER_CODE2) {
+                std::cerr << "Error: header magick not valid" << std::endl;
                 startReceiveHandler();
                 return;
             }

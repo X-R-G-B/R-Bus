@@ -8,20 +8,19 @@
 #include <NitworkServer.hpp>
 
 struct packetData_s {
-        struct header_s header;
         struct action_s action;
-        struct msgInit_s msgInit;
+        struct header_s header;
 } __attribute__((packed));
 
 int main()
 {
     struct header_s header = {
-        .magick1          = 0x42,
+        .magick1          = HEADER_CODE1,
         .ids_received     = 0,
         .last_id_received = 0,
         .id               = 0,
         .nb_action        = 1,
-        .magick2          = 0x42,
+        .magick2          = HEADER_CODE1,
     };
     struct action_s action = {
         .magick = INIT,
@@ -29,10 +28,12 @@ int main()
     struct msgInit_s msgInit = {
         .magick = INIT,
     };
+    struct msgReady_s msgReady = {
+        .magick = READY,
+    };
     struct packetData_s packetData = {
-        .header  = header,
         .action  = action,
-        .msgInit = msgInit,
+        .header  = header,
     };
     const int port = 4242; // Remplacez par le port du serveur
 
