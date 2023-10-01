@@ -5,7 +5,7 @@
 ** main
 */
 
-#include <Nitwork.hpp>
+#include <NitworkServer.hpp>
 
 struct packetData_s {
         struct header_s header;

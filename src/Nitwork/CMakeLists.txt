@@ -14,11 +14,13 @@ target_include_directories(
 target_sources(
     ${PROJECT_NAME_CLIENT}
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/Nitwork.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ANitwork.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/NitworkServer.cpp
 )
 
 target_sources(
     ${PROJECT_NAME_SERVER}
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/Nitwork.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ANitwork.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/NitworkServer.cpp
 )

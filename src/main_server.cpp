@@ -1,14 +1,21 @@
-#include "Nitwork.hpp"
-#include "boost/asio.hpp"
+//#include "NitworkServer.hpp"
+#include "NitworkServer.hpp"
 
 int main()
 {
+//    try {
+//        std::cout << "Starting server..." << std::endl;
+//        NitworkServer::NitworkServer::getInstance().start(4242);
+//        std::cout << "Server started." << std::endl;
+//        while (true);
+//    } catch (std::exception& e) {
+//        std::cerr << e.what() << std::endl;
+//    }
     try {
         std::cout << "Starting server..." << std::endl;
-        Nitwork::Nitwork::getInstance().start(4242);
+        Nitwork::NitworkServer::getInstance().start(4242);
         std::cout << "Server started." << std::endl;
-        while (true)
-            ;
+        while (true);
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
     }
