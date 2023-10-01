@@ -15,14 +15,14 @@
 namespace Systems {
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        Registry &registry = Registry::getInstance();
         Registry::components<Types::Position> arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
+            registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
-            Registry::getInstance().getComponents<Types::CollisionRect>();
+            registry.getComponents<Types::CollisionRect>();
 
-        std::vector<std::size_t> playerIdx = Registry::getInstance()
-                                                 .getComponents<Types::Player>()
-                                                 .getExistingsId();
+        std::vector<std::size_t> playerIdx =
+            registry.getComponents<Types::Player>().getExistingsId();
 
         const float maxPercent = 100.0F;
         for (std::size_t id : playerIdx) {
@@ -118,17 +118,44 @@ namespace Systems {
 
     void init(std::size_t managerId, std::size_t systemId)
     {
-        Registry::getInstance().addEntity();
+        std::size_t id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Types::Position>().insertBack(
             {playerData, playerData});
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {playerPath, playerWidth, playerHeight});
+            {playerPath, playerWidth, playerHeight, id});
+        Registry::getInstance().getComponents<Types::Rect>().insertBack(
+            spriteRect);
+        Registry::getInstance()
+            .getComponents<Types::CollisionRect>()
+            .insertBack(collisionRect);
+        Registry::getInstance().setToBackLayers(id);
+
+        id = Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Types::Position>().insertBack(
+            {playerData, playerData});
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
+            {playerPath, playerWidth, playerHeight, id});
         Registry::getInstance().getComponents<Types::Rect>().insertBack(
             spriteRect);
         Registry::getInstance()
             .getComponents<Types::CollisionRect>()
             .insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
+        Registry::getInstance().getComponents<Types::Health>().insertBack(
+            {playerHealth});
+
+        id = Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Types::Position>().insertBack(
+            {playerData, playerData + playerData + playerData});
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
+            {playerPath, playerWidth, playerHeight, id});
+        Registry::getInstance().getComponents<Types::Rect>().insertBack(
+            spriteRect);
+        Registry::getInstance()
+            .getComponents<Types::CollisionRect>()
+            .insertBack(collisionRect);
+        Registry::getInstance().setToFrontLayers(id);
+
         Registry::getInstance().getComponents<Raylib::Music>().insertBack(
             {musicPath, musicVolume});
         Registry::getInstance().getComponents<Raylib::Sound>().insertBack(

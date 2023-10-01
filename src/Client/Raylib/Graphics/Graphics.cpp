@@ -438,7 +438,11 @@ namespace Raylib {
 
     // Texture functions
 
-    Sprite::Sprite(const std::string &fileName, float width, float height)
+    Sprite::Sprite(
+        const std::string &fileName,
+        float width,
+        float height,
+        std::size_t id)
         : _texture(LoadTexture(fileName.c_str())),
           _width(width),
           _height(height)
@@ -449,6 +453,7 @@ namespace Raylib {
             _texture                          = LoadTextureFromImage(
                 GenImageColor(badImageSize, badImageSize, badTexture));
         }
+        Registry::getInstance().setToDefaultLayer(id);
     }
 
     Sprite::Sprite(Image image, float width, float height)

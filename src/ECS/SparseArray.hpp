@@ -66,6 +66,12 @@ class SparseArray {
             return _dense[_sparse[id]];
         }
 
+        /*
+         * A dense sparseArrays is not sort by entities id, the begin of two
+         * sparseArrays could be different entities, only _sparse are
+         * synchronized You can only use iterator in a system dealing with only
+         * one component at time
+         */
         typename std::vector<Component>::iterator begin()
         {
             return _dense.begin();
@@ -78,7 +84,15 @@ class SparseArray {
 
         bool exist(std::size_t id)
         {
-            return id < _sparse.size() && _sparse[id] != -1;
+            if (id >= _sparse.size()) {
+                return false;
+            }
+            for (auto elemId : _revSparse) {
+                if (id == elemId) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         std::vector<std::size_t> getExistingsId()
