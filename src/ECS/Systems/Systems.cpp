@@ -101,38 +101,50 @@ namespace Systems {
         }
     }
 
+    void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<Types::Health> arrHealth =
+            Registry::getInstance().getComponents<Types::Health>();
+        Registry::components<Types::Dead> arrDead =
+            Registry::getInstance().getComponents<Types::Dead>();
+
+        std::vector<std::size_t> ids = arrHealth.getExistingsId();
+        auto itIds                   = ids.begin();
+
+        while (itIds != ids.end()) {
+            if (arrHealth.exist(*itIds)) {
+                if (arrHealth[*itIds].hp <= 0 && arrDead.exist(*itIds)) {
+                    arrDead[*itIds].deathFunction
+                        ? arrDead[*itIds].deathFunction.value()(*itIds)
+                        : Registry::getInstance().removeEntity(*itIds);
+                }
+            }
+            itIds++;
+        }
+    }
+
     const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
     const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
     const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
     const Types::Rect spriteRect = {2, 2, 48, 48};
-    const Types::CollisionRect collisionRect = {46, 46};
+    const Types::CollisionRect collisionRect = {25, 25};
     const Raylib::Vector2 textPos            = {20, 50};
     constexpr int playerData                 = 10;
+    const Types::Position playerPos          = {50, 50};
     constexpr int playerDammage              = 10;
-    constexpr int playerHealth               = 1;
+    constexpr int playerHealth               = 5;
+    constexpr int playerHealth2              = 4;
     constexpr float musicVolume              = 0.02F;
     constexpr float soundVolume              = 0.1F;
     constexpr float fontScale                = 2.0F;
-    const float playerWidth                  = 50.0F;
-    const float playerHeight                 = 50.0F;
+    const float playerWidth                  = 25.0F;
+    const float playerHeight                 = 25.0F;
 
     void init(std::size_t managerId, std::size_t systemId)
     {
         std::size_t id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {playerData, playerData});
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {playerPath, playerWidth, playerHeight, id});
-        Registry::getInstance().getComponents<Types::Rect>().insertBack(
-            spriteRect);
-        Registry::getInstance()
-            .getComponents<Types::CollisionRect>()
-            .insertBack(collisionRect);
-        Registry::getInstance().setToBackLayers(id);
-
-        id = Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {playerData, playerData});
+            playerPos);
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
             {playerPath, playerWidth, playerHeight, id});
         Registry::getInstance().getComponents<Types::Rect>().insertBack(
@@ -143,6 +155,8 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
         Registry::getInstance().getComponents<Types::Health>().insertBack(
             {playerHealth});
+        Registry::getInstance().getComponents<Types::Dead>().insertBack(
+            {std::nullopt});
 
         id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Types::Position>().insertBack(
@@ -154,6 +168,8 @@ namespace Systems {
         Registry::getInstance()
             .getComponents<Types::CollisionRect>()
             .insertBack(collisionRect);
+        Registry::getInstance().getComponents<Types::Dead>().insertBack(
+            {std::nullopt});
         Registry::getInstance().setToFrontLayers(id);
 
         Registry::getInstance().getComponents<Raylib::Music>().insertBack(
@@ -169,7 +185,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Dammage>().insertBack(
             {playerDammage});
         Registry::getInstance().getComponents<Types::Health>().insertBack(
-            {playerHealth});
+            {playerHealth2});
         SystemManagersDirector::getInstance()
             .getSystemManager(managerId)
             .removeSystem(systemId);
@@ -177,6 +193,6 @@ namespace Systems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
     {
-        return {windowCollision, init, entitiesCollision};
+        return {windowCollision, init, entitiesCollision, deathChecker};
     }
 } // namespace Systems

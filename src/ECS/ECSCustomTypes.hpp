@@ -7,7 +7,9 @@
 
 #pragma once
 
-// all values are in percentage of the screen
+#include <functional>
+#include <optional>
+#include <cstddef>
 
 namespace Types {
 
@@ -35,5 +37,9 @@ namespace Types {
     };
 
     struct Player { };
+
+    struct Dead {
+            std::optional<std::function<void(std::size_t id)>> deathFunction;
+    };
 
 } // namespace Types
