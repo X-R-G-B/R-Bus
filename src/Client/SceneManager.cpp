@@ -14,8 +14,8 @@
 
 #include "CustomTypes.hpp"
 
-constexpr int screenWidth  = 1920;
-constexpr int screenHeight = 1080;
+constexpr int screenWidth  = 800;
+constexpr int screenHeight = 600;
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 bool SceneManager::_init             = false;
