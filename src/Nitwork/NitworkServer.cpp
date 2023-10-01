@@ -20,12 +20,12 @@ namespace Nitwork {
         return _instance;
     }
 
-    bool NitworkServer::start(int port, int threadNb, int tick)
+    bool NitworkServer::start(int port, int threadNb, int tick, const std::string &ip)
     {
         return ANitwork::start(port, threadNb, tick);
     }
 
-    bool NitworkServer::startNitworkConfig(int port)
+    bool NitworkServer::startNitworkConfig(int port, const std::string &ip /* unused */)
     {
         _endpoint =
             boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port);

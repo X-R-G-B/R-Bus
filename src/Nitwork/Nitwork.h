@@ -47,8 +47,20 @@ struct msgInit_s {
         n_magick_t magick;
 } __attribute__((packed));
 
+struct packetMsgInit_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgInit_s msgInit;
+} __attribute__((packed));
+
 struct msgReady_s {
         n_magick_t magick;
+} __attribute__((packed));
+
+struct packetMsgReady_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgReady_s msgReady;
 } __attribute__((packed));
 
 #endif

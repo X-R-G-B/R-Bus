@@ -8,15 +8,17 @@
 #include "ANitwork.hpp"
 namespace Nitwork {
     ANitwork::ANitwork()
-        : _socket(_context) {}
+        : _socket(_context),
+          _packetId(0) {
+    }
 
-    bool ANitwork::start(int port, int threadNb, int tick)
+    bool ANitwork::start(int port, int threadNb, int tick, const std::string &ip)
     {
         try {
             startReceiveHandler();
             startInputHandler();
             startOutputHandler();
-            if (!startNitworkConfig(port)) {
+            if (!startNitworkConfig(port, ip)) {
                 std::cerr << "Error: Nitwork config failed" << std::endl;
                 return false;
             }
@@ -112,17 +114,17 @@ namespace Nitwork {
         std::size_t bytes_received,
         const boost::system::error_code &error)
     {
+        if (bytes_received < sizeof(struct header_s)) {
+            std::cerr << "Error: header not received" << std::endl;
+            startReceiveHandler();
+            return;
+        }
         if (error) {
             std::cerr << "Error: " << error.message() << std::endl;
             startReceiveHandler();
             return;
         }
         try {
-            if (bytes_received < sizeof(struct header_s)) {
-                std::cerr << "Error: header not received" << std::endl;
-                startReceiveHandler();
-                return;
-            }
             auto *header =
                 reinterpret_cast<struct header_s *>(_receiveBuffer.data());
             if (header->magick1 != HEADER_CODE1 || header->magick2 != HEADER_CODE2) {
@@ -148,16 +150,19 @@ namespace Nitwork {
     void ANitwork::startInputHandler()
     {
         boost::asio::post(_context, [this]() {
-            std::unique_lock<std::mutex> lockTick(_tickMutex);
+            std::unique_lock<std::mutex> lockTick(_tickMutex, std::defer_lock);
+            std::unique_lock<std::mutex> lockQueue(_inputQueueMutex, std::defer_lock);
 
             std::cout << std::endl << "Starting input handler" << std::endl;
             try {
                 while (true) {
                     _tickConvVar.wait(lockTick);
+                    lockQueue.lock();
                     for (auto &action : _actions) {
                         action.second(action.first.data, action.first.endpoint);
                     }
                     _actions.clear();
+                    lockQueue.unlock();
                 }
             } catch (std::exception &e) {
                 std::cerr << e.what() << std::endl;
@@ -168,29 +173,44 @@ namespace Nitwork {
     void ANitwork::startOutputHandler()
     {
         boost::asio::post(_context, [this]() {
-            std::unique_lock<std::mutex> lockQueue(_outputQueueMutex);
-            std::unique_lock<std::mutex> lockTick(_tickMutex);
+            std::unique_lock<std::mutex> lockQueue(_outputQueueMutex, std::defer_lock);
+            std::unique_lock<std::mutex> lockTick(_tickMutex, std::defer_lock);
             const std::map<enum n_actionType_t, actionHandler> &actionToSendHandlers = getActionToSendHandlers();
 
             std::cout << std::endl << "Starting output handler" << std::endl;
             try {
                 while (true) {
                     _tickConvVar.wait(lockTick);
+                    lockQueue.lock();
                     for (auto &data : _outputQueue) {
-                        lockQueue.lock();
                         auto it = actionToSendHandlers.find(data.second.action);
                         if (it == actionToSendHandlers.end()) {
                             std::cerr << "Error: action not found" << std::endl;
                             continue;
                         }
                         it->second(data.second.body, data.first);
-                        lockQueue.unlock();
                     }
                     _outputQueue.clear();
+                    lockQueue.unlock();
                 }
             } catch (std::exception &e) {
                 std::cerr << e.what() << std::endl;
             }
         });
+    }
+
+    /* Getters / Setters Section */
+    n_id_t ANitwork::getPacketID() const
+    {
+        return _packetId;
+    }
+
+    void ANitwork::addPacketToSend(const boost::asio::ip::udp::endpoint &endpoint, const struct packet_s &packet)
+    {
+        std::lock_guard<std::mutex> lock(_outputQueueMutex);
+
+        std::cout << "add packet to send of type : " << packet.action << std::endl;
+        _outputQueue.emplace_back(std::make_pair(endpoint, packet));
+        _packetId++;
     }
 } // namespace Nitwork

@@ -5,77 +5,13 @@
 ** main
 */
 
-#include <NitworkServer.hpp>
-
-struct packetData_s {
-        struct action_s action;
-        struct header_s header;
-} __attribute__((packed));
+#include "NitworkClient.hpp"
 
 int main()
 {
-    struct header_s header = {
-        .magick1          = HEADER_CODE1,
-        .ids_received     = 0,
-        .last_id_received = 0,
-        .id               = 0,
-        .nb_action        = 1,
-        .magick2          = HEADER_CODE1,
-    };
-    struct action_s action = {
-        .magick = INIT,
-    };
-    struct msgInit_s msgInit = {
-        .magick = INIT,
-    };
-    struct msgReady_s msgReady = {
-        .magick = READY,
-    };
-    struct packetData_s packetData = {
-        .action  = action,
-        .header  = header,
-    };
-    const int port = 4242; // Remplacez par le port du serveur
+    Nitwork::NitworkClient::getInstance().start(4242);
 
-    try {
-        // Initialisation de Boost.Asio
-        boost::asio::io_context io_context;
-
-        // Adresse et port du serveur
-        boost::asio::ip::udp::resolver resolver(io_context);
-        boost::asio::ip::udp::endpoint client_endpoint =
-            *resolver
-                 .resolve(
-                     boost::asio::ip::udp::v4(),
-                     "127.0.0.1",
-                     std::to_string(port))
-                 .begin();
-
-        // Ouvrir le socket UDP
-        boost::asio::ip::udp::socket socket(io_context);
-        socket.open(boost::asio::ip::udp::v4());
-        std::thread t([&io_context]() {
-            io_context.run();
-        });
-
-        if (!socket.is_open()) {
-            std::cerr << "Error: socket not open" << std::endl;
-            return 84;
-        }
-
-        // Envoi de la structure
-        socket.send_to(
-            boost::asio::buffer(&packetData, sizeof(struct packetData_s)),
-            client_endpoint);
-
-        std::cout << "Structure envoyée avec succès au serveur. au port "
-                  << port << std::endl;
-
-        // Fermer le socket
-        socket.close();
-        t.join();
-    } catch (std::exception& e) {
-        std::cerr << e.what() << std::endl;
-    }
+    Nitwork::NitworkClient::getInstance().addInitMsg();
+    while (true);
     return 0;
 }

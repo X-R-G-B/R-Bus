@@ -44,12 +44,12 @@ namespace Nitwork {
             virtual ~INitwork() = default;
 
             // start the NitworkServer
-            virtual bool start(int port, int threadNb, int tick) = 0;
+            virtual bool start(int port, int threadNb, int tick, const std::string &ip = "") = 0;
 
             virtual void stop() = 0;
         protected:
             // start the NitworkServer config
-            virtual bool startNitworkConfig(int port) = 0;
+            virtual bool startNitworkConfig(int port, const std::string &ip) = 0;
             // start the NitworkServer threads (context threads, clock thread, input thread and output thread)
             virtual bool startNitworkThreads(int threadNb, int tick) = 0;
             // start the context threads

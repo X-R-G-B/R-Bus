@@ -1,8 +1,8 @@
 /*
 ** EPITECH PROJECT, 2023
-** r-type
+** R-Bus
 ** File description:
-** NitworkServer
+** NitworkClient
 */
 
 #pragma once
@@ -10,13 +10,14 @@
 #include "ANitwork.hpp"
 
 namespace Nitwork {
-    class NitworkServer : public ANitwork {
+    class NitworkClient : public ANitwork {
         public:
-            NitworkServer();
-            ~NitworkServer() = default;
+            NitworkClient();
+            ~NitworkClient() = default;
 
-            static NitworkServer &getInstance();
+            static NitworkClient &getInstance();
 
+            using ANitwork::start;
             bool start(int port, int threadNb = DEFAULT_THREAD_NB, int tick = TICKS_PER_SECOND, const std::string &ip = "") final;
 
             bool startNitworkConfig(int port, const std::string &ip) final;
@@ -24,6 +25,12 @@ namespace Nitwork {
             void handleBodyAction(
                 const struct header_s header,
                 const boost::asio::ip::udp::endpoint &endpoint) final;
+
+
+            // Get bytes of packets ids receives
+            n_idsReceived_t getIdsReceived();
+            // Messages creation methods
+            void addInitMsg();
         private:
             [[nodiscard]] const std::map<
                 enum n_actionType_t,
@@ -39,11 +46,9 @@ namespace Nitwork {
                 boost::asio::ip::udp::endpoint &endpoint);
         protected:
         private:
-            // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
-            static NitworkServer
-                _instance; // instance of the NitworkServer (singleton)
-            // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
-            std::list<boost::asio::ip::udp::endpoint> _endpoints; // A vector of endpoints which will be used to send the actions to the clients and identify them
+            static NitworkClient
+                _instance; // instance of the NitworkClient (singleton)
+            boost::asio::ip::udp::resolver _resolver; // resolver used to find the server
 
             // maps that will be used to handle the actions, in order to send or receive them
             std::map<
@@ -55,14 +60,14 @@ namespace Nitwork {
                     std::make_pair(
                         handleBodyT(
                             std::bind(
-                                &NitworkServer::handleBody<struct msgInit_s>,
+                                &NitworkClient::handleBody<struct msgInit_s>,
                                 this, std::placeholders::_1,
                                 std::placeholders::_2
                             )
                         ),
                         actionHandler(
                             std::bind(
-                                &NitworkServer::handleInitMsg,
+                                &NitworkClient::handleInitMsg,
                                 this, std::placeholders::_1,
                                 std::placeholders::_2
                             )
@@ -70,49 +75,49 @@ namespace Nitwork {
                     )
                 },
                 {
-                     READY,
-                     std::make_pair(
-                         handleBodyT(
-                             std::bind(
-                                &NitworkServer::handleBody<struct msgReady_s>,
+                    READY,
+                    std::make_pair(
+                        handleBodyT(
+                            std::bind(
+                                &NitworkClient::handleBody<struct msgReady_s>,
                                 this, std::placeholders::_1,
                                 std::placeholders::_2
                             )
-                         ),
-                         actionHandler(
-                             std::bind(
-                                 &NitworkServer::handleReadyMsg,
-                                 this, std::placeholders::_1,
-                                 std::placeholders::_2
-                             )
-                         )
-                     )
+                        ),
+                        actionHandler(
+                            std::bind(
+                                &NitworkClient::handleReadyMsg,
+                                this, std::placeholders::_1,
+                                std::placeholders::_2
+                            )
+                        )
+                    )
                 },
             };
             std::map<
                 enum n_actionType_t,
                 actionHandler
-            > _actionToSendHandlers = {
-                    {
-                         INIT,
-                         actionHandler(
-                             std::bind(
-                                 &ANitwork::sendData<struct msgInit_s>,
-                                 this, std::placeholders::_1,
-                                 std::placeholders::_2
-                             )
+                > _actionToSendHandlers = {
+                {
+                    INIT,
+                    actionHandler(
+                        std::bind(
+                            &ANitwork::sendData<struct packetMsgInit_s>,
+                            this, std::placeholders::_1,
+                            std::placeholders::_2
                         )
-                    },
-                    {
-                        READY,
-                        actionHandler(
-                            std::bind(
-                                &ANitwork::sendData<struct msgReady_s>,
-                                this, std::placeholders::_1,
-                                std::placeholders::_2
-                            )
+                    )
+                },
+                {
+                    READY,
+                    actionHandler(
+                        std::bind(
+                            &ANitwork::sendData<struct packetMsgReady_s>,
+                            this, std::placeholders::_1,
+                            std::placeholders::_2
                         )
-                    }
+                    )
+                }
             };
-    };
+        };
 }
