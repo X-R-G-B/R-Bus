@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include "ECSCustomTypes.hpp"
 
 namespace Types {
@@ -17,6 +18,36 @@ namespace Types {
             float y;
             float width;
             float height;
+    };
+
+    enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };
+
+    struct AnimRect {
+        public:
+            AnimRect(
+                Rect rect,
+                std::vector<Rect> _moveRects,
+                std::vector<Rect> _attackRects = {},
+                std::vector<Rect> _deadRects   = {})
+                : defaultRect(rect),
+                  moveRects(_moveRects),
+                  attackRects(_attackRects),
+                  deadRects(_deadRects),
+                  currentRectInList(0),
+                  currentRectList(Types::RectListType::DEFAULTRECT)
+            {
+            }
+            Rect defaultRect;
+            std::vector<Rect> moveRects;
+            std::vector<Rect> attackRects;
+            std::vector<Rect> deadRects;
+            RectListType currentRectList;
+            std::size_t currentRectInList;
+            void changeRectList(RectListType type = RectListType::DEFAULTRECT)
+            {
+                currentRectList   = type;
+                currentRectInList = 0;
+            }
     };
 
 } // namespace Types
