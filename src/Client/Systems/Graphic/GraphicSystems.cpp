@@ -16,9 +16,6 @@ namespace Systems {
     GraphicSystems::getGraphicsSystems()
     {
         std::vector<std::function<void(std::size_t, std::size_t)>>
-            graphicSystems;
-
-        std::vector<std::function<void(std::size_t, std::size_t)>>
             audioSystems = getAudioSystems();
         std::vector<std::function<void(std::size_t, std::size_t)>>
             spriteSystems = getSpriteSystems();
@@ -27,22 +24,18 @@ namespace Systems {
         std::vector<std::function<void(std::size_t, std::size_t)>>
             deathSystems = DeathSystems::getDeathSystems();
 
-        graphicSystems.insert(
-            graphicSystems.end(),
-            audioSystems.begin(),
-            audioSystems.end());
-        graphicSystems.insert(
-            graphicSystems.end(),
+        audioSystems.insert(
+            audioSystems.end(),
             spriteSystems.begin(),
             spriteSystems.end());
-        graphicSystems.insert(
-            graphicSystems.end(),
+        audioSystems.insert(
+            audioSystems.end(),
             textSystems.begin(),
             textSystems.end());
-        graphicSystems.insert(
-            graphicSystems.end(),
+        audioSystems.insert(
+            audioSystems.end(),
             deathSystems.begin(),
             deathSystems.end());
-        return graphicSystems;
+        return audioSystems;
     }
 } // namespace Systems
