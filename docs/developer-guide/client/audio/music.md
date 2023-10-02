@@ -11,22 +11,22 @@ Create a music object from the specified audio file.
 ### Methods
 
 ```cpp
-void unload();
-bool isReady() const;
-void play() const;
-bool isPlaying() const;
-void update() const;
-void stop() const;
-void pause() const;
-void resume() const;
-void setVolume(float volume) const;
-void setPitch(float pitch) const;
-void setPan(float pan) const;
-float getTimeLength() const;
-float getTimePlayed() const;
-bool NeedToPlay() const;
-void setNeedToPlay(bool needToPlay);
-std::string getPath() const;
+void Raylib::Music::unload();
+bool Raylib::Music::isReady() const;
+void Raylib::Music::play() const;
+bool Raylib::Music::isPlaying() const;
+void Raylib::Music::update() const;
+void Raylib::Music::stop() const;
+void Raylib::Music::pause() const;
+void Raylib::Music::resume() const;
+void Raylib::Music::setVolume(float volume) const;
+void Raylib::Music::setPitch(float pitch) const;
+void Raylib::Music::setPan(float pan) const;
+float Raylib::Music::getTimeLength() const;
+float Raylib::Music::getTimePlayed() const;
+bool Raylib::Music::NeedToPlay() const;
+void Raylib::Music::setNeedToPlay(bool needToPlay);
+std::string Raylib::Music::getPath() const;
 ```
 
 ### Example usage

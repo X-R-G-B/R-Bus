@@ -38,9 +38,35 @@
 
 - [Client](developer-guide/client/README.md)
     - [Audio](developer-guide/client/audio/README.md)
+        - [Audio settings](developer-guide/client/audio/audioSettings.md)
+        - [Audio file formats](developer-guide/client/audio/fileFormats.md)
+        - [Music](developer-guide/client/audio/music.md)
+        - [Sounds](developer-guide/client/audio/sounds.md)
+
     - [Events](developer-guide/client/events/README.md)
+        - [keyboard](developer-guide/client/events/keyboard.md)
+        - [Mouse](developer-guide/client/events/mouse.md)
+
     - [Geometry](developer-guide/client/geometry/README.md)
+        - [Color](developer-guide/client/geometry/color.md)
+        - [Constant](developer-guide/client/geometry/constant.md)
+        - [Rectangle](developer-guide/client/geometry/rectangle.md)
+        - [Vector2](developer-guide/client/geometry/vector2.md)
+        - [Vector3](developer-guide/client/geometry/vector3.md)
+        - [Vector4](developer-guide/client/geometry/vector4.md)
+
     - [Graphic](developer-guide/client/graphic/README.md)
+        - [Colors pixels](developer-guide/client/graphic/colorsPixels.md)
+        - [Config flags](developer-guide/client/graphic/configFlags.md)
+        - [Cursor](developer-guide/client/graphic/cursor.md)
+        - [Drawing](developer-guide/client/graphic/drawing.md)
+        - [Frame rate](developer-guide/client/graphic/frameRate.md)
+        - [Image](developer-guide/client/graphic/image.md)
+        - [Misc](developer-guide/client/graphic/misc.md)
+        - [Shapes](developer-guide/client/graphic/shapes.md)
+        - [Sprite](developer-guide/client/graphic/sprite.md)
+        - [Text](developer-guide/client/graphic/text.md)
+        - [Window](developer-guide/client/graphic/window.md)
 
 -----------
 
