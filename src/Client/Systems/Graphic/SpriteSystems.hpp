@@ -2,7 +2,7 @@
 ** EPITECH PROJECT, 2023
 ** R-Bus
 ** File description:
-** GraphicSystems
+** SpriteSystems
 */
 
 #pragma once
@@ -13,7 +13,10 @@
 
 namespace Systems {
     namespace GraphicSystems {
+        void rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/);
+        void rectRenderer(std::size_t /*unused*/, std::size_t /*unused*/);
+        void spriteRenderer(std::size_t /*unused*/, std::size_t /*unused*/);
         std::vector<std::function<void(std::size_t, std::size_t)>>
-        getGraphicsSystems();
+        getSpriteSystems();
     } // namespace GraphicSystems
 } // namespace Systems

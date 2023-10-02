@@ -12,6 +12,19 @@
 #include "SceneManager.hpp"
 
 namespace Systems {
+    static void checkAnimRect(std::size_t id)
+    {
+        Registry::components<Types::AnimRect> arrAnimRect =
+            Registry::getInstance().getComponents<Types::AnimRect>();
+
+        if (arrAnimRect.exist(id)) {
+            Types::AnimRect &anim = arrAnimRect[id];
+            if (anim.currentRectList != Types::RectListType::MOVE) {
+                anim.changeRectList(Types::RectListType::MOVE);
+            }
+        }
+    }
+
     void EventsSystems::playerMovement(
         std::size_t /*unused*/,
         std::size_t /*unused*/)
@@ -24,15 +37,19 @@ namespace Systems {
 
         for (std::size_t id : playerId) {
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
+                checkAnimRect(id);
                 arrPosition[id].x += 1;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
+                checkAnimRect(id);
                 arrPosition[id].x -= 1;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
+                checkAnimRect(id);
                 arrPosition[id].y -= 1;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
+                checkAnimRect(id);
                 arrPosition[id].y += 1;
             }
         }
