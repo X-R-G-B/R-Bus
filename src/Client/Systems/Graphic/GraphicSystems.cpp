@@ -5,16 +5,15 @@
 ** GraphicSystems
 */
 
-#include <unordered_map>
-#include <iostream>
+#include "GraphicSystems.hpp"
 #include <functional>
+#include <iostream>
 #include <optional>
 #include <typeindex>
-#include "GraphicSystems.hpp"
+#include <unordered_map>
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
-#include "CustomTypes.hpp"
 
 namespace Systems {
     void
@@ -245,14 +244,29 @@ namespace Systems {
         }
     }
 
-    std::function<void(std::size_t)> testFunc = [](std::size_t id) {
-        std::cout << "Entity " << id << " is dead" << std::endl;
+    // REPLACE BY YOUR DEATH FUNCTION
+
+    const std::function<void(std::size_t)> testFuncPlayer = [](std::size_t id) {
+        std::cout << "Player " << id << " is dead" << std::endl;
     };
 
-    // const std::unordered_map<std::type_index,  std::function<void(std::size_t)>>
-    // deathFunctions = {
-    //     {std::type_index(typeid(Types::Player)), testFunc},
-    // };
+    const std::unordered_map<std::type_index, std::function<void(std::size_t)>>
+        deathFunctions = {
+            {std::type_index(typeid(Types::Player)), testFuncPlayer},
+    };
+
+    static void addDeathFunction(Registry::components<Types::Dead> &arrDead,
+        Registry::components<Types::Player> &arrPlayer, std::size_t id)
+    {
+        try {
+            if (arrPlayer.exist(id)) {
+                arrDead[id].deathFunction = deathFunctions.at(
+                    std::type_index(typeid(Types::Player)));
+            }
+        } catch (std::out_of_range &) {
+            std::cerr << "No death function for this entity" << std::endl;
+        }
+    }
 
     void GraphicSystems::setEntityDeathFunction(
         std::size_t /*unused*/,
@@ -260,15 +274,15 @@ namespace Systems {
     {
         Registry::components<Types::Dead> arrDead =
             Registry::getInstance().getComponents<Types::Dead>();
+        Registry::components<Types::Player> arrPlayer =
+            Registry::getInstance().getComponents<Types::Player>();
 
         std::vector<std::size_t> ids = arrDead.getExistingsId();
-        auto itIds                   = ids.begin();
 
-        while (itIds != ids.end()) {
+        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
             if (arrDead[*itIds].deathFunction == std::nullopt) {
-                arrDead[*itIds].deathFunction = testFunc;
+                addDeathFunction(arrDead, arrPlayer, *itIds);
             }
-            itIds++;
         }
     }
 

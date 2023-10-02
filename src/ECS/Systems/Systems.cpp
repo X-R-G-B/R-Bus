@@ -109,15 +109,13 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Dead>();
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
-        auto itIds                   = ids.begin();
 
-        while (itIds != ids.end()) {
+        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
             if (arrHealth[*itIds].hp <= 0 && arrDead.exist(*itIds)) {
                 arrDead[*itIds].deathFunction
                     ? arrDead[*itIds].deathFunction.value()(*itIds)
                     : Registry::getInstance().removeEntity(*itIds);
             }
-            itIds++;
         }
     }
 
