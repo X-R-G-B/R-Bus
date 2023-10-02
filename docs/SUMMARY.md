@@ -43,11 +43,11 @@
         - [Music](developer-guide/client/audio/music.md)
         - [Sounds](developer-guide/client/audio/sounds.md)
 
-    - [Events](developer-guide/client/events/README.md)
+    - [Events]()
         - [keyboard](developer-guide/client/events/keyboard.md)
         - [Mouse](developer-guide/client/events/mouse.md)
 
-    - [Geometry](developer-guide/client/geometry/README.md)
+    - [Geometry]()
         - [Color](developer-guide/client/geometry/color.md)
         - [Constant](developer-guide/client/geometry/constant.md)
         - [Rectangle](developer-guide/client/geometry/rectangle.md)
@@ -55,7 +55,7 @@
         - [Vector3](developer-guide/client/geometry/vector3.md)
         - [Vector4](developer-guide/client/geometry/vector4.md)
 
-    - [Graphic](developer-guide/client/graphic/README.md)
+    - [Graphic]()
         - [Colors pixels](developer-guide/client/graphic/colorsPixels.md)
         - [Config flags](developer-guide/client/graphic/configFlags.md)
         - [Cursor](developer-guide/client/graphic/cursor.md)
