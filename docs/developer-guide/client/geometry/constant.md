@@ -1,0 +1,26 @@
+### Color Constants
+
+- `Raylib::DarkGray`
+- `Raylib::Yellow`
+- `Raylib::Gold`
+- `Raylib::Orange`
+- `Raylib::Pink`
+- `Raylib::Red`
+- `Raylib::Maroon`
+- `Raylib::Green`
+- `Raylib::Lime`
+- `Raylib::DarkGreen`
+- `Raylib::SkyBlue`
+- `Raylib::Blue`
+- `Raylib::DarkBlue`
+- `Raylib::Purple`
+- `Raylib::Violet`
+- `Raylib::DarkPurple`
+- `Raylib::Beige`
+- `Raylib::Brown`
+- `Raylib::DarkBrown`
+- `Raylib::White`
+- `Raylib::Black`
+- `Raylib::Blank`
+- `Raylib::Magenta`
+- `Raylib::RayWhite`
