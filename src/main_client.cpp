@@ -9,11 +9,13 @@
 
 int main()
 {
-    Nitwork::NitworkClient::getInstance().start(4242);
+    const int port = 4242;
+    Nitwork::NitworkClient::getInstance().start(port);
 
     Nitwork::NitworkClient::getInstance().addInitMsg();
-    while (true);
+    while (true) {};
     return 0;
+}
 
 // #include "SceneManager.hpp"
 //
