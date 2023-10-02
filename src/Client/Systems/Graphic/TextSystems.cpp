@@ -7,13 +7,12 @@
 
 #include "TextSystems.hpp"
 #include "Raylib.hpp"
+#include "SharedValues.hpp"
 
 namespace Systems {
 
     static void drawTextResponsive(Raylib::Text &text)
     {
-        const float denominator = 100.0;
-
         float x =
             (text.x() * static_cast<float>(GetScreenWidth())) / denominator;
         float y =
@@ -36,6 +35,7 @@ namespace Systems {
             drawTextResponsive(textIt);
         }
     }
+
     std::vector<std::function<void(std::size_t, std::size_t)>>
     GraphicSystems::getTextSystems()
     {

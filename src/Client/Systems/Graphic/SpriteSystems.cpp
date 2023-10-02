@@ -8,6 +8,7 @@
 #include "SpriteSystems.hpp"
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
+#include "SharedValues.hpp"
 
 namespace Systems {
     static std::vector<Types::Rect> getCurrentList(Types::AnimRect &animRect)
@@ -57,7 +58,6 @@ namespace Systems {
             registry.getComponents<Types::RectangleShape>();
         std::vector<std::size_t> rectShapeIndexes = arrRect.getExistingsId();
 
-        const float denominator = 100.0;
 
         for (auto id : rectShapeIndexes) {
             if (!arrPosition.exist(id)) {
@@ -96,7 +96,6 @@ namespace Systems {
         float rotation            = 0;
         const Raylib::Color tint  = Raylib::White;
         Raylib::Vector2 spritePos = {0, 0};
-        const float denominator   = 100.0;
 
         float x = (position.x * static_cast<float>(Raylib::getScreenWidth()))
             / denominator;
@@ -119,7 +118,6 @@ namespace Systems {
         Raylib::Vector2 origin   = {0, 0};
         float rotation           = 0;
         const Raylib::Color tint = Raylib::White;
-        const float denominator  = 100.0;
 
         float x = (position.x * static_cast<float>(Raylib::getScreenWidth()))
             / denominator;
