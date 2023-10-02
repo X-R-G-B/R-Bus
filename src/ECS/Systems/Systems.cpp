@@ -112,12 +112,10 @@ namespace Systems {
         auto itIds                   = ids.begin();
 
         while (itIds != ids.end()) {
-            if (arrHealth.exist(*itIds)) {
-                if (arrHealth[*itIds].hp <= 0 && arrDead.exist(*itIds)) {
-                    arrDead[*itIds].deathFunction
-                        ? arrDead[*itIds].deathFunction.value()(*itIds)
-                        : Registry::getInstance().removeEntity(*itIds);
-                }
+            if (arrHealth[*itIds].hp <= 0 && arrDead.exist(*itIds)) {
+                arrDead[*itIds].deathFunction
+                    ? arrDead[*itIds].deathFunction.value()(*itIds)
+                    : Registry::getInstance().removeEntity(*itIds);
             }
             itIds++;
         }

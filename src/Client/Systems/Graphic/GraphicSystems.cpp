@@ -5,10 +5,16 @@
 ** GraphicSystems
 */
 
+#include <unordered_map>
+#include <iostream>
+#include <functional>
+#include <optional>
+#include <typeindex>
 #include "GraphicSystems.hpp"
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
+#include "CustomTypes.hpp"
 
 namespace Systems {
     void
@@ -239,6 +245,33 @@ namespace Systems {
         }
     }
 
+    std::function<void(std::size_t)> testFunc = [](std::size_t id) {
+        std::cout << "Entity " << id << " is dead" << std::endl;
+    };
+
+    // const std::unordered_map<std::type_index,  std::function<void(std::size_t)>>
+    // deathFunctions = {
+    //     {std::type_index(typeid(Types::Player)), testFunc},
+    // };
+
+    void GraphicSystems::setEntityDeathFunction(
+        std::size_t /*unused*/,
+        std::size_t /*unused*/)
+    {
+        Registry::components<Types::Dead> arrDead =
+            Registry::getInstance().getComponents<Types::Dead>();
+
+        std::vector<std::size_t> ids = arrDead.getExistingsId();
+        auto itIds                   = ids.begin();
+
+        while (itIds != ids.end()) {
+            if (arrDead[*itIds].deathFunction == std::nullopt) {
+                arrDead[*itIds].deathFunction = testFunc;
+            }
+            itIds++;
+        }
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>>
     GraphicSystems::getGraphicsSystems()
     {
@@ -248,6 +281,8 @@ namespace Systems {
             textRenderer,
             musicPlayer,
             soundEffectPlayer,
-            playSoundWithKey};
+            playSoundWithKey,
+            setEntityDeathFunction,
+        };
     }
 } // namespace Systems
