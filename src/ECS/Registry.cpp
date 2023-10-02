@@ -6,7 +6,6 @@
 */
 
 #include "Registry.hpp"
-#include <iostream>
 #include <string>
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
