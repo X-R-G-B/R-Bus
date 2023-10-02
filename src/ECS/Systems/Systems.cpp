@@ -148,6 +148,17 @@ namespace Systems {
         Registry::getInstance()
             .getComponents<Types::CollisionRect>()
             .insertBack(collisionRect);
+        // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack({
+            spriteRect,
+            {spriteRect,
+              {2, 51, 46, 47},
+              {101, 2, 48, 47},
+              {152, 2, 46, 47},
+              {201, 2, 46, 47}},
+        });
+        // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        Registry::getInstance().setToBackLayers(id);
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
         Registry::getInstance().getComponents<Types::Health>().insertBack(
             {playerHealth});
