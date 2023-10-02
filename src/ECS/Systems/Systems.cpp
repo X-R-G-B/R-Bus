@@ -104,19 +104,23 @@ namespace Systems {
 
     void debugCollisionRect(std::size_t, std::size_t)
     {
-        Registry::components<Types::CollisionRect> arrCollisionRect = 
+        Registry::components<Types::CollisionRect> arrCollisionRect =
             Registry::getInstance().getComponents<Types::CollisionRect>();
-        Registry::components<Types::Position> arrPosition = 
+        Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
-        Registry::components<Types::RectangleShape> arrRectangleShape = 
+        Registry::components<Types::RectangleShape> arrRectangleShape =
             Registry::getInstance().getComponents<Types::RectangleShape>();
-        
+
         std::vector<std::size_t> ids = arrCollisionRect.getExistingsId();
 
         for (auto &id : ids) {
             if (arrPosition.exist(id) && !arrRectangleShape.exist(id)) {
-                Registry::getInstance().getComponents<Types::RectangleShape>().insert(
-                   id, {arrCollisionRect[id].width + 2, arrCollisionRect[id].height + 2});
+                Registry::getInstance()
+                    .getComponents<Types::RectangleShape>()
+                    .insert(
+                        id,
+                        {arrCollisionRect[id].width + 2,
+                         arrCollisionRect[id].height + 2});
             }
         }
     }
@@ -154,13 +158,12 @@ namespace Systems {
     constexpr float playerWidth              = 10.0F;
     constexpr float playerHeight             = 10.0F;
 
-    constexpr int ennemyData                 = 10;
-    constexpr float ennemyWidth              = 20.F;
-    constexpr float ennemyHeight             = 20.F;
-    const Types::Dammage ennemyDammage       = {20};
-    const Types::Rect ennemySpriteRect       = {2, 67, 30, 32};
+    constexpr int ennemyData                  = 10;
+    constexpr float ennemyWidth               = 20.F;
+    constexpr float ennemyHeight              = 20.F;
+    const Types::Dammage ennemyDammage        = {20};
+    const Types::Rect ennemySpriteRect        = {2, 67, 30, 32};
     const Types::CollisionRect ennemyCollRect = {17, 18};
-
 
     void init(std::size_t managerId, std::size_t systemId)
     {
@@ -201,6 +204,11 @@ namespace Systems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
     {
-        return {windowCollision, init, entitiesCollision, moveEntities, debugCollisionRect};
+        return {
+            windowCollision,
+            init,
+            entitiesCollision,
+            moveEntities,
+            debugCollisionRect};
     }
 } // namespace Systems

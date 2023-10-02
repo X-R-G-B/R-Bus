@@ -35,15 +35,15 @@ namespace Types {
     };
 
     struct Velocity {
-        float speedX;
-        float speedY;
+            float speedX;
+            float speedY;
     };
 
     struct Player { };
 
     struct Missiles {
-        // maybe enum better ?
-        std::string type;
+            // maybe enum better ?
+            std::string type;
     };
 
 } // namespace Types
