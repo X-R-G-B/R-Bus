@@ -105,7 +105,7 @@ namespace Systems {
     const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
     const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
     const Types::Rect spriteRect = {2, 2, 48, 48};
-    const Types::CollisionRect collisionRect = {46, 46};
+    const Types::CollisionRect collisionRect = {6, 6};
     const Raylib::Vector2 textPos            = {20, 50};
     constexpr int playerData                 = 10;
     constexpr int playerDammage              = 10;
@@ -113,8 +113,8 @@ namespace Systems {
     constexpr float musicVolume              = 0.02F;
     constexpr float soundVolume              = 0.1F;
     constexpr float fontScale                = 2.0F;
-    const float playerWidth                  = 50.0F;
-    const float playerHeight                 = 50.0F;
+    const float playerWidth                  = 10.0F;
+    const float playerHeight                 = 10.0F;
 
     void init(std::size_t managerId, std::size_t systemId)
     {
@@ -128,7 +128,18 @@ namespace Systems {
         Registry::getInstance()
             .getComponents<Types::CollisionRect>()
             .insertBack(collisionRect);
+        // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack({
+            spriteRect,
+            {spriteRect,
+              {2, 51, 46, 47},
+              {101, 2, 48, 47},
+              {152, 2, 46, 47},
+              {201, 2, 46, 47}},
+        });
+        // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
         Registry::getInstance().setToBackLayers(id);
+        Registry::getInstance().getComponents<Types::Player>().insertBack({});
 
         id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Types::Position>().insertBack(
@@ -140,7 +151,6 @@ namespace Systems {
         Registry::getInstance()
             .getComponents<Types::CollisionRect>()
             .insertBack(collisionRect);
-        Registry::getInstance().getComponents<Types::Player>().insertBack({});
         Registry::getInstance().getComponents<Types::Health>().insertBack(
             {playerHealth});
 
