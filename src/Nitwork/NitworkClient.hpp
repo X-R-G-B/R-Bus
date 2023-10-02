@@ -49,7 +49,9 @@ namespace Nitwork {
             static NitworkClient
                 _instance; // instance of the NitworkClient (singleton)
             boost::asio::ip::udp::resolver _resolver; // resolver used to find the server
+            n_id_t _clientPacketId = 0; // packet id of the client
 
+            // clang-format off
             // maps that will be used to handle the actions, in order to send or receive them
             std::map<
                 enum n_actionType_t,
@@ -119,5 +121,6 @@ namespace Nitwork {
                     )
                 }
             };
+            // clang-format on
         };
 }

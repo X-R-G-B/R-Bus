@@ -138,12 +138,40 @@ namespace Nitwork {
                 startReceiveHandler();
                 return;
             }
+            handlePacketIdsReceived(*header);
             std::cout << "header received" << std::endl;
             for (int i = 0; i < header->nb_action; i++) {
                 handleBodyAction(*header, _senderEndpoint);
             }
         } catch (std::exception &e) {
             std::cerr << "Error: " << e.what() << std::endl;
+        }
+    }
+
+    void ANitwork::handlePacketIdsReceived(const struct header_s &header)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        std::vector<int> ids;
+        struct header_s *headerPacket;
+        int index = 0;
+
+        for (int i = 0; i < MAX_NB_ACTION; i++) {
+            if (header.ids_received & (1 << i)) {
+                ids.emplace_back(header.last_id_received - i);
+            }
+        }
+        for (auto &id : ids) {
+            auto it = std::find(_receivedPacketsIds.begin(), _receivedPacketsIds.end(), id);
+            if (it == _receivedPacketsIds.end()) {
+                for (auto &packet : _packetsSent) {
+                    headerPacket = reinterpret_cast<struct header_s *>(std::any_cast<struct header_s *>(packet.second.body));
+                    if (headerPacket->id == id) {
+                        _outputQueue.emplace_back(std::make_pair(packet.first, packet.second));
+                        break;
+                    }
+                }
+            }
+            index++;
         }
     }
 
@@ -188,6 +216,7 @@ namespace Nitwork {
                             std::cerr << "Error: action not found" << std::endl;
                             continue;
                         }
+                        addPacketToSentPackages(data);
                         it->second(data.second.body, data.first);
                     }
                     _outputQueue.clear();
@@ -197,6 +226,16 @@ namespace Nitwork {
                 std::cerr << e.what() << std::endl;
             }
         });
+    }
+
+    void ANitwork::addPacketToSentPackages(const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, packet_s> &data)
+    {
+        std::lock_guard<std::mutex> lock(_packetsSentMutex);
+
+        _packetsSent.emplace_back(data);
+        if (_packetsSent.size() > MAX_NB_ACTION) {
+            _packetsSent.pop_front();
+        }
     }
 
     /* Getters / Setters Section */

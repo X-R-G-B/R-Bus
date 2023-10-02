@@ -12,6 +12,7 @@ int main()
     Nitwork::NitworkClient::getInstance().start(4242);
 
     Nitwork::NitworkClient::getInstance().addInitMsg();
+    Nitwork::NitworkClient::getInstance().addInitMsg();
     while (true);
     return 0;
 }

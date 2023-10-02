@@ -65,6 +65,7 @@ namespace Nitwork {
             /* Getters / Setters */
             n_id_t getPacketID() const;
             void addPacketToSend(const boost::asio::ip::udp::endpoint &, const struct packet_s &);
+            void handlePacketIdsReceived(const struct header_s &header);
 
             void startReceiveHandler() final;
             // handler func for receive handler which handle the header
@@ -127,6 +128,7 @@ namespace Nitwork {
                 std::cout << "action added to queue" << std::endl;
                 startReceiveHandler();
             }
+            void addPacketToSentPackages(const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, packet_s> &data);
 
         protected:
             boost::asio::io_context _context; // The main context
@@ -137,11 +139,12 @@ namespace Nitwork {
             boost::array<char, MAX_PACKET_SIZE> _receiveBuffer; // The buffer used to receive the actions
 
             // list of packets' ids receives
-            std::list<int> _receivedPacketsIds; // A list of packets' ids receives
-
-            // Mutexes shared
+            std::vector<n_id_t> _receivedPacketsIds; // A list of packets' ids receives
+            std::list<std::pair<boost::asio::ip::udp::endpoint, struct packet_s>>  _packetsSent; // A list of packets' ids receives
+                // Mutexes shared
             std::mutex _receivedPacketsIdsMutex; // Mutex for the received packets ids
             std::mutex _outputQueueMutex; // Mutex for the output queue
+            std::mutex _packetsSentMutex; // Mutex for the packets sent
 
         private:
             n_id_t _packetId = 0; // The packet id

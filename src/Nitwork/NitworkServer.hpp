@@ -25,6 +25,8 @@ namespace Nitwork {
                 const struct header_s header,
                 const boost::asio::ip::udp::endpoint &endpoint) final;
         private:
+            void handleHeaderPacketsIds(const struct header_s &);
+
             [[nodiscard]] const std::map<
                 enum n_actionType_t,
                 actionHandler
