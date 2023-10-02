@@ -45,7 +45,8 @@ namespace Nitwork {
         auto endPointIt = std::find_if(
             _endpoints.begin(), _endpoints.end(),
             [&endpoint](const boost::asio::ip::udp::endpoint &e) {
-                return e.address() == endpoint.address();
+                return e.address() == endpoint.address() &&
+                    e.port() == endpoint.port();
         });
         if (endPointIt == _endpoints.end() && action->magick != INIT) {
             std::cerr << "Error: endpoint not found" << std::endl;
@@ -88,7 +89,8 @@ namespace Nitwork {
         auto endPointIt = std::find_if(
             _endpoints.begin(), _endpoints.end(),
             [&endpoint](const boost::asio::ip::udp::endpoint &e) {
-                return e.address() == endpoint.address();
+                return e.address() == endpoint.address() &&
+                    e.port() == endpoint.port();
         });
         if (endPointIt != _endpoints.end()) {
             std::cerr << "Error: endpoint already init" << std::endl;
