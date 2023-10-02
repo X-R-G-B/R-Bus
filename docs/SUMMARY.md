@@ -49,7 +49,6 @@
 
     - [Geometry]()
         - [Color](developer-guide/client/geometry/color.md)
-        - [Constant](developer-guide/client/geometry/constant.md)
         - [Rectangle](developer-guide/client/geometry/rectangle.md)
         - [Vector2](developer-guide/client/geometry/vector2.md)
         - [Vector3](developer-guide/client/geometry/vector3.md)

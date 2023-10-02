@@ -1,15 +1,15 @@
 ## Input-related functions: mouse
 
-- `bool Raylib::isMouseButtonPressed(MouseButton button);`
+- `bool Raylib::isMouseButtonPressed(Raylib::MouseButton button);`
   Check if a mouse button has been pressed once.
 
-- `bool Raylib::isMouseButtonDown(MouseButton button);`
+- `bool Raylib::isMouseButtonDown(Raylib::MouseButton button);`
   Check if a mouse button is being pressed.
 
-- `bool Raylib::isMouseButtonReleased(MouseButton button);`
+- `bool Raylib::isMouseButtonReleased(Raylib::MouseButton button);`
   Check if a mouse button has been released once.
 
-- `bool Raylib::isMouseButtonUp(MouseButton button);`
+- `bool Raylib::isMouseButtonUp(Raylib::MouseButton button);`
   Check if a mouse button is NOT being pressed.
 
 - `int Raylib::getMouseX();`

@@ -9,7 +9,7 @@
 - `Vector4 Raylib::colorNormalize(Raylib::Color color);`
   Normalize a Color struct to a Vector4.
 
-- `Raylib::Color Raylib::colorFromNormalized(Vector4 normalized);`
+- `Raylib::Color Raylib::colorFromNormalized(Raylib::Vector4 normalized);`
   Create a Color from a normalized Vector4.
 
 - `Raylib::Color Raylib::getColor(unsigned int hexValue);`

@@ -20,4 +20,5 @@ You can use the following flags to configure the window:
 
 ```cpp
 Raylib::setWindowState(Raylib::ConfigFlags::WINDOW_RESIZABLE);
+Raylib::setWindowState(Raylib::ConfigFlags::WINDOW_RESIZABLE | Raylib::ConfigFlags::FLAG_VSYNC_HINT);
 ```
