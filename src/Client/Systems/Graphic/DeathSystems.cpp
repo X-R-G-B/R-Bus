@@ -26,13 +26,15 @@ namespace Systems {
             {std::type_index(typeid(Types::Player)), testFuncPlayer},
     };
 
-    static void addDeathFunction(Registry::components<Types::Dead> &arrDead,
-        Registry::components<Types::Player> &arrPlayer, std::size_t id)
+    static void addDeathFunction(
+        Registry::components<Types::Dead> &arrDead,
+        Registry::components<Types::Player> &arrPlayer,
+        std::size_t id)
     {
         try {
             if (arrPlayer.exist(id)) {
-                arrDead[id].deathFunction = deathFunctions.at(
-                    std::type_index(typeid(Types::Player)));
+                arrDead[id].deathFunction =
+                    deathFunctions.at(std::type_index(typeid(Types::Player)));
             }
         } catch (std::out_of_range &) {
             std::cerr << "No death function for this entity" << std::endl;

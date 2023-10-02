@@ -7,12 +7,15 @@
 
 #pragma once
 
-#include <vector>
 #include <functional>
+#include <vector>
 
 namespace Systems {
     namespace DeathSystems {
-        std::vector<std::function<void(std::size_t, std::size_t)>> getDeathSystems();
-        void setEntityDeathFunction(std::size_t /*unused*/, std::size_t /*unused*/);
+        std::vector<std::function<void(std::size_t, std::size_t)>>
+        getDeathSystems();
+        void setEntityDeathFunction(
+            std::size_t /*unused*/,
+            std::size_t /*unused*/);
     } // namespace DeathSystems
 } // namespace Systems

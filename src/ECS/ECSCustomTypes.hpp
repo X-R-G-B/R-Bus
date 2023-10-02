@@ -7,9 +7,9 @@
 
 #pragma once
 
+#include <cstddef>
 #include <functional>
 #include <optional>
-#include <cstddef>
 
 namespace Types {
 
