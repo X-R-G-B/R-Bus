@@ -9,7 +9,7 @@
 
 namespace Nitwork {
     NitworkClient::NitworkClient()
-        : ANitwork(), _resolver(_context) {}
+        : _resolver(_context) {}
 
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
     NitworkClient NitworkClient::_instance = NitworkClient();
@@ -96,7 +96,7 @@ namespace Nitwork {
             .header = {
                 .magick1 = HEADER_CODE1,
                 .ids_received = getIdsReceived(),
-                .last_id_received = (_receivedPacketsIds.size() > 0) ? _receivedPacketsIds.back() : 0,
+                .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
                 .id = getPacketID(),
                 .nb_action = 1,
                 .magick2 = HEADER_CODE2,
