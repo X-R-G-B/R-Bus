@@ -8,25 +8,10 @@
 #pragma once
 
 #include <string>
-#include "raylib.h"
+#include <vector>
+#include "ECSCustomTypes.hpp"
 
 namespace Types {
-
-    // Size in %
-    struct Sprite {
-            Sprite(const std::string path, float _width, float _height)
-                : sprite(LoadTexture(path.c_str())),
-                  width(_width),
-                  height(_height) {};
-            Texture2D sprite;
-            float width;
-            float height;
-    };
-
-    struct Position {
-            float x;
-            float y;
-    };
 
     struct Rect {
             float x;
@@ -35,48 +20,34 @@ namespace Types {
             float height;
     };
 
-    struct SoundEffect {
-            SoundEffect(std::string soundPath)
-                : sound(LoadSound(soundPath.c_str())),
-                  path(soundPath)
+    enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };
+
+    struct AnimRect {
+        public:
+            AnimRect(
+                Rect rect,
+                std::vector<Rect> _moveRects,
+                std::vector<Rect> _attackRects = {},
+                std::vector<Rect> _deadRects   = {})
+                : defaultRect(rect),
+                  moveRects(_moveRects),
+                  attackRects(_attackRects),
+                  deadRects(_deadRects),
+                  currentRectInList(0),
+                  currentRectList(Types::RectListType::DEFAULTRECT)
             {
             }
-            Sound sound;
-            bool needToPlay {false};
-            std::string path;
-    };
-
-    struct MusicStream {
-            MusicStream(std::string musicPath)
-                : music(LoadMusicStream(musicPath.c_str())),
-                  path(musicPath)
+            Rect defaultRect;
+            std::vector<Rect> moveRects;
+            std::vector<Rect> attackRects;
+            std::vector<Rect> deadRects;
+            RectListType currentRectList;
+            std::size_t currentRectInList;
+            void changeRectList(RectListType type = RectListType::DEFAULTRECT)
             {
+                currentRectList   = type;
+                currentRectInList = 0;
             }
-            Music music;
-            bool needToPlay {false};
-            bool isPlaying {false};
-            std::string path;
-    };
-
-    struct RectangleShape {
-            float width;
-            float height;
-    };
-
-    struct CollisionRect {
-            float width;
-            float height;
-    };
-
-    struct Player {
-            bool isMine;
-    };
-
-    struct Text {
-            std::string text;
-            Color color;
-            Font font;
-            float fontSize;
     };
 
 } // namespace Types

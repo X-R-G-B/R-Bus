@@ -14,4 +14,14 @@ int main()
     Nitwork::NitworkClient::getInstance().addInitMsg();
     while (true);
     return 0;
-}
+
+// #include "SceneManager.hpp"
+//
+// int main()
+// {
+//     SceneManager &sceneManager = SceneManager::getInstance();
+//
+//     int res = sceneManager.run();
+//
+//     return res;
+// }

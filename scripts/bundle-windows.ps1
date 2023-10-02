@@ -3,11 +3,11 @@
 
 $ErrorActionPreference = "SilentlyContinue"
 
-./scripts/compil.ps1
+rm -Recurse build
 
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release;Release" -DCONFIG=Release
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release"
 
-cmake --build build
+cmake --build build --config Release
 
 cd build
 
@@ -17,10 +17,10 @@ if ($LASTEXITCODE -ne 0) {
     type _CPack_Packages/win64/NSIS/NSISOutput.log
 }
 
-Copy-Item R-Type-win64.exe ../r-type-windows.exe
+Copy-Item R-Type-Windows.exe ../r-type-windows.exe
 
 cpack --config CPackSourceConfig.cmake -G ZIP
 
-Copy-Item R-Type-Source.zip ../r-type-windows.zip
+Copy-Item R-Type-Windows.zip ../r-type-windows.zip
 
 cd ..
