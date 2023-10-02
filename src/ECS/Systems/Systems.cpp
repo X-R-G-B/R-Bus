@@ -20,12 +20,13 @@ namespace Systems {
             registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
             registry.getComponents<Types::CollisionRect>();
-
-        std::vector<std::size_t> playerIdx =
-            registry.getComponents<Types::Player>().getExistingsId();
+        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
+            {typeid(Types::Player),
+             typeid(Types::Position),
+             typeid(Types::CollisionRect)});
 
         const float maxPercent = 100.0F;
-        for (std::size_t id : playerIdx) {
+        for (std::size_t id : ids) {
             if (arrPosition[id].x < 0) {
                 arrPosition[id].x = 0;
             }
@@ -85,19 +86,16 @@ namespace Systems {
 
     void entitiesCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        Registry &registry = Registry::getInstance();
         Registry::components<Types::Position> arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
+            registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
-            Registry::getInstance().getComponents<Types::CollisionRect>();
+            registry.getComponents<Types::CollisionRect>();
+        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
+            {typeid(Types::CollisionRect), typeid(Types::Position)});
 
-        std::vector<std::size_t> ids = arrPosition.getExistingsId();
-        auto itIds                   = ids.begin();
-
-        while (itIds != ids.end()) {
-            if (arrCollisionRect.exist(*itIds)) {
-                checkCollisionEntity(itIds, ids, arrPosition, arrCollisionRect);
-            }
-            itIds++;
+        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
+            checkCollisionEntity(itIds, ids, arrPosition, arrCollisionRect);
         }
     }
 
@@ -142,8 +140,6 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
 
         id = Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {playerData, playerData});
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
             {playerPath, playerWidth, playerHeight, id});
         Registry::getInstance().getComponents<Types::Rect>().insertBack(
@@ -153,6 +149,7 @@ namespace Systems {
             .insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Health>().insertBack(
             {playerHealth});
+        Registry::getInstance().getComponents<Types::Player>().insertBack({});
 
         id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Types::Position>().insertBack(

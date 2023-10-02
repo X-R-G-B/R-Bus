@@ -9,6 +9,7 @@
 
 #include <any>
 #include <functional>
+#include <iostream>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -50,6 +51,9 @@ class Registry {
 
         void clear();
 
+        std::vector<std::size_t>
+            getEntitiesByComponents(std::vector<std::type_index>);
+
         void
         setToBackLayers(std::size_t id, BackLayers layer = BackLayers::BACK);
 
@@ -77,6 +81,8 @@ class Registry {
 
         void removeFromDefaultLayer(std::size_t id);
 
+        std::vector<std::size_t> getExistings(std::type_index type);
+
         template <typename Component>
         void checkAddSparseArray()
         {
@@ -86,6 +92,8 @@ class Registry {
                     &Registry::addComponentPlace<Component>);
                 _removeComponentFunctions.push_back(
                     &Registry::removeComponent<Component>);
+                _getExistingsId[typeid(Component)] =
+                    &Registry::getExistingsId<Component>;
                 components<Component> componentArray = castReturn<Component>();
                 for (std::size_t i = 0; i < _entitiesNb; i++) {
                     componentArray.add();
@@ -105,6 +113,12 @@ class Registry {
             castReturn<Component>().erase(id);
         }
 
+        template <typename Component>
+        std::vector<std::size_t> getExistingsId()
+        {
+            return castReturn<Component>().getExistingsId();
+        }
+
         template <class Component>
         components<Component> castReturn()
         {
@@ -120,6 +134,10 @@ class Registry {
             _addComponentPlaceFunctions;
         std::vector<std::function<void(Registry &, std::size_t)>>
             _removeComponentFunctions;
+        std::unordered_map<
+            std::type_index,
+            std::function<std::vector<std::size_t>(Registry &)>>
+            _getExistingsId;
         std::unordered_map<std::type_index, std::any> _data;
 
         std::size_t _entitiesNb;
