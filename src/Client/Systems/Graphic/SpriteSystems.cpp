@@ -58,7 +58,6 @@ namespace Systems {
             registry.getComponents<Types::RectangleShape>();
         std::vector<std::size_t> rectShapeIndexes = arrRect.getExistingsId();
 
-
         for (auto id : rectShapeIndexes) {
             if (!arrPosition.exist(id)) {
                 continue;
