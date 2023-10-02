@@ -30,27 +30,27 @@ namespace Systems {
         std::size_t /*unused*/)
     {
         Registry &registry = Registry::getInstance();
-        Registry::components<Types::Position> arrPosition =
+        Registry::components<Types::Position> arrPos =
             registry.getComponents<Types::Position>();
-        std::vector<std::size_t> playerId =
-            registry.getComponents<Types::Player>().getExistingsId();
+        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
+            {typeid(Types::Player), typeid(Types::Position)});
 
-        for (std::size_t id : playerId) {
+        for (auto id : ids) {
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
                 checkAnimRect(id);
-                arrPosition[id].x += 1;
+                arrPos[id].x += 1;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
                 checkAnimRect(id);
-                arrPosition[id].x -= 1;
+                arrPos[id].x -= 1;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
                 checkAnimRect(id);
-                arrPosition[id].y -= 1;
+                arrPos[id].y -= 1;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
                 checkAnimRect(id);
-                arrPosition[id].y += 1;
+                arrPos[id].y += 1;
             }
         }
     }
