@@ -3,6 +3,8 @@
 
 set -ex
 
+rm -rf build
+
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
 cmake --build build
@@ -15,4 +17,4 @@ mv R-Type-Linux.sh ../r-type-linux.sh
 
 cpack --config CPackSourceConfig.cmake -G TGZ
 
-mv R-Type-Source.tar.gz ../r-type-linux.tar.gz
+mv R-Type-Linux.tar.gz ../r-type-linux.tar.gz

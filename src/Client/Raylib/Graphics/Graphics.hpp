@@ -11,6 +11,7 @@
 #include "raylib.h"
 #include "Geometry.hpp"
 #include "Inputs.hpp"
+#include "Registry.hpp"
 
 namespace Raylib {
 
@@ -143,7 +144,11 @@ namespace Raylib {
 
     class Sprite {
         public:
-            Sprite(const std::string &fileName, float width, float height);
+            Sprite(
+                const std::string &fileName,
+                float width,
+                float height,
+                std::size_t id);
             Sprite(Image image, float width, float height);
             unsigned int getId() const;
             float getWidth() const;

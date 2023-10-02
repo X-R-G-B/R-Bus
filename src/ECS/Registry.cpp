@@ -17,12 +17,13 @@ Registry &Registry::getInstance()
     return _instance;
 }
 
-void Registry::addEntity()
+std::size_t Registry::addEntity()
 {
     for (auto function : _addComponentPlaceFunctions) {
         function(*this);
     }
     _entitiesNb++;
+    return _entitiesNb - 1;
 }
 
 void Registry::removeEntity(std::size_t id)
@@ -32,40 +33,74 @@ void Registry::removeEntity(std::size_t id)
     }
 }
 
-void Registry::clear(std::vector<CustomIndex> indexes)
+void Registry::clear()
 {
     _data.clear();
     _addComponentPlaceFunctions.clear();
     _removeComponentFunctions.clear();
     _entitiesNb = 0;
-    _customSparseArrays.clear();
-    initCustomSparseArrays(indexes);
 }
 
-std::size_t Registry::getEntitiesNb() const
+void Registry::setToBackLayers(std::size_t id, BackLayers layer)
 {
-    return (_entitiesNb);
+    removeFromDefaultLayer(id);
+    _backLayers[layer].push_back(id);
 }
 
-void Registry::initCustomSparseArrays(std::vector<CustomIndex> indexes)
+void Registry::setToDefaultLayer(std::size_t id)
 {
-    for (auto index : indexes) {
-        addCustomSparseIndex(static_cast<std::size_t>(index));
+    _defaultLayer.push_back(id);
+}
+
+void Registry::setToFrontLayers(std::size_t id, FrontLayers layer)
+{
+    _backLayers[layer].push_back(id);
+}
+
+std::vector<std::vector<std::size_t>> Registry::getBackLayers()
+{
+    return _backLayers;
+}
+
+std::vector<std::size_t> Registry::getDefaultLayer()
+{
+    return _defaultLayer;
+}
+
+std::vector<std::vector<std::size_t>> Registry::getFrontLayers()
+{
+    return _frontLayers;
+}
+
+void Registry::initLayers(bool back)
+{
+    auto max = static_cast<std::size_t>(
+        back ? BackLayers::BACKMAX : FrontLayers::FRONTMAX);
+
+    for (std::size_t i = 0; i < max; i++) {
+        std::vector<std::vector<std::size_t>> &layers =
+            back ? _backLayers : _frontLayers;
+        layers.emplace_back();
+    }
+    if (back) {
+        initLayers(false);
     }
 }
 
-Registry::Registry() : _entitiesNb(0), _maxCustomId(0)
+void Registry::removeFromDefaultLayer(std::size_t id)
 {
+    auto i = _defaultLayer.end();
+
+    while (i != _defaultLayer.begin()) {
+        --i;
+        if (*i == id) {
+            _defaultLayer.erase(i);
+            break;
+        }
+    }
 }
 
-void Registry::addCustomSparseIndex(std::size_t id)
+Registry::Registry() : _entitiesNb(0)
 {
-    if (_customSparseArrays.find(id) != _customSparseArrays.end()) {
-        throw std::runtime_error(
-            "addCustomSparseIndex: id" + std::to_string(id) + " already exist");
-    };
-    _customSparseArrays[id] = SparseArray<std::size_t>();
-    if (id > _maxCustomId) {
-        _maxCustomId = id;
-    }
+    initLayers(true);
 }
