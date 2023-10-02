@@ -9,14 +9,26 @@
 
 #include <any>
 #include <functional>
-#include <iostream>
 #include <memory>
+#include <stdexcept>
+#include <string>
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
-#include "raylib.h"
+#include "SceneManager.hpp"
 #include "SparseArray.hpp"
+
+enum LayerType { BACKLAYER, FRONTLAYER, DEFAULTLAYER };
+
+enum BackLayers { BACK = 0, BACKMAX };
+
+/*
+ * FRONT is the frontest layer, so when adding a new one increment the FRONT
+ * value and add the new one above
+ */
+
+enum FrontLayers { FRONT = 0, FRONTMAX };
 
 class Registry {
     public:
@@ -32,9 +44,26 @@ class Registry {
             return castReturn<Component>();
         }
 
-        void addEntity();
+        std::size_t addEntity();
 
         void removeEntity(std::size_t /*id*/);
+
+        void clear();
+
+        void
+        setToBackLayers(std::size_t id, BackLayers layer = BackLayers::BACK);
+
+        void setToDefaultLayer(std::size_t id);
+
+        void setToFrontLayers(
+            std::size_t id,
+            FrontLayers layer = FrontLayers::FRONT);
+
+        std::vector<std::vector<std::size_t>> getBackLayers();
+
+        std::vector<std::size_t> getDefaultLayer();
+
+        std::vector<std::vector<std::size_t>> getFrontLayers();
 
         Registry &operator=(const Registry &) = delete;
         Registry(const Registry &)            = delete;
@@ -43,6 +72,10 @@ class Registry {
 
     private:
         Registry();
+
+        void initLayers(bool back);
+
+        void removeFromDefaultLayer(std::size_t id);
 
         template <typename Component>
         void checkAddSparseArray()
@@ -88,5 +121,10 @@ class Registry {
         std::vector<std::function<void(Registry &, std::size_t)>>
             _removeComponentFunctions;
         std::unordered_map<std::type_index, std::any> _data;
+
         std::size_t _entitiesNb;
+
+        std::vector<std::vector<std::size_t>> _backLayers;
+        std::vector<std::size_t> _defaultLayer;
+        std::vector<std::vector<std::size_t>> _frontLayers;
 };

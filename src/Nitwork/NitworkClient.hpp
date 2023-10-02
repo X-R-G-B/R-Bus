@@ -12,8 +12,11 @@
 namespace Nitwork {
     class NitworkClient : public ANitwork {
         public:
-            NitworkClient();
-            ~NitworkClient() = default;
+            ~NitworkClient() override = default;
+            NitworkClient(const NitworkClient &) = delete;
+            NitworkClient(const NitworkClient &&) = delete;
+            void operator=(const NitworkClient &) = delete;
+            void operator=(const NitworkClient &&) = delete;
 
             static NitworkClient &getInstance();
 
@@ -23,7 +26,7 @@ namespace Nitwork {
             bool startNitworkConfig(int port, const std::string &ip) final;
 
             void handleBodyAction(
-                const struct header_s header,
+                struct header_s header,
                 const boost::asio::ip::udp::endpoint &endpoint) final;
 
 
@@ -32,6 +35,7 @@ namespace Nitwork {
             // Messages creation methods
             void addInitMsg();
         private:
+            NitworkClient();
             [[nodiscard]] const std::map<
                 enum n_actionType_t,
                 actionHandler
@@ -46,8 +50,9 @@ namespace Nitwork {
                 boost::asio::ip::udp::endpoint &endpoint);
         protected:
         private:
-            static NitworkClient
-                _instance; // instance of the NitworkClient (singleton)
+            // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
+            static NitworkClient _instance; // instance of the NitworkClient (singleton)
+            // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
             boost::asio::ip::udp::resolver _resolver; // resolver used to find the server
             n_id_t _clientPacketId = 0; // packet id of the client
 

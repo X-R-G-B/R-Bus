@@ -54,9 +54,6 @@ jobs:
     - name: Build
       run: ./scripts/bundle-windows.ps1
 
-    - name: LIST ALL
-      run: Get-ChildItem build -Recurse
-
     - name: Upload To Release
       if: github.ref == 'refs/heads/main'
       env:
@@ -92,9 +89,6 @@ jobs:
 
     - name: Build
       run: ./scripts/bundle-linux.sh
-
-    - name: LIST ALL
-      run: ls -Rl build
 
     - name: Upload To Release
       if: github.ref == 'refs/heads/main'
@@ -132,23 +126,27 @@ jobs:
     - name: Build
       run: ./scripts/bundle-macos.sh
 
-    - name: LIST ALL
-      run: ls -Rl build
-
     - name: Upload To Release
       if: github.ref == 'refs/heads/main'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         gh release upload ${{ needs.release-create.outputs.release }} ./r-type-macos.zip
-        # gh release upload ${{ needs.release-create.outputs.release }} ./r-type-linux.sh
+        gh release upload ${{ needs.release-create.outputs.release }} ./r-type-macos.dmg
 
     - name: Upload To Artifact
       if: github.ref != 'refs/heads/main'
       uses: actions/upload-artifact@v3
       with:
-        name: r-type-macos.sh
-        path: ./r-type-macos.sh
+        name: r-type-macos.dmg
+        path: ./r-type-macos.dmg
+
+    - name: Upload To Artifact
+      if: github.ref != 'refs/heads/main'
+      uses: actions/upload-artifact@v3
+      with:
+        name: r-type-macos.zip
+        path: ./r-type-macos.zip
 
   raylib-to-tar:
     runs-on: ubuntu-latest

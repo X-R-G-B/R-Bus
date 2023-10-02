@@ -69,9 +69,4 @@ foreach(lib ${BOOST_INCLUDE_LIBRARIES})
         PRIVATE
         Boost::${lib}
     )
-#    if(WIN32)
-#        install(FILES Boost::${lib} DESTINATION ${CMAKE_INSTALL_BINDIR})
-#    else()
-#        install(FILES Boost::${lib} DESTINATION ${CMAKE_INSTALL_LIBDIR})
-#    endif()
 endforeach()

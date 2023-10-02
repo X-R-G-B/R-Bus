@@ -12,8 +12,11 @@
 namespace Nitwork {
     class NitworkServer : public ANitwork {
         public:
-            NitworkServer();
-            ~NitworkServer() = default;
+            ~NitworkServer() override = default;
+            NitworkServer(const NitworkServer &) = delete;
+            NitworkServer(const NitworkServer &&) = delete;
+            void operator=(const NitworkServer &) = delete;
+            void operator=(const NitworkServer &&) = delete;
 
             static NitworkServer &getInstance();
 
@@ -22,11 +25,12 @@ namespace Nitwork {
             bool startNitworkConfig(int port, const std::string &ip) final;
 
             void handleBodyAction(
-                const struct header_s header,
+                struct header_s header,
                 const boost::asio::ip::udp::endpoint &endpoint) final;
         private:
-            void handleHeaderPacketsIds(const struct header_s &);
+            NitworkServer() = default;
 
+            void handleHeaderPacketsIds(const struct header_s &);
             [[nodiscard]] const std::map<
                 enum n_actionType_t,
                 actionHandler
@@ -39,8 +43,6 @@ namespace Nitwork {
             void handleReadyMsg(
                 const std::any &msg,
                 boost::asio::ip::udp::endpoint &endpoint);
-        protected:
-        private:
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static NitworkServer
                 _instance; // instance of the NitworkServer (singleton)

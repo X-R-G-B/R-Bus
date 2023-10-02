@@ -8,9 +8,6 @@
 #include "NitworkServer.hpp"
 
 namespace Nitwork {
-    NitworkServer::NitworkServer()
-        : ANitwork() {}
-
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
     NitworkServer NitworkServer::_instance = NitworkServer();
     // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)

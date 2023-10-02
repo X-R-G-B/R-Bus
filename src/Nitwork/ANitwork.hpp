@@ -20,8 +20,11 @@ namespace Nitwork {
 
     class ANitwork : public INitwork {
         public:
-            ANitwork();
             virtual ~ANitwork() = default;
+            ANitwork(const ANitwork &) = delete;
+            ANitwork(const ANitwork &&) = delete;
+            void operator=(const ANitwork &) = delete;
+            void operator=(const ANitwork &&) = delete;
 
             // start the NitworkServer
             bool start(int port, int threadNb, int tick, const std::string &ip = "") override;
@@ -62,8 +65,10 @@ namespace Nitwork {
 
 
         protected:
+            ANitwork();
+
             /* Getters / Setters */
-            n_id_t getPacketID() const;
+            [[nodiscard]] n_id_t getPacketID() const;
             void addPacketToSend(const boost::asio::ip::udp::endpoint &, const struct packet_s &);
             void handlePacketIdsReceived(const struct header_s &header);
 

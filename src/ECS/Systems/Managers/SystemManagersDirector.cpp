@@ -32,22 +32,23 @@ namespace Systems {
     }
 
     std::size_t SystemManagersDirector::addSystemManager(
-        std::vector<std::function<void(std::size_t)>> systems)
+        std::vector<std::function<void(std::size_t, std::size_t)>> systems)
     {
         _systemManagers.emplace_back(systems);
         return _systemManagers.size() - 1;
     }
 
-    void SystemManagersDirector::removeSystem(std::size_t id)
+    void SystemManagersDirector::removeSystemManager(std::size_t id)
     {
         auto it = _systemManagers.begin();
         std::advance(it, id);
         _systemManagers.erase(it);
     }
 
-    SystemManagersDirector::SystemManagersDirector()
+    void SystemManagersDirector::resetChanges()
     {
-        addSystemManager(ecsSystems);
+        for (auto &manager : _systemManagers) {
+            manager.resetChanges();
+        }
     }
-
 } // namespace Systems

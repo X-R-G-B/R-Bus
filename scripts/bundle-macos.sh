@@ -3,6 +3,8 @@
 
 set -ex
 
+rm -rf build
+
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
 cmake --build build
@@ -11,6 +13,8 @@ cd build || exit 14
 
 cpack --config CPackConfig.cmake -G DragNDrop || (cat "./_CPack_Packages/Darwin/DragNDrop/PreinstallOutput.log" && exit 1)
 
+cp R-Type-Darwin.dmg ../r-type-macos.dmg
+
 cpack --config CPackSourceConfig.cmake -G ZIP
 
-ls -l
+cp R-Type-Darwin.zip ../r-type-macos.zip 

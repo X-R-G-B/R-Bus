@@ -18,11 +18,11 @@ extern "C"
 }
 
 namespace Nitwork {
-    typedef std::function<void(std::any &, boost::asio::ip::udp::endpoint &)> actionHandler;
-    typedef std::function<void(
+    using actionHandler = std::function<void(std::any &, boost::asio::ip::udp::endpoint &)>;
+    using handleBodyT = std::function<void(
         const struct header_s &,
         actionHandler &
-    )> handleBodyT;
+    )>;
 
     class SenderData {
         public:
@@ -39,15 +39,21 @@ namespace Nitwork {
             n_actionType_t action;
             std::any body;
     };
+
     class INitwork {
         public:
             virtual ~INitwork() = default;
+            INitwork(const INitwork &) = delete;
+            INitwork(const INitwork &&) = delete;
+            void operator=(const INitwork &) = delete;
+            void operator=(const INitwork &&) = delete;
 
             // start the NitworkServer
             virtual bool start(int port, int threadNb, int tick, const std::string &ip = "") = 0;
 
             virtual void stop() = 0;
         protected:
+            INitwork() = default;
             // start the NitworkServer config
             virtual bool startNitworkConfig(int port, const std::string &ip) = 0;
             // start the NitworkServer threads (context threads, clock thread, input thread and output thread)
@@ -73,7 +79,7 @@ namespace Nitwork {
                 const boost::asio::ip::udp::endpoint &endpoint) = 0;
 
             // getters
-            virtual const std::map<
+            [[nodiscard]] virtual const std::map<
                 enum n_actionType_t,
                 actionHandler
             >& getActionToSendHandlers() const = 0;
