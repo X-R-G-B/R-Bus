@@ -21,12 +21,13 @@ namespace Systems {
             registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
             registry.getComponents<Types::CollisionRect>();
-
-        std::vector<std::size_t> playerIdx =
-            registry.getComponents<Types::Player>().getExistingsId();
+        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
+            {typeid(Types::Player),
+             typeid(Types::Position),
+             typeid(Types::CollisionRect)});
 
         const float maxPercent = 100.0F;
-        for (std::size_t id : playerIdx) {
+        for (std::size_t id : ids) {
             if (arrPosition[id].x < 0) {
                 arrPosition[id].x = 0;
             }
@@ -86,19 +87,16 @@ namespace Systems {
 
     void entitiesCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        Registry &registry = Registry::getInstance();
         Registry::components<Types::Position> arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
+            registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
-            Registry::getInstance().getComponents<Types::CollisionRect>();
+            registry.getComponents<Types::CollisionRect>();
+        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
+            {typeid(Types::CollisionRect), typeid(Types::Position)});
 
-        std::vector<std::size_t> ids = arrPosition.getExistingsId();
-        auto itIds                   = ids.begin();
-
-        while (itIds != ids.end()) {
-            if (arrCollisionRect.exist(*itIds)) {
-                checkCollisionEntity(itIds, ids, arrPosition, arrCollisionRect);
-            }
-            itIds++;
+        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
+            checkCollisionEntity(itIds, ids, arrPosition, arrCollisionRect);
         }
     }
 
@@ -177,9 +175,18 @@ namespace Systems {
         Registry::getInstance()
             .getComponents<Types::CollisionRect>()
             .insertBack(collisionRect);
+        // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack({
+            spriteRect,
+            {spriteRect,
+              {2, 51, 46, 47},
+              {101, 2, 48, 47},
+              {152, 2, 46, 47},
+              {201, 2, 46, 47}},
+        });
+        // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
+        Registry::getInstance().setToBackLayers(id);
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
-        Registry::getInstance().getComponents<Types::Health>().insertBack(
-            {playerHealth});
 
         id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Types::Position>().insertBack(
@@ -196,6 +203,24 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Dammage>().insertBack(
             ennemyDammage);
         Registry::getInstance().setToFrontLayers(id);
+
+        Registry::getInstance().getComponents<Raylib::Music>().insertBack(
+            {musicPath, musicVolume});
+        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(
+            {soundPath, soundVolume});
+        Registry::getInstance().getComponents<Raylib::Text>().insertBack(
+            {"Press SPACE to play music, ENTER to play sound, J to reset "
+             "scene, ARROWS to move",
+             textPos,
+             fontScale,
+             Raylib::DarkBlue});
+        Registry::getInstance().getComponents<Types::Dammage>().insertBack(
+            {playerDammage});
+        Registry::getInstance().getComponents<Types::Health>().insertBack(
+            {playerHealth});
+        SystemManagersDirector::getInstance()
+            .getSystemManager(managerId)
+            .removeSystem(systemId);
 
         SystemManagersDirector::getInstance()
             .getSystemManager(managerId)
