@@ -105,7 +105,8 @@ class SparseArray {
             auto revIt = _revSparse.begin();
             std::advance(revIt, sparseValue);
             _revSparse.erase(revIt);
-            for (auto revIt2 = _revSparse.begin(); revIt2 != _revSparse.end(); revIt2++) {
+            for (auto revIt2 = _revSparse.begin(); revIt2 != _revSparse.end();
+                 revIt2++) {
                 if (*revIt2 > id) {
                     (*revIt2)--;
                 }

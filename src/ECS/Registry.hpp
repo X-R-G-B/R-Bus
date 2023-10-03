@@ -26,7 +26,7 @@ enum BackLayers { BACK = 0, BACKMAX };
 /*
  * FRONT is the frontest layer, so when adding a new one increment the FRONT
  * value and add the new one above
-*/
+ */
 
 enum FrontLayers { FRONT = 0, FRONTMAX };
 
