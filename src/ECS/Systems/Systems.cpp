@@ -161,7 +161,7 @@ namespace Systems {
     constexpr float ennemyHeight              = 20.F;
     const Types::Dammage ennemyDammage        = {20};
     const Types::Rect ennemySpriteRect        = {2, 67, 30, 32};
-    const Types::CollisionRect ennemyCollRect = {17, 18};
+    const Types::CollisionRect ennemyCollRect = {28, 35};
 
     void init(std::size_t managerId, std::size_t systemId)
     {

@@ -93,7 +93,7 @@ namespace Systems {
         }
     }
 
-    void playerShootBullet(std::size_t, std::size_t)
+    void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Player> arrPlayer =
             Registry::getInstance().getComponents<Types::Player>();
