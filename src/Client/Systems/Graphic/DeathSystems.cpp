@@ -34,8 +34,8 @@ namespace Systems {
     // MAP FOR DEATH FUNCTIONS FOR EACH ENTITY
     const std::unordered_map<std::type_index, std::function<void(std::size_t)>>
         deathFunctions = {
-            {std::type_index(typeid(Types::Player)), setPlayerAnimRectDeath},
-            {std::type_index(typeid(Types::Enemy)),  setEnemyDeathFunc     },
+            // {std::type_index(typeid(Types::Player)), setPlayerAnimRectDeath},
+            // {std::type_index(typeid(Types::Enemy)),  setEnemyDeathFunc     },
     };
 
     void DeathSystems::setEntityDeathFunction(

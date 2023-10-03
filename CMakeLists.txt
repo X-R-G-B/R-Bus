@@ -56,25 +56,7 @@ install(TARGETS ${PROJECT_NAME_SERVER}
 
 add_subdirectory(deps)
 
-# Clang-Tidy
 
-find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
-
-if(CLANG_TIDY_EXE)
-    if (MSVC)
-        set_target_properties(${PROJECT_NAME_CLIENT} PROPERTIES
-            VS_GLOBAL_RunCodeAnalysis true
-            VS_GLOBAL_EnableClangTidyCodeAnalysis true
-        )
-        set_target_properties(${PROJECT_NAME_SERVER} PROPERTIES
-            VS_GLOBAL_RunCodeAnalysis true
-            VS_GLOBAL_EnableClangTidyCodeAnalysis true
-        )
-    else()
-        set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "--fix" "--fix-notes" "--fix-errors")
-        set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
-    endif()
-endif()
 
 if(MSVC)
     target_compile_options(
