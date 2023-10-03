@@ -98,7 +98,7 @@ namespace Nitwork {
                          .magick2          = HEADER_CODE2,
                          },
             .action  = {.magick = INIT},
-            .msgInit = {.magick = MAGICK_INIT}
+            .msgInit = {.magick = MAGICK_INIT                                                              }
         };
         struct packet_s packetData = {
             .action = packetMsgInit.action.magick,
@@ -120,7 +120,7 @@ namespace Nitwork {
                          .magick2          = HEADER_CODE2,
                          },
             .action   = {.magick = READY},
-            .msgReady = {.magick = MAGICK_READY}
+            .msgReady = {.magick = MAGICK_READY                                                              }
         };
         struct packet_s packetData = {
             .action = packetMsgReady.action.magick,

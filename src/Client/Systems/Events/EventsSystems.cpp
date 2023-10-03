@@ -25,15 +25,12 @@ namespace Systems {
         }
     }
 
-    void EventsSystems::playerMovement(
-        std::size_t /*unused*/,
-        std::size_t /*unused*/)
+    void EventsSystems::playerMovement(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry = Registry::getInstance();
-        Registry::components<Types::Position> arrPos =
-            registry.getComponents<Types::Position>();
-        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
-            {typeid(Types::Player), typeid(Types::Position)});
+        Registry &registry                           = Registry::getInstance();
+        Registry::components<Types::Position> arrPos = registry.getComponents<Types::Position>();
+        std::vector<std::size_t> ids =
+            registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
         for (auto id : ids) {
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
@@ -55,8 +52,7 @@ namespace Systems {
         }
     }
 
-    void
-    EventsSystems::changeScene(std::size_t /*unused*/, std::size_t /*unused*/)
+    void EventsSystems::changeScene(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
             SceneManager &sceneManager = SceneManager::getInstance();
@@ -68,8 +64,7 @@ namespace Systems {
         }
     }
 
-    std::vector<std::function<void(std::size_t, std::size_t)>>
-    EventsSystems::getEventSystems()
+    std::vector<std::function<void(std::size_t, std::size_t)>> EventsSystems::getEventSystems()
     {
         return {playerMovement, changeScene};
     }
