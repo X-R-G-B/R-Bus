@@ -28,16 +28,14 @@ namespace Systems {
         Registry &registry = Registry::getInstance();
         Registry::components<Types::AnimRect> arrAnimRect =
             registry.getComponents<Types::AnimRect>();
-        std::vector<std::size_t> ids = arrAnimRect.getExistingsId();
         Registry::components<Types::Rect> arrRect =
             registry.getComponents<Types::Rect>();
+        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
+            {typeid(Types::AnimRect), typeid(Types::Rect)});
 
         for (auto id : ids) {
             Types::AnimRect &animRect = arrAnimRect[id];
-            if (arrRect.exist(id)) {
-                arrRect[id] =
-                    getCurrentList(animRect)[animRect.currentRectInList];
-            }
+            arrRect[id] = getCurrentList(animRect)[animRect.currentRectInList];
             if (animRect.currentRectList != Types::RectListType::DEFAULTRECT) {
                 animRect.currentRectInList++;
                 if (animRect.currentRectInList
@@ -56,12 +54,10 @@ namespace Systems {
             registry.getComponents<Types::Position>();
         Registry::components<Types::RectangleShape> arrRect =
             registry.getComponents<Types::RectangleShape>();
-        std::vector<std::size_t> rectShapeIndexes = arrRect.getExistingsId();
+        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
+            {typeid(Types::RectangleShape), typeid(Types::Position)});
 
-        for (auto id : rectShapeIndexes) {
-            if (!arrPosition.exist(id)) {
-                continue;
-            }
+        for (auto id : ids) {
             Types::Position &position        = arrPosition[id];
             Types::RectangleShape &rectangle = arrRect[id];
 
