@@ -100,7 +100,7 @@ namespace Systems {
         }
     }
 
-    void debugCollisionRect(std::size_t, std::size_t)
+    void debugCollisionRect(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::CollisionRect> arrCollisionRect =
             Registry::getInstance().getComponents<Types::CollisionRect>();
