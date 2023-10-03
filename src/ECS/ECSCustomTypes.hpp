@@ -11,6 +11,9 @@
 
 namespace Types {
 
+        enum MissileTypes {CLASSIC};
+
+
     struct CollisionRect {
             float width;
             float height;
@@ -43,7 +46,7 @@ namespace Types {
 
     struct Missiles {
             // maybe enum better ?
-            std::string type;
+             MissileTypes type;
     };
 
 } // namespace Types
