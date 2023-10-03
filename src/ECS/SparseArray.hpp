@@ -48,7 +48,7 @@ class SparseArray {
                     "SparseArrays::erase: ID out of bounds!");
             }
             std::size_t sparseValue = _sparse[id];
-            if (sparseValue != -1) {
+            if (int(sparseValue) != -1) {
                 removeDenses(id, sparseValue);
             }
             auto it = _sparse.begin();
