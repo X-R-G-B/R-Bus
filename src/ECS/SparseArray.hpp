@@ -47,13 +47,9 @@ class SparseArray {
                 throw std::runtime_error(
                     "SparseArrays::erase: ID out of bounds!");
             }
-            if (_sparse[id] != -1) {
-                auto it = _dense.begin();
-                std::advance(it, _sparse[id]);
-                _dense.erase(it);
-                auto revIt = _revSparse.begin();
-                std::advance(revIt, _sparse[id]);
-                _revSparse.erase(revIt);
+            std::size_t sparseValue = _sparse[id];
+            if (sparseValue != -1) {
+                removeDenses(id, sparseValue);
             }
             auto it = _sparse.begin();
             std::advance(it, id);
@@ -101,6 +97,27 @@ class SparseArray {
         }
 
     private:
+        void removeDenses(std::size_t id, std::size_t sparseValue)
+        {
+            auto it = _dense.begin();
+            std::advance(it, sparseValue);
+            _dense.erase(it);
+            auto revIt = _revSparse.begin();
+            std::advance(revIt, sparseValue);
+            _revSparse.erase(revIt);
+            for (auto revIt2 = _revSparse.begin(); revIt2 != _revSparse.end();
+                 revIt2++) {
+                if (*revIt2 > id) {
+                    (*revIt2)--;
+                }
+            }
+            for (auto it2 = _sparse.begin(); it2 != _sparse.end(); it2++) {
+                if (static_cast<int>(*it2) > static_cast<int>(sparseValue)) {
+                    (*it2)--;
+                }
+            }
+        }
+
         void throwIfDontExist(std::size_t id)
         {
             if (!exist(id)) {

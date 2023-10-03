@@ -7,7 +7,9 @@
 
 #pragma once
 
-// all values are in percentage of the screen
+#include <cstddef>
+#include <functional>
+#include <optional>
 
 namespace Types {
 
@@ -30,10 +32,16 @@ namespace Types {
             int hp;
     };
 
-    struct Dammage {
-            int dammage;
+    struct Damage {
+            int damage;
     };
 
     struct Player { };
+
+    struct Enemy { };
+
+    struct Dead {
+            std::optional<std::function<void(std::size_t id)>> deathFunction;
+    };
 
 } // namespace Types

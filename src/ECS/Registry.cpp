@@ -7,6 +7,7 @@
 
 #include "Registry.hpp"
 #include <string>
+#include "Clock.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 Registry Registry::_instance = Registry();
@@ -38,7 +39,45 @@ void Registry::clear()
     _data.clear();
     _addComponentPlaceFunctions.clear();
     _removeComponentFunctions.clear();
+    _getExistingsId.clear();
     _entitiesNb = 0;
+}
+
+static std::vector<std::size_t>
+match(std::vector<std::size_t> fst, std::vector<std::size_t> scd)
+{
+    std::vector<std::size_t> res;
+
+    for (auto it = fst.begin(); it != fst.end(); it++) {
+        for (auto scdIt = scd.begin(); scdIt != scd.end(); scdIt++) {
+            if (*it == *scdIt) {
+                res.push_back(*it);
+            }
+        }
+    }
+    return res;
+}
+
+std::vector<std::size_t> Registry::getExistings(std::type_index type)
+{
+    auto funcIt = _getExistingsId.find(type);
+    if (funcIt == _getExistingsId.end()) {
+        return {};
+    }
+    return (funcIt->second)(*this);
+}
+
+std::vector<std::size_t>
+Registry::getEntitiesByComponents(std::vector<std::type_index> types)
+{
+    auto it                      = types.begin();
+    std::vector<std::size_t> res = getExistings(*it);
+    it++;
+
+    for (; it != types.end(); it++) {
+        res = match(res, getExistings(*it));
+    }
+    return res;
 }
 
 void Registry::setToBackLayers(std::size_t id, BackLayers layer)
@@ -103,4 +142,9 @@ void Registry::removeFromDefaultLayer(std::size_t id)
 Registry::Registry() : _entitiesNb(0)
 {
     initLayers(true);
+}
+
+Clock &Registry::getClock()
+{
+    return _clock;
 }

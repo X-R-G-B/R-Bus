@@ -42,12 +42,8 @@ namespace Systems {
         }
     }
 
-    const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
-    const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
-    const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
-    const Types::Rect spriteRect = {2, 2, 48, 48};
-    const Types::CollisionRect collisionRect = {46, 46};
-    const Raylib::Vector2 textPos            = {20, 50};
+    const std::string musicPath = "assets/Audio/Musics/Title.mp3";
+    const std::string soundPath = "assets/Audio/Sounds/fire.ogg";
 
     void GraphicSystems::playSoundWithKey(
         std::size_t /*unused*/,
