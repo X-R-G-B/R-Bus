@@ -16,6 +16,7 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
+#include "Clock.hpp"
 #include "SceneManager.hpp"
 #include "SparseArray.hpp"
 
@@ -73,8 +74,12 @@ class Registry {
         void operator=(const Registry &&)     = delete;
         Registry(Registry &&)                 = delete;
 
+        Clock &getClock();
+
     private:
         Registry();
+
+        Clock _clock;
 
         void initLayers(bool back);
 

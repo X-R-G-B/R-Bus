@@ -7,6 +7,7 @@
 
 #include "Registry.hpp"
 #include <string>
+#include "Clock.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 Registry Registry::_instance = Registry();
@@ -140,4 +141,9 @@ void Registry::removeFromDefaultLayer(std::size_t id)
 Registry::Registry() : _entitiesNb(0)
 {
     initLayers(true);
+}
+
+Clock &Registry::getClock()
+{
+    return _clock;
 }
