@@ -8,6 +8,14 @@
 #ifndef NITWORK_H
     #define NITWORK_H
 
+    #ifdef __GNUC__
+        #define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
+    #endif
+
+    #ifdef _MSC_VER
+        #define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop))
+    #endif
+
     #define HEADER_SIZE sizeof(struct header_s)
     #define TICKS_PER_SECOND 20
     #define ONE_SECOND 1000
@@ -35,53 +43,53 @@ enum n_actionType_t {
     N_ACTION_TYPE_MAX,
 };
 
-struct header_s {
+PACK(struct header_s {
         n_magick_t magick1;
         n_idsReceived_t ids_received;
         n_id_t last_id_received;
         n_id_t id;
         n_nbAction_t nb_action;
         n_magick_t magick2;
-} __attribute__((packed));
+});
 
-struct action_s {
+PACK(struct action_s {
         enum n_actionType_t magick;
-} __attribute__((packed));
+});
 
 
 /* Message Init */
-struct msgInit_s {
+PACK(struct msgInit_s {
         n_magick_t magick;
-} __attribute__((packed));
+});
 
-struct packetMsgInit_s {
+PACK(struct packetMsgInit_s {
         struct header_s header;
         struct action_s action;
         struct msgInit_s msgInit;
-} __attribute__((packed));
+});
 
 
 /* Message ready */
-struct msgReady_s {
+PACK(struct msgReady_s {
         n_magick_t magick;
-} __attribute__((packed));
+});
 
-struct packetMsgReady_s {
+PACK(struct packetMsgReady_s {
         struct header_s header;
         struct action_s action;
         struct msgReady_s msgReady;
-} __attribute__((packed));
+});
 
 /* Message Start Game */
-struct msgStartGame_s {
+PACK(struct msgStartGame_s {
         n_magick_t magick;
         n_id_t playerId;
-} __attribute__((packed));
+});
 
-struct packetMsgStartGame_s {
+PACK(struct packetMsgStartGame_s {
         struct header_s header;
         struct action_s action;
         struct msgStartGame_s msgStartGame;
-} __attribute__((packed));
+});
 
 #endif
