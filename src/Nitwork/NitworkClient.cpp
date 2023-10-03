@@ -61,7 +61,7 @@ namespace Nitwork {
     /* Handlers Section */
     void NitworkClient::handleStartGame(
         const std::any &msg,
-        __attribute__((unused)) boost::asio::ip::udp::endpoint &endpoint)
+        boost::asio::ip::udp::endpoint &endpoint /* unused */)
     {
         const struct msgStartGame_s &msgStartGame = std::any_cast<struct msgStartGame_s>(msg);
 

@@ -34,8 +34,7 @@ namespace Nitwork {
         return true;
     }
 
-    void NitworkServer::handleBodyAction(__attribute__((unused))
-                                         const boost::asio::ip::udp::endpoint &endpoint)
+    void NitworkServer::handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint /* unused */)
     {
         auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
         auto it      = _actionsHandlers.find(action->magick);
@@ -70,7 +69,7 @@ namespace Nitwork {
 
     /* Handle packet (msg) Section */
     void NitworkServer::handleInitMsg(
-        __attribute__((unused)) const std::any &msg,
+        const std::any &msg /* unused */,
         boost::asio::ip::udp::endpoint &endpoint)
     {
         if (_endpoints.size() >= MAX_CLIENTS) {
@@ -85,8 +84,8 @@ namespace Nitwork {
     }
 
     void NitworkServer::handleReadyMsg(
-        __attribute__((unused)) const std::any &msg,
-        __attribute__((unused)) boost::asio::ip::udp::endpoint &endpoint)
+        const std::any &msg /* unused */,
+        boost::asio::ip::udp::endpoint &endpoint /* unused */)
     {
         if (!isClientAlreadyConnected(endpoint)) {
             std::cerr << "Client not connected" << std::endl;
