@@ -107,16 +107,17 @@ namespace Systems {
 
         auto ids = arrHealth.getExistingsId();
 
-        //je print les entites existantes = resultat 0 et 1
+        // je print les entites existantes = resultat 0 et 1
         for (auto id : ids) {
             std::cout << "There is an entity with id : " << id << std::endl;
         }
 
-        //je supprime la premiere entite existante
+        // je supprime la premiere entite existante
         Registry::getInstance().removeEntity(0);
-        std::cout << "-----------------------------------------------------" << std::endl;
+        std::cout << "-----------------------------------------------------"
+                  << std::endl;
 
-        //je print les entites existantes = 0 car j en ai supprime une
+        // je print les entites existantes = 0 car j en ai supprime une
         auto ids2 = arrHealth.getExistingsId();
         for (auto id : ids2) {
             std::cout << "There is an entity with id : " << id << std::endl;
