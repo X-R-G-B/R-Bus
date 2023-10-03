@@ -49,8 +49,7 @@ namespace Systems {
         Registry::components<Types::Health> arrHealth =
             Registry::getInstance().getComponents<Types::Health>();
 
-        if (arrDamage.exist(firstEntity)
-            && arrDamage[firstEntity].damage > 0) {
+        if (arrDamage.exist(firstEntity) && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
                 arrHealth[secondEntity].hp -= arrDamage[firstEntity].damage;
             }
@@ -126,8 +125,8 @@ namespace Systems {
     const Raylib::Vector2 textPos            = {20, 50};
     constexpr int playerData                 = 10;
     const Types::Position playerPos          = {50, 50};
-    constexpr int playerDamage              = 1;
-    constexpr int enemyDamage              = 1;
+    constexpr int playerDamage               = 1;
+    constexpr int enemyDamage                = 1;
     constexpr int playerHealth               = 5;
     constexpr int playerHealth2              = 5;
     constexpr float musicVolume              = 0.02F;
