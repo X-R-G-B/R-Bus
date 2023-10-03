@@ -14,6 +14,9 @@ int main()
 
     Nitwork::NitworkClient::getInstance().addInitMsg();
     Nitwork::NitworkClient::getInstance().addInitMsg();
+    Nitwork::NitworkClient::getInstance().addInitMsg();
+    Nitwork::NitworkClient::getInstance().addInitMsg();
+    Nitwork::NitworkClient::getInstance().addReadyMsg();
     while (true) {};
     return 0;
 }

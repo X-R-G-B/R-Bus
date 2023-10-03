@@ -17,6 +17,10 @@
     #define HEADER_CODE1 '\x01'
     #define HEADER_CODE2 '\x03'
 
+    #define MAGICK_INIT '\x06'
+    #define MAGICK_READY '\x17'
+    #define MAGICK_START_GAME '\a'
+
 
 typedef char n_magick_t;
 typedef int n_idsReceived_t;
@@ -27,6 +31,7 @@ enum n_actionType_t {
     NO_ACTION = 0,
     INIT = 1,
     READY = 2,
+    START_GAME = 3,
     N_ACTION_TYPE_MAX,
 };
 
@@ -43,6 +48,8 @@ struct action_s {
         enum n_actionType_t magick;
 } __attribute__((packed));
 
+
+/* Message Init */
 struct msgInit_s {
         n_magick_t magick;
 } __attribute__((packed));
@@ -53,6 +60,8 @@ struct packetMsgInit_s {
         struct msgInit_s msgInit;
 } __attribute__((packed));
 
+
+/* Message ready */
 struct msgReady_s {
         n_magick_t magick;
 } __attribute__((packed));
@@ -61,6 +70,18 @@ struct packetMsgReady_s {
         struct header_s header;
         struct action_s action;
         struct msgReady_s msgReady;
+} __attribute__((packed));
+
+/* Message Start Game */
+struct msgStartGame_s {
+        n_magick_t magick;
+        n_id_t playerId;
+} __attribute__((packed));
+
+struct packetMsgStartGame_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgStartGame_s msgStartGame;
 } __attribute__((packed));
 
 #endif

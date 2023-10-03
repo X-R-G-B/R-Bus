@@ -25,15 +25,14 @@ namespace Nitwork {
 
             bool startNitworkConfig(int port, const std::string &ip) final;
 
-            void handleBodyAction(
-                struct header_s header,
-                const boost::asio::ip::udp::endpoint &endpoint) final;
+            void handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint) final;
 
 
             // Get bytes of packets ids receives
             n_idsReceived_t getIdsReceived();
             // Messages creation methods
             void addInitMsg();
+            void addReadyMsg();
         private:
             NitworkClient();
             [[nodiscard]] const std::map<
@@ -41,11 +40,7 @@ namespace Nitwork {
                 actionHandler
             >& getActionToSendHandlers() const final;
 
-            void handleInitMsg(
-                const std::any &msg,
-                boost::asio::ip::udp::endpoint &endpoint);
-
-            void handleReadyMsg(
+            void handleStartGame(
                 const std::any &msg,
                 boost::asio::ip::udp::endpoint &endpoint);
         protected:
@@ -63,43 +58,23 @@ namespace Nitwork {
                 std::pair<handleBodyT, actionHandler>
             > _actionsHandlers = {
                 {
-                    INIT,
+                    START_GAME,
                     std::make_pair(
                         handleBodyT(
                             std::bind(
-                                &NitworkClient::handleBody<struct msgInit_s>,
-                                this, std::placeholders::_1,
-                                std::placeholders::_2
+                                &NitworkClient::handleBody<struct msgStartGame_s>,
+                                this, std::placeholders::_1
                             )
                         ),
                         actionHandler(
                             std::bind(
-                                &NitworkClient::handleInitMsg,
+                                &NitworkClient::handleStartGame,
                                 this, std::placeholders::_1,
                                 std::placeholders::_2
                             )
                         )
                     )
-                },
-                {
-                    READY,
-                    std::make_pair(
-                        handleBodyT(
-                            std::bind(
-                                &NitworkClient::handleBody<struct msgReady_s>,
-                                this, std::placeholders::_1,
-                                std::placeholders::_2
-                            )
-                        ),
-                        actionHandler(
-                            std::bind(
-                                &NitworkClient::handleReadyMsg,
-                                this, std::placeholders::_1,
-                                std::placeholders::_2
-                            )
-                        )
-                    )
-                },
+                }
             };
             std::map<
                 enum n_actionType_t,

@@ -46,6 +46,8 @@ namespace Nitwork {
                 }
                 T data = std::any_cast<T>(rawData);
 
+                std::cout << "Sending data to " << endpoint.address().to_string()
+                          << ":" << endpoint.port() << std::endl;
                 _socket.async_send_to(
                     boost::asio::buffer(&data, sizeof(T)),
                     endpoint,
@@ -68,22 +70,18 @@ namespace Nitwork {
             ANitwork();
 
             /* Getters / Setters */
-            [[nodiscard]] n_id_t getPacketID() const;
+            n_id_t getPacketID();
             void addPacketToSend(const boost::asio::ip::udp::endpoint &, const struct packet_s &);
             void handlePacketIdsReceived(const struct header_s &header);
 
             void startReceiveHandler() final;
             // handler func for receive handler which handle the header
             template <typename B>
-            void handleBody(
-                const struct header_s &header,
-                const actionHandler &handler)
+            void handleBody(const actionHandler &handler)
             {
-                B *body = reinterpret_cast<B *>(
-                    _receiveBuffer.data() + sizeof(struct header_s)
-                    + sizeof(struct action_s));
+                auto *body = reinterpret_cast<B *>(
+                    _receiveBuffer.data() + sizeof(struct header_s));
                 handleBodyDatas<B>(
-                    header,
                     handler,
                     *body,
                     boost::system::error_code(),
@@ -106,11 +104,11 @@ namespace Nitwork {
             void headerHandler(
                 std::size_t bytes_received,
                 const boost::system::error_code &error) final;
+            bool isAlreadyReceived(n_id_t id);
 
             // handler func for receive handler which handle the action
             template <typename B>
             void handleBodyDatas(
-                const struct header_s &header,
                 const actionHandler &handler,
                 B body,
                 const boost::system::error_code &error,
@@ -128,9 +126,7 @@ namespace Nitwork {
                 }
                 std::lock_guard<std::mutex> lock(_inputQueueMutex);
                 SenderData senderData(_senderEndpoint, std::any(body));
-                std::cout << "adding action to queue" << std::endl;
                 _actions.emplace_back(senderData, handler);
-                std::cout << "action added to queue" << std::endl;
                 startReceiveHandler();
             }
             void addPacketToSentPackages(const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, packet_s> &data);
@@ -141,7 +137,8 @@ namespace Nitwork {
             boost::asio::ip::udp::endpoint _endpoint; // endpoint of the Server
 
             // The buffer used to receive the actions
-            boost::array<char, MAX_PACKET_SIZE> _receiveBuffer; // The buffer used to receive the actions
+            std::array<char, MAX_PACKET_SIZE> _receiveBuffer; // The buffer used to receive the actions
+//            std::vector<char> _receiveBuffer; // The buffer used to receive the actions
 
             // list of packets' ids receives
             std::vector<n_id_t> _receivedPacketsIds; // A list of packets' ids receives

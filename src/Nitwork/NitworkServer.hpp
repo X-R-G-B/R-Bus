@@ -24,17 +24,19 @@ namespace Nitwork {
 
             bool startNitworkConfig(int port, const std::string &ip) final;
 
-            void handleBodyAction(
-                struct header_s header,
-                const boost::asio::ip::udp::endpoint &endpoint) final;
+            void handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint) final;
+
+            /* Messages creation methods */
+            void addStarGameMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
         private:
             NitworkServer() = default;
 
-            void handleHeaderPacketsIds(const struct header_s &);
             [[nodiscard]] const std::map<
                 enum n_actionType_t,
                 actionHandler
             >& getActionToSendHandlers() const final;
+
+            bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
 
             void handleInitMsg(
                 const std::any &msg,
@@ -60,8 +62,7 @@ namespace Nitwork {
                         handleBodyT(
                             std::bind(
                                 &NitworkServer::handleBody<struct msgInit_s>,
-                                this, std::placeholders::_1,
-                                std::placeholders::_2
+                                this, std::placeholders::_1
                             )
                         ),
                         actionHandler(
@@ -79,8 +80,7 @@ namespace Nitwork {
                          handleBodyT(
                              std::bind(
                                 &NitworkServer::handleBody<struct msgReady_s>,
-                                this, std::placeholders::_1,
-                                std::placeholders::_2
+                                this, std::placeholders::_1
                             )
                          ),
                          actionHandler(
@@ -97,26 +97,16 @@ namespace Nitwork {
                 enum n_actionType_t,
                 actionHandler
             > _actionToSendHandlers = {
-                    {
-                         INIT,
-                         actionHandler(
-                             std::bind(
-                                 &ANitwork::sendData<struct msgInit_s>,
-                                 this, std::placeholders::_1,
-                                 std::placeholders::_2
-                             )
-                        )
-                    },
-                    {
-                        READY,
-                        actionHandler(
-                            std::bind(
-                                &ANitwork::sendData<struct msgReady_s>,
-                                this, std::placeholders::_1,
-                                std::placeholders::_2
-                            )
-                        )
-                    }
+                {
+                     START_GAME,
+                     actionHandler(
+                         std::bind(
+                             &ANitwork::sendData<struct packetMsgStartGame_s>,
+                             this, std::placeholders::_1,
+                             std::placeholders::_2
+                         )
+                    )
+                }
             };
     };
 }

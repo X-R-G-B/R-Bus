@@ -19,10 +19,7 @@ extern "C"
 
 namespace Nitwork {
     using actionHandler = std::function<void(std::any &, boost::asio::ip::udp::endpoint &)>;
-    using handleBodyT = std::function<void(
-        const struct header_s &,
-        actionHandler &
-    )>;
+    using handleBodyT = std::function<void(actionHandler &)>;
 
     class SenderData {
         public:
@@ -74,9 +71,7 @@ namespace Nitwork {
                 std::size_t bytes_received,
                 const boost::system::error_code &error) = 0;
             // handler func for headerHandler which handle the action
-            virtual void handleBodyAction(
-                const struct header_s header,
-                const boost::asio::ip::udp::endpoint &endpoint) = 0;
+            virtual void handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint) = 0;
 
             // getters
             [[nodiscard]] virtual const std::map<

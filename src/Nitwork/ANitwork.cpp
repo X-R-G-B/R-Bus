@@ -5,11 +5,15 @@
 ** ANitwork
 */
 
+#include <iostream>
+#include <fstream>
 #include "ANitwork.hpp"
+
 namespace Nitwork {
     ANitwork::ANitwork()
         : _socket(_context),
-          _packetId(0) {
+          _packetId(0)
+    {
     }
 
     bool ANitwork::start(int port, int threadNb, int tick, const std::string &ip)
@@ -99,7 +103,6 @@ namespace Nitwork {
 
     void ANitwork::startReceiveHandler()
     {
-        std::cout << "Starting receive handler" << std::endl;
         _socket.async_receive_from(
             boost::asio::buffer(_receiveBuffer),
             _senderEndpoint,
@@ -114,6 +117,11 @@ namespace Nitwork {
         std::size_t bytes_received,
         const boost::system::error_code &error)
     {
+        static int vv = 1;
+        std::ofstream file("log" + std::to_string(vv++) + std::getenv("TYPE") + ".txt");
+        file.write(_receiveBuffer.data(), bytes_received);
+
+        std::cout << "abc: " << bytes_received << std::endl;
         if (bytes_received < sizeof(struct header_s)) {
             std::cerr << "Error: header not received" << std::endl;
             startReceiveHandler();
@@ -125,27 +133,36 @@ namespace Nitwork {
             return;
         }
         try {
-            auto *header =
-                reinterpret_cast<struct header_s *>(_receiveBuffer.data());
+            auto *header = reinterpret_cast<struct header_s *>(_receiveBuffer.data());
             if (header->magick1 != HEADER_CODE1 || header->magick2 != HEADER_CODE2) {
                 std::cerr << "Error: header magick not valid" << std::endl;
                 startReceiveHandler();
                 return;
             }
-            if (header->nb_action > MAX_NB_ACTION || header->nb_action < 0) {
-                std::cerr << "Error: too many actions received or no action"
-                          << std::endl;
+            std::cout << "packet id :" << header->id << std::endl;
+            if (header->nb_action > MAX_NB_ACTION || header->nb_action < 0 || isAlreadyReceived(header->id)) {
+                std::cerr << "Error: too many actions received or no action or already received" << std::endl;
                 startReceiveHandler();
                 return;
             }
-            handlePacketIdsReceived(*header);
-            std::cout << "header received" << std::endl;
+            _receivedPacketsIds.push_back(header->id);
+//            handlePacketIdsReceived(*header);
             for (int i = 0; i < header->nb_action; i++) {
-                handleBodyAction(*header, _senderEndpoint);
+                handleBodyAction(_senderEndpoint);
             }
+            startReceiveHandler();
         } catch (std::exception &e) {
             std::cerr << "Error: " << e.what() << std::endl;
         }
+    }
+
+    bool ANitwork::isAlreadyReceived(n_id_t id)
+    {
+        for (auto &receivedId : _receivedPacketsIds) {
+            if (receivedId == id)
+                return true;
+        }
+        return false;
     }
 
     void ANitwork::handlePacketIdsReceived(const struct header_s &header)
@@ -239,17 +256,17 @@ namespace Nitwork {
     }
 
     /* Getters / Setters Section */
-    n_id_t ANitwork::getPacketID() const
+    n_id_t ANitwork::getPacketID()
     {
-        return _packetId;
+        n_id_t packetId = _packetId;
+        _packetId++;
+        return packetId;
     }
 
     void ANitwork::addPacketToSend(const boost::asio::ip::udp::endpoint &endpoint, const struct packet_s &packet)
     {
         std::lock_guard<std::mutex> lock(_outputQueueMutex);
 
-        std::cout << "add packet to send of type : " << packet.action << std::endl;
         _outputQueue.emplace_back(std::make_pair(endpoint, packet));
-        _packetId++;
     }
 } // namespace Nitwork
