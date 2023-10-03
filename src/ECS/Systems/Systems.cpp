@@ -12,8 +12,6 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
-#include <iostream>
-
 namespace Systems {
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
@@ -100,32 +98,31 @@ namespace Systems {
         }
     }
 
+    static void executeDeathFunction(
+        std::size_t id,
+        Registry::components<Types::Dead> arrDead)
+    {
+        if (arrDead[id].deathFunction != std::nullopt) {
+            arrDead[id].deathFunction.value()(id);
+        } else {
+            Registry::getInstance().removeEntity(id);
+        }
+    }
+
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Health> arrHealth =
             Registry::getInstance().getComponents<Types::Health>();
+        Registry::components<Types::Dead> arrDead =
+            Registry::getInstance().getComponents<Types::Dead>();
 
-        auto ids = arrHealth.getExistingsId();
-
-        // je print les entites existantes = resultat 0 et 1
-        for (auto id : ids) {
-            std::cout << "There is an entity with id : " << id << std::endl;
+        std::vector<std::size_t> ids = arrHealth.getExistingsId();
+        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
+            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0
+                && arrDead.exist(*itIds)) {
+                executeDeathFunction(*itIds, arrDead);
+            }
         }
-
-        // je supprime la premiere entite existante
-        Registry::getInstance().removeEntity(0);
-        std::cout << "-----------------------------------------------------"
-                  << std::endl;
-
-        // je print les entites existantes = 0 car j en ai supprime une
-        auto ids2 = arrHealth.getExistingsId();
-        for (auto id : ids2) {
-            std::cout << "There is an entity with id : " << id << std::endl;
-        }
-
-        Registry::getInstance().removeEntity(0);
-
-        exit(0);
     }
 
     const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
