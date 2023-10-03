@@ -26,8 +26,7 @@ class SparseArray {
         void insert(size_t id, const Component &value)
         {
             if (id >= _sparse.size()) {
-                throw std::runtime_error(
-                    "SparseArrays::insert: ID out of bounds!");
+                throw std::runtime_error("SparseArrays::insert: ID out of bounds!");
             }
 
             if (_sparse[id] > -1) {
@@ -44,8 +43,7 @@ class SparseArray {
         void erase(std::size_t id)
         {
             if (id >= _sparse.size()) {
-                throw std::runtime_error(
-                    "SparseArrays::erase: ID out of bounds!");
+                throw std::runtime_error("SparseArrays::erase: ID out of bounds!");
             }
             std::size_t sparseValue = _sparse[id];
             if (sparseValue != -1) {
@@ -105,8 +103,7 @@ class SparseArray {
             auto revIt = _revSparse.begin();
             std::advance(revIt, sparseValue);
             _revSparse.erase(revIt);
-            for (auto revIt2 = _revSparse.begin(); revIt2 != _revSparse.end();
-                 revIt2++) {
+            for (auto revIt2 = _revSparse.begin(); revIt2 != _revSparse.end(); revIt2++) {
                 if (*revIt2 > id) {
                     (*revIt2)--;
                 }

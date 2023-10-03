@@ -69,7 +69,9 @@ namespace Nitwork {
     /* End Check Methods Section */
 
     /* Handle packet (msg) Section */
-    void NitworkServer::handleInitMsg(__attribute__((unused)) const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    void NitworkServer::handleInitMsg(
+        __attribute__((unused)) const std::any &msg,
+        boost::asio::ip::udp::endpoint &endpoint)
     {
         if (_endpoints.size() >= MAX_CLIENTS) {
             std::cerr << "Too many clients, can't add an other one" << std::endl;
@@ -106,7 +108,7 @@ namespace Nitwork {
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
             .action       = {.magick = START_GAME},
-            .msgStartGame = {.magick = MAGICK_START_GAME, .playerId = playerId}
+            .msgStartGame = {.magick = MAGICK_START_GAME,                                 .playerId = playerId}
         };
         struct packet_s packetData = {
             .action = packetMsgStartGame.action.magick,

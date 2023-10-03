@@ -124,8 +124,8 @@ namespace Nitwork {
             // list of packets' ids receives
             std::vector<n_id_t> _receivedPacketsIds; // A list of packets' ids receives
             std::list<std::pair<boost::asio::ip::udp::endpoint, struct packet_s>>
-                _packetsSent; // A list of packets' ids receives
-                              // Mutexes shared
+                _packetsSent;                    // A list of packets' ids receives
+                                                 // Mutexes shared
             std::mutex _receivedPacketsIdsMutex; // Mutex for the received packets ids
             std::mutex _outputQueueMutex;        // Mutex for the output queue
             std::mutex _packetsSentMutex;        // Mutex for the packets sent
