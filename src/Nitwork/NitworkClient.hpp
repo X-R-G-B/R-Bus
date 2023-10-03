@@ -42,7 +42,7 @@ namespace Nitwork {
             [[nodiscard]] const std::map<enum n_actionType_t, actionHandler> &
             getActionToSendHandlers() const final;
 
-            void gs(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
+            void handleStartGame(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
         protected:
 
