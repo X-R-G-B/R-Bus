@@ -103,6 +103,7 @@ namespace Nitwork {
 
     void ANitwork::startReceiveHandler()
     {
+        _receiveBuffer.fill(0);
         _socket.async_receive_from(
             boost::asio::buffer(_receiveBuffer),
             _senderEndpoint,
@@ -117,10 +118,6 @@ namespace Nitwork {
         std::size_t bytes_received,
         const boost::system::error_code &error)
     {
-        static int vv = 1;
-        std::ofstream file("log" + std::to_string(vv++) + std::getenv("TYPE") + ".txt");
-        file.write(_receiveBuffer.data(), bytes_received);
-
         std::cout << "abc: " << bytes_received << std::endl;
         if (bytes_received < sizeof(struct header_s)) {
             std::cerr << "Error: header not received" << std::endl;
@@ -132,28 +129,24 @@ namespace Nitwork {
             startReceiveHandler();
             return;
         }
-        try {
-            auto *header = reinterpret_cast<struct header_s *>(_receiveBuffer.data());
-            if (header->magick1 != HEADER_CODE1 || header->magick2 != HEADER_CODE2) {
-                std::cerr << "Error: header magick not valid" << std::endl;
-                startReceiveHandler();
-                return;
-            }
-            std::cout << "packet id :" << header->id << std::endl;
-            if (header->nb_action > MAX_NB_ACTION || header->nb_action < 0 || isAlreadyReceived(header->id)) {
-                std::cerr << "Error: too many actions received or no action or already received" << std::endl;
-                startReceiveHandler();
-                return;
-            }
-            _receivedPacketsIds.push_back(header->id);
-//            handlePacketIdsReceived(*header);
-            for (int i = 0; i < header->nb_action; i++) {
-                handleBodyAction(_senderEndpoint);
-            }
+        auto *header = reinterpret_cast<struct header_s *>(_receiveBuffer.data());
+        std::cout << "packet id :" << header->id << std::endl;
+        if (header->magick1 != HEADER_CODE1 || header->magick2 != HEADER_CODE2) {
+            std::cerr << "Error: header magick not valid" << std::endl;
             startReceiveHandler();
-        } catch (std::exception &e) {
-            std::cerr << "Error: " << e.what() << std::endl;
+            return;
         }
+        if (header->nb_action > MAX_NB_ACTION || header->nb_action < 0 || isAlreadyReceived(header->id)) {
+            std::cerr << "Error: too many actions received or no action or already received" << std::endl;
+            startReceiveHandler();
+            return;
+        }
+        _receivedPacketsIds.push_back(header->id);
+//            handlePacketIdsReceived(*header);
+//        for (int i = 0; i < header->nb_action; i++) {
+            handleBodyAction(_senderEndpoint);
+//        }
+        startReceiveHandler();
     }
 
     bool ANitwork::isAlreadyReceived(n_id_t id)

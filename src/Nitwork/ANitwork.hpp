@@ -80,12 +80,11 @@ namespace Nitwork {
             void handleBody(const actionHandler &handler)
             {
                 auto *body = reinterpret_cast<B *>(
-                    _receiveBuffer.data() + sizeof(struct header_s));
+                    _receiveBuffer.data() + sizeof(struct header_s) + sizeof(struct action_s));
                 handleBodyDatas<B>(
                     handler,
                     *body,
-                    boost::system::error_code(),
-                    sizeof(B));
+                    boost::system::error_code());
             }
 
 
@@ -110,24 +109,17 @@ namespace Nitwork {
             template <typename B>
             void handleBodyDatas(
                 const actionHandler &handler,
-                B body,
-                const boost::system::error_code &error,
-                const std::size_t bytes_received)
+                B &body,
+                const boost::system::error_code &error)
             {
                 if (error) {
                     std::cerr << "Error: " << error.message() << std::endl;
                     startReceiveHandler();
                     return;
                 }
-                if (bytes_received != sizeof(B)) {
-                    std::cerr << "Error: body not received" << std::endl;
-                    startReceiveHandler();
-                    return;
-                }
                 std::lock_guard<std::mutex> lock(_inputQueueMutex);
                 SenderData senderData(_senderEndpoint, std::any(body));
                 _actions.emplace_back(senderData, handler);
-                startReceiveHandler();
             }
             void addPacketToSentPackages(const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, packet_s> &data);
 
@@ -137,7 +129,7 @@ namespace Nitwork {
             boost::asio::ip::udp::endpoint _endpoint; // endpoint of the Server
 
             // The buffer used to receive the actions
-            std::array<char, MAX_PACKET_SIZE> _receiveBuffer; // The buffer used to receive the actions
+            std::array<char, MAX_PACKET_SIZE> _receiveBuffer = {0}; // The buffer used to receive the actions
 //            std::vector<char> _receiveBuffer; // The buffer used to receive the actions
 
             // list of packets' ids receives

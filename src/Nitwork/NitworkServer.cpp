@@ -37,8 +37,7 @@ namespace Nitwork {
 
     void NitworkServer::handleBodyAction(__attribute__((unused)) const boost::asio::ip::udp::endpoint &endpoint)
     {
-        auto *action = reinterpret_cast<struct action_s *>(
-            _receiveBuffer.data() + sizeof(struct header_s));
+        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
         auto it = _actionsHandlers.find(action->magick);
 
         if (it == _actionsHandlers.end()) {
