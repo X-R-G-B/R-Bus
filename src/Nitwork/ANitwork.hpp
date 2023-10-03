@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include <iostream>
-#include <list>
-#include <mutex>
 #include <boost/asio/placeholders.hpp>
 #include <boost/bind/bind.hpp>
 #include <condition_variable>
+#include <iostream>
+#include <list>
+#include <mutex>
 #include "INitwork.hpp"
 
 namespace Nitwork {
@@ -20,10 +20,10 @@ namespace Nitwork {
 
     class ANitwork : public INitwork {
         public:
-            virtual ~ANitwork() = default;
-            ANitwork(const ANitwork &) = delete;
-            ANitwork(const ANitwork &&) = delete;
-            void operator=(const ANitwork &) = delete;
+            virtual ~ANitwork()               = default;
+            ANitwork(const ANitwork &)        = delete;
+            ANitwork(const ANitwork &&)       = delete;
+            void operator=(const ANitwork &)  = delete;
             void operator=(const ANitwork &&) = delete;
 
             // start the NitworkServer
@@ -32,9 +32,7 @@ namespace Nitwork {
             void stop() override;
             // send data to the endpoint with the given data
             template <typename T>
-            void sendData(
-                std::any &rawData,
-                boost::asio::ip::udp::endpoint &endpoint)
+            void sendData(std::any &rawData, boost::asio::ip::udp::endpoint &endpoint)
             {
                 if (rawData.type() != typeid(T)) {
                     std::cerr << "Error: invalid type" << std::endl;
@@ -46,16 +44,14 @@ namespace Nitwork {
                 }
                 T data = std::any_cast<T>(rawData);
 
-                std::cout << "Sending data to " << endpoint.address().to_string()
-                          << ":" << endpoint.port() << std::endl;
+                std::cout << "Sending data to " << endpoint.address().to_string() << ":" << endpoint.port()
+                          << std::endl;
                 _socket.async_send_to(
                     boost::asio::buffer(&data, sizeof(T)),
                     endpoint,
-                    [](const boost::system::error_code &error,
-                       std::size_t bytes_sent) {
+                    [](const boost::system::error_code &error, std::size_t bytes_sent) {
                         if (error) {
-                            std::cerr << "Error: " << error.message()
-                                      << std::endl;
+                            std::cerr << "Error: " << error.message() << std::endl;
                             return;
                         }
                         if (bytes_sent != sizeof(T)) {
@@ -64,7 +60,6 @@ namespace Nitwork {
                         }
                     });
             }
-
 
         protected:
             ANitwork();
@@ -81,15 +76,12 @@ namespace Nitwork {
             {
                 auto *body = reinterpret_cast<B *>(
                     _receiveBuffer.data() + sizeof(struct header_s) + sizeof(struct action_s));
-                handleBodyDatas<B>(
-                    handler,
-                    *body,
-                    boost::system::error_code());
+                handleBodyDatas<B>(handler, *body, boost::system::error_code());
             }
 
-
         private:
-            // start the NitworkServer threads (context threads, clock thread, input thread and output thread)
+            // start the NitworkServer threads (context threads, clock thread, input thread and output
+            // thread)
             bool startNitworkThreads(int threadNb, int tick) final;
             // start the context threads
             bool startContextThreads(int threadNb) final;
@@ -100,17 +92,13 @@ namespace Nitwork {
             // start the output thread inside the context (post)
             void startOutputHandler() final;
             // start receive handler
-            void headerHandler(
-                std::size_t bytes_received,
-                const boost::system::error_code &error) final;
+            void headerHandler(std::size_t bytes_received, const boost::system::error_code &error) final;
             bool isAlreadyReceived(n_id_t id);
 
             // handler func for receive handler which handle the action
             template <typename B>
-            void handleBodyDatas(
-                const actionHandler &handler,
-                B &body,
-                const boost::system::error_code &error)
+            void
+            handleBodyDatas(const actionHandler &handler, B &body, const boost::system::error_code &error)
             {
                 if (error) {
                     std::cerr << "Error: " << error.message() << std::endl;
@@ -121,35 +109,39 @@ namespace Nitwork {
                 SenderData senderData(_senderEndpoint, std::any(body));
                 _actions.emplace_back(senderData, handler);
             }
-            void addPacketToSentPackages(const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, packet_s> &data);
+            void addPacketToSentPackages(
+                const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, packet_s> &data);
 
         protected:
             boost::asio::io_context _context; // The main context
-            boost::asio::ip::udp::socket _socket; // The socket which will be used to send and receive the actions
+            boost::asio::ip::udp::socket
+                _socket; // The socket which will be used to send and receive the actions
             boost::asio::ip::udp::endpoint _endpoint; // endpoint of the Server
 
             // The buffer used to receive the actions
-            std::array<char, MAX_PACKET_SIZE> _receiveBuffer = {0}; // The buffer used to receive the actions
-//            std::vector<char> _receiveBuffer; // The buffer used to receive the actions
+            std::array<char, MAX_PACKET_SIZE> _receiveBuffer = {
+                0}; // The buffer used to receive the actions
+            //            std::vector<char> _receiveBuffer; // The buffer used to receive the actions
 
             // list of packets' ids receives
             std::vector<n_id_t> _receivedPacketsIds; // A list of packets' ids receives
-            std::list<std::pair<boost::asio::ip::udp::endpoint, struct packet_s>>  _packetsSent; // A list of packets' ids receives
-                // Mutexes shared
+            std::list<std::pair<boost::asio::ip::udp::endpoint, struct packet_s>>
+                _packetsSent; // A list of packets' ids receives
+                              // Mutexes shared
             std::mutex _receivedPacketsIdsMutex; // Mutex for the received packets ids
-            std::mutex _outputQueueMutex; // Mutex for the output queue
-            std::mutex _packetsSentMutex; // Mutex for the packets sent
+            std::mutex _outputQueueMutex;        // Mutex for the output queue
+            std::mutex _packetsSentMutex;        // Mutex for the packets sent
 
         private:
             n_id_t _packetId = 0; // The packet id
 
-            std::mutex _inputQueueMutex; // Mutex for the input queue
-            std::mutex _tickMutex; // Mutex for the tick
+            std::mutex _inputQueueMutex;          // Mutex for the input queue
+            std::mutex _tickMutex;                // Mutex for the tick
             std::condition_variable _tickConvVar; // Condition variable for the tick
 
             // Threads
             std::vector<std::thread> _pool; // The context threads pool
-            std::thread _clockThread; // The clock thread
+            std::thread _clockThread;       // The clock thread
 
             // Endpoints
             boost::asio::ip::udp::endpoint _senderEndpoint; // The sender endpoint
@@ -157,11 +149,9 @@ namespace Nitwork {
             // Body handler vars
             std::list<std::pair<
                 SenderData,
-                const actionHandler&>
-            > _actions; // A list of actions which will be handled by the second context
-            std::list<
-                std::pair<boost::asio::ip::udp::endpoint, struct packet_s>
-            > _outputQueue; // A queue of actions which will be sent to the clients
-    }; // class INitwork
-} // namespace NitworkServer
-
+                const actionHandler &>>
+                _actions; // A list of actions which will be handled by the second context
+            std::list<std::pair<boost::asio::ip::udp::endpoint, struct packet_s>>
+                _outputQueue; // A queue of actions which will be sent to the clients
+    };                        // class INitwork
+} // namespace Nitwork

@@ -8,8 +8,9 @@
 #include "NitworkClient.hpp"
 
 namespace Nitwork {
-    NitworkClient::NitworkClient()
-        : _resolver(_context) {}
+    NitworkClient::NitworkClient() : _resolver(_context)
+    {
+    }
 
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
     NitworkClient NitworkClient::_instance = NitworkClient();
@@ -39,8 +40,7 @@ namespace Nitwork {
 
     void NitworkClient::handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint)
     {
-        auto *action = reinterpret_cast<struct action_s *>(
-            _receiveBuffer.data() + sizeof(struct header_s));
+        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
         if (endpoint.address().to_string() != _endpoint.address().to_string()) {
             std::cerr << "Error: endpoint is not the server" << std::endl;
             return;
@@ -60,7 +60,8 @@ namespace Nitwork {
 
     /* Handlers Section */
     void NitworkClient::handleStartGame(
-        const std::any &msg, __attribute__((unused)) boost::asio::ip::udp::endpoint &endpoint)
+        const std::any &msg,
+        __attribute__((unused)) boost::asio::ip::udp::endpoint &endpoint)
     {
         const struct msgStartGame_s &msgStartGame = std::any_cast<struct msgStartGame_s>(msg);
 
@@ -84,31 +85,28 @@ namespace Nitwork {
         return idsReceived;
     }
 
-
     /* Message Creation Section */
-    void NitworkClient::addInitMsg() {
+    void NitworkClient::addInitMsg()
+    {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgInit_s packetMsgInit = {
-            .header = {
-                .magick1 = HEADER_CODE1,
-                .ids_received = getIdsReceived(),
-                .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                .id = getPacketID(),
-                .nb_action = 1,
-                .magick2 = HEADER_CODE2,
-            },
-            .action = {
-                .magick = INIT
-            },
-            .msgInit = {
-                .magick = MAGICK_INIT
-            }
+            .header =
+                {
+                         .magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2,
+                         },
+            .action  = {.magick = INIT},
+            .msgInit = {.magick = MAGICK_INIT}
         };
         struct packet_s packetData = {
             .action = packetMsgInit.action.magick,
-            .body = std::make_any<struct packetMsgInit_s>(packetMsgInit)
-        };
-        std::cout << "Packed will be sent with id : " << packetMsgInit.header.id << " " << packetMsgInit.action.magick << std::endl;
+            .body   = std::make_any<struct packetMsgInit_s>(packetMsgInit)};
+        std::cout << "Packed will be sent with id : " << packetMsgInit.header.id << " "
+                  << packetMsgInit.action.magick << std::endl;
         std::cout << "Adding init msg" << std::endl;
         addPacketToSend(_endpoint, packetData);
     }
@@ -117,25 +115,21 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgReady_s packetMsgReady = {
-            .header = {
-                       .magick1 = HEADER_CODE1,
-                       .ids_received = getIdsReceived(),
-                       .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                       .id = getPacketID(),
-                       .nb_action = 1,
-                       .magick2 = HEADER_CODE2,
-            },
-            .action = {
-                       .magick = READY
-            },
-            .msgReady = {
-                       .magick = MAGICK_READY
-            }
+            .header =
+                {
+                         .magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2,
+                         },
+            .action   = {.magick = READY},
+            .msgReady = {.magick = MAGICK_READY}
         };
         struct packet_s packetData = {
             .action = packetMsgReady.action.magick,
-            .body = std::make_any<struct packetMsgReady_s>(packetMsgReady)
-        };
+            .body   = std::make_any<struct packetMsgReady_s>(packetMsgReady)};
         std::cout << "Packed will be sent with id : " << packetMsgReady.header.id << std::endl;
         std::cout << "Adding ready msg" << std::endl;
         addPacketToSend(_endpoint, packetData);

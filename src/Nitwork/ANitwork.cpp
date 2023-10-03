@@ -5,14 +5,12 @@
 ** ANitwork
 */
 
-#include <iostream>
-#include <fstream>
 #include "ANitwork.hpp"
+#include <fstream>
+#include <iostream>
 
 namespace Nitwork {
-    ANitwork::ANitwork()
-        : _socket(_context),
-          _packetId(0)
+    ANitwork::ANitwork() : _socket(_context), _packetId(0)
     {
     }
 
@@ -50,8 +48,7 @@ namespace Nitwork {
                 }
             });
             if (!_pool.back().joinable()) {
-                std::cerr << "Error: thread nb: " << i << " not joinable"
-                          << std::endl;
+                std::cerr << "Error: thread nb: " << i << " not joinable" << std::endl;
                 return false;
             }
         }
@@ -114,9 +111,7 @@ namespace Nitwork {
                 boost::asio::placeholders::error));
     }
 
-    void ANitwork::headerHandler(
-        std::size_t bytes_received,
-        const boost::system::error_code &error)
+    void ANitwork::headerHandler(std::size_t bytes_received, const boost::system::error_code &error)
     {
         std::cout << "abc: " << bytes_received << std::endl;
         if (bytes_received < sizeof(struct header_s)) {
@@ -142,10 +137,10 @@ namespace Nitwork {
             return;
         }
         _receivedPacketsIds.push_back(header->id);
-//            handlePacketIdsReceived(*header);
-//        for (int i = 0; i < header->nb_action; i++) {
-            handleBodyAction(_senderEndpoint);
-//        }
+        //            handlePacketIdsReceived(*header);
+        //        for (int i = 0; i < header->nb_action; i++) {
+        handleBodyAction(_senderEndpoint);
+        //        }
         startReceiveHandler();
     }
 
@@ -174,7 +169,8 @@ namespace Nitwork {
             auto it = std::find(_receivedPacketsIds.begin(), _receivedPacketsIds.end(), id);
             if (it == _receivedPacketsIds.end()) {
                 for (auto &packet : _packetsSent) {
-                    headerPacket = reinterpret_cast<struct header_s *>(std::any_cast<struct header_s *>(packet.second.body));
+                    headerPacket = reinterpret_cast<struct header_s *>(
+                        std::any_cast<struct header_s *>(packet.second.body));
                     if (headerPacket->id == id) {
                         _outputQueue.emplace_back(std::make_pair(packet.first, packet.second));
                         break;
@@ -213,7 +209,8 @@ namespace Nitwork {
         boost::asio::post(_context, [this]() {
             std::unique_lock<std::mutex> lockQueue(_outputQueueMutex, std::defer_lock);
             std::unique_lock<std::mutex> lockTick(_tickMutex, std::defer_lock);
-            const std::map<enum n_actionType_t, actionHandler> &actionToSendHandlers = getActionToSendHandlers();
+            const std::map<enum n_actionType_t, actionHandler> &actionToSendHandlers =
+                getActionToSendHandlers();
 
             std::cout << std::endl << "Starting output handler" << std::endl;
             try {
@@ -238,7 +235,8 @@ namespace Nitwork {
         });
     }
 
-    void ANitwork::addPacketToSentPackages(const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, packet_s> &data)
+    void ANitwork::addPacketToSentPackages(
+        const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, packet_s> &data)
     {
         std::lock_guard<std::mutex> lock(_packetsSentMutex);
 
@@ -256,7 +254,8 @@ namespace Nitwork {
         return packetId;
     }
 
-    void ANitwork::addPacketToSend(const boost::asio::ip::udp::endpoint &endpoint, const struct packet_s &packet)
+    void
+    ANitwork::addPacketToSend(const boost::asio::ip::udp::endpoint &endpoint, const struct packet_s &packet)
     {
         std::lock_guard<std::mutex> lock(_outputQueueMutex);
 

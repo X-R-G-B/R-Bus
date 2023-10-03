@@ -8,9 +8,9 @@
 #pragma once
 
 #include <any>
-#include <map>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
+#include <map>
 
 extern "C"
 {
@@ -19,7 +19,7 @@ extern "C"
 
 namespace Nitwork {
     using actionHandler = std::function<void(std::any &, boost::asio::ip::udp::endpoint &)>;
-    using handleBodyT = std::function<void(actionHandler &)>;
+    using handleBodyT   = std::function<void(actionHandler &)>;
 
     class SenderData {
         public:
@@ -39,21 +39,23 @@ namespace Nitwork {
 
     class INitwork {
         public:
-            virtual ~INitwork() = default;
-            INitwork(const INitwork &) = delete;
-            INitwork(const INitwork &&) = delete;
-            void operator=(const INitwork &) = delete;
+            virtual ~INitwork()               = default;
+            INitwork(const INitwork &)        = delete;
+            INitwork(const INitwork &&)       = delete;
+            void operator=(const INitwork &)  = delete;
             void operator=(const INitwork &&) = delete;
 
             // start the NitworkServer
             virtual bool start(int port, int threadNb, int tick, const std::string &ip = "") = 0;
 
             virtual void stop() = 0;
+
         protected:
             INitwork() = default;
             // start the NitworkServer config
             virtual bool startNitworkConfig(int port, const std::string &ip) = 0;
-            // start the NitworkServer threads (context threads, clock thread, input thread and output thread)
+            // start the NitworkServer threads (context threads, clock thread, input thread and output
+            // thread)
             virtual bool startNitworkThreads(int threadNb, int tick) = 0;
             // start the context threads
             virtual bool startContextThreads(int threadNb) = 0;
@@ -67,16 +69,13 @@ namespace Nitwork {
             // start receive handler
             virtual void startReceiveHandler() = 0;
             // handler func for receive handler which handle the header
-            virtual void headerHandler(
-                std::size_t bytes_received,
-                const boost::system::error_code &error) = 0;
+            virtual void
+            headerHandler(std::size_t bytes_received, const boost::system::error_code &error) = 0;
             // handler func for headerHandler which handle the action
             virtual void handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint) = 0;
 
             // getters
-            [[nodiscard]] virtual const std::map<
-                enum n_actionType_t,
-                actionHandler
-            >& getActionToSendHandlers() const = 0;
+            [[nodiscard]] virtual const std::map<enum n_actionType_t, actionHandler> &
+            getActionToSendHandlers() const = 0;
     }; // class INitwork
-} // namespace NitworkServer
+} // namespace Nitwork
