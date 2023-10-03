@@ -44,15 +44,15 @@ namespace Systems {
 
     static void giveDamages(std::size_t firstEntity, std::size_t secondEntity)
     {
-        Registry::components<Types::Dammage> arrDammage =
-            Registry::getInstance().getComponents<Types::Dammage>();
+        Registry::components<Types::Damage> arrDamage =
+            Registry::getInstance().getComponents<Types::Damage>();
         Registry::components<Types::Health> arrHealth =
             Registry::getInstance().getComponents<Types::Health>();
 
-        if (arrDammage.exist(firstEntity)
-            && arrDammage[firstEntity].dammage > 0) {
+        if (arrDamage.exist(firstEntity)
+            && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
-                arrHealth[secondEntity].hp -= arrDammage[firstEntity].dammage;
+                arrHealth[secondEntity].hp -= arrDamage[firstEntity].damage;
             }
         }
     }
@@ -126,9 +126,10 @@ namespace Systems {
     const Raylib::Vector2 textPos            = {20, 50};
     constexpr int playerData                 = 10;
     const Types::Position playerPos          = {50, 50};
-    constexpr int playerDammage              = 10;
+    constexpr int playerDamage              = 1;
+    constexpr int enemyDamage              = 1;
     constexpr int playerHealth               = 5;
-    constexpr int playerHealth2              = 4;
+    constexpr int playerHealth2              = 5;
     constexpr float musicVolume              = 0.02F;
     constexpr float soundVolume              = 0.1F;
     constexpr float fontScale                = 2.0F;
@@ -172,6 +173,8 @@ namespace Systems {
         // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
         Registry::getInstance().setToBackLayers(id);
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
+        Registry::getInstance().getComponents<Types::Damage>().insertBack(
+            {playerDamage});
         Registry::getInstance().getComponents<Types::Health>().insertBack(
             {playerHealth});
         Registry::getInstance().getComponents<Types::Dead>().insertBack(
@@ -202,8 +205,8 @@ namespace Systems {
              textPos,
              fontScale,
              Raylib::DarkBlue});
-        Registry::getInstance().getComponents<Types::Dammage>().insertBack(
-            {playerDammage});
+        Registry::getInstance().getComponents<Types::Damage>().insertBack(
+            {enemyDamage});
         Registry::getInstance().getComponents<Types::Health>().insertBack(
             {playerHealth2});
         SystemManagersDirector::getInstance()

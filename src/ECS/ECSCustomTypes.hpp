@@ -32,8 +32,8 @@ namespace Types {
             int hp;
     };
 
-    struct Dammage {
-            int dammage;
+    struct Damage {
+            int damage;
     };
 
     struct Player { };
