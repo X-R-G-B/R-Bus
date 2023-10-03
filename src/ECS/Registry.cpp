@@ -38,6 +38,7 @@ void Registry::clear()
     _data.clear();
     _addComponentPlaceFunctions.clear();
     _removeComponentFunctions.clear();
+    _getExistingsId.clear();
     _entitiesNb = 0;
 }
 
