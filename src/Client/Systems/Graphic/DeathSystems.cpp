@@ -13,17 +13,18 @@
 
 namespace Systems {
 
-    const std::function<void(std::size_t)> setPlayerAnimRectToDeath = [](std::size_t id) {
-        Registry::components<Types::AnimRect> arrAnimRect =
-            Registry::getInstance().getComponents<Types::AnimRect>();
+    const std::function<void(std::size_t)> setPlayerAnimRectToDeath =
+        [](std::size_t id) {
+            Registry::components<Types::AnimRect> arrAnimRect =
+                Registry::getInstance().getComponents<Types::AnimRect>();
 
-        if (arrAnimRect.exist(id)) {
-            Types::AnimRect &anim = arrAnimRect[id];
-            if (anim.currentRectList != Types::RectListType::DEAD) {
-                anim.changeRectList(Types::RectListType::DEAD);
+            if (arrAnimRect.exist(id)) {
+                Types::AnimRect& anim = arrAnimRect[id];
+                if (anim.currentRectList != Types::RectListType::DEAD) {
+                    anim.changeRectList(Types::RectListType::DEAD);
+                }
             }
-        }
-    };
+        };
 
     // MAP FOR DEATH FUNCTIONS FOR EACH ENTITY
     const std::unordered_map<std::type_index, std::function<void(std::size_t)>>
@@ -44,7 +45,8 @@ namespace Systems {
             std::vector<std::size_t> entities =
                 Registry::getInstance().getEntitiesByComponents({typeIndex});
             for (std::size_t id : entities) {
-                if (arrDead.exist(id) && arrDead[id].deathFunction == std::nullopt) {
+                if (arrDead.exist(id)
+                    && arrDead[id].deathFunction == std::nullopt) {
                     arrDead[id].deathFunction = function;
                 }
             }
