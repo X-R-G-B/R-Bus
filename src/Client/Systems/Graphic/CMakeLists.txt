@@ -13,4 +13,5 @@ target_sources(
     ${CMAKE_CURRENT_SOURCE_DIR}/AudioSystems.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/SpriteSystems.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextSystems.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/DeathSystems.cpp
 )

@@ -112,7 +112,7 @@ class SparseArray {
                 }
             }
             for (auto it2 = _sparse.begin(); it2 != _sparse.end(); it2++) {
-                if (*it2 > sparseValue) {
+                if (static_cast<int>(*it2) > static_cast<int>(sparseValue)) {
                     (*it2)--;
                 }
             }
