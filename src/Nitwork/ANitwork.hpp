@@ -44,8 +44,6 @@ namespace Nitwork {
                 }
                 T data = std::any_cast<T>(rawData);
 
-                std::cout << "Sending data to " << endpoint.address().to_string() << ":" << endpoint.port()
-                          << std::endl;
                 _socket.async_send_to(
                     boost::asio::buffer(&data, sizeof(T)),
                     endpoint,

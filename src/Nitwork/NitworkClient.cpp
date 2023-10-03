@@ -69,8 +69,6 @@ namespace Nitwork {
             std::cerr << "Error: magick is not START_GAME" << std::endl;
             return;
         }
-        std::cout << "Start game" << std::endl;
-        std::cout << "Your id is :" << msgStartGame.playerId << std::endl;
     }
     /* End Handlers Section */
 
@@ -105,9 +103,6 @@ namespace Nitwork {
         struct packet_s packetData = {
             .action = packetMsgInit.action.magick,
             .body   = std::make_any<struct packetMsgInit_s>(packetMsgInit)};
-        std::cout << "Packed will be sent with id : " << packetMsgInit.header.id << " "
-                  << packetMsgInit.action.magick << std::endl;
-        std::cout << "Adding init msg" << std::endl;
         addPacketToSend(_endpoint, packetData);
     }
 
@@ -130,8 +125,6 @@ namespace Nitwork {
         struct packet_s packetData = {
             .action = packetMsgReady.action.magick,
             .body   = std::make_any<struct packetMsgReady_s>(packetMsgReady)};
-        std::cout << "Packed will be sent with id : " << packetMsgReady.header.id << std::endl;
-        std::cout << "Adding ready msg" << std::endl;
         addPacketToSend(_endpoint, packetData);
     }
 } // namespace Nitwork

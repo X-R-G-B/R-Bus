@@ -69,10 +69,8 @@ namespace Nitwork {
     /* End Check Methods Section */
 
     /* Handle packet (msg) Section */
-    void NitworkServer::handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    void NitworkServer::handleInitMsg(__attribute__((unused)) const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
     {
-        const struct msgInit_s &initMsg = std::any_cast<struct msgInit_s>(msg);
-
         if (_endpoints.size() >= MAX_CLIENTS) {
             std::cerr << "Too many clients, can't add an other one" << std::endl;
             return;
@@ -81,22 +79,17 @@ namespace Nitwork {
             std::cerr << "Client already connected" << std::endl;
             return;
         }
-        std::cout << "Client added, good code : " << initMsg.magick << std::endl;
         _endpoints.emplace_back(endpoint);
     }
 
     void NitworkServer::handleReadyMsg(
-        const std::any &msg,
+        __attribute__((unused)) const std::any &msg,
         __attribute__((unused)) boost::asio::ip::udp::endpoint &endpoint)
     {
-        const struct msgReady_s &readyMsg = std::any_cast<struct msgReady_s>(msg);
-
         if (!isClientAlreadyConnected(endpoint)) {
             std::cerr << "Client not connected" << std::endl;
             return;
         }
-        std::cout << "Client ready, good code : " << readyMsg.magick << std::endl;
-        addStarGameMessage(endpoint, 1);
     }
     /* End Handle packet (msg) Section */
 
@@ -118,7 +111,6 @@ namespace Nitwork {
         struct packet_s packetData = {
             .action = packetMsgStartGame.action.magick,
             .body   = std::make_any<struct packetMsgStartGame_s>(packetMsgStartGame)};
-        std::cout << "Adding start game msg" << std::endl;
         addPacketToSend(endpoint, packetData);
     }
 } // namespace Nitwork

@@ -38,7 +38,6 @@ namespace Nitwork {
 
     bool ANitwork::startContextThreads(int threadNb)
     {
-        std::cout << "Starting context threads" << std::endl;
         for (int i = 0; i < threadNb; i++) {
             _pool.emplace_back([this]() {
                 try {
@@ -57,7 +56,6 @@ namespace Nitwork {
 
     bool ANitwork::startClockThread(int tick)
     {
-        std::cout << "Starting clock thread" << std::endl;
         _clockThread = std::thread([this, tick]() {
             try {
                 while (true) {
@@ -113,7 +111,6 @@ namespace Nitwork {
 
     void ANitwork::headerHandler(std::size_t bytes_received, const boost::system::error_code &error)
     {
-        std::cout << "abc: " << bytes_received << std::endl;
         if (bytes_received < sizeof(struct header_s)) {
             std::cerr << "Error: header not received" << std::endl;
             startReceiveHandler();
@@ -125,7 +122,7 @@ namespace Nitwork {
             return;
         }
         auto *header = reinterpret_cast<struct header_s *>(_receiveBuffer.data());
-        std::cout << "packet id :" << header->id << std::endl;
+
         if (header->magick1 != HEADER_CODE1 || header->magick2 != HEADER_CODE2) {
             std::cerr << "Error: header magick not valid" << std::endl;
             startReceiveHandler();
@@ -138,9 +135,9 @@ namespace Nitwork {
         }
         _receivedPacketsIds.push_back(header->id);
         //            handlePacketIdsReceived(*header);
-        //        for (int i = 0; i < header->nb_action; i++) {
-        handleBodyAction(_senderEndpoint);
-        //        }
+        for (int i = 0; i < header->nb_action; i++) {
+            handleBodyAction(_senderEndpoint);
+        }
         startReceiveHandler();
     }
 
@@ -187,7 +184,6 @@ namespace Nitwork {
             std::unique_lock<std::mutex> lockTick(_tickMutex, std::defer_lock);
             std::unique_lock<std::mutex> lockQueue(_inputQueueMutex, std::defer_lock);
 
-            std::cout << std::endl << "Starting input handler" << std::endl;
             try {
                 while (true) {
                     _tickConvVar.wait(lockTick);
@@ -212,7 +208,6 @@ namespace Nitwork {
             const std::map<enum n_actionType_t, actionHandler> &actionToSendHandlers =
                 getActionToSendHandlers();
 
-            std::cout << std::endl << "Starting output handler" << std::endl;
             try {
                 while (true) {
                     _tickConvVar.wait(lockTick);

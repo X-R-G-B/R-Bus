@@ -1,23 +1,13 @@
-//#include "NitworkServer.hpp"
 #include "NitworkServer.hpp"
 
 int main()
 {
-//    try {
-//        std::cout << "Starting server..." << std::endl;
-//        NitworkServer::NitworkServer::getInstance().start(4242);
-//        std::cout << "Server started." << std::endl;
-//        while (true);
-//    } catch (std::exception& e) {
-//        std::cerr << e.what() << std::endl;
-//    }
     try {
         std::cout << "Starting server..." << std::endl;
-        Nitwork::NitworkServer::getInstance().start(4242);
+        NitworkServer::NitworkServer::getInstance().start(4242);
         std::cout << "Server started." << std::endl;
         while (true);
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
     }
-    return 0;
 }
