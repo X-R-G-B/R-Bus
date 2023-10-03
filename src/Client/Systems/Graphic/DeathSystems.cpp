@@ -13,27 +13,29 @@
 
 namespace Systems {
 
-    const std::function<void(std::size_t)> setPlayerAnimRectDeath = [](std::size_t id) {
-        Registry::components<Types::AnimRect> arrAnimRect =
-            Registry::getInstance().getComponents<Types::AnimRect>();
+    const std::function<void(std::size_t)> setPlayerAnimRectDeath =
+        [](std::size_t id) {
+            Registry::components<Types::AnimRect> arrAnimRect =
+                Registry::getInstance().getComponents<Types::AnimRect>();
 
-        if (arrAnimRect.exist(id)) {
-            Types::AnimRect &anim = arrAnimRect[id];
-            if (anim.currentRectList != Types::RectListType::DEAD) {
-                anim.changeRectList(Types::RectListType::DEAD);
+            if (arrAnimRect.exist(id)) {
+                Types::AnimRect& anim = arrAnimRect[id];
+                if (anim.currentRectList != Types::RectListType::DEAD) {
+                    anim.changeRectList(Types::RectListType::DEAD);
+                }
             }
-        }
-    };
-    
-    const std::function<void(std::size_t)> setEnemyDeathFunc = [](std::size_t id) {
-        Registry::getInstance().removeEntity(id);
-    };
+        };
+
+    const std::function<void(std::size_t)> setEnemyDeathFunc =
+        [](std::size_t id) {
+            Registry::getInstance().removeEntity(id);
+        };
 
     // MAP FOR DEATH FUNCTIONS FOR EACH ENTITY
     const std::unordered_map<std::type_index, std::function<void(std::size_t)>>
         deathFunctions = {
             {std::type_index(typeid(Types::Player)), setPlayerAnimRectDeath},
-            {std::type_index(typeid(Types::Enemy)), setEnemyDeathFunc},
+            {std::type_index(typeid(Types::Enemy)),  setEnemyDeathFunc     },
     };
 
     void DeathSystems::setEntityDeathFunction(
@@ -49,7 +51,8 @@ namespace Systems {
             std::vector<std::size_t> entities =
                 Registry::getInstance().getEntitiesByComponents({typeIndex});
             for (std::size_t id : entities) {
-                if (arrDead.exist(id) && arrDead[id].deathFunction == std::nullopt) {
+                if (arrDead.exist(id)
+                    && arrDead[id].deathFunction == std::nullopt) {
                     arrDead[id].deathFunction = function;
                 }
             }
