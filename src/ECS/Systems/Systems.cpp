@@ -100,14 +100,15 @@ namespace Systems {
         }
     }
 
-    bool executeDeadFunc(std::size_t id, Registry::components<Types::Dead> &arrDead)
+    bool
+    executeDeadFunc(std::size_t id, Registry::components<Types::Dead> &arrDead)
     {
         std::cout << "----------------------------------" << std::endl;
 
         // AVANT DE SUPPRIMER, JE REGARDE QUELLES ENTITES EXISTES
         Registry::components<Types::Health> arrHealth1 =
             Registry::getInstance().getComponents<Types::Health>();
-        
+
         std::vector<std::size_t> ids1 = arrHealth1.getExistingsId();
         for (auto itIds1 = ids1.begin(); itIds1 != ids1.end(); itIds1++) {
             std::cout << "There is an entity with id " << *itIds1 << std::endl;
@@ -137,19 +138,22 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Health>();
         Registry::components<Types::Dead> arrDead =
             Registry::getInstance().getComponents<Types::Dead>();
-        
+
         bool isEntityRemoved = false;
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
         for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
-            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0 && arrDead.exist(*itIds)) {
+            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0
+                && arrDead.exist(*itIds)) {
                 isEntityRemoved = executeDeadFunc(*itIds, arrDead);
                 if (isEntityRemoved) {
-                    arrHealth = Registry::getInstance().getComponents<Types::Health>();
-                    arrDead = Registry::getInstance().getComponents<Types::Dead>();
-                    ids = arrHealth.getExistingsId();
+                    arrHealth =
+                        Registry::getInstance().getComponents<Types::Health>();
+                    arrDead =
+                        Registry::getInstance().getComponents<Types::Dead>();
+                    ids   = arrHealth.getExistingsId();
                     itIds = ids.begin();
-                    //if empty, return
+                    // if empty, return
                     if (itIds == ids.end()) {
                         return;
                     }
