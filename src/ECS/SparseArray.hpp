@@ -30,7 +30,7 @@ class SparseArray {
                     "SparseArrays::insert: ID out of bounds!");
             }
 
-            if (_sparse[id] > -1) {
+            if (static_cast<int>(_sparse[id]) > -1) {
                 _dense[_sparse[id]]     = value;
                 _revSparse[_sparse[id]] = id;
                 return;
