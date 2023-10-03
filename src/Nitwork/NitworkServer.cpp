@@ -68,9 +68,8 @@ namespace Nitwork {
     /* End Check Methods Section */
 
     /* Handle packet (msg) Section */
-    void NitworkServer::handleInitMsg(
-        const std::any &msg /* unused */,
-        boost::asio::ip::udp::endpoint &endpoint)
+    void
+    NitworkServer::handleInitMsg(const std::any &msg /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
         if (_endpoints.size() >= MAX_CLIENTS) {
             std::cerr << "Too many clients, can't add an other one" << std::endl;
