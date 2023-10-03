@@ -38,6 +38,8 @@ namespace Types {
 
     struct Player { };
 
+    struct Enemy { };
+
     struct Dead {
             std::optional<std::function<void(std::size_t id)>> deathFunction;
     };

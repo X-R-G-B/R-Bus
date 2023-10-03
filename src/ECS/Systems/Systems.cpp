@@ -150,11 +150,24 @@ namespace Systems {
         // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
         Registry::getInstance().getComponents<Types::AnimRect>().insertBack({
             spriteRect,
-            {spriteRect,
+            {spriteRect, // move
               {2, 51, 46, 47},
               {101, 2, 48, 47},
               {152, 2, 46, 47},
-              {201, 2, 46, 47}},
+              {201, 2, 46, 47}
+            },
+            {spriteRect, // attack
+              {2, 51, 46, 47},
+              {101, 2, 48, 47},
+              {152, 2, 46, 47},
+              {201, 2, 46, 47}
+            },
+            {spriteRect, // dead x y with height
+              {180, 140, 18, 12},
+              {211, 140, 18, 12},
+              {230, 140, 18, 12},
+              {250, 140, 18, 12}
+            }
         });
         // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
         Registry::getInstance().setToBackLayers(id);
@@ -165,6 +178,7 @@ namespace Systems {
             {std::nullopt});
 
         id = Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Types::Enemy>().insertBack({});
         Registry::getInstance().getComponents<Types::Position>().insertBack(
             {playerData, playerData + playerData + playerData});
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
