@@ -1,5 +1,5 @@
-#include <chrono>
 #include "Clock.hpp"
+#include <chrono>
 
 std::size_t Clock::create()
 {
