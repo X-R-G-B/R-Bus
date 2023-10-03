@@ -117,7 +117,7 @@ namespace Systems {
                     .getComponents<Types::RectangleShape>()
                     .insert(
                         id,
-                        {arrCollisionRect[id].width ,
+                        {arrCollisionRect[id].width,
                          arrCollisionRect[id].height});
             }
         }

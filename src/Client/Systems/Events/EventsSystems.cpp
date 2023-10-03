@@ -65,36 +65,30 @@ namespace Systems {
     const Types::Health health               = {1};
     const Types::Dammage dammage             = {10};
 
-    static void createMissile(std::size_t id, Registry::components<Types::Position> &arrPosition)
+    static void createMissile(
+        std::size_t id,
+        Registry::components<Types::Position> &arrPosition)
     {
         if (arrPosition.exist(id)) {
             std::size_t entityId = Registry::getInstance().addEntity();
 
-            Registry::getInstance()
-                .getComponents<Types::Position>()
-                .insertBack({arrPosition[id].x, arrPosition[id].y});
-            Registry::getInstance()
-                .getComponents<Raylib::Sprite>()
-                .insertBack(
-                    {bulletPath, bulletWidth, bulletHeight, entityId});
-            Registry::getInstance()
-                .getComponents<Types::Rect>()
-                .insertBack(spriteRect);
+            Registry::getInstance().getComponents<Types::Position>().insertBack(
+                {arrPosition[id].x, arrPosition[id].y});
+            Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
+                {bulletPath, bulletWidth, bulletHeight, entityId});
+            Registry::getInstance().getComponents<Types::Rect>().insertBack(
+                spriteRect);
             Registry::getInstance()
                 .getComponents<Types::CollisionRect>()
                 .insertBack(collisionRect);
-            Registry::getInstance()
-                .getComponents<Types::Missiles>()
-                .insertBack(missileType);
-            Registry::getInstance()
-                .getComponents<Types::Velocity>()
-                .insertBack(velocity);
-            Registry::getInstance()
-                .getComponents<Types::Health>()
-                .insertBack(health);
-            Registry::getInstance()
-                .getComponents<Types::Dammage>()
-                .insertBack(dammage);
+            Registry::getInstance().getComponents<Types::Missiles>().insertBack(
+                missileType);
+            Registry::getInstance().getComponents<Types::Velocity>().insertBack(
+                velocity);
+            Registry::getInstance().getComponents<Types::Health>().insertBack(
+                health);
+            Registry::getInstance().getComponents<Types::Dammage>().insertBack(
+                dammage);
             Registry::getInstance().setToFrontLayers(entityId);
         }
     }

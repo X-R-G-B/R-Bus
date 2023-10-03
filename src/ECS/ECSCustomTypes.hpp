@@ -11,8 +11,7 @@
 
 namespace Types {
 
-        enum MissileTypes {CLASSIC};
-
+    enum MissileTypes { CLASSIC };
 
     struct CollisionRect {
             float width;
@@ -46,7 +45,7 @@ namespace Types {
 
     struct Missiles {
             // maybe enum better ?
-             MissileTypes type;
+            MissileTypes type;
     };
 
 } // namespace Types
