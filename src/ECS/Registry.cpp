@@ -112,7 +112,7 @@ std::vector<std::vector<std::size_t>> Registry::getFrontLayers()
 
 void Registry::initLayers(bool back)
 {
-    std::size_t max;
+    std::size_t max = 0;
     if (back) {
         max = static_cast<std::size_t>(BackLayers::BACKMAX);
     } else {
