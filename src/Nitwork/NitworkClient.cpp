@@ -40,7 +40,9 @@ namespace Nitwork {
 
     void NitworkClient::handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint)
     {
+        // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
         auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
+        // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
         if (endpoint.address().to_string() != _endpoint.address().to_string()) {
             std::cerr << "Error: endpoint is not the server" << std::endl;
             return;
@@ -59,10 +61,12 @@ namespace Nitwork {
     }
 
     /* Handlers Section */
+    // NOLINTBEGIN(readability-convert-member-functions-to-static)
     void NitworkClient::handleStartGame(
         const std::any &msg,
-        boost::asio::ip::udp::endpoint &endpoint /* unused */)
+        boost::asio::ip::udp::endpoint &/* unused */)
     {
+        // NOLINTEND(readability-convert-member-functions-to-static)
         const struct msgStartGame_s &msgStartGame = std::any_cast<struct msgStartGame_s>(msg);
 
         if (msgStartGame.magick != MAGICK_START_GAME) {
