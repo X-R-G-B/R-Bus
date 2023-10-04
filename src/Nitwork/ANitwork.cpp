@@ -5,6 +5,7 @@
 ** ANitwork
 */
 
+#include <algorithm>
 #include "ANitwork.hpp"
 
 namespace Nitwork {
