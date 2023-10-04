@@ -5,8 +5,8 @@
 ** main
 */
 
-#include "SceneManager.hpp"
 #include "Logger.hpp"
+#include "SceneManager.hpp"
 
 int main()
 {

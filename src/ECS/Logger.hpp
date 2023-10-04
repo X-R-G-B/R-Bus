@@ -13,13 +13,13 @@
 
 namespace Logger {
     enum class LogLevel : int {
-        NOLOG = -1,
-        Fatal = 0,
-        Error = 1,
-        Warn  = 2,
-        Info  = 3,
-        Debug = 4,
-        Trace = 5,
+        NOLOG       = -1,
+        Fatal       = 0,
+        Error       = 1,
+        Warn        = 2,
+        Info        = 3,
+        Debug       = 4,
+        Trace       = 5,
         MAXLOGLEVEL = 6,
     };
 
@@ -39,8 +39,9 @@ namespace Logger {
      * LogLevel::Error - `error` and `fatal` are displayed
      * LogLevel::Warn - `warn`, `error` and `fatal` are displayed
      * LogLevel::Info - `info`, `warn`, `error` and `fatal` are displayed
-     * LogLevel::Debug - `debug`, `info`, `warn`, `error` and `fatal` are displayed
-     * LogLevel::Trace - `trace`, `debug`, `info`, `warn`, `error` and `fatal` are displayed
+     * LogLevel::Debug - `debug`, `info`, `warn`, `error` and `fatal` are
+     * displayed LogLevel::Trace - `trace`, `debug`, `info`, `warn`, `error` and
+     * `fatal` are displayed
      *
      * Attention:
      * `debug` and `trace` will only do something in debug mode compilation.

@@ -109,42 +109,43 @@ namespace Logger {
     {
 #ifdef __linux__
         static std::map<LogLevel, std::string> colors = {
-            {LogLevel::Fatal, "\033[31m"},
-            {LogLevel::Error, "\033[33m"},
-            {LogLevel::Warn,  "\033[34m"},
-            {LogLevel::Info,  "\033[32m"},
-            {LogLevel::Debug, "\033[38m"},
-            {LogLevel::Trace, "\033[30m"},
+            {LogLevel::Fatal,       "\033[31m"},
+            {LogLevel::Error,       "\033[33m"},
+            {LogLevel::Warn,        "\033[34m"},
+            {LogLevel::Info,        "\033[32m"},
+            {LogLevel::Debug,       "\033[38m"},
+            {LogLevel::Trace,       "\033[30m"},
             {LogLevel::MAXLOGLEVEL, "\033[0m" },
         };
 #elif __APPLE__
         static std::map<int, std::string> colors = {
-            {LogLevel::Fatal, "\033[31m"},
-            {LogLevel::Error, "\033[33m"},
-            {LogLevel::Warn,  "\033[34m"},
-            {LogLevel::Info,  "\033[32m"},
-            {LogLevel::Debug, "\033[38m"},
-            {LogLevel::Trace, "\033[30m"},
+            {LogLevel::Fatal,       "\033[31m"},
+            {LogLevel::Error,       "\033[33m"},
+            {LogLevel::Warn,        "\033[34m"},
+            {LogLevel::Info,        "\033[32m"},
+            {LogLevel::Debug,       "\033[38m"},
+            {LogLevel::Trace,       "\033[30m"},
             {LogLevel::MAXLOGLEVEL, "\033[0m" },
         };
 #else
-        static std::map<int, std::string> colors =
-            {
-                {LogLevel::Fatal,""},
-                {LogLevel::Error,""},
-                {LogLevel::Warn, ""},
-                {LogLevel::Info, ""},
-                {LogLevel::Debug,""},
-                {LogLevel::Trace,""},
-                {LogLevel::MAXLOG""},
+        static std::map<int, std::string> colors = {
+            {LogLevel::Fatal, ""},
+            {LogLevel::Error,               ""},
+            {LogLevel::Warn,""},
+            {LogLevel::Info,  ""},
+            {LogLevel::Debug,               ""},
+            {LogLevel::Trace,            ""},
+            {LogLevel::MAXLOG ""},
         };
 #endif
 
-        auto const now = std::chrono::current_zone()->to_local(std::chrono::system_clock::now());
+        auto const now = std::chrono::current_zone()->to_local(
+            std::chrono::system_clock::now());
         std::string mes;
         auto it = _callbacks.find(levelT);
 
-        mes = std::format("{:%Y-%m-%d %H:%M:%S}", now) + " [" + level + "] " + message;
+        mes = std::format("{:%Y-%m-%d %H:%M:%S}", now) + " [" + level + "] "
+            + message;
         std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL]
                   << std::endl;
         if (it != _callbacks.end()) {
