@@ -27,18 +27,17 @@ namespace Nitwork {
                 int tick              = TICKS_PER_SECOND,
                 const std::string &ip = "") final;
 
-            bool startNitworkConfig(int port, const std::string &ip) final;
 
-            void handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint) final;
-
-            // Get bytes of packets ids receives
-            n_idsReceived_t getIdsReceived();
             // Messages creation methods
             void addInitMsg();
             void addReadyMsg();
 
         private:
             NitworkClient();
+            bool startNitworkConfig(int port, const std::string &ip) final;
+
+            void handleBodyAction(const struct header_s &header, const boost::asio::ip::udp::endpoint &endpoint) final;
+
             [[nodiscard]] const std::map<enum n_actionType_t, actionHandler> &
             getActionToSendHandlers() const final;
 
@@ -62,8 +61,8 @@ namespace Nitwork {
                 {
                     START_GAME,
                     std::make_pair(
-                        handleBodyT([this](actionHandler &handler) {
-                            handleBody<struct msgStartGame_s>(handler);
+                        handleBodyT([this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgStartGame_s>(handler, header);
                         }),
                         actionHandler([this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             handleStartGame(any, endpoint);

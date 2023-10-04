@@ -35,7 +35,7 @@ namespace Nitwork {
         return true;
     }
 
-    void NitworkServer::handleBodyAction(const boost::asio::ip::udp::endpoint & /* unused */)
+    void NitworkServer::handleBodyAction(const struct header_s &header, const boost::asio::ip::udp::endpoint & /* unused */)
     {
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
         auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
@@ -46,7 +46,7 @@ namespace Nitwork {
             std::cerr << "Error: action not found" << std::endl;
             return;
         }
-        it->second.first(it->second.second);
+        it->second.first(it->second.second, header);
     }
 
     /* Getters Section */
@@ -93,6 +93,7 @@ namespace Nitwork {
             std::cerr << "Client not connected" << std::endl;
             return;
         }
+        addStarGameMessage(endpoint, _endpoints.size());
     }
     /* End Handle packet (msg) Section */
 
@@ -103,7 +104,7 @@ namespace Nitwork {
         struct packetMsgStartGame_s packetMsgStartGame = {
             .header =
                 {.magick1          = HEADER_CODE1,
-                         .ids_received     = 0,
+                         .ids_received     = getIdsReceived(),
                          .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
                          .id               = getPacketID(),
                          .nb_action        = 1,
@@ -112,8 +113,11 @@ namespace Nitwork {
             .msgStartGame = {.magick = MAGICK_START_GAME,                                 .playerId = playerId}
         };
         Packet packet(
+            packetMsgStartGame.header.id,
             packetMsgStartGame.action.magick,
-            std::make_any<struct packetMsgStartGame_s>(packetMsgStartGame));
+            std::make_any<struct packetMsgStartGame_s>(packetMsgStartGame)
+        );
+        std::cout << "Send START_GAME to " << endpoint.address().to_string() << ":" << endpoint.port() << std::endl;
         addPacketToSend(endpoint, packet);
     }
 } // namespace Nitwork

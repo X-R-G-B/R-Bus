@@ -19,27 +19,31 @@ extern "C"
 
 namespace Nitwork {
     using actionHandler = std::function<void(std::any &, boost::asio::ip::udp::endpoint &)>;
-    using handleBodyT   = std::function<void(actionHandler &)>;
+    using handleBodyT   = std::function<void(actionHandler &, const struct header_s &)>;
 
     class SenderData {
         public:
-            SenderData(boost::asio::ip::udp::endpoint &endpoint, std::any data)
-                : endpoint(endpoint),
+            SenderData(n_id_t id, boost::asio::ip::udp::endpoint &endpoint, std::any data)
+                : id(id),
+                  endpoint(endpoint),
                   data(std::move(data))
             {
             }
 
+            n_id_t id;
             boost::asio::ip::udp::endpoint endpoint;
             std::any data;
     };
     class Packet {
         public:
-            Packet(n_actionType_t action, std::any body)
-                : action(action),
+            Packet(n_id_t id, n_actionType_t action, std::any body)
+                : id(id),
+                  action(action),
                   body(std::move(body))
             {
             }
 
+            n_id_t id;
             n_actionType_t action;
             std::any body;
     };
@@ -79,7 +83,7 @@ namespace Nitwork {
             virtual void
             headerHandler(std::size_t bytes_received, const boost::system::error_code &error) = 0;
             // handler func for headerHandler which handle the action
-            virtual void handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint) = 0;
+            virtual void handleBodyAction(const struct header_s &header, const boost::asio::ip::udp::endpoint &endpoint) = 0;
 
             // getters
             [[nodiscard]] virtual const std::map<enum n_actionType_t, actionHandler> &

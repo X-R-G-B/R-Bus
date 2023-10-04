@@ -26,15 +26,16 @@ namespace Nitwork {
                 int tick              = TICKS_PER_SECOND,
                 const std::string &ip = "") final;
 
-            bool startNitworkConfig(int port, const std::string &ip) final;
-
-            void handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint) final;
 
             /* Messages creation methods */
             void addStarGameMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
 
         private:
             NitworkServer() = default;
+
+            bool startNitworkConfig(int port, const std::string &ip) final;
+
+            void handleBodyAction(const struct header_s &header, const boost::asio::ip::udp::endpoint &endpoint) final;
 
             [[nodiscard]] const std::map<enum n_actionType_t, actionHandler> &
             getActionToSendHandlers() const final;
@@ -56,8 +57,8 @@ namespace Nitwork {
                 {
                      INIT,
                      std::make_pair(
-                         handleBodyT([this](actionHandler &actionHandler) {
-                             handleBody<struct msgInit_s>(actionHandler);
+                         handleBodyT([this](actionHandler &actionHandler, const struct header_s &header) {
+                             handleBody<struct msgInit_s>(actionHandler, header);
                          }),
                          actionHandler([this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                              handleInitMsg(msg, endpoint);
@@ -67,8 +68,8 @@ namespace Nitwork {
                 {
                      READY,
                      std::make_pair(
-                         handleBodyT([this](actionHandler &actionHandler) {
-                             handleBody<struct msgReady_s>(actionHandler);
+                         handleBodyT([this](actionHandler &actionHandler, const struct header_s &header) {
+                             handleBody<struct msgReady_s>(actionHandler, header);
                          }),
                          actionHandler([this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                              handleReadyMsg(msg, endpoint);

@@ -38,7 +38,7 @@ namespace Nitwork {
         return true;
     }
 
-    void NitworkClient::handleBodyAction(const boost::asio::ip::udp::endpoint &endpoint)
+    void NitworkClient::handleBodyAction(const struct header_s &header, const boost::asio::ip::udp::endpoint &endpoint)
     {
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
         auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
@@ -52,7 +52,7 @@ namespace Nitwork {
             std::cerr << "Error: action not found" << std::endl;
             return;
         }
-        it->second.first(it->second.second);
+        it->second.first(it->second.second, header);
     }
 
     const std::map<enum n_actionType_t, actionHandler> &NitworkClient::getActionToSendHandlers() const
@@ -71,19 +71,9 @@ namespace Nitwork {
             std::cerr << "Error: magick is not START_GAME" << std::endl;
             return;
         }
+        std::cout << "Game started" << std::endl;
     }
     /* End Handlers Section */
-
-    /* Getters Section */
-    n_idsReceived_t NitworkClient::getIdsReceived()
-    {
-        n_idsReceived_t idsReceived = 0;
-
-        for (auto &id : _receivedPacketsIds) {
-            idsReceived |= id;
-        }
-        return idsReceived;
-    }
 
     /* Message Creation Section */
     void NitworkClient::addInitMsg()
@@ -102,7 +92,11 @@ namespace Nitwork {
             .action  = {.magick = INIT},
             .msgInit = {.magick = MAGICK_INIT                                                              }
         };
-        Packet packet(packetMsgInit.action.magick, std::make_any<struct packetMsgInit_s>(packetMsgInit));
+        Packet packet(
+            packetMsgInit.header.id,
+            packetMsgInit.action.magick,
+            std::make_any<struct packetMsgInit_s>(packetMsgInit)
+        );
         addPacketToSend(_endpoint, packet);
     }
 
@@ -123,8 +117,10 @@ namespace Nitwork {
             .msgReady = {.magick = MAGICK_READY                                                              }
         };
         Packet packet(
+            packetMsgReady.header.id,
             packetMsgReady.action.magick,
-            std::make_any<struct packetMsgReady_s>(packetMsgReady));
+            std::make_any<struct packetMsgReady_s>(packetMsgReady)
+        );
         addPacketToSend(_endpoint, packet);
     }
 } // namespace Nitwork
