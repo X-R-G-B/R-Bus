@@ -48,9 +48,11 @@ static void unloadImage(std::size_t id)
     }
 }
 
+// NOLINTNEXTLINE(readability-convert-member-functions-to-static,-warnings-as-errors)
 void Registry::unloadRaylibComponents(std::size_t id)
 {
     unloadSounds(id);
     unloadMusic(id);
     unloadSprite(id);
+    unloadImage(id);
 }
