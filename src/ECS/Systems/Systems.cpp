@@ -306,7 +306,7 @@ namespace Systems {
         return {
             windowCollision,
             initPlayer,
-            initParalax
+            initParalax,
             entitiesCollision,
             moveEntities,
             deathChecker,
