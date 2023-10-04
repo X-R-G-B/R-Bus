@@ -5,7 +5,7 @@ on:
     branches: [main, dev]
 
 env:
-  BRANCH: "feature/RB-61-basic-missiles"
+  BRANCH: "main"
   RAYLIB_TAG: "4.5.0"
   DATE_TAG: "v3.0.1"
 
