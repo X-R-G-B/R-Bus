@@ -32,7 +32,14 @@ namespace Nitwork {
             boost::asio::ip::udp::endpoint endpoint;
             std::any data;
     };
-    struct packet_s {
+    class Packet {
+        public:
+            Packet(n_actionType_t action, std::any body)
+                : action(action),
+                  body(std::move(body))
+            {
+            }
+
             n_actionType_t action;
             std::any body;
     };

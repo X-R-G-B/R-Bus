@@ -38,7 +38,7 @@ namespace Nitwork {
                     std::cerr << "Error: invalid type" << std::endl;
                     return;
                 }
-                if (sizeof(T) > MAX_PACKET_SIZE) {
+                if constexpr (sizeof(T) > MAX_PACKET_SIZE) {
                     std::cerr << "Error: package too big" << std::endl;
                     return;
                 }
@@ -64,7 +64,7 @@ namespace Nitwork {
 
             /* Getters / Setters */
             n_id_t getPacketID();
-            void addPacketToSend(const boost::asio::ip::udp::endpoint &, const struct packet_s &);
+            void addPacketToSend(const boost::asio::ip::udp::endpoint &, const Packet &);
             void handlePacketIdsReceived(const struct header_s &header);
 
             void startReceiveHandler() final;
@@ -108,7 +108,7 @@ namespace Nitwork {
                 _actions.emplace_back(senderData, handler);
             }
             void addPacketToSentPackages(
-                const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, packet_s> &data);
+                const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, Packet> &data);
 
         protected:
             boost::asio::io_context _context; // The main context
@@ -123,7 +123,7 @@ namespace Nitwork {
 
             // list of packets' ids receives
             std::vector<n_id_t> _receivedPacketsIds; // A list of packets' ids receives
-            std::list<std::pair<boost::asio::ip::udp::endpoint, struct packet_s>>
+            std::list<std::pair<boost::asio::ip::udp::endpoint, Packet>>
                 _packetsSent;                    // A list of packets' ids receives
                                                  // Mutexes shared
             std::mutex _receivedPacketsIdsMutex; // Mutex for the received packets ids
@@ -131,7 +131,7 @@ namespace Nitwork {
             std::mutex _packetsSentMutex;        // Mutex for the packets sent
 
         private:
-            n_id_t _packetId = 0; // The packet id
+            n_id_t _packetId; // The packet id
 
             std::mutex _inputQueueMutex;          // Mutex for the input queue
             std::mutex _tickMutex;                // Mutex for the tick
@@ -149,7 +149,7 @@ namespace Nitwork {
                 SenderData,
                 const actionHandler &>>
                 _actions; // A list of actions which will be handled by the second context
-            std::list<std::pair<boost::asio::ip::udp::endpoint, struct packet_s>>
+            std::list<std::pair<boost::asio::ip::udp::endpoint, Packet>>
                 _outputQueue; // A queue of actions which will be sent to the clients
     };                        // class INitwork
 } // namespace Nitwork

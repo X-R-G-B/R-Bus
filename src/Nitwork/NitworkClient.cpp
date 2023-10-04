@@ -102,10 +102,8 @@ namespace Nitwork {
             .action  = {.magick = INIT},
             .msgInit = {.magick = MAGICK_INIT                                                              }
         };
-        struct packet_s packetData = {
-            .action = packetMsgInit.action.magick,
-            .body   = std::make_any<struct packetMsgInit_s>(packetMsgInit)};
-        addPacketToSend(_endpoint, packetData);
+        Packet packet(packetMsgInit.action.magick, std::make_any<struct packetMsgInit_s>(packetMsgInit));
+        addPacketToSend(_endpoint, packet);
     }
 
     void NitworkClient::addReadyMsg()
@@ -124,9 +122,9 @@ namespace Nitwork {
             .action   = {.magick = READY},
             .msgReady = {.magick = MAGICK_READY                                                              }
         };
-        struct packet_s packetData = {
-            .action = packetMsgReady.action.magick,
-            .body   = std::make_any<struct packetMsgReady_s>(packetMsgReady)};
-        addPacketToSend(_endpoint, packetData);
+        Packet packet(
+            packetMsgReady.action.magick,
+            std::make_any<struct packetMsgReady_s>(packetMsgReady));
+        addPacketToSend(_endpoint, packet);
     }
 } // namespace Nitwork

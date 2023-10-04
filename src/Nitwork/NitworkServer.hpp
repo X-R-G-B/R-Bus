@@ -53,31 +53,36 @@ namespace Nitwork {
 
             // maps that will be used to handle the actions, in order to send or receive them
             std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
-                {INIT,
-                 std::make_pair(
-                     handleBodyT(std::bind(
-                         &NitworkServer::handleBody<struct msgInit_s>,
-                 this, std::placeholders::_1)),
-                 actionHandler(std::bind(
-                         &NitworkServer::handleInitMsg,
-                 this, std::placeholders::_1,
-                 std::placeholders::_2)))},
-                {READY,
-                 std::make_pair(
-                     handleBodyT(std::bind(
-                         &NitworkServer::handleBody<struct msgReady_s>,
-                 this, std::placeholders::_1)),
-                 actionHandler(std::bind(
-                         &NitworkServer::handleReadyMsg,
-                 this, std::placeholders::_1,
-                 std::placeholders::_2)))},
+                {
+                     INIT,
+                     std::make_pair(
+                         handleBodyT([this](actionHandler &actionHandler) {
+                             handleBody<struct msgInit_s>(actionHandler);
+                         }),
+                         actionHandler([this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                             handleInitMsg(msg, endpoint);
+                         })
+                     )
+                },
+                {
+                     READY,
+                     std::make_pair(
+                         handleBodyT([this](actionHandler &actionHandler) {
+                             handleBody<struct msgReady_s>(actionHandler);
+                         }),
+                         actionHandler([this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                             handleReadyMsg(msg, endpoint);
+                         })
+                     )
+                },
             };
             std::map<enum n_actionType_t, actionHandler> _actionToSendHandlers = {
-                {START_GAME,
-                 actionHandler(std::bind(
-                     &ANitwork::sendData<struct packetMsgStartGame_s>,
-                 this, std::placeholders::_1,
-                 std::placeholders::_2))}
+                {
+                     START_GAME,
+                     actionHandler([this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetMsgStartGame_s>(any, endpoint);
+                     })
+                }
             };
     };
 } // namespace Nitwork

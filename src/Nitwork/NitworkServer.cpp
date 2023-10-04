@@ -22,15 +22,16 @@ namespace Nitwork {
         return ANitwork::start(port, threadNb, tick, ip);
     }
 
-    bool NitworkServer::startNitworkConfig(int port, __attribute((unused)) const std::string &ip)
+    bool NitworkServer::startNitworkConfig(int port, const std::string & /* unused */)
     {
-        _endpoint = boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port);
+        boost::asio::ip::udp::endpoint endpoint = boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), boost::asio::ip::port_type(port));
+
         _socket.open(boost::asio::ip::udp::v4());
         if (!_socket.is_open()) {
             std::cerr << "Error: socket not open" << std::endl;
             return false;
         }
-        _socket.bind(_endpoint);
+        _socket.bind(endpoint);
         return true;
     }
 
@@ -110,9 +111,9 @@ namespace Nitwork {
             .action       = {.magick = START_GAME},
             .msgStartGame = {.magick = MAGICK_START_GAME,                                 .playerId = playerId}
         };
-        struct packet_s packetData = {
-            .action = packetMsgStartGame.action.magick,
-            .body   = std::make_any<struct packetMsgStartGame_s>(packetMsgStartGame)};
-        addPacketToSend(endpoint, packetData);
+        Packet packet(
+            packetMsgStartGame.action.magick,
+            std::make_any<struct packetMsgStartGame_s>(packetMsgStartGame));
+        addPacketToSend(endpoint, packet);
     }
 } // namespace Nitwork

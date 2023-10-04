@@ -62,20 +62,13 @@ namespace Nitwork {
                 {
                     START_GAME,
                     std::make_pair(
-                        handleBodyT(
-                            std::bind(
-                                &NitworkClient::handleBody<struct msgStartGame_s>,
-                                this, std::placeholders::_1
-                            )
-                        ),
-                        actionHandler(
-                            std::bind(
-                                &NitworkClient::handleStartGame,
-                                this, std::placeholders::_1,
-                                std::placeholders::_2
-                            )
-                        )
-                    )
+                        handleBodyT([this](actionHandler &handler) {
+                            handleBody<struct msgStartGame_s>(handler);
+                        }),
+                        actionHandler([this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            handleStartGame(any, endpoint);
+                        })
+                    ),
                 }
             };
             std::map<
@@ -84,22 +77,17 @@ namespace Nitwork {
                 > _actionToSendHandlers = {
                 {
                     INIT,
-                    actionHandler(
-                        std::bind(
-                            &ANitwork::sendData<struct packetMsgInit_s>,
-                            this, std::placeholders::_1,
-                            std::placeholders::_2
-                        )
+                    actionHandler([this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetMsgInit_s>(any, endpoint);
+                        }
                     )
                 },
                 {
                     READY,
                     actionHandler(
-                        std::bind(
-                            &ANitwork::sendData<struct packetMsgReady_s>,
-                            this, std::placeholders::_1,
-                            std::placeholders::_2
-                        )
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetMsgReady_s>(any, endpoint);
+                        }
                     )
                 }
             };

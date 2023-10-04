@@ -90,8 +90,9 @@ namespace Nitwork {
     void ANitwork::stop()
     {
         _context.stop();
-        for (auto &thread : _pool)
+        for (auto &thread : _pool) {
             thread.join();
+        }
         _pool.clear();
         _clockThread.join();
     }
@@ -102,11 +103,10 @@ namespace Nitwork {
         _socket.async_receive_from(
             boost::asio::buffer(_receiveBuffer),
             _senderEndpoint,
-            boost::bind(
-                &ANitwork::headerHandler,
-                this,
-                boost::asio::placeholders::bytes_transferred,
-                boost::asio::placeholders::error));
+            [this](const boost::system::error_code &error, std::size_t bytes_received) {
+                headerHandler(bytes_received, error);
+            }
+        );
     }
 
     void ANitwork::headerHandler(std::size_t bytes_received, const boost::system::error_code &error)
@@ -231,7 +231,7 @@ namespace Nitwork {
     }
 
     void ANitwork::addPacketToSentPackages(
-        const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, packet_s> &data)
+        const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, Packet> &data)
     {
         std::lock_guard<std::mutex> lock(_packetsSentMutex);
 
@@ -250,7 +250,7 @@ namespace Nitwork {
     }
 
     void
-    ANitwork::addPacketToSend(const boost::asio::ip::udp::endpoint &endpoint, const struct packet_s &packet)
+    ANitwork::addPacketToSend(const boost::asio::ip::udp::endpoint &endpoint, const Packet &packet)
     {
         std::lock_guard<std::mutex> lock(_outputQueueMutex);
 
