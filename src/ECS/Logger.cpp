@@ -114,7 +114,7 @@ namespace Logger {
             {LogLevel::MAXLOGLEVEL, "\033[0m" },
         };
 #elif __APPLE__
-        static std::map<int, std::string> colors = {
+        static std::map<LogLevel, std::string> colors = {
             {LogLevel::Fatal,       "\033[31m"},
             {LogLevel::Error,       "\033[33m"},
             {LogLevel::Warn,        "\033[34m"},
@@ -124,14 +124,14 @@ namespace Logger {
             {LogLevel::MAXLOGLEVEL, "\033[0m" },
         };
 #else
-        static std::map<int, std::string> colors = {
-            {LogLevel::Fatal, ""},
-            {LogLevel::Error,               ""},
-            {LogLevel::Warn,""},
-            {LogLevel::Info,  ""},
-            {LogLevel::Debug,               ""},
-            {LogLevel::Trace,            ""},
-            {LogLevel::MAXLOG ""},
+        static std::map<LogLevel, std::string> colors = {
+            {LogLevel::Fatal,   ""},
+            {LogLevel::Error,   ""},
+            {LogLevel::Warn,    ""},
+            {LogLevel::Info,    ""},
+            {LogLevel::Debug,   ""},
+            {LogLevel::Trace,   ""},
+            {LogLevel::MAXLOG,  ""},
         };
 #endif
 
