@@ -140,7 +140,10 @@ namespace Logger {
         std::stringstream s;
         std::string mes;
 
-        s << now << " [" << level << "] " << message;
+        {
+            using namespace date;
+            s << now << " [" << level << "] " << message;
+        }
         mes = s.str();
         std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL]
                   << std::endl;
