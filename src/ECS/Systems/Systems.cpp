@@ -172,8 +172,8 @@ namespace Systems {
     const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
     const std::string ennemyPath = "assets/R-TypeSheet/r-typesheet18.gif";
     const Types::Rect spriteRect = {2, 2, 48, 48};
-    const float playerWidth                  = 25.0F;
-    const float playerHeight                 = 25.0F;
+    const float playerWidth      = 25.0F;
+    const float playerHeight     = 25.0F;
     const Types::CollisionRect collisionRect = {playerWidth, playerHeight};
     const Raylib::Vector2 textPos            = {20, 50};
     constexpr int playerData                 = 10;
@@ -204,11 +204,11 @@ namespace Systems {
             {{2, 51, 46, 47},
               {101, 2, 48, 47},
               {152, 2, 46, 47},
-              {201, 2, 46, 47}},
+              {201, 2, 46, 47}  },
             {{2, 51, 46, 47},
               {101, 2, 48, 47},
               {152, 2, 46, 47},
-              {201, 2, 46, 47}},
+              {201, 2, 46, 47}  },
             {{180, 140, 18, 12},
               {211, 140, 18, 12},
               {230, 140, 18, 12},
