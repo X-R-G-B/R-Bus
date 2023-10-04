@@ -2,7 +2,7 @@
 
 int main()
 {
-    int port = 4242;
+    const int port = 4242;
 
     try {
         Nitwork::NitworkServer::getInstance().start(port);
