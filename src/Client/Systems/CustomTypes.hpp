@@ -12,12 +12,13 @@
 #include "ECSCustomTypes.hpp"
 
 namespace Types {
-
     struct Rect {
             float x;
             float y;
             float width;
             float height;
+
+            NLOHMANN_DEFINE_TYPE_INTRUSIVE(Rect, x, y, width, height);
     };
 
     enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };

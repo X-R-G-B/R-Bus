@@ -24,6 +24,7 @@ namespace Systems {
         std::vector<std::function<void(std::size_t, std::size_t)>> systems)
         : _id(_managerNb),
           _originalSystems(std::move(systems)),
+          _modifiedSystems(_originalSystems),
           _modified(false)
     {
         _managerNb += 1;
@@ -35,16 +36,14 @@ namespace Systems {
 
         for (auto &system : getSystems()) {
             system(_id, i);
-            std::cout << "System id : " << i << std::endl; 
             i++;
         }
         for (auto &id : _toRemove) {
-            if (getSystems().size() > 0) {
-                auto it = _modifiedSystems.begin();
-                std::advance(it, id);
-                _modifiedSystems.erase(it);
-            }
+            auto it = _modifiedSystems.begin();
+            std::advance(it, id);
+            _modifiedSystems.erase(it);
         }
+        _toRemove.clear();
     }
 
     void
@@ -62,6 +61,7 @@ namespace Systems {
 
     void SystemManager::resetChanges()
     {
+        std::cout << "je passes la dedans" << std::endl;
         _modified = false;
         _modifiedSystems.clear();
     }

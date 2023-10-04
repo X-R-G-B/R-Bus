@@ -10,12 +10,17 @@
 #include <cstddef>
 #include <functional>
 #include <optional>
+#include "nlohmann/json.hpp"
+
+// all values are in percentage of the screen
 
 namespace Types {
 
     struct CollisionRect {
             float width;
             float height;
+
+            NLOHMANN_DEFINE_TYPE_INTRUSIVE(CollisionRect, width, height);
     };
 
     struct RectangleShape {
@@ -26,6 +31,8 @@ namespace Types {
     struct Position {
             float x;
             float y;
+
+            NLOHMANN_DEFINE_TYPE_INTRUSIVE(Position, x, y);
     };
 
     struct Health {

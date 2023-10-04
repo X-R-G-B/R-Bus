@@ -10,6 +10,10 @@
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include <nlohmann/json.hpp>
 #include "SystemManagersDirector.hpp"
 
 namespace Systems {
@@ -83,6 +87,50 @@ namespace Systems {
         }
     }
 
+    static nlohmann::json openJsonData(const std::string &path)
+    {
+        std::ifstream fileData(path);
+        std::ostringstream input;
+        nlohmann::json jsonData = {};
+
+        if (fileData.is_open()) {
+            input << fileData.rdbuf();
+            if (nlohmann::json::accept(input.str())) {
+                jsonData = nlohmann::json::parse(input.str());
+                return jsonData;
+            }
+        }
+        std::cout << "Could not load the json data : An error occured." << std::endl;
+        return jsonData;
+    }
+
+    static void initParallaxEntity(nlohmann::json_abi_v3_11_2::basic_json<> &parallaxData)
+    {
+        std::size_t id = Registry::getInstance().addEntity();
+
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
+            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id}
+        );
+        Registry::getInstance().getComponents<Types::Position>().insertBack(
+            {Types::Position(parallaxData["position"])}
+        );
+        Registry::getInstance().setToBackLayers(id);
+    }
+
+    void initParalax(std::size_t managerId, std::size_t systemId)
+    {
+        nlohmann::json jsonData = openJsonData("assets/Json/parallaxData.json");
+
+        for (auto &e : jsonData["parallax"]) {
+            initParallaxEntity(e);
+        }        std::cout << "C est pas bon" << std::endl;
+
+
+        SystemManagersDirector::getInstance()
+            .getSystemManager(managerId)
+            .removeSystem(systemId);
+    }
+
     void entitiesCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry &registry = Registry::getInstance();
@@ -92,6 +140,7 @@ namespace Systems {
             registry.getComponents<Types::CollisionRect>();
         std::vector<std::size_t> ids = registry.getEntitiesByComponents(
             {typeid(Types::CollisionRect), typeid(Types::Position)});
+
 
         for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
             checkCollisionEntity(itIds, ids, arrPosition, arrCollisionRect);
@@ -125,9 +174,47 @@ namespace Systems {
         }
     }
 
+    void initPlayer(std::size_t managerId, std::size_t systemId)
+    {
+        nlohmann::json jsonData = openJsonData("assets/Json/playerData.json");
+        std::size_t id = Registry::getInstance().addEntity();
+
+        if (jsonData["player"] == nullptr) {
+            return;
+        }
+        jsonData = jsonData["player"];
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
+            {jsonData["spritePath"], jsonData["width"], jsonData["height"], id}
+        );
+        Registry::getInstance().getComponents<Types::Position>().insertBack(
+            {Types::Position(jsonData["position"])}
+        );
+        Registry::getInstance().getComponents<Types::Rect>().insertBack(
+            {Types::Rect(jsonData["rect"])}
+        );
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
+            {Types::CollisionRect(jsonData["collisionRect"])}
+        );
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(
+            Types::AnimRect(Types::Rect(jsonData["rect"]),
+            std::vector<Types::Rect>(jsonData["animRect"]["move"]),
+            std::vector<Types::Rect>(jsonData["animRect"]["attack"]),
+            std::vector<Types::Rect>(jsonData["animRect"]["dead"]))
+        );
+        Registry::getInstance().getComponents<Types::Player>().insertBack({});
+        Registry::getInstance().getComponents<Types::Damage>().insertBack(
+            {jsonData["damage"]}
+        );
+        Registry::getInstance().getComponents<Types::Health>().insertBack(
+            {jsonData["health"]}
+        );
+        SystemManagersDirector::getInstance()
+            .getSystemManager(managerId)
+            .removeSystem(systemId);
+    }
+
     const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
-    const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
-    const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
+    const std::string soundPath  = "assets/Audio/Sounds/fire.gif";
     const Types::Rect spriteRect = {2, 2, 48, 48};
     const Types::CollisionRect collisionRect = {25, 25};
     const Raylib::Vector2 textPos            = {20, 50};
@@ -145,71 +232,71 @@ namespace Systems {
 
     void init(std::size_t managerId, std::size_t systemId)
     {
-        std::size_t id = Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            playerPos);
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {playerPath, playerWidth, playerHeight, id});
-        Registry::getInstance().getComponents<Types::Rect>().insertBack(
-            spriteRect);
-        Registry::getInstance()
-            .getComponents<Types::CollisionRect>()
-            .insertBack(collisionRect);
+        // std::size_t id = Registry::getInstance().addEntity();
+        // Registry::getInstance().getComponents<Types::Position>().insertBack(
+        //     playerPos);
+        // Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
+        //     {playerPath, playerWidth, playerHeight, id});
+        // Registry::getInstance().getComponents<Types::Rect>().insertBack(
+        //     spriteRect);
+        // Registry::getInstance()
+        //     .getComponents<Types::CollisionRect>()
+        //     .insertBack(collisionRect);
         // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
-        Registry::getInstance().getComponents<Types::AnimRect>().insertBack({
-            spriteRect,
-            {{2, 51, 46, 47},
-              {101, 2, 48, 47},
-              {152, 2, 46, 47},
-              {201, 2, 46, 47}  },
-            {{2, 51, 46, 47},
-              {101, 2, 48, 47},
-              {152, 2, 46, 47},
-              {201, 2, 46, 47}  },
-            {{180, 140, 18, 12},
-              {211, 140, 18, 12},
-              {230, 140, 18, 12},
-              {250, 140, 18, 12}}
-        });
+        // Registry::getInstance().getComponents<Types::AnimRect>().insertBack({
+        //     spriteRect,
+        //     {{2, 51, 46, 47},
+        //       {101, 2, 48, 47},
+        //       {152, 2, 46, 47},
+        //       {201, 2, 46, 47}  },
+        //     {{2, 51, 46, 47},
+        //       {101, 2, 48, 47},
+        //       {152, 2, 46, 47},
+        //       {201, 2, 46, 47}  },
+        //     {{180, 140, 18, 12},
+        //       {211, 140, 18, 12},
+        //       {230, 140, 18, 12},
+        //       {250, 140, 18, 12}}
+        // });
         // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
-        Registry::getInstance().setToBackLayers(id);
-        Registry::getInstance().getComponents<Types::Player>().insertBack({});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack(
-            {playerDamage});
-        Registry::getInstance().getComponents<Types::Health>().insertBack(
-            {playerHealth});
-        Registry::getInstance().getComponents<Types::Dead>().insertBack(
-            {std::nullopt});
+        // Registry::getInstance().setToBackLayers(id);
+        // Registry::getInstance().getComponents<Types::Player>().insertBack({});
+        // Registry::getInstance().getComponents<Types::Damage>().insertBack(
+        //     {playerDamage});
+        // Registry::getInstance().getComponents<Types::Health>().insertBack(
+        //     {playerHealth});
+        // Registry::getInstance().getComponents<Types::Dead>().insertBack(
+        //     {std::nullopt});
 
-        id = Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Types::Enemy>().insertBack({});
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {playerData, playerData + playerData + playerData});
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {playerPath, playerWidth, playerHeight, id});
-        Registry::getInstance().getComponents<Types::Rect>().insertBack(
-            spriteRect);
-        Registry::getInstance()
-            .getComponents<Types::CollisionRect>()
-            .insertBack(collisionRect);
-        Registry::getInstance().getComponents<Types::Dead>().insertBack(
-            {std::nullopt});
-        Registry::getInstance().setToFrontLayers(id);
+        // id = Registry::getInstance().addEntity();
+        // Registry::getInstance().getComponents<Types::Enemy>().insertBack({});
+        // Registry::getInstance().getComponents<Types::Position>().insertBack(
+        //     {playerData, playerData + playerData + playerData});
+        // // Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
+        // //     {playerPath, playerWidth, playerHeight, id});
+        // Registry::getInstance().getComponents<Types::Rect>().insertBack(
+        //     spriteRect);
+        // Registry::getInstance()
+        //     .getComponents<Types::CollisionRect>()
+        //     .insertBack(collisionRect);
+        // Registry::getInstance().getComponents<Types::Dead>().insertBack(
+        //     {std::nullopt});
+        // Registry::getInstance().setToFrontLayers(id);
 
-        Registry::getInstance().getComponents<Raylib::Music>().insertBack(
-            {musicPath, musicVolume});
-        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(
-            {soundPath, soundVolume});
-        Registry::getInstance().getComponents<Raylib::Text>().insertBack(
-            {"Press SPACE to play music, ENTER to play sound, J to reset "
-             "scene, ARROWS to move",
-             textPos,
-             fontScale,
-             Raylib::DarkBlue});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack(
-            {enemyDamage});
-        Registry::getInstance().getComponents<Types::Health>().insertBack(
-            {playerHealth2});
+        // Registry::getInstance().getComponents<Raylib::Music>().insertBack(
+        //     {musicPath, musicVolume});
+        // Registry::getInstance().getComponents<Raylib::Sound>().insertBack(
+        //     {soundPath, soundVolume});
+        // Registry::getInstance().getComponents<Raylib::Text>().insertBack(
+        //     {"Press SPACE to play music, ENTER to play sound, J to reset "
+        //      "scene, ARROWS to move",
+        //      textPos,
+        //      fontScale,
+        //      Raylib::DarkBlue});
+        // Registry::getInstance().getComponents<Types::Damage>().insertBack(
+        //     {enemyDamage});
+        // Registry::getInstance().getComponents<Types::Health>().insertBack(
+        //     {playerHealth2});
         SystemManagersDirector::getInstance()
             .getSystemManager(managerId)
             .removeSystem(systemId);
@@ -217,6 +304,6 @@ namespace Systems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
     {
-        return {windowCollision, init, entitiesCollision, deathChecker};
+        return {init, initParalax, initPlayer, entitiesCollision, windowCollision, deathChecker};
     }
 } // namespace Systems
