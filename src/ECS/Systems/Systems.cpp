@@ -172,7 +172,9 @@ namespace Systems {
     const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
     const std::string ennemyPath = "assets/R-TypeSheet/r-typesheet18.gif";
     const Types::Rect spriteRect = {2, 2, 48, 48};
-    const Types::CollisionRect collisionRect = {25, 25};
+    const float playerWidth      = 25.0F;
+    const float playerHeight     = 25.0F;
+    const Types::CollisionRect collisionRect = {playerWidth, playerHeight};
     const Raylib::Vector2 textPos            = {20, 50};
     constexpr int playerData                 = 10;
     const Types::Position playerPos          = {50, 50};
@@ -183,8 +185,6 @@ namespace Systems {
     constexpr float musicVolume              = 0.02F;
     constexpr float soundVolume              = 0.1F;
     constexpr float fontScale                = 2.0F;
-    const float playerWidth                  = 25.0F;
-    const float playerHeight                 = 25.0F;
 
     void init(std::size_t managerId, std::size_t systemId)
     {
