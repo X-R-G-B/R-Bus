@@ -140,29 +140,29 @@ namespace Systems {
         }
     }
 
-    const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
-    const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
-    const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
-    const std::string ennemyPath = "assets/R-TypeSheet/r-typesheet18.gif";
-    const Raylib::Vector2 textPos            = {20, 50};
-    constexpr int playerData                 = 70;
-    constexpr int playerDammage              = 10;
-    constexpr int playerHealth               = 1;
-    constexpr float musicVolume              = 0.02F;
-    constexpr float soundVolume              = 0.1F;
-    constexpr float fontScale                = 2.0F;
+    const std::string musicPath   = "assets/Audio/Musics/Title.mp3";
+    const std::string soundPath   = "assets/Audio/Sounds/fire.ogg";
+    const std::string playerPath  = "assets/R-TypeSheet/r-typesheet14.gif";
+    const std::string ennemyPath  = "assets/R-TypeSheet/r-typesheet18.gif";
+    const Raylib::Vector2 textPos = {20, 50};
+    constexpr int playerData      = 70;
+    constexpr int playerDammage   = 10;
+    constexpr int playerHealth    = 1;
+    constexpr float musicVolume   = 0.02F;
+    constexpr float soundVolume   = 0.1F;
+    constexpr float fontScale     = 2.0F;
 
-    constexpr int ennemyData                  = 10;
-    const Types::Dammage ennemyDammage        = {20};
+    constexpr int ennemyData           = 10;
+    const Types::Dammage ennemyDammage = {20};
 
-    const Types::Rect ennemySpriteRect        = {2, 67, 30, 32};
-    const Types::Rect spriteRect = {2, 2, 48, 48};
+    const Types::Rect ennemySpriteRect = {2, 67, 30, 32};
+    const Types::Rect spriteRect       = {2, 2, 48, 48};
 
-    const Raylib::Vector2 playerSize          = {7, 7};
+    const Raylib::Vector2 playerSize               = {7, 7};
     const Types::CollisionRect playerCollisionRect = {7, 7};
 
     const Types::CollisionRect ennemyCollisionRect = {28, 35};
-    const Raylib::Vector2 ennemySize          = {28, 35};
+    const Raylib::Vector2 ennemySize               = {28, 35};
 
     void init(std::size_t managerId, std::size_t systemId)
     {
