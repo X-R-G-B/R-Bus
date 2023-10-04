@@ -137,8 +137,8 @@ namespace Systems {
     constexpr int enemyDamage                = 1;
     constexpr int playerHealth               = 5;
     constexpr int playerHealth2              = 5;
-    constexpr float musicVolume              = 0.02F;
-    constexpr float soundVolume              = 0.1F;
+    constexpr float musicVolume              = 0.10F;
+    constexpr float soundVolume              = 0.13F;
     constexpr float fontScale                = 2.0F;
     const float playerWidth                  = 25.0F;
     const float playerHeight                 = 25.0F;
@@ -196,10 +196,6 @@ namespace Systems {
             {std::nullopt});
         Registry::getInstance().setToFrontLayers(id);
 
-        Registry::getInstance().getComponents<Raylib::Music>().insertBack(
-            {musicPath, musicVolume});
-        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(
-            {soundPath, soundVolume});
         Registry::getInstance().getComponents<Raylib::Text>().insertBack(
             {"Press SPACE to play music, ENTER to play sound, J to reset "
              "scene, ARROWS to move",
@@ -213,6 +209,14 @@ namespace Systems {
         SystemManagersDirector::getInstance()
             .getSystemManager(managerId)
             .removeSystem(systemId);
+
+        Registry::getInstance().setToFrontLayers(id);
+
+        Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Raylib::Music>().insertBack(
+            {musicPath, musicVolume});
+        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(
+            {soundPath, soundVolume});
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
