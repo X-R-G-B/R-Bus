@@ -125,23 +125,38 @@ namespace Systems {
         }
     }
 
-    const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
-    const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
-    const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
-    const Types::Rect spriteRect = {2, 2, 48, 48};
+    // Player
+
+    constexpr int playerData        = 10;
+    const Types::Position playerPos = {50, 50};
+    constexpr int playerDamage      = 1;
+    const float playerWidth         = 25.0F;
+    const float playerHeight        = 25.0F;
+    constexpr int playerHealth      = 5;
+    constexpr int playerHealth2     = 5;
+    const std::string playerPath    = "assets/R-TypeSheet/r-typesheet14.gif";
+    const Types::Rect spriteRect    = {2, 2, 48, 48};
     const Types::CollisionRect collisionRect = {25, 25};
-    const Raylib::Vector2 textPos            = {20, 50};
-    constexpr int playerData                 = 10;
-    const Types::Position playerPos          = {50, 50};
-    constexpr int playerDamage               = 1;
-    constexpr int enemyDamage                = 1;
-    constexpr int playerHealth               = 5;
-    constexpr int playerHealth2              = 5;
-    constexpr float musicVolume              = 0.10F;
-    constexpr float soundVolume              = 0.13F;
-    constexpr float fontScale                = 2.0F;
-    const float playerWidth                  = 25.0F;
-    const float playerHeight                 = 25.0F;
+
+    // Enemy
+
+    constexpr int enemyDamage = 1;
+
+    // Audio
+
+    constexpr float musicVolume = 0.10F;
+    constexpr float soundVolume = 0.13F;
+    const std::string musicPath = "assets/Audio/Musics/Title.mp3";
+    const std::string soundPath = "assets/Audio/Sounds/fire.ogg";
+    Raylib::Music music(musicPath, musicVolume);
+    Raylib::Sound sound(soundPath, soundVolume);
+
+    // Texts
+
+    const Raylib::Vector2 textPos = {20, 50};
+    constexpr float fontScale     = 2.0F;
+
+    // Init
 
     void init(std::size_t managerId, std::size_t systemId)
     {
@@ -214,9 +229,9 @@ namespace Systems {
 
         Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Raylib::Music>().insertBack(
-            {musicPath, musicVolume});
+            music);
         Registry::getInstance().getComponents<Raylib::Sound>().insertBack(
-            {soundPath, soundVolume});
+            sound);
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()

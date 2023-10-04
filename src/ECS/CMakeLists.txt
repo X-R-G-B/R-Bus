@@ -13,5 +13,4 @@ target_sources(
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/Registry.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Clock.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/UnloadRaylib.cpp
 )

@@ -150,6 +150,7 @@ namespace Raylib {
                 float height,
                 std::size_t id);
             Sprite(Image image, float width, float height);
+            ~Sprite();
             unsigned int getId() const;
             float getWidth() const;
             float getHeight() const;
