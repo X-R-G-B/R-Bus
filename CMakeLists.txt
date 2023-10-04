@@ -65,12 +65,12 @@ if(CLANG_TIDY_EXE)
         set_target_properties(${PROJECT_NAME_CLIENT} PROPERTIES
             VS_GLOBAL_RunCodeAnalysis true
             VS_GLOBAL_EnableClangTidyCodeAnalysis true
-            VS_GLOBAL_ClangTidyChecks "-checks=-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type;--header-filter=(src/ECS/)|(src/Client/)|(src/Server/)"
+            VS_GLOBAL_ClangTidyChecks "-checks=-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type"
         )
         set_target_properties(${PROJECT_NAME_SERVER} PROPERTIES
             VS_GLOBAL_RunCodeAnalysis true
             VS_GLOBAL_EnableClangTidyCodeAnalysis true
-            VS_GLOBAL_ClangTidyChecks "-checks=-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type;--header-filter=(src/ECS/)|(src/Client/)|(src/Server/)"
+            VS_GLOBAL_ClangTidyChecks "-checks=-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type"
         )
     else()
         set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "--fix" "--fix-notes" "--fix-errors")
