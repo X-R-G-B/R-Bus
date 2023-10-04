@@ -135,7 +135,7 @@ namespace Logger {
         };
 #endif
 
-        auto const now = std::chrono::current_zone()->to_local(
+        auto const now = std::chrono::get_tzdb().current_zone()->to_local(
             std::chrono::system_clock::now());
         std::string mes;
         auto it = _callbacks.find(levelT);
