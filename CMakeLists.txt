@@ -62,9 +62,15 @@ find_program(CLANG_TIDY_EXE NAMES "clang-tidy")
 
 if(CLANG_TIDY_EXE)
     if (MSVC)
+	if (NOT DEFINED NO_USE_CLANG_TIDY)
+        add_custom_command(OUTPUT ${CMAKE_BINARY_DIR}/.clang-tidy
+            COMMAND ${CMAKE_COMMAND} -E copy
+	    ${CMAKE_CURRENT_SOURCE_DIR}/.clang-tidy
+	    ${CMAKE_BINARY_DIR}/.clang-tidy
+        )
         set_target_properties(${PROJECT_NAME_CLIENT} PROPERTIES
-            VS_GLOBAL_RunCodeAnalysis true
-            VS_GLOBAL_EnableClangTidyCodeAnalysis true
+            VS_GLOBAL_RunCodeAnalysis "<$<CONFIG:Debug>:Debug>"
+            VS_GLOBAL_EnableClangTidyCodeAnalysis "<$<:Debug>:Debug>"
             VS_GLOBAL_ClangTidyChecks "-checks=-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type"
         )
         set_target_properties(${PROJECT_NAME_SERVER} PROPERTIES
@@ -72,6 +78,7 @@ if(CLANG_TIDY_EXE)
             VS_GLOBAL_EnableClangTidyCodeAnalysis true
             VS_GLOBAL_ClangTidyChecks "-checks=-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type"
         )
+        endif()
     else()
         set(CLANG_TIDY_COMMAND "${CLANG_TIDY_EXE}" "--fix" "--fix-notes" "--fix-errors")
         set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND}")
