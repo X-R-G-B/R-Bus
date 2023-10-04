@@ -5,12 +5,12 @@
 ** Logger.cpp
 */
 
-#include "Logger.hpp"
 #include <chrono>
 #include <sstream>
 #include <iostream>
 #include "Registry.hpp"
 #include "date/date.h"
+#include "Logger.hpp"
 
 namespace Logger {
     void fatal(const std::string &message)
@@ -136,7 +136,7 @@ namespace Logger {
 #endif
 
         auto const now = std::chrono::system_clock::now();
-        auto it = _callbacks.find(levelT);
+        auto it        = _callbacks.find(levelT);
         std::stringstream s;
         std::string mes;
 
