@@ -76,6 +76,8 @@ class Registry {
 
         Clock &getClock();
 
+        void unloadRaylibComponents(std::size_t id);
+
     private:
         Registry();
 

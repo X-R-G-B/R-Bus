@@ -15,7 +15,7 @@ class SparseArray {
     public:
         void add()
         {
-            _sparse.push_back(std::size_t(-1));
+            _sparse.emplace_back(std::size_t(-1));
         }
 
         void insertBack(const Component &value)
@@ -31,14 +31,14 @@ class SparseArray {
             }
 
             if (_sparse[id] > -1) {
-                _dense[_sparse[id]]     = value;
+                _dense[_sparse[id]]     = std::move(value);
                 _revSparse[_sparse[id]] = id;
                 return;
             }
 
             _sparse[id] = _dense.size();
-            _dense.push_back(value);
-            _revSparse.push_back(id);
+            _dense.emplace_back(std::move(value));
+            _revSparse.emplace_back(id);
         }
 
         void erase(std::size_t id)

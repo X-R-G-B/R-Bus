@@ -464,11 +464,6 @@ namespace Raylib {
         loadTextureFromImage(image);
     }
 
-    Sprite::~Sprite()
-    {
-        unloadSprite();
-    }
-
     void Sprite::loadTextureFromImage(Image image)
     {
         ::Image img;
