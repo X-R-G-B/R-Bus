@@ -37,9 +37,9 @@ namespace Nitwork {
 
     void NitworkServer::handleBodyAction(const struct header_s &header, const boost::asio::ip::udp::endpoint & /* unused */)
     {
-        // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
+        // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast, cppcoreguidelines-pro-bounds-pointer-arithmetic)
         auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
-        // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
+        // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast, cppcoreguidelines-pro-bounds-pointer-arithmetic)
         auto it = _actionsHandlers.find(action->magick);
 
         if (it == _actionsHandlers.end()) {

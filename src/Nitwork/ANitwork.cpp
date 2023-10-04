@@ -122,9 +122,9 @@ namespace Nitwork {
             startReceiveHandler();
             return;
         }
-        // NOLINT BEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
+        // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
         auto *header = reinterpret_cast<struct header_s *>(_receiveBuffer.data());
-        // NOLINT END(cppcoreguidelines-pro-type-reinterpret-cast)
+        // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
 
         if (header->magick1 != HEADER_CODE1 || header->magick2 != HEADER_CODE2) {
             std::cerr << "Error: header magick not valid" << std::endl;
@@ -163,7 +163,7 @@ namespace Nitwork {
         }
         std::reverse(ids.begin(), ids.end());
         for (std::size_t index = 0; index < _packetsSent.size(); index++) {
-            if (!ids[index]) {
+            if (ids[index] == 0) {
                 auto packet = std::find_if(_packetsSent.begin(), _packetsSent.end(), [header, index](auto &packet) {
                     return std::size_t(packet.second.id) == header.last_id_received - index;
                 });
