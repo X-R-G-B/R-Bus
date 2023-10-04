@@ -14,5 +14,7 @@
 namespace Systems {
     void windowCollision(std::size_t, std::size_t);
     void init(std::size_t, std::size_t);
+    void entitiesCollision(std::size_t, std::size_t);
+    void deathChecker(std::size_t, std::size_t);
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems();
 } // namespace Systems

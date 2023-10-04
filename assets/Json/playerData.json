@@ -1,0 +1,109 @@
+{
+    "player": {
+        "spritePath": "assets/R-TypeSheet/r-typesheet14.gif",
+        "damage": 10.0,
+        "health": 1.0,
+        "width": 10.0,
+        "height" : 10.0,
+        "rect": {
+            "x": 2.0,
+            "y": 2.0,
+            "width": 48.0,
+            "height": 48.0
+        },
+        "position" : {
+            "x": 10,
+            "y": 10
+        },
+        "collisionRect": {
+            "width": 6.0,
+            "height": 6.0
+        },
+        "animRect": {
+            "move" : [
+                {
+                    "x": 2.0,
+                    "y": 2.0,
+                    "width": 48.0,
+                    "height": 48.0
+                },
+                {
+                    "x": 2.0,
+                    "y": 51.0,
+                    "width": 46.0,
+                    "height": 47.0
+                },
+                {
+                    "x": 101.0,
+                    "y": 2.0,
+                    "width": 48.0,
+                    "height": 47.0
+                },
+                {
+                    "x": 152.0,
+                    "y": 2.0,
+                    "width": 46.0,
+                    "height": 47.0
+                },
+                {
+                    "x": 201.0,
+                    "y": 2.0,
+                    "width": 46.0,
+                    "height": 47.0
+                }
+            ],
+            "attack": [
+                {
+                    "x": 2.0,
+                    "y": 51.0,
+                    "width": 46.0,
+                    "height": 47.0
+                },
+                {
+                    "x": 101.0,
+                    "y": 2.0,
+                    "width": 48.0,
+                    "height": 47.0
+                },
+                {
+                    "x": 152.0,
+                    "y": 2.0,
+                    "width": 46.0,
+                    "height": 47.0
+                },
+                {
+                    "x": 202.0,
+                    "y": 2.0,
+                    "width": 46.0,
+                    "height": 47.0
+                }
+            ],
+            "dead": [
+                {
+                    "x": 180.0,
+                    "y": 140.0,
+                    "width": 18.0,
+                    "height": 12.0
+                },
+                {
+                    "x": 211.0,
+                    "y": 140.0,
+                    "width": 18.0,
+                    "height": 12.0
+                },
+                {
+                    "x": 230.0,
+                    "y": 140.0,
+                    "width": 18.0,
+                    "height": 12.0
+                },
+                {
+                    "x": 250.0,
+                    "y": 140.0,
+                    "width": 18.0,
+                    "height": 12.0
+                }
+            ]
+        }
+    }
+}

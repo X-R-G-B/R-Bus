@@ -61,7 +61,6 @@ namespace Systems {
 
     void SystemManager::resetChanges()
     {
-        std::cout << "je passes la dedans" << std::endl;
         _modified = false;
         _modifiedSystems.clear();
     }
