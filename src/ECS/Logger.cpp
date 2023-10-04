@@ -5,16 +5,12 @@
 ** Logger.cpp
 */
 
-#include "Logger.hpp"
 #include <chrono>
 #include <ctime>
 #include <format>
 #include <iostream>
-#include <map>
-#include <mutex>
-#include <string>
-
-#include <Registry.hpp>
+#include "Registry.hpp"
+#include "Logger.hpp"
 
 namespace Logger {
     void fatal(const std::string &message)
