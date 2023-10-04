@@ -11,26 +11,36 @@
 #include <map>
 #include <string>
 
-#define _LOG_FATAL_VALUE 0
-#define _LOG_ERROR_VALUE 1
-#define _LOG_WARN_VALUE  2
-#define _LOG_INFO_VALUE  3
-#define _LOG_DEBUG_VALUE 4
-#define _LOG_TRACE_VALUE 5
-#define _LOG_RESET_COLOR 6
-
 namespace Logger {
+    enum class LogLevel : int {
+        NOLOG = -1,
+        Fatal = 0,
+        Error = 1,
+        Warn  = 2,
+        Info  = 3,
+        Debug = 4,
+        Trace = 5,
+        MAXLOGLEVEL = 6,
+    };
+
+    void fatal(const std::string &message);
+    void error(const std::string &message);
+    void warn(const std::string &message);
+    void info(const std::string &message);
+    void debug(const std::string &message);
+    void trace(const std::string &message);
+
     /**
-     * @brief Logger singleton
+     * @brief Logger
      *
      * LogLevel:
-     * -1 - no messages
-     * 0 - only `fatal` are displayed
-     * 1 - `error` and `fatal` are displayed
-     * 2 - `warn`, `error` and `fatal` are displayed
-     * 3 - `info`, `warn`, `error` and `fatal` are displayed
-     * 4 - `debug`, `info`, `warn`, `error` and `fatal` are displayed
-     * 5 - `trace`, `debug`, `info`, `warn`, `error` and `fatal` are displayed
+     * LogLevel::NOLOG - no messages
+     * LogLevel::Fatal - only `fatal` are displayed
+     * LogLevel::Error - `error` and `fatal` are displayed
+     * LogLevel::Warn - `warn`, `error` and `fatal` are displayed
+     * LogLevel::Info - `info`, `warn`, `error` and `fatal` are displayed
+     * LogLevel::Debug - `debug`, `info`, `warn`, `error` and `fatal` are displayed
+     * LogLevel::Trace - `trace`, `debug`, `info`, `warn`, `error` and `fatal` are displayed
      *
      * Attention:
      * `debug` and `trace` will only do something in debug mode compilation.
@@ -38,7 +48,7 @@ namespace Logger {
      */
     class Logger {
         public:
-            Logger(int logLevel = _LOG_WARN_VALUE);
+            Logger(LogLevel logLevel = LogLevel::Info);
             /**
              * @brief Logger fata
              *
@@ -106,7 +116,7 @@ namespace Logger {
              * @param callback the callback
              */
             void subscribeCallback(
-                int type,
+                LogLevel type,
                 const std::string &name,
                 std::function<void(const std::string &)> callback);
             /**
@@ -115,17 +125,29 @@ namespace Logger {
              * @param type the type
              * @param name the name
              */
-            void unsubscribeCallback(int type, const std::string &name);
+            void unsubscribeCallback(LogLevel type, const std::string &name);
+            /**
+             * @brief set log level
+             *
+             * @param logLevel the log level
+             */
+            void setLogLevel(LogLevel logLevel);
+            /**
+             * @brief get log level
+             *
+             * @return the log level
+             */
+            [[nodiscard]] LogLevel getLogLevel() const;
 
         private:
             void print(
-                int levelT,
+                LogLevel levelT,
                 const std::string &level,
                 const std::string &message);
             std::map<
-                int,
+                LogLevel,
                 std::map<std::string, std::function<void(const std::string &)>>>
                 _callbacks;
-            int _logLevel;
+            LogLevel _logLevel;
     };
 } // namespace Logger

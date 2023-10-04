@@ -148,3 +148,8 @@ Clock &Registry::getClock()
 {
     return _clock;
 }
+
+Logger::Logger &Registry::getLogger()
+{
+    return _logger;
+}
