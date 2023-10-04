@@ -93,7 +93,6 @@ namespace Nitwork {
             std::cerr << "Client not connected" << std::endl;
             return;
         }
-        addStarGameMessage(endpoint, _endpoints.size());
     }
     /* End Handle packet (msg) Section */
 
