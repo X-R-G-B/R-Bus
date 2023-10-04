@@ -137,7 +137,6 @@ namespace Nitwork {
             return;
         }
         lock.lock();
-        std::cout << "Packet received with id : " << header->id << std::endl;
         _receivedPacketsIds.push_back(header->id);
         lock.unlock();
         handlePacketIdsReceived(*header);
@@ -149,7 +148,7 @@ namespace Nitwork {
 
     bool ANitwork::isAlreadyReceived(n_id_t id)
     {
-        return std::ranges::any_of(_receivedPacketsIds, [id](auto &receivedId) {
+        return std::any_of(_receivedPacketsIds.begin(), _receivedPacketsIds.end(), [id](auto &receivedId) {
             return receivedId == id;
         });
     }
@@ -241,7 +240,7 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_packetsSentMutex);
 
-        if (std::ranges::any_of(_packetsSent, [data](auto &packet) {
+        if (std::any_of(_packetsSent.begin(), _packetsSent.end(), [data](auto &packet) {
                 return packet.second.id == data.second.id;
             })) {
             return;
@@ -275,13 +274,12 @@ namespace Nitwork {
         });
         lastId = _receivedPacketsIds.back();
         for (int i = 0; i < MAX_NB_ACTION; i++) {
-            isPresent = std::ranges::any_of(_receivedPacketsIds, [lastId, i](auto &id) {
+            isPresent = std::any_of(_receivedPacketsIds.begin(), _receivedPacketsIds.end(), [lastId, i](auto &id) {
                 return id == lastId - i;
             });
             idsReceived = idsReceived << 1;
             idsReceived += (isPresent ? 1 : 0);
         }
-        std::cout << "ids received : " << idsReceived << std::endl;
         return idsReceived;
     }
 
