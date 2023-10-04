@@ -30,7 +30,7 @@ class SparseArray {
                     "SparseArrays::insert: ID out of bounds!");
             }
 
-            if (_sparse[id] > -1) {
+            if (static_cast<int>(_sparse[id]) > -1) {
                 _dense[_sparse[id]]     = value;
                 _revSparse[_sparse[id]] = id;
                 return;
@@ -48,7 +48,7 @@ class SparseArray {
                     "SparseArrays::erase: ID out of bounds!");
             }
             std::size_t sparseValue = _sparse[id];
-            if (sparseValue != -1) {
+            if (int(sparseValue) != -1) {
                 removeDenses(id, sparseValue);
             }
             auto it = _sparse.begin();
@@ -112,7 +112,7 @@ class SparseArray {
                 }
             }
             for (auto it2 = _sparse.begin(); it2 != _sparse.end(); it2++) {
-                if (*it2 > sparseValue) {
+                if (static_cast<int>(*it2) > static_cast<int>(sparseValue)) {
                     (*it2)--;
                 }
             }

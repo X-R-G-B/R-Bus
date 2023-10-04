@@ -63,7 +63,7 @@ namespace Systems {
     const Types::Velocity velocity           = {-0.7F, 0.0F};
     const Types::Missiles missileType        = {Types::MissileTypes::CLASSIC};
     const Types::Health health               = {1};
-    const Types::Dammage dammage             = {10};
+    const Types::Damage damage               = {10};
 
     static void createMissile(
         std::size_t id,
@@ -87,8 +87,8 @@ namespace Systems {
                 velocity);
             Registry::getInstance().getComponents<Types::Health>().insertBack(
                 health);
-            Registry::getInstance().getComponents<Types::Dammage>().insertBack(
-                dammage);
+            Registry::getInstance().getComponents<Types::Damage>().insertBack(
+                damage);
             Registry::getInstance().setToFrontLayers(entityId);
         }
     }
