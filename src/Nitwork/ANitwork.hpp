@@ -7,8 +7,14 @@
 
 #pragma once
 
+#ifdef _MSC_VER
+#pragma warning(push, 0)
+#endif
 #include <boost/asio/placeholders.hpp>
 #include <boost/bind/bind.hpp>
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
 #include <condition_variable>
 #include <iostream>
 #include <list>

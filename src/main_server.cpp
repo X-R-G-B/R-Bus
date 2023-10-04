@@ -2,8 +2,10 @@
 
 int main()
 {
+    int port = 4242;
+
     try {
-        Nitwork::NitworkServer::getInstance().start(4242);
+        Nitwork::NitworkServer::getInstance().start(port);
         while (true) { }
     } catch (std::exception& e) {
         std::cerr << e.what() << std::endl;
