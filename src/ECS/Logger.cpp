@@ -7,13 +7,10 @@
 
 #include "Logger.hpp"
 #include <chrono>
-#include <ctime>
-#include <format>
+#include <sstream>
 #include <iostream>
 #include "Registry.hpp"
 #include "date/date.h"
-#include <sstream>
-#include <string>
 
 namespace Logger {
     void fatal(const std::string &message)
