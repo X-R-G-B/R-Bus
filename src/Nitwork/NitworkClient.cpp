@@ -40,9 +40,9 @@ namespace Nitwork {
 
     void NitworkClient::handleBodyAction(const struct header_s &header, const boost::asio::ip::udp::endpoint &endpoint)
     {
-        // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
+        // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast, cppcoreguidelines-pro-bounds-pointer-arithmetic)
         auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
-        // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
+        // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast, cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (endpoint.address().to_string() != _endpoint.address().to_string()) {
             std::cerr << "Error: endpoint is not the server" << std::endl;
             return;
