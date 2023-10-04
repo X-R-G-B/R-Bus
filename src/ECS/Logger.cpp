@@ -7,10 +7,10 @@
 
 #include "Logger.hpp"
 #include <chrono>
-#include <ctime>
-#include <format>
 #include <iostream>
+#include <sstream>
 #include "Registry.hpp"
+#include "date/date.h"
 
 namespace Logger {
     void fatal(const std::string &message)
@@ -114,7 +114,7 @@ namespace Logger {
             {LogLevel::MAXLOGLEVEL, "\033[0m" },
         };
 #elif __APPLE__
-        static std::map<int, std::string> colors = {
+        static std::map<LogLevel, std::string> colors = {
             {LogLevel::Fatal,       "\033[31m"},
             {LogLevel::Error,       "\033[33m"},
             {LogLevel::Warn,        "\033[34m"},
@@ -124,24 +124,27 @@ namespace Logger {
             {LogLevel::MAXLOGLEVEL, "\033[0m" },
         };
 #else
-        static std::map<int, std::string> colors = {
-            {LogLevel::Fatal, ""},
-            {LogLevel::Error,               ""},
-            {LogLevel::Warn,""},
-            {LogLevel::Info,  ""},
-            {LogLevel::Debug,               ""},
-            {LogLevel::Trace,            ""},
-            {LogLevel::MAXLOG ""},
+        static std::map<LogLevel, std::string> colors = {
+            {LogLevel::Fatal,       ""},
+            {LogLevel::Error,       ""},
+            {LogLevel::Warn,        ""},
+            {LogLevel::Info,        ""},
+            {LogLevel::Debug,       ""},
+            {LogLevel::Trace,       ""},
+            {LogLevel::MAXLOGLEVEL, ""},
         };
 #endif
 
-        auto const now = std::chrono::current_zone()->to_local(
-            std::chrono::system_clock::now());
+        auto const now = std::chrono::system_clock::now();
+        auto it        = _callbacks.find(levelT);
+        std::stringstream s;
         std::string mes;
-        auto it = _callbacks.find(levelT);
 
-        mes = std::format("{:%Y-%m-%d %H:%M:%S}", now) + " [" + level + "] "
-            + message;
+        {
+            using namespace date;
+            s << now << " [" << level << "] " << message;
+        }
+        mes = s.str();
         std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL]
                   << std::endl;
         if (it != _callbacks.end()) {

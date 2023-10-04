@@ -13,6 +13,8 @@
 
 namespace Types {
 
+    enum MissileTypes { CLASSIC };
+
     struct CollisionRect {
             float width;
             float height;
@@ -36,8 +38,16 @@ namespace Types {
             int damage;
     };
 
+    struct Velocity {
+            float speedX;
+            float speedY;
+    };
+
     struct Player { };
 
+    struct Missiles {
+            MissileTypes type;
+    };
     struct Enemy { };
 
     struct Dead {
