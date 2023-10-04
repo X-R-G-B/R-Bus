@@ -63,7 +63,7 @@ namespace Systems {
     const Types::Velocity velocity           = {-0.7F, 0.0F};
     const Types::Missiles missileType        = {Types::MissileTypes::CLASSIC};
     const Types::Health health               = {1};
-    const Types::Damage damage             = {10};
+    const Types::Damage damage               = {10};
 
     static void createMissile(
         std::size_t id,

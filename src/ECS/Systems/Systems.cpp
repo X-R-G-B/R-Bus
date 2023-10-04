@@ -99,30 +99,30 @@ namespace Systems {
         }
     }
 
-    #ifndef NDEBUG
-        void debugCollisionRect(std::size_t /*unused*/, std::size_t /*unused*/)
-        {
-            Registry::components<Types::CollisionRect> arrCollisionRect =
-                Registry::getInstance().getComponents<Types::CollisionRect>();
-            Registry::components<Types::Position> arrPosition =
-                Registry::getInstance().getComponents<Types::Position>();
-            Registry::components<Types::RectangleShape> arrRectangleShape =
-                Registry::getInstance().getComponents<Types::RectangleShape>();
+#ifndef NDEBUG
+    void debugCollisionRect(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<Types::CollisionRect> arrCollisionRect =
+            Registry::getInstance().getComponents<Types::CollisionRect>();
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::RectangleShape> arrRectangleShape =
+            Registry::getInstance().getComponents<Types::RectangleShape>();
 
-            std::vector<std::size_t> ids = arrCollisionRect.getExistingsId();
+        std::vector<std::size_t> ids = arrCollisionRect.getExistingsId();
 
-            for (auto &id : ids) {
-                if (arrPosition.exist(id) && !arrRectangleShape.exist(id)) {
-                    Registry::getInstance()
-                        .getComponents<Types::RectangleShape>()
-                        .insert(
-                            id,
-                            {arrCollisionRect[id].width,
-                             arrCollisionRect[id].height});
-                }
+        for (auto &id : ids) {
+            if (arrPosition.exist(id) && !arrRectangleShape.exist(id)) {
+                Registry::getInstance()
+                    .getComponents<Types::RectangleShape>()
+                    .insert(
+                        id,
+                        {arrCollisionRect[id].width,
+                         arrCollisionRect[id].height});
             }
         }
-    #endif
+    }
+#endif
 
     void moveEntities(std::size_t /*unused*/, std::size_t /*unused*/)
     {
@@ -140,7 +140,7 @@ namespace Systems {
             }
         }
     }
-    
+
     static void executeDeathFunction(
         std::size_t id,
         Registry::components<Types::Dead> arrDead)
@@ -151,21 +151,21 @@ namespace Systems {
             Registry::getInstance().removeEntity(id);
         }
     }
-        void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
-        {
-            Registry::components<Types::Health> arrHealth =
-                Registry::getInstance().getComponents<Types::Health>();
-            Registry::components<Types::Dead> arrDead =
-                Registry::getInstance().getComponents<Types::Dead>();
+    void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<Types::Health> arrHealth =
+            Registry::getInstance().getComponents<Types::Health>();
+        Registry::components<Types::Dead> arrDead =
+            Registry::getInstance().getComponents<Types::Dead>();
 
-            std::vector<std::size_t> ids = arrHealth.getExistingsId();
-            for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
-                if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0
-                    && arrDead.exist(*itIds)) {
-                    executeDeathFunction(*itIds, arrDead);
-                }
+        std::vector<std::size_t> ids = arrHealth.getExistingsId();
+        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
+            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0
+                && arrDead.exist(*itIds)) {
+                executeDeathFunction(*itIds, arrDead);
             }
         }
+    }
 
     const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
     const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
@@ -262,18 +262,18 @@ namespace Systems {
             .removeSystem(systemId);
     }
 
-    #ifndef NDEBUG
-        std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
-        {
-            return {
-                windowCollision,
-                init,
-                entitiesCollision,
-                moveEntities,
-                debugCollisionRect,
-                deathChecker};
-        }
-    #else
+#ifndef NDEBUG
+    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
+    {
+        return {
+            windowCollision,
+            init,
+            entitiesCollision,
+            moveEntities,
+            debugCollisionRect,
+            deathChecker};
+    }
+#else
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
     {
         return {
@@ -283,5 +283,5 @@ namespace Systems {
             moveEntities,
             deathChecker};
     }
-    #endif
+#endif
 } // namespace Systems
