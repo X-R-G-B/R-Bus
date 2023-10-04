@@ -144,8 +144,6 @@ namespace Systems {
     const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
     const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
     const std::string ennemyPath = "assets/R-TypeSheet/r-typesheet18.gif";
-    const Types::Rect spriteRect = {2, 2, 48, 48};
-    const Types::CollisionRect collisionRect = {7, 7};
     const Raylib::Vector2 textPos            = {20, 50};
     constexpr int playerData                 = 70;
     constexpr int playerDammage              = 10;
@@ -153,15 +151,18 @@ namespace Systems {
     constexpr float musicVolume              = 0.02F;
     constexpr float soundVolume              = 0.1F;
     constexpr float fontScale                = 2.0F;
-    constexpr float playerWidth              = 10.0F;
-    constexpr float playerHeight             = 10.0F;
 
     constexpr int ennemyData                  = 10;
-    constexpr float ennemyWidth               = 20.F;
-    constexpr float ennemyHeight              = 20.F;
     const Types::Dammage ennemyDammage        = {20};
+
     const Types::Rect ennemySpriteRect        = {2, 67, 30, 32};
-    const Types::CollisionRect ennemyCollRect = {28, 35};
+    const Types::Rect spriteRect = {2, 2, 48, 48};
+
+    const Raylib::Vector2 playerSize          = {7, 7};
+    const Types::CollisionRect playerCollisionRect = {7, 7};
+
+    const Types::CollisionRect ennemyCollisionRect = {28, 35};
+    const Raylib::Vector2 ennemySize          = {28, 35};
 
     void init(std::size_t managerId, std::size_t systemId)
     {
@@ -169,12 +170,12 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Position>().insertBack(
             {playerData, playerData});
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {playerPath, playerWidth, playerHeight, id});
+            {playerPath, playerSize.x, playerSize.y, id});
         Registry::getInstance().getComponents<Types::Rect>().insertBack(
             spriteRect);
         Registry::getInstance()
             .getComponents<Types::CollisionRect>()
-            .insertBack(collisionRect);
+            .insertBack(playerCollisionRect);
         // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
         Registry::getInstance().getComponents<Types::AnimRect>().insertBack({
             spriteRect,
@@ -192,12 +193,12 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Position>().insertBack(
             {ennemyData, ennemyData});
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {ennemyPath, ennemyWidth, ennemyHeight, id});
+            {ennemyPath, ennemySize.x, ennemySize.y, id});
         Registry::getInstance().getComponents<Types::Rect>().insertBack(
             ennemySpriteRect);
         Registry::getInstance()
             .getComponents<Types::CollisionRect>()
-            .insertBack(ennemyCollRect);
+            .insertBack(ennemyCollisionRect);
         Registry::getInstance().getComponents<Types::Health>().insertBack(
             {playerHealth});
         Registry::getInstance().getComponents<Types::Dammage>().insertBack(
