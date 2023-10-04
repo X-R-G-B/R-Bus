@@ -11,6 +11,9 @@
 #include <format>
 #include <iostream>
 #include "Registry.hpp"
+#include "date/date.h"
+#include <sstream>
+#include <string>
 
 namespace Logger {
     void fatal(const std::string &message)
@@ -135,13 +138,13 @@ namespace Logger {
         };
 #endif
 
-        auto const now = std::chrono::get_tzdb().current_zone()->to_local(
-            std::chrono::system_clock::now());
-        std::string mes;
+        auto const now = std::chrono::system_clock::now();
         auto it = _callbacks.find(levelT);
+        std::stringstream s;
+        std::string mes;
 
-        mes = std::format("{:%Y-%m-%d %H:%M:%S}", now) + " [" + level + "] "
-            + message;
+        s << now << " [" << level << "] " << message;
+        mes = s.str();
         std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL]
                   << std::endl;
         if (it != _callbacks.end()) {
