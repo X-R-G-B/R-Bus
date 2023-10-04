@@ -62,9 +62,7 @@ namespace Nitwork {
 
     /* Handlers Section */
     // NOLINTBEGIN(readability-convert-member-functions-to-static)
-    void NitworkClient::handleStartGame(
-        const std::any &msg,
-        boost::asio::ip::udp::endpoint &/* unused */)
+    void NitworkClient::handleStartGame(const std::any &msg, boost::asio::ip::udp::endpoint & /* unused */)
     {
         // NOLINTEND(readability-convert-member-functions-to-static)
         const struct msgStartGame_s &msgStartGame = std::any_cast<struct msgStartGame_s>(msg);
