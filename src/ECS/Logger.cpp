@@ -125,13 +125,13 @@ namespace Logger {
         };
 #else
         static std::map<LogLevel, std::string> colors = {
-            {LogLevel::Fatal,        ""},
-            {LogLevel::Error,        ""},
-            {LogLevel::Warn,         ""},
-            {LogLevel::Info,         ""},
-            {LogLevel::Debug,        ""},
-            {LogLevel::Trace,        ""},
-            {LogLevel::MAXLOGLEVEL,  ""},
+            {LogLevel::Fatal,       ""},
+            {LogLevel::Error,       ""},
+            {LogLevel::Warn,        ""},
+            {LogLevel::Info,        ""},
+            {LogLevel::Debug,       ""},
+            {LogLevel::Trace,       ""},
+            {LogLevel::MAXLOGLEVEL, ""},
         };
 #endif
 
