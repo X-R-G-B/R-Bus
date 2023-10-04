@@ -8,9 +8,17 @@
 #pragma once
 
 #include <any>
+#include <map>
+#ifdef _MSC_VER
+    #pragma warning(push, 0)
+#endif
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
-#include <map>
+#include <boost/asio/placeholders.hpp>
+#include <boost/bind/bind.hpp>
+#ifdef _MSC_VER
+    #pragma warning(pop)
+#endif
 
 extern "C"
 {
