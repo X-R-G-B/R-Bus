@@ -7,6 +7,7 @@
 
 #include "GraphicSystems.hpp"
 #include "AudioSystems.hpp"
+#include "DeathSystems.hpp"
 #include "SpriteSystems.hpp"
 #include "TextSystems.hpp"
 
@@ -20,6 +21,8 @@ namespace Systems {
             spriteSystems = getSpriteSystems();
         std::vector<std::function<void(std::size_t, std::size_t)>> textSystems =
             getTextSystems();
+        std::vector<std::function<void(std::size_t, std::size_t)>>
+            deathSystems = DeathSystems::getDeathSystems();
 
         audioSystems.insert(
             audioSystems.end(),
@@ -29,6 +32,10 @@ namespace Systems {
             audioSystems.end(),
             textSystems.begin(),
             textSystems.end());
+        audioSystems.insert(
+            audioSystems.end(),
+            deathSystems.begin(),
+            deathSystems.end());
         return audioSystems;
     }
 } // namespace Systems
