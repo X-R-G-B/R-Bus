@@ -12,7 +12,6 @@
 #include "Registry.hpp"
 #include <fstream>
 #include <sstream>
-#include <iostream>
 #include <nlohmann/json.hpp>
 #include "SystemManagersDirector.hpp"
 
@@ -98,7 +97,7 @@ namespace Systems {
                 return jsonData;
             }
         }
-        std::cout << "Could not load the json data : An error occured." << std::endl;
+        Registry::getInstance().getLogger().error("Could not load json file. An error occured");
         return jsonData;
     }
 
@@ -131,9 +130,11 @@ namespace Systems {
         Registry::getInstance().setToBackLayers(id);
     }
 
+    const std::string parallaxFile = "assets/Json/parallaxData.json";
+
     void initParalax(std::size_t managerId, std::size_t systemId)
     {
-        nlohmann::json jsonData = openJsonData("assets/Json/parallaxData.json");
+        nlohmann::json jsonData = openJsonData(parallaxFile);
 
         for (auto &e : jsonData["parallax"]) {
             initParallaxEntity(e);
@@ -256,9 +257,11 @@ namespace Systems {
         }
     }
 
+    const std::string playerFile = "assets/Json/playerData.json";
+
     void initPlayer(std::size_t managerId, std::size_t systemId)
     {
-        nlohmann::json jsonData = openJsonData("assets/Json/playerData.json");
+        nlohmann::json jsonData = openJsonData(playerFile);
         std::size_t id = Registry::getInstance().addEntity();
 
         if (jsonData["player"] == nullptr) {

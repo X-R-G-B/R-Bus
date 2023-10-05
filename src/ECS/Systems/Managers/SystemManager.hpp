@@ -26,7 +26,6 @@ namespace Systems {
 
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static std::size_t _managerNb;
-
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
             std::size_t _id;
