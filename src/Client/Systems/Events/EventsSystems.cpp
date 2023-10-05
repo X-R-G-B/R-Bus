@@ -66,19 +66,17 @@ namespace Systems {
         }
     }
 
-    const Types::Rect spriteRect = {300, 121, 32, 10};
-    const std::string bulletPath = "assets/R-TypeSheet/r-typesheet1.gif";
-    constexpr float bulletWidth  = 5.0F;
-    constexpr float bulletHeight = 5.0F;
+    const Types::Rect spriteRect             = {300, 121, 32, 10};
+    const std::string bulletPath             = "assets/R-TypeSheet/r-typesheet1.gif";
+    constexpr float bulletWidth              = 5.0F;
+    constexpr float bulletHeight             = 5.0F;
     const Types::CollisionRect collisionRect = {1, 1};
     const Types::Velocity velocity           = {0.7F, 0.0F};
     const Types::Missiles missileType        = {Types::MissileTypes::CLASSIC};
     const Types::Health health               = {1};
     const Types::Damage damage               = {10};
 
-    static void createMissile(
-        std::size_t id,
-        Registry::components<Types::Position> &arrPosition)
+    static void createMissile(std::size_t id, Registry::components<Types::Position> &arrPosition)
     {
         if (arrPosition.exist(id)) {
             std::size_t entityId = Registry::getInstance().addEntity();
@@ -130,8 +128,7 @@ namespace Systems {
         }
     }
 
-    void
-    EventsSystems::changeScene(std::size_t /*unused*/, std::size_t /*unused*/)
+    void EventsSystems::changeScene(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
             SceneManager &sceneManager = SceneManager::getInstance();
@@ -143,8 +140,7 @@ namespace Systems {
         }
     }
 
-    std::vector<std::function<void(std::size_t, std::size_t)>>
-    EventsSystems::getEventSystems()
+    std::vector<std::function<void(std::size_t, std::size_t)>> EventsSystems::getEventSystems()
     {
         return {playerMovement, changeScene, playerShootBullet};
     }

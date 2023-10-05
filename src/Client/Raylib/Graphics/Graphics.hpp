@@ -144,11 +144,7 @@ namespace Raylib {
 
     class Sprite {
         public:
-            Sprite(
-                const std::string &fileName,
-                float width,
-                float height,
-                std::size_t id);
+            Sprite(const std::string &fileName, float width, float height, std::size_t id);
             Sprite(Image image, float width, float height);
             unsigned int getId() const;
             float getWidth() const;
@@ -163,21 +159,9 @@ namespace Raylib {
 
             void draw(int posX, int posY, Color tint);
             void drawV(Raylib::Vector2 position, Color tint);
-            void drawEx(
-                Raylib::Vector2 position,
-                float rotation,
-                float scale,
-                Color tint);
-            void drawRec(
-                Raylib::Rectangle source,
-                Raylib::Vector2 position,
-                Color tint);
-            void drawPro(
-                Rectangle source,
-                Rectangle dest,
-                Vector2 origin,
-                float rotation,
-                Color tint);
+            void drawEx(Raylib::Vector2 position, float rotation, float scale, Color tint);
+            void drawRec(Raylib::Rectangle source, Raylib::Vector2 position, Color tint);
+            void drawPro(Rectangle source, Rectangle dest, Vector2 origin, float rotation, Color tint);
 
         private:
             void loadTextureFromImage(Image image);
@@ -191,11 +175,7 @@ namespace Raylib {
 
     class Text {
         public:
-            Text(
-                std::string text,
-                Vector2 position = {0, 0},
-                float fontSize   = 5.0F,
-                Color color      = BLACK);
+            Text(std::string text, Vector2 position = {0, 0}, float fontSize = 5.0F, Color color = BLACK);
             void draw();
             void drawEx(float spacing);
             void drawPro(Vector2 origin, float rotation, float spacing);

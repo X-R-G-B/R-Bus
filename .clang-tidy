@@ -1,5 +1,5 @@
 ---
 Checks:          '-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type'
 WarningsAsErrors: '-*,clang-diagnostic-*,clang-analyzer-*,-*,clang-analyzer-*,concurrency-*,cppcoreguidelines-*,modernize-*,portability-*,readability-*,-readability-identifier-length,-modernize-use-trailing-return-type'
-HeaderFilterRegex: '(src/ECS/)|(src/Client/)|(src/Server/)'
+HeaderFilterRegex: '(src/ECS/)|(src/Client/)|(src/Server/)|(src/Nitwork/)'
 AnalyzeTemporaryDtors: false

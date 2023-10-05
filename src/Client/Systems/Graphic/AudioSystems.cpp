@@ -10,9 +10,7 @@
 #include "Raylib.hpp"
 
 namespace Systems {
-    void GraphicSystems::soundEffectPlayer(
-        std::size_t /*unused*/,
-        std::size_t /*unused*/)
+    void GraphicSystems::soundEffectPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Raylib::Sound> arrSoundEffect =
             Registry::getInstance().getComponents<Raylib::Sound>();
@@ -25,8 +23,7 @@ namespace Systems {
         }
     }
 
-    void
-    GraphicSystems::musicPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
+    void GraphicSystems::musicPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Raylib::Music> arrMusics =
             Registry::getInstance().getComponents<Raylib::Music>();
@@ -45,31 +42,24 @@ namespace Systems {
     const std::string musicPath = "assets/Audio/Musics/Title.mp3";
     const std::string soundPath = "assets/Audio/Sounds/fire.ogg";
 
-    void GraphicSystems::playSoundWithKey(
-        std::size_t /*unused*/,
-        std::size_t /*unused*/)
+    void GraphicSystems::playSoundWithKey(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry = Registry::getInstance();
-        Registry::components<Raylib::Music> arrMusics =
-            registry.getComponents<Raylib::Music>();
-        Registry::components<Raylib::Sound> arrSounds =
-            registry.getComponents<Raylib::Sound>();
+        Registry &registry                            = Registry::getInstance();
+        Registry::components<Raylib::Music> arrMusics = registry.getComponents<Raylib::Music>();
+        Registry::components<Raylib::Sound> arrSounds = registry.getComponents<Raylib::Sound>();
 
         for (auto &music : arrMusics) {
-            if (music.getPath() == musicPath
-                && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_SPACE)) {
+            if (music.getPath() == musicPath && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_SPACE)) {
                 music.setNeedToPlay(true);
             }
         }
         for (auto &sound : arrSounds) {
-            if (sound.getPath() == soundPath
-                && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_ENTER)) {
+            if (sound.getPath() == soundPath && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_ENTER)) {
                 sound.setNeedToPlay(true);
             }
         }
     }
-    std::vector<std::function<void(std::size_t, std::size_t)>>
-    GraphicSystems::getAudioSystems()
+    std::vector<std::function<void(std::size_t, std::size_t)>> GraphicSystems::getAudioSystems()
     {
         return {soundEffectPlayer, musicPlayer, playSoundWithKey};
     }

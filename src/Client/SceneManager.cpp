@@ -26,8 +26,7 @@ static void initRaylib()
 {
     Raylib::initWindow(screenWidth, screenHeight, "R-Bus");
     Raylib::setWindowState(Raylib::ConfigFlags::WINDOW_RESIZABLE);
-    Raylib::setTargetFPS(
-        Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
+    Raylib::setTargetFPS(Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
     Raylib::initAudioDevice();
 }
 
