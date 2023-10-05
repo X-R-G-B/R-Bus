@@ -62,12 +62,12 @@ namespace Nitwork {
                 {
                     START_GAME,
                     {
-                        handleBodyT([this](actionHandler &handler, const struct header_s &header) {
+                        [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgStartGame_s>(handler, header);
-                        }),
-                        actionHandler([this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                        },
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             handleStartGame(any, endpoint);
-                        })
+                        }
                     },
                 }
             };
@@ -77,18 +77,15 @@ namespace Nitwork {
                 > _actionToSendHandlers = {
                 {
                     INIT,
-                    actionHandler([this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                    [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             sendData<struct packetMsgInit_s>(any, endpoint);
                         }
-                    )
                 },
                 {
                     READY,
-                    actionHandler(
                         [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             sendData<struct packetMsgReady_s>(any, endpoint);
                         }
-                    )
                 }
             };
             // clang-format on

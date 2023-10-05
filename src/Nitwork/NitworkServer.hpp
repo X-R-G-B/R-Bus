@@ -57,27 +57,27 @@ namespace Nitwork {
             std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
                 {
                     INIT,
-                 {handleBodyT([this](actionHandler &actionHandler, const struct header_s &header) {
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgInit_s>(actionHandler, header);
-                  }),
-                  actionHandler([this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                  },
+                  [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       handleInitMsg(msg, endpoint);
-                  })}
+                  }}
                 },
                 {
                      READY,
-                 {handleBodyT([this](actionHandler &actionHandler, const struct header_s &header) {
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgReady_s>(actionHandler, header);
-                  }),
-                  actionHandler([this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                  },
+                  [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       handleReadyMsg(msg, endpoint);
-                  })}
+                  }}
                 },
             };
             std::map<enum n_actionType_t, actionHandler> _actionToSendHandlers = {
-                {START_GAME, actionHandler([this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                {START_GAME, [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                      sendData<struct packetMsgStartGame_s>(any, endpoint);
-                 })}
+                 }}
             };
     };
 } // namespace Nitwork
