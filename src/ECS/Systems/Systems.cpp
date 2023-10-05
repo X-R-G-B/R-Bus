@@ -7,13 +7,13 @@
 
 #include "Systems.hpp"
 #include <cstddef>
+#include <fstream>
+#include <iostream>
+#include <nlohmann/json.hpp>
+#include <sstream>
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <nlohmann/json.hpp>
 #include "SystemManagersDirector.hpp"
 
 namespace Systems {
@@ -107,27 +107,20 @@ namespace Systems {
         std::size_t id = Registry::getInstance().addEntity();
 
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id}
-        );
+            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id});
         Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {Types::Position(parallaxData["position"])}
-        );
+            {Types::Position(parallaxData["position"])});
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::getInstance().getComponents<Types::InitialPosition>().insertBack(
-            {arrPosition[id].x, arrPosition[id].y}
-        );
+            {arrPosition[id].x, arrPosition[id].y});
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(
-            {Types::Velocity(parallaxData["velocity"])}
-        );
+            {Types::Velocity(parallaxData["velocity"])});
         if (parallaxData["rect"] != nullptr) {
             Registry::getInstance().getComponents<Types::Rect>().insertBack(
-                {Types::Rect(parallaxData["rect"])}
-            );
+                {Types::Rect(parallaxData["rect"])});
         }
-        Registry::getInstance().getComponents<Types::Parallax>().insertBack(
-            {}
-        );
+        Registry::getInstance().getComponents<Types::Parallax>().insertBack({});
         Registry::getInstance().setToBackLayers(id);
     }
 
@@ -139,9 +132,7 @@ namespace Systems {
             initParallaxEntity(e);
         }
 
-        SystemManagersDirector::getInstance()
-            .getSystemManager(managerId)
-            .removeSystem(systemId);
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
     void entitiesCollision(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -152,7 +143,6 @@ namespace Systems {
             registry.getComponents<Types::CollisionRect>();
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::CollisionRect), typeid(Types::Position)});
-
 
         for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
             checkCollisionEntity(itIds, ids, arrPosition, arrCollisionRect);
@@ -207,9 +197,12 @@ namespace Systems {
         }
     }
 
-    static void resetParallaxPosition(std::size_t id, Registry::components<Types::InitialPosition> &arrInitialPos, Registry::components<Types::Position> &arrPosition)
+    static void resetParallaxPosition(
+        std::size_t id,
+        Registry::components<Types::InitialPosition> &arrInitialPos,
+        Registry::components<Types::Position> &arrPosition)
     {
-        constexpr int maxOutParallaxLeft = -100;
+        constexpr int maxOutParallaxLeft  = -100;
         constexpr int maxOutParallaxRight = 100;
 
         if (arrPosition[id].x <= maxOutParallaxLeft) {
@@ -226,9 +219,9 @@ namespace Systems {
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
-        Registry::components<Types::Parallax> arrParallax = 
+        Registry::components<Types::Parallax> arrParallax =
             Registry::getInstance().getComponents<Types::Parallax>();
-        Registry::components<Types::Velocity> arrVelocity = 
+        Registry::components<Types::Velocity> arrVelocity =
             Registry::getInstance().getComponents<Types::Velocity>();
         Registry::components<Types::InitialPosition> arrInitialPos =
             Registry::getInstance().getComponents<Types::InitialPosition>();
@@ -259,44 +252,30 @@ namespace Systems {
     void initPlayer(std::size_t managerId, std::size_t systemId)
     {
         nlohmann::json jsonData = openJsonData("assets/Json/playerData.json");
-        std::size_t id = Registry::getInstance().addEntity();
+        std::size_t id          = Registry::getInstance().addEntity();
 
         if (jsonData["player"] == nullptr) {
             return;
         }
         jsonData = jsonData["player"];
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {jsonData["spritePath"], jsonData["width"], jsonData["height"], id}
-        );
+            {jsonData["spritePath"], jsonData["width"], jsonData["height"], id});
         Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {Types::Position(jsonData["position"])}
-        );
-        Registry::getInstance().getComponents<Types::Rect>().insertBack(
-            {Types::Rect(jsonData["rect"])}
-        );
+            {Types::Position(jsonData["position"])});
+        Registry::getInstance().getComponents<Types::Rect>().insertBack({Types::Rect(jsonData["rect"])});
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
-            {Types::CollisionRect(jsonData["collisionRect"])}
-        );
-        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(
-            Types::AnimRect(Types::Rect(jsonData["rect"]),
+            {Types::CollisionRect(jsonData["collisionRect"])});
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
+            Types::Rect(jsonData["rect"]),
             std::vector<Types::Rect>(jsonData["animRect"]["move"]),
             std::vector<Types::Rect>(jsonData["animRect"]["attack"]),
-            std::vector<Types::Rect>(jsonData["animRect"]["dead"]))
-        );
+            std::vector<Types::Rect>(jsonData["animRect"]["dead"])));
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack(
-            {jsonData["damage"]}
-        );
-        Registry::getInstance().getComponents<Types::Health>().insertBack(
-            {jsonData["health"]}
-        );
-        Registry::getInstance().getComponents<Types::Dead>().insertBack(
-            {std::nullopt}
-        );
+        Registry::getInstance().getComponents<Types::Damage>().insertBack({jsonData["damage"]});
+        Registry::getInstance().getComponents<Types::Health>().insertBack({jsonData["health"]});
+        Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
         Registry::getInstance().setToFrontLayers(id);
-        SystemManagersDirector::getInstance()
-            .getSystemManager(managerId)
-            .removeSystem(systemId);
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
 #ifndef NDEBUG
