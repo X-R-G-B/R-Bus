@@ -8,11 +8,11 @@
 #pragma once
 
 #include <any>
-#include <map>
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <boost/asio/placeholders.hpp>
 #include <boost/bind/bind.hpp>
+#include <map>
 
 extern "C"
 {
@@ -85,7 +85,9 @@ namespace Nitwork {
             virtual void
             headerHandler(std::size_t bytes_received, const boost::system::error_code &error) = 0;
             // handler func for headerHandler which handle the action
-            virtual void handleBodyAction(const struct header_s &header, const boost::asio::ip::udp::endpoint &endpoint) = 0;
+            virtual void handleBodyAction(
+                const struct header_s &header,
+                const boost::asio::ip::udp::endpoint &endpoint) = 0;
 
             // getters
             [[nodiscard]] virtual const std::map<enum n_actionType_t, actionHandler> &

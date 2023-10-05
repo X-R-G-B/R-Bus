@@ -449,10 +449,7 @@ namespace Raylib {
         Registry::getInstance().setToDefaultLayer(id);
     }
 
-    Sprite::Sprite(Image image, float width, float height)
-        : _texture(),
-          _width(width),
-          _height(height)
+    Sprite::Sprite(Image image, float width, float height) : _texture(), _width(width), _height(height)
     {
         loadTextureFromImage(image);
     }

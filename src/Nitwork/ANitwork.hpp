@@ -99,8 +99,11 @@ namespace Nitwork {
 
             // handler func for receive handler which handle the action
             template <typename B>
-            void
-            handleBodyDatas(const actionHandler &handler, const struct header_s &header, B &body, const boost::system::error_code &error)
+            void handleBodyDatas(
+                const actionHandler &handler,
+                const struct header_s &header,
+                B &body,
+                const boost::system::error_code &error)
             {
                 if (error) {
                     std::cerr << "Error: " << error.message() << std::endl;
@@ -118,14 +121,13 @@ namespace Nitwork {
                 T data = std::any_cast<T>(packet.body);
 
                 data.header.ids_received = getIdsReceived();
-                auto updatedPacket = Packet(packet.id, packet.action, std::make_any<T>(data));
+                auto updatedPacket       = Packet(packet.id, packet.action, std::make_any<T>(data));
                 std::cout << "updatedPacket.header.ids_received: " << data.header.ids_received << std::endl;
                 return updatedPacket;
             }
 
             void addPacketToSentPackages(
                 const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, Packet> &data);
-
 
         protected:
             boost::asio::io_context _context; // The main context
@@ -168,26 +170,19 @@ namespace Nitwork {
                 _actions; // A list of actions which will be handled by the second context
             std::list<std::pair<boost::asio::ip::udp::endpoint, Packet>>
                 _outputQueue; // A queue of actions which will be sent to the clients
-            std::map<enum n_actionType_t, std::function<Packet(const std::any &)>>
-                _updatePacketHandlers = {
-                    {
-                        INIT,
-                        [this](const std::any &any) {
-                            return updateHeaderPacket<struct packetMsgInit_s>(std::any_cast<Packet>(any));
-                        }
-                    },
-                    {
-                        READY,
-                        [this](const std::any &any) {
-                            return updateHeaderPacket<struct packetMsgReady_s>(std::any_cast<Packet>(any));
-                        }
-                    },
-                    {
-                        START_GAME,
-                        [this](const std::any &any) {
-                            return updateHeaderPacket<struct packetMsgStartGame_s>(std::any_cast<Packet>(any));
-                        }
-                    },
-                }; // A map of actions which will be sent to the clients
-    };                        // class INitwork
+            std::map<enum n_actionType_t, std::function<Packet(const std::any &)>> _updatePacketHandlers = {
+                {INIT,
+                 [this](const std::any &any) {
+                     return updateHeaderPacket<struct packetMsgInit_s>(std::any_cast<Packet>(any));
+                 }},
+                {READY,
+                 [this](const std::any &any) {
+                     return updateHeaderPacket<struct packetMsgReady_s>(std::any_cast<Packet>(any));
+                 }},
+                {START_GAME,
+                 [this](const std::any &any) {
+                     return updateHeaderPacket<struct packetMsgStartGame_s>(std::any_cast<Packet>(any));
+                 }},
+            }; // A map of actions which will be sent to the clients
+    };         // class INitwork
 } // namespace Nitwork

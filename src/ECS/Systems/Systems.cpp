@@ -109,12 +109,9 @@ namespace Systems {
 
         for (auto &id : ids) {
             if (arrPosition.exist(id) && !arrRectangleShape.exist(id)) {
-                Registry::getInstance()
-                    .getComponents<Types::RectangleShape>()
-                    .insert(
-                        id,
-                        {arrCollisionRect[id].width,
-                         arrCollisionRect[id].height});
+                Registry::getInstance().getComponents<Types::RectangleShape>().insert(
+                    id,
+                    {arrCollisionRect[id].width, arrCollisionRect[id].height});
             }
         }
     }
@@ -137,9 +134,7 @@ namespace Systems {
         }
     }
 
-    static void executeDeathFunction(
-        std::size_t id,
-        Registry::components<Types::Dead> arrDead)
+    static void executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead)
     {
         if (arrDead[id].deathFunction != std::nullopt) {
             arrDead[id].deathFunction.value()(id);
@@ -161,11 +156,11 @@ namespace Systems {
         }
     }
 
-    const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
-    const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
-    const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
-    const std::string ennemyPath = "assets/R-TypeSheet/r-typesheet18.gif";
-    const Types::Rect spriteRect = {2, 2, 48, 48};
+    const std::string musicPath              = "assets/Audio/Musics/Title.mp3";
+    const std::string soundPath              = "assets/Audio/Sounds/fire.ogg";
+    const std::string playerPath             = "assets/R-TypeSheet/r-typesheet14.gif";
+    const std::string ennemyPath             = "assets/R-TypeSheet/r-typesheet18.gif";
+    const Types::Rect spriteRect             = {2, 2, 48, 48};
     const Types::CollisionRect collisionRect = {25, 25};
     const Raylib::Vector2 textPos            = {20, 50};
     constexpr int playerData                 = 10;
@@ -221,39 +216,22 @@ namespace Systems {
              textPos,
              fontScale,
              Raylib::DarkBlue});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack(
-            {enemyDamage});
-        Registry::getInstance().getComponents<Types::Health>().insertBack(
-            {playerHealth2});
-        SystemManagersDirector::getInstance()
-            .getSystemManager(managerId)
-            .removeSystem(systemId);
+        Registry::getInstance().getComponents<Types::Damage>().insertBack({enemyDamage});
+        Registry::getInstance().getComponents<Types::Health>().insertBack({playerHealth2});
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
 
-        SystemManagersDirector::getInstance()
-            .getSystemManager(managerId)
-            .removeSystem(systemId);
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
 #ifndef NDEBUG
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
     {
-        return {
-            windowCollision,
-            init,
-            entitiesCollision,
-            moveEntities,
-            debugCollisionRect,
-            deathChecker};
+        return {windowCollision, init, entitiesCollision, moveEntities, debugCollisionRect, deathChecker};
     }
 #else
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
     {
-        return {
-            windowCollision,
-            init,
-            entitiesCollision,
-            moveEntities,
-            deathChecker};
+        return {windowCollision, init, entitiesCollision, moveEntities, deathChecker};
     }
 #endif
 } // namespace Systems

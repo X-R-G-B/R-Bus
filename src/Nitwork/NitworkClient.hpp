@@ -27,7 +27,6 @@ namespace Nitwork {
                 int tick              = TICKS_PER_SECOND,
                 const std::string &ip = "") final;
 
-
             // Messages creation methods
             void addInitMsg();
             void addReadyMsg();
@@ -36,7 +35,9 @@ namespace Nitwork {
             NitworkClient();
             bool startNitworkConfig(int port, const std::string &ip) final;
 
-            void handleBodyAction(const struct header_s &header, const boost::asio::ip::udp::endpoint &endpoint) final;
+            void handleBodyAction(
+                const struct header_s &header,
+                const boost::asio::ip::udp::endpoint &endpoint) final;
 
             [[nodiscard]] const std::map<enum n_actionType_t, actionHandler> &
             getActionToSendHandlers() const final;
