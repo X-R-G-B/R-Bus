@@ -2,6 +2,7 @@
 # Install deps
 
 if command -v apt-get 2>/dev/null; then
+    apt-get update
     apt-get install -y g++ cmake clang-tidy clang-format xorg-dev
 elif command -v pacman 2>/dev/null; then
     pacman -S g++ cmake clang
