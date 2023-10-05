@@ -11,8 +11,7 @@
 namespace Systems {
 
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
-    SystemManagersDirector SystemManagersDirector::_instance =
-        SystemManagersDirector();
+    SystemManagersDirector SystemManagersDirector::_instance = SystemManagersDirector();
     // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
     SystemManagersDirector &SystemManagersDirector::getInstance()

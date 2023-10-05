@@ -21,59 +21,44 @@ namespace Systems {
         }
     }
 
-    void GraphicSystems::rectIncrementation(
-        std::size_t /*unused*/,
-        std::size_t /*unused*/)
+    void GraphicSystems::rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry = Registry::getInstance();
-        Registry::components<Types::AnimRect> arrAnimRect =
-            registry.getComponents<Types::AnimRect>();
-        Registry::components<Types::Rect> arrRect =
-            registry.getComponents<Types::Rect>();
-        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
-            {typeid(Types::AnimRect), typeid(Types::Rect)});
+        Registry &registry                                = Registry::getInstance();
+        Registry::components<Types::AnimRect> arrAnimRect = registry.getComponents<Types::AnimRect>();
+        Registry::components<Types::Rect> arrRect         = registry.getComponents<Types::Rect>();
+        std::vector<std::size_t> ids =
+            registry.getEntitiesByComponents({typeid(Types::AnimRect), typeid(Types::Rect)});
 
         for (auto id : ids) {
             Types::AnimRect &animRect = arrAnimRect[id];
-            arrRect[id] = getCurrentList(animRect)[animRect.currentRectInList];
+            arrRect[id]               = getCurrentList(animRect)[animRect.currentRectInList];
             if (animRect.currentRectList != Types::RectListType::DEFAULTRECT) {
                 animRect.currentRectInList++;
-                if (animRect.currentRectInList
-                    == getCurrentList(animRect).size()) {
+                if (animRect.currentRectInList == getCurrentList(animRect).size()) {
                     animRect.currentRectInList = 0;
                 }
             }
         }
     }
 
-    void
-    GraphicSystems::rectRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
+    void GraphicSystems::rectRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry = Registry::getInstance();
-        Registry::components<Types::Position> arrPosition =
-            registry.getComponents<Types::Position>();
+        Registry &registry                                = Registry::getInstance();
+        Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::RectangleShape> arrRect =
             registry.getComponents<Types::RectangleShape>();
-        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
-            {typeid(Types::RectangleShape), typeid(Types::Position)});
+        std::vector<std::size_t> ids =
+            registry.getEntitiesByComponents({typeid(Types::RectangleShape), typeid(Types::Position)});
 
         for (auto id : ids) {
             Types::Position &position        = arrPosition[id];
             Types::RectangleShape &rectangle = arrRect[id];
 
-            float x =
-                (position.x * static_cast<float>(Raylib::getScreenWidth()))
-                / denominator;
-            float y =
-                (position.y * static_cast<float>(Raylib::getScreenHeight()))
-                / denominator;
+            float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
+            float y = (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
-            float width =
-                (rectangle.width * static_cast<float>(Raylib::getScreenWidth()))
-                / denominator;
-            float height = (rectangle.height
-                            * static_cast<float>(Raylib::getScreenHeight()))
-                / denominator;
+            float width  = (rectangle.width * static_cast<float>(Raylib::getScreenWidth())) / denominator;
+            float height = (rectangle.height * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
             DrawRectangle(
                 static_cast<int>(x),
@@ -84,47 +69,34 @@ namespace Systems {
         }
     }
 
-    static void
-    drawSpriteWithoutRect(Types::Position &position, Raylib::Sprite &sprite)
+    static void drawSpriteWithoutRect(Types::Position &position, Raylib::Sprite &sprite)
     {
         float scale               = 1.0F;
         float rotation            = 0;
         const Raylib::Color tint  = Raylib::White;
         Raylib::Vector2 spritePos = {0, 0};
 
-        float x = (position.x * static_cast<float>(Raylib::getScreenWidth()))
-            / denominator;
-        float y = (position.y * static_cast<float>(Raylib::getScreenHeight()))
-            / denominator;
+        float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
+        float y = (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
-        scale =
-            (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth()))
-            / denominator / static_cast<float>(sprite.getTextureWidth());
+        scale = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator
+            / static_cast<float>(sprite.getTextureWidth());
         spritePos = {x, y};
 
         sprite.drawEx(spritePos, rotation, scale, tint);
     }
 
-    static void drawSpriteWithRect(
-        Types::Position &position,
-        Raylib::Sprite &sprite,
-        Types::Rect &rect)
+    static void drawSpriteWithRect(Types::Position &position, Raylib::Sprite &sprite, Types::Rect &rect)
     {
         Raylib::Vector2 origin   = {0, 0};
         float rotation           = 0;
         const Raylib::Color tint = Raylib::White;
 
-        float x = (position.x * static_cast<float>(Raylib::getScreenWidth()))
-            / denominator;
-        float y = (position.y * static_cast<float>(Raylib::getScreenHeight()))
-            / denominator;
+        float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
+        float y = (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
-        float width =
-            (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth()))
-            / denominator;
-        float height =
-            (sprite.getHeight() * static_cast<float>(Raylib::getScreenHeight()))
-            / denominator;
+        float width  = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator;
+        float height = (sprite.getHeight() * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
         sprite.drawPro(
             Raylib::Rectangle(rect.x, rect.y, rect.width, rect.height),
@@ -136,21 +108,15 @@ namespace Systems {
 
     static void renderEntityList(std::vector<std::size_t> list)
     {
-        Registry &registry = Registry::getInstance();
-        Registry::components<Raylib::Sprite> arrSprite =
-            registry.getComponents<Raylib::Sprite>();
-        Registry::components<Types::Rect> arrRect =
-            registry.getComponents<Types::Rect>();
-        Registry::components<Types::Position> arrPosition =
-            registry.getComponents<Types::Position>();
+        Registry &registry                                = Registry::getInstance();
+        Registry::components<Raylib::Sprite> arrSprite    = registry.getComponents<Raylib::Sprite>();
+        Registry::components<Types::Rect> arrRect         = registry.getComponents<Types::Rect>();
+        Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
 
         for (auto id : list) {
             if (arrPosition.exist(id)) {
                 if (arrRect.exist(id)) {
-                    drawSpriteWithRect(
-                        arrPosition[id],
-                        arrSprite[id],
-                        arrRect[id]);
+                    drawSpriteWithRect(arrPosition[id], arrSprite[id], arrRect[id]);
                 } else {
                     drawSpriteWithoutRect(arrPosition[id], arrSprite[id]);
                 }
@@ -158,16 +124,12 @@ namespace Systems {
         }
     }
 
-    void GraphicSystems::spriteRenderer(
-        std::size_t /*unused*/,
-        std::size_t /*unused*/)
+    void GraphicSystems::spriteRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry = Registry::getInstance();
-        std::vector<std::vector<std::size_t>> backLayers =
-            registry.getBackLayers();
-        std::vector<std::size_t> defaultLayer = registry.getDefaultLayer();
-        std::vector<std::vector<std::size_t>> frontLayers =
-            registry.getFrontLayers();
+        Registry &registry                                = Registry::getInstance();
+        std::vector<std::vector<std::size_t>> backLayers  = registry.getBackLayers();
+        std::vector<std::size_t> defaultLayer             = registry.getDefaultLayer();
+        std::vector<std::vector<std::size_t>> frontLayers = registry.getFrontLayers();
 
         for (auto list : backLayers) {
             renderEntityList(list);
@@ -178,8 +140,7 @@ namespace Systems {
         }
     }
 
-    std::vector<std::function<void(std::size_t, std::size_t)>>
-    GraphicSystems::getSpriteSystems()
+    std::vector<std::function<void(std::size_t, std::size_t)>> GraphicSystems::getSpriteSystems()
     {
         return {rectIncrementation, rectRenderer, spriteRenderer};
     }

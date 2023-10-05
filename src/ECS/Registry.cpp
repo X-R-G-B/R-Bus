@@ -43,8 +43,7 @@ void Registry::clear()
     _entitiesNb = 0;
 }
 
-static std::vector<std::size_t>
-match(std::vector<std::size_t> fst, std::vector<std::size_t> scd)
+static std::vector<std::size_t> match(std::vector<std::size_t> fst, std::vector<std::size_t> scd)
 {
     std::vector<std::size_t> res;
 
@@ -67,8 +66,7 @@ std::vector<std::size_t> Registry::getExistings(std::type_index type)
     return (funcIt->second)(*this);
 }
 
-std::vector<std::size_t>
-Registry::getEntitiesByComponents(std::vector<std::type_index> types)
+std::vector<std::size_t> Registry::getEntitiesByComponents(std::vector<std::type_index> types)
 {
     auto it                      = types.begin();
     std::vector<std::size_t> res = getExistings(*it);
@@ -121,8 +119,7 @@ void Registry::initLayers(bool back)
     }
 
     for (std::size_t i = 0; i < max; i++) {
-        std::vector<std::vector<std::size_t>> &layers =
-            back ? _backLayers : _frontLayers;
+        std::vector<std::vector<std::size_t>> &layers = back ? _backLayers : _frontLayers;
         layers.emplace_back();
     }
     if (back) {

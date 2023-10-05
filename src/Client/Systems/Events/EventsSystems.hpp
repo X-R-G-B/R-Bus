@@ -16,7 +16,6 @@ namespace Systems {
         void playerMovement(std::size_t /*unused*/, std::size_t /*unused*/);
         void changeScene(std::size_t /*unused*/, std::size_t /*unused*/);
         void shootBullet(std::size_t /*unused*/, std::size_t /*unused*/);
-        std::vector<std::function<void(std::size_t, std::size_t)>>
-        getEventSystems();
+        std::vector<std::function<void(std::size_t, std::size_t)>> getEventSystems();
     } // namespace EventsSystems
 } // namespace Systems
