@@ -14,12 +14,9 @@ namespace Systems {
     class SystemManager {
         public:
             SystemManager();
-            SystemManager(
-                std::vector<std::function<void(std::size_t, std::size_t)>>
-                    systems);
+            SystemManager(std::vector<std::function<void(std::size_t, std::size_t)>> systems);
             void updateSystems();
-            void addSystem(
-                std::function<void(std::size_t, std::size_t)> /*sys*/);
+            void addSystem(std::function<void(std::size_t, std::size_t)> /*sys*/);
             void removeSystem(std::size_t /*id*/);
             void resetChanges();
 

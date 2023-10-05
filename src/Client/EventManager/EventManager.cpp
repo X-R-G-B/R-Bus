@@ -30,10 +30,7 @@ void EventManager::updateEvents()
 
 bool EventManager::checkEvent(Raylib::KeyboardKey event)
 {
-    return std::any_of(
-        _activeEvents.begin(),
-        _activeEvents.end(),
-        [event](Raylib::KeyboardKey e) {
-            return e == event;
-        });
+    return std::any_of(_activeEvents.begin(), _activeEvents.end(), [event](Raylib::KeyboardKey e) {
+        return e == event;
+    });
 }

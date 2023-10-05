@@ -20,15 +20,12 @@ namespace Systems {
 
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry = Registry::getInstance();
-        Registry::components<Types::Position> arrPosition =
-            registry.getComponents<Types::Position>();
+        Registry &registry                                = Registry::getInstance();
+        Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
             registry.getComponents<Types::CollisionRect>();
         std::vector<std::size_t> ids = registry.getEntitiesByComponents(
-            {typeid(Types::Player),
-             typeid(Types::Position),
-             typeid(Types::CollisionRect)});
+            {typeid(Types::Player), typeid(Types::Position), typeid(Types::CollisionRect)});
 
         const float maxPercent = 100.0F;
         for (std::size_t id : ids) {
@@ -149,13 +146,12 @@ namespace Systems {
 
     void entitiesCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry = Registry::getInstance();
-        Registry::components<Types::Position> arrPosition =
-            registry.getComponents<Types::Position>();
+        Registry &registry                                = Registry::getInstance();
+        Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
             registry.getComponents<Types::CollisionRect>();
-        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
-            {typeid(Types::CollisionRect), typeid(Types::Position)});
+        std::vector<std::size_t> ids =
+            registry.getEntitiesByComponents({typeid(Types::CollisionRect), typeid(Types::Position)});
 
 
         for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
@@ -177,12 +173,9 @@ namespace Systems {
 
         for (auto &id : ids) {
             if (arrPosition.exist(id) && !arrRectangleShape.exist(id)) {
-                Registry::getInstance()
-                    .getComponents<Types::RectangleShape>()
-                    .insert(
-                        id,
-                        {arrCollisionRect[id].width,
-                         arrCollisionRect[id].height});
+                Registry::getInstance().getComponents<Types::RectangleShape>().insert(
+                    id,
+                    {arrCollisionRect[id].width, arrCollisionRect[id].height});
             }
         }
     }
@@ -205,9 +198,7 @@ namespace Systems {
         }
     }
 
-    static void executeDeathFunction(
-        std::size_t id,
-        Registry::components<Types::Dead> arrDead)
+    static void executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead)
     {
         if (arrDead[id].deathFunction != std::nullopt) {
             arrDead[id].deathFunction.value()(id);
@@ -255,13 +246,11 @@ namespace Systems {
     {
         Registry::components<Types::Health> arrHealth =
             Registry::getInstance().getComponents<Types::Health>();
-        Registry::components<Types::Dead> arrDead =
-            Registry::getInstance().getComponents<Types::Dead>();
+        Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
         for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
-            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0
-                && arrDead.exist(*itIds)) {
+            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0 && arrDead.exist(*itIds)) {
                 executeDeathFunction(*itIds, arrDead);
             }
         }
