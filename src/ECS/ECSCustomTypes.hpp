@@ -38,8 +38,8 @@ namespace Types {
     };
 
     struct InitialPosition {
-             float x;
-             float y;
+            float x;
+            float y;
     };
 
     struct Health {

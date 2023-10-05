@@ -47,13 +47,13 @@ namespace Systems {
 
     void SystemManager::addSystem(std::function<void(std::size_t, std::size_t)> sys)
     {
-        _modified        = true;
+        _modified = true;
         _modifiedSystems.push_back(sys);
     }
 
     void SystemManager::removeSystem(std::size_t id)
     {
-        _modified        = true;
+        _modified = true;
         _toRemove.push_back(id);
     }
 

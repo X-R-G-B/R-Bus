@@ -21,8 +21,7 @@ namespace Systems {
             void resetChanges();
 
         private:
-            std::vector<std::function<void(std::size_t, std::size_t)>>&
-            getSystems();
+            std::vector<std::function<void(std::size_t, std::size_t)>>& getSystems();
 
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static std::size_t _managerNb;
@@ -30,10 +29,8 @@ namespace Systems {
 
             std::size_t _id;
             std::vector<std::size_t> _toRemove;
-            std::vector<std::function<void(std::size_t, std::size_t)>>
-                _originalSystems;
-            std::vector<std::function<void(std::size_t, std::size_t)>>
-                _modifiedSystems;
+            std::vector<std::function<void(std::size_t, std::size_t)>> _originalSystems;
+            std::vector<std::function<void(std::size_t, std::size_t)>> _modifiedSystems;
             bool _modified;
     };
 } // namespace Systems
