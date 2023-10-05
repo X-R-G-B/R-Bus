@@ -5,9 +5,9 @@
 ** SpriteSystems implementation
 */
 
-#include "Logger.hpp"
 #include "SpriteSystems.hpp"
 #include "CustomTypes.hpp"
+#include "Logger.hpp"
 #include "Raylib.hpp"
 #include "SharedValues.hpp"
 
@@ -26,8 +26,7 @@ namespace Systems {
     {
         if (animRect.currentRectList != Types::RectListType::DEFAULTRECT) {
             animRect.currentRectInList++;
-            if (animRect.currentRectInList
-                == getCurrentList(animRect).size()) {
+            if (animRect.currentRectInList == getCurrentList(animRect).size()) {
                 animRect.currentRectInList = 0;
             }
         }
@@ -51,8 +50,10 @@ namespace Systems {
         if (animRect.currentRectInList < rects.size()) {
             rect = rects[animRect.currentRectInList];
         } else {
-            Logger::error("Attempt to access id : " + std::to_string(animRect.currentRectInList) + " in list of size " + std::to_string(getCurrentList(animRect).size()));
-            animRect.currentRectList = Types::RectListType::DEFAULTRECT;
+            Logger::error(
+                "Attempt to access id : " + std::to_string(animRect.currentRectInList) + " in list of size "
+                + std::to_string(getCurrentList(animRect).size()));
+            animRect.currentRectList   = Types::RectListType::DEFAULTRECT;
             animRect.currentRectInList = 0;
             return;
         }
@@ -60,9 +61,7 @@ namespace Systems {
         clock_.restart(clockIds[id]);
     }
 
-    void GraphicSystems::rectIncrementation(
-        std::size_t /*unused*/,
-        std::size_t /*unused*/)
+    void GraphicSystems::rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::AnimRect> arrAnimRect = registry.getComponents<Types::AnimRect>();

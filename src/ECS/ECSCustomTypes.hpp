@@ -43,20 +43,23 @@ namespace Types {
             float speedY;
     };
 
-    struct Player {};
+    struct Player { };
 
     struct Missiles {
             MissileTypes type;
     };
 
-    struct PlayerAllies {};
+    struct PlayerAllies { };
 
-    struct EnemyAllies {};
+    struct EnemyAllies { };
 
-    struct Enemy {};
+    struct Enemy { };
 
     struct Dead {
-            Dead(std::optional<std::function<void(std::size_t id)>> func, std::size_t time = 0) : deathFunction(func), timeToWait(time), launched(false)
+            Dead(std::optional<std::function<void(std::size_t id)>> func, std::size_t time = 0)
+                : deathFunction(func),
+                  timeToWait(time),
+                  launched(false)
             {
                 clockId = static_cast<std::size_t>(-1);
             };

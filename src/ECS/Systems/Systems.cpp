@@ -42,16 +42,19 @@ namespace Systems {
 
     static bool checkAllies(std::size_t fstId, std::size_t scdId)
     {
-        Registry &registry = Registry::getInstance();
+        Registry &registry                          = Registry::getInstance();
         Registry::components<Types::Player> players = registry.getComponents<Types::Player>();
-        Registry::components<Types::Enemy> enemys = registry.getComponents<Types::Enemy>();
-        Registry::components<Types::PlayerAllies> playerAllies = registry.getComponents<Types::PlayerAllies>();
+        Registry::components<Types::Enemy> enemys   = registry.getComponents<Types::Enemy>();
+        Registry::components<Types::PlayerAllies> playerAllies =
+            registry.getComponents<Types::PlayerAllies>();
         Registry::components<Types::EnemyAllies> enemyAllies = registry.getComponents<Types::EnemyAllies>();
 
-        if ((playerAllies.exist(fstId) && players.exist(scdId)) || (playerAllies.exist(scdId) && players.exist(fstId))) {
+        if ((playerAllies.exist(fstId) && players.exist(scdId))
+            || (playerAllies.exist(scdId) && players.exist(fstId))) {
             return true;
         }
-        if ((enemyAllies.exist(fstId) && enemys.exist(scdId)) || (enemyAllies.exist(scdId) && enemys.exist(fstId))) {
+        if ((enemyAllies.exist(fstId) && enemys.exist(scdId))
+            || (enemyAllies.exist(scdId) && enemys.exist(fstId))) {
             return true;
         }
         return false;
@@ -158,13 +161,14 @@ namespace Systems {
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry &registry = Registry::getInstance();
-        auto deadList = registry.getComponents<Types::Dead>();
-        auto deadIdList = deadList.getExistingsId();
-        Clock &clock = registry.getClock();
+        auto deadList      = registry.getComponents<Types::Dead>();
+        auto deadIdList    = deadList.getExistingsId();
+        Clock &clock       = registry.getClock();
 
         for (auto id : deadIdList) {
             Types::Dead &dead = deadList[id];
-            if (static_cast<int>(dead.clockId) > -1 && clock.elapsedMillisecondsSince(dead.clockId) > dead.timeToWait) {
+            if (static_cast<int>(dead.clockId) > -1
+                && clock.elapsedMillisecondsSince(dead.clockId) > dead.timeToWait) {
                 clock.restart(dead.clockId);
                 registry.removeEntity(id);
             }
@@ -177,7 +181,7 @@ namespace Systems {
         if (deadComp.deathFunction != std::nullopt) {
             if (!deadComp.launched) {
                 deadComp.deathFunction.value()(id);
-                deadComp.clockId = Registry::getInstance().getClock().create();
+                deadComp.clockId  = Registry::getInstance().getClock().create();
                 deadComp.launched = true;
             }
         } else {
@@ -217,7 +221,7 @@ namespace Systems {
     constexpr float fontScale                = 2.0F;
     const float playerWidth                  = 25.0F;
     const float playerHeight                 = 25.0F;
-    const std::size_t deadTime = 1500;
+    const std::size_t deadTime               = 1500;
 
     void init(std::size_t managerId, std::size_t systemId)
     {
@@ -231,18 +235,9 @@ namespace Systems {
         // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
         Registry::getInstance().getComponents<Types::AnimRect>().insertBack({
             spriteRect,
-            {spriteRect, {51, 1, 46, 47},
-              {101, 2, 48, 47},
-              {152, 2, 46, 47},
-              {201, 2, 46, 47}  },
-            {{2, 51, 46, 47},
-              {101, 2, 48, 47},
-              {152, 2, 46, 47},
-              {201, 2, 46, 47}  },
-            {{180, 140, 18, 12},
-              {211, 140, 18, 12},
-              {230, 140, 18, 12},
-              {250, 140, 18, 12}}
+            {spriteRect, {51, 1, 46, 47}, {101, 2, 48, 47},     {152, 2, 46, 47},          {201, 2, 46, 47}},
+            {{2, 51, 46, 47},          {101, 2, 48, 47},           {152, 2, 46, 47},      {201, 2, 46, 47}    },
+            {{180, 140, 18, 12},          {211, 140, 18, 12},        {230, 140, 18, 12}, {250, 140, 18, 12}}
         });
         // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
         Registry::getInstance().setToBackLayers(id);
@@ -253,8 +248,7 @@ namespace Systems {
 
         id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Types::Enemy>().insertBack({});
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            playerPos);
+        Registry::getInstance().getComponents<Types::Position>().insertBack(playerPos);
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
             {playerPath, playerWidth, playerHeight, id});
         Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);

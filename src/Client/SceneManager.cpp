@@ -6,8 +6,8 @@
 */
 
 #include "SceneManager.hpp"
-#include "Logger.hpp"
 #include "ClientSystems.hpp"
+#include "Logger.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"

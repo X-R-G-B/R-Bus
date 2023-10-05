@@ -29,18 +29,14 @@ namespace Systems {
 
     constexpr std::size_t elapsedBetweenMove = 20;
 
-    void EventsSystems::playerMovement(
-        std::size_t /*unused*/,
-        std::size_t /*unused*/)
+    void EventsSystems::playerMovement(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry = Registry::getInstance();
-        Registry::components<Types::Position> arrPos =
-            registry.getComponents<Types::Position>();
-        Registry::components<Types::Health> arrHealth =
-            registry.getComponents<Types::Health>();
-        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
+        Registry &registry                            = Registry::getInstance();
+        Registry::components<Types::Position> arrPos  = registry.getComponents<Types::Position>();
+        Registry::components<Types::Health> arrHealth = registry.getComponents<Types::Health>();
+        std::vector<std::size_t> ids                  = registry.getEntitiesByComponents(
             {typeid(Types::Player), typeid(Types::Position), typeid(Types::Health)});
-        Clock &clock_ = registry.getClock();
+        Clock &clock_              = registry.getClock();
         static std::size_t clockId = clock_.create(true);
 
         for (auto id : ids) {
@@ -87,20 +83,13 @@ namespace Systems {
                 {bulletPath, bulletWidth, bulletHeight, entityId});
             Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
                 {bulletWidth, bulletHeight});
-            Registry::getInstance().getComponents<Types::Rect>().insertBack(
-                spriteRect);
-            Registry::getInstance()
-                .getComponents<Types::CollisionRect>()
-                .insertBack(collisionRect);
-            Registry::getInstance().getComponents<Types::Missiles>().insertBack(
-                missileType);
+            Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
+            Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
+            Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
             Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack({});
-            Registry::getInstance().getComponents<Types::Velocity>().insertBack(
-                velocity);
-            Registry::getInstance().getComponents<Types::Health>().insertBack(
-                health);
-            Registry::getInstance().getComponents<Types::Damage>().insertBack(
-                damage);
+            Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
+            Registry::getInstance().getComponents<Types::Health>().insertBack(health);
+            Registry::getInstance().getComponents<Types::Damage>().insertBack(damage);
             Registry::getInstance().setToFrontLayers(entityId);
         }
     }
@@ -109,18 +98,16 @@ namespace Systems {
 
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry = Registry::getInstance();
-        Registry::components<Types::Player> arrPlayer =
-            registry.getComponents<Types::Player>();
-        Registry::components<Types::Position> arrPosition =
-            registry.getComponents<Types::Position>();
-        Clock &clock_ = registry.getClock();
-        static std::size_t clockId = clock_.create(true);
+        Registry &registry                                = Registry::getInstance();
+        Registry::components<Types::Player> arrPlayer     = registry.getComponents<Types::Player>();
+        Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
+        Clock &clock_                                     = registry.getClock();
+        static std::size_t clockId                        = clock_.create(true);
 
         std::vector<std::size_t> ids = arrPlayer.getExistingsId();
 
-        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE) &&
-            clock_.elapsedSecondsSince(clockId) > waitTimeBullet) {
+        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE)
+            && clock_.elapsedSecondsSince(clockId) > waitTimeBullet) {
             clock_.restart(clockId);
             for (auto &id : ids) {
                 createMissile(id, arrPosition);
