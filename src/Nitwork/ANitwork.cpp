@@ -5,9 +5,9 @@
 ** ANitwork
 */
 
-#include <thread>
-#include <algorithm>
 #include "ANitwork.hpp"
+#include <algorithm>
+#include <thread>
 
 namespace Nitwork {
     ANitwork::ANitwork() : _socket(_context), _packetId(0)
@@ -105,8 +105,7 @@ namespace Nitwork {
             _senderEndpoint,
             [this](const boost::system::error_code &error, std::size_t bytes_received) {
                 headerHandler(bytes_received, error);
-            }
-        );
+            });
     }
 
     void ANitwork::callReceiveHandler(const std::string &message)
@@ -167,9 +166,10 @@ namespace Nitwork {
         std::reverse(ids.begin(), ids.end());
         for (std::size_t index = 0; index < _packetsSent.size(); index++) {
             if (ids[index] == 0) {
-                auto packet = std::find_if(_packetsSent.begin(), _packetsSent.end(), [header, index](auto &packet) {
-                    return std::size_t(packet.second.id) == header.last_id_received - index;
-                });
+                auto packet =
+                    std::find_if(_packetsSent.begin(), _packetsSent.end(), [header, index](auto &packet) {
+                        return std::size_t(packet.second.id) == header.last_id_received - index;
+                    });
                 if (packet == _packetsSent.end()) {
                     std::cerr << "Error: packet not found" << std::endl;
                     continue;
@@ -271,8 +271,8 @@ namespace Nitwork {
     n_idsReceived_t ANitwork::getIdsReceived()
     {
         n_idsReceived_t idsReceived = 0;
-        int lastId = 0;
-        bool isPresent = false;
+        int lastId                  = 0;
+        bool isPresent              = false;
 
         if (_receivedPacketsIds.empty()) {
             return 0;
@@ -282,17 +282,17 @@ namespace Nitwork {
         });
         lastId = _receivedPacketsIds.back();
         for (int i = 0; i < MAX_NB_ACTION; i++) {
-            isPresent = std::any_of(_receivedPacketsIds.begin(), _receivedPacketsIds.end(), [lastId, i](auto &id) {
-                return id == lastId - i;
-            });
+            isPresent =
+                std::any_of(_receivedPacketsIds.begin(), _receivedPacketsIds.end(), [lastId, i](auto &id) {
+                    return id == lastId - i;
+                });
             idsReceived = idsReceived << 1;
             idsReceived += (isPresent ? 1 : 0);
         }
         return idsReceived;
     }
 
-    void
-    ANitwork::addPacketToSend(const boost::asio::ip::udp::endpoint &endpoint, const Packet &packet)
+    void ANitwork::addPacketToSend(const boost::asio::ip::udp::endpoint &endpoint, const Packet &packet)
     {
         std::lock_guard<std::mutex> lock(_outputQueueMutex);
 

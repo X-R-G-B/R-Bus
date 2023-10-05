@@ -141,14 +141,8 @@ namespace Logger {
             [[nodiscard]] LogLevel getLogLevel() const;
 
         private:
-            void print(
-                LogLevel levelT,
-                const std::string &level,
-                const std::string &message);
-            std::map<
-                LogLevel,
-                std::map<std::string, std::function<void(const std::string &)>>>
-                _callbacks;
+            void print(LogLevel levelT, const std::string &level, const std::string &message);
+            std::map<LogLevel, std::map<std::string, std::function<void(const std::string &)>>> _callbacks;
             LogLevel _logLevel;
     };
 } // namespace Logger

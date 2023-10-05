@@ -24,7 +24,8 @@ namespace Nitwork {
 
     bool NitworkServer::startNitworkConfig(int port, const std::string & /* unused */)
     {
-        boost::asio::ip::udp::endpoint endpoint = boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), boost::asio::ip::port_type(port));
+        boost::asio::ip::udp::endpoint endpoint =
+            boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), boost::asio::ip::port_type(port));
 
         _socket.open(boost::asio::ip::udp::v4());
         if (!_socket.is_open()) {
@@ -35,11 +36,15 @@ namespace Nitwork {
         return true;
     }
 
-    void NitworkServer::handleBodyAction(const struct header_s &header, const boost::asio::ip::udp::endpoint & /* unused */)
+    void NitworkServer::handleBodyAction(
+        const struct header_s &header,
+        const boost::asio::ip::udp::endpoint & /* unused */)
     {
-        // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast, cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
+        // cppcoreguidelines-pro-bounds-pointer-arithmetic)
         auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
-        // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast, cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
+        // cppcoreguidelines-pro-bounds-pointer-arithmetic)
         auto it = _actionsHandlers.find(action->magick);
 
         if (it == _actionsHandlers.end()) {
@@ -101,22 +106,20 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgStartGame_s packetMsgStartGame = {
-            {
-                HEADER_CODE1,
-                getIdsReceived(),
-                (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                getPacketID(),
-                1,
-                HEADER_CODE2},
+            {HEADER_CODE1,
+             getIdsReceived(),
+             (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+             getPacketID(),
+             1, HEADER_CODE2},
             {START_GAME},
-            {MAGICK_START_GAME, playerId}
+            {MAGICK_START_GAME,             playerId               }
         };
         Packet packet(
             packetMsgStartGame.header.id,
             packetMsgStartGame.action.magick,
-            std::make_any<struct packetMsgStartGame_s>(packetMsgStartGame)
-        );
-        std::cout << "Send START_GAME to " << endpoint.address().to_string() << ":" << endpoint.port() << std::endl;
+            std::make_any<struct packetMsgStartGame_s>(packetMsgStartGame));
+        std::cout << "Send START_GAME to " << endpoint.address().to_string() << ":" << endpoint.port()
+                  << std::endl;
         addPacketToSend(endpoint, packet);
     }
 } // namespace Nitwork

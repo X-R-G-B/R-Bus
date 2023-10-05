@@ -38,11 +38,15 @@ namespace Nitwork {
         return true;
     }
 
-    void NitworkClient::handleBodyAction(const struct header_s &header, const boost::asio::ip::udp::endpoint &endpoint)
+    void NitworkClient::handleBodyAction(
+        const struct header_s &header,
+        const boost::asio::ip::udp::endpoint &endpoint)
     {
-        // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast, cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
+        // cppcoreguidelines-pro-bounds-pointer-arithmetic)
         auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
-        // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast, cppcoreguidelines-pro-bounds-pointer-arithmetic)
+        // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
+        // cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (endpoint.address().to_string() != _endpoint.address().to_string()) {
             std::cerr << "Error: endpoint is not the server" << std::endl;
             return;
@@ -81,21 +85,18 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgInit_s packetMsgInit = {
             {
-                HEADER_CODE1,
-                getIdsReceived(),
-                (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                getPacketID(),
-                1,
-                HEADER_CODE2,
-            },
+             HEADER_CODE1,                                                    getIdsReceived(),
+             (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+             getPacketID(),
+             1, HEADER_CODE2,
+             },
             {INIT},
-            {MAGICK_INIT}
+            {MAGICK_INIT                                                              }
         };
         Packet packet(
             packetMsgInit.header.id,
             packetMsgInit.action.magick,
-            std::make_any<struct packetMsgInit_s>(packetMsgInit)
-        );
+            std::make_any<struct packetMsgInit_s>(packetMsgInit));
         addPacketToSend(_endpoint, packet);
     }
 
@@ -104,21 +105,18 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgReady_s packetMsgReady = {
             {
-                HEADER_CODE1,
-                getIdsReceived(),
-                (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                getPacketID(),
-                1,
-                HEADER_CODE2,
+             HEADER_CODE1,                                                    getIdsReceived(),
+             (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+             getPacketID(),
+             1, HEADER_CODE2,
              },
             {READY},
-            {MAGICK_READY}
+            {MAGICK_READY                                                              }
         };
         Packet packet(
             packetMsgReady.header.id,
             packetMsgReady.action.magick,
-            std::make_any<struct packetMsgReady_s>(packetMsgReady)
-        );
+            std::make_any<struct packetMsgReady_s>(packetMsgReady));
         addPacketToSend(_endpoint, packet);
     }
 } // namespace Nitwork

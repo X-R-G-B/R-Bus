@@ -98,10 +98,7 @@ namespace Logger {
 #endif
     }
 
-    void Logger::print(
-        LogLevel levelT,
-        const std::string &level,
-        const std::string &message)
+    void Logger::print(LogLevel levelT, const std::string &level, const std::string &message)
     {
 #ifdef __linux__
         static std::map<LogLevel, std::string> colors = {
@@ -145,8 +142,7 @@ namespace Logger {
             s << now << " [" << level << "] " << message;
         }
         mes = s.str();
-        std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL]
-                  << std::endl;
+        std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL] << std::endl;
         if (it != _callbacks.end()) {
             for (auto &it1 : it->second) {
                 it1.second(mes);
@@ -160,11 +156,7 @@ namespace Logger {
         std::function<void(const std::string &)> callback)
     {
         if (_callbacks.find(type) == _callbacks.end()) {
-            _callbacks.emplace(
-                type,
-                std::map<
-                    std::string,
-                    std::function<void(const std::string &)>>());
+            _callbacks.emplace(type, std::map<std::string, std::function<void(const std::string &)>>());
         }
         _callbacks[type].emplace(name, callback);
     }
