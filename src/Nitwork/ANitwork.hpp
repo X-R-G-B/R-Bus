@@ -88,9 +88,14 @@ namespace Nitwork {
             void startInputHandler() final;
             // start the output thread inside the context (post)
             void startOutputHandler() final;
+            // send package
+            void sendPackages(const std::map<enum n_actionType_t, actionHandler> &);
             // start receive handler
             void headerHandler(std::size_t bytes_received, const boost::system::error_code &error) final;
+            // check if the packet has already been received
             bool isAlreadyReceived(n_id_t id);
+            // call startReceiveHandler method by displaying a message
+            void callReceiveHandler(const std::string &message);
 
             // handler func for receive handler which handle the action
             template <typename B>

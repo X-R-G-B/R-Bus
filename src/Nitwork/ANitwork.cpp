@@ -16,17 +16,17 @@ namespace Nitwork {
     bool ANitwork::start(int port, int threadNb, int tick, const std::string &ip)
     {
         try {
-            startReceiveHandler();
-            startInputHandler();
-            startOutputHandler();
             if (!startNitworkConfig(port, ip)) {
                 std::cerr << "Error: Nitwork config failed" << std::endl;
                 return false;
             }
+            startInputHandler();
+            startOutputHandler();
             if (!startNitworkThreads(threadNb, tick)) {
                 std::cerr << "Error: Nitwork threads failed" << std::endl;
                 return false;
             }
+            startReceiveHandler();
             std::cout << "Nitwork started on port " << port << std::endl;
         } catch (std::exception &e) {
             std::cerr << "Nitwork Error : " << e.what() << std::endl;
@@ -107,24 +107,23 @@ namespace Nitwork {
             }
         );
     }
-static void callReceiveHandler(std::string message)
-{
-    std::cerr << message << std::endl;
-    startReceiveHandler();
-}
+
+    void ANitwork::callReceiveHandler(const std::string &message)
+    {
+        std::cerr << message << std::endl;
+        startReceiveHandler();
+    }
 
     void ANitwork::headerHandler(std::size_t bytes_received, const boost::system::error_code &error)
     {
         std::unique_lock<std::mutex> lock(_receivedPacketsIdsMutex, std::defer_lock);
 
-        if (bytes_received < sizeof(struct header_s)) {
-            std::cerr << "Error: header not received" << std::endl;
-            startReceiveHandler();
+        if (error) {
+            callReceiveHandler("Error: " + error.message());
             return;
         }
-        if (error) {
-            std::cerr << "Error: " << error.message() << std::endl;
-            startReceiveHandler();
+        if (bytes_received < sizeof(struct header_s)) {
+            callReceiveHandler("Error: header not received");
             return;
         }
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -132,13 +131,11 @@ static void callReceiveHandler(std::string message)
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
 
         if (header->magick1 != HEADER_CODE1 || header->magick2 != HEADER_CODE2) {
-            std::cerr << "Error: header magick not valid" << std::endl;
-            startReceiveHandler();
+            callReceiveHandler("Error: header magick not valid");
             return;
         }
         if (header->nb_action > MAX_NB_ACTION || header->nb_action < 0 || isAlreadyReceived(header->id)) {
-            std::cerr << "Error: too many actions received or no action or already received" << std::endl;
-            startReceiveHandler();
+            callReceiveHandler("Error: header nb action not valid or already received");
             return;
         }
         lock.lock();
@@ -207,6 +204,19 @@ static void callReceiveHandler(std::string message)
         });
     }
 
+    void ANitwork::sendPackages(const std::map<enum n_actionType_t, actionHandler> &actionToSendHandlers)
+    {
+        for (auto &data : _outputQueue) {
+            auto it = actionToSendHandlers.find(data.second.action);
+            if (it == actionToSendHandlers.end()) {
+                std::cerr << "Error: action not found" << std::endl;
+                continue;
+            }
+            addPacketToSentPackages(data);
+            it->second(data.second.body, data.first);
+        }
+    }
+
     void ANitwork::startOutputHandler()
     {
         boost::asio::post(_context, [this]() {
@@ -222,15 +232,7 @@ static void callReceiveHandler(std::string message)
                     _outputQueue.sort([](auto &a, auto &b) {
                         return a.second.id < b.second.id;
                     });
-                    for (auto &data : _outputQueue) {
-                        auto it = actionToSendHandlers.find(data.second.action);
-                        if (it == actionToSendHandlers.end()) {
-                            std::cerr << "Error: action not found" << std::endl;
-                            continue;
-                        }
-                        addPacketToSentPackages(data);
-                        it->second(data.second.body, data.first);
-                    }
+                    sendPackages(actionToSendHandlers);
                     _outputQueue.clear();
                     lockQueue.unlock();
                 }
