@@ -107,6 +107,11 @@ namespace Nitwork {
             }
         );
     }
+static void callReceiveHandler(std::string message)
+{
+    std::cerr << message << std::endl;
+    startReceiveHandler();
+}
 
     void ANitwork::headerHandler(std::size_t bytes_received, const boost::system::error_code &error)
     {
