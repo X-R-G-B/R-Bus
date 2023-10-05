@@ -5,17 +5,25 @@
             "width": 100,
             "height": 100,
             "position": {
-                "x": 0,
-                "y": 0
+                "x": 0.0,
+                "y": 0.0
+            },
+            "velocity" : {
+                "speedX" : -0.5,
+                "speedY" :0.0
             }
         },
         {
             "spritePath": "assets/Map/preview.png",
-            "width": 100,
-            "height": 100,
+            "width": 100.0,
+            "height": 100.0,
             "position": {
-                "x": -100,
-                "y": 0
+                "x": 100.0,
+                "y": 0.0
+            },
+            "velocity" : {
+                "speedX" : -0.5,
+                "speedY" :0.0
             }
         }
     ]

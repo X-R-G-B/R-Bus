@@ -115,6 +115,9 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Position>().insertBack(
             {Types::Position(parallaxData["position"])}
         );
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(
+            {Types::Velocity(parallaxData["velocity"])}
+        );
         Registry::getInstance().getComponents<Types::Parallax>().insertBack(
             {}
         );
@@ -203,27 +206,22 @@ namespace Systems {
         }
     }
 
-    static void checkResetParralax(std::size_t id, Registry::components<Types::Position> &arrPos)
-    {
-        if (arrPos[id].x >= 100) {
-            arrPos[id].x = -100;
-        } else {
-            arrPos[id].x += 1;
-        }
-    }
-
     void manageParallax(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
-        Registry::components<Types::Parallax> arrParralax = 
+        Registry::components<Types::Parallax> arrParallax = 
             Registry::getInstance().getComponents<Types::Parallax>();
+        Registry::components<Types::Velocity> arrVelocity = 
+            Registry::getInstance().getComponents<Types::Velocity>();
 
-        std::vector<std::size_t> ids = arrParralax.getExistingsId();
+        std::vector<std::size_t> ids = arrParallax.getExistingsId();
 
         for (auto &id : ids) {
-            if (arrPosition.exist(id)) {
-                checkResetParralax(id, arrPosition);
+            if (arrPosition.exist(id) && arrVelocity.exist(id)) {
+                if (arrPosition[id].x <= -100) {
+                    arrPosition[id].x = 100;
+                }
             }
         }
     }
