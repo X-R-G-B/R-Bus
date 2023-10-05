@@ -43,12 +43,33 @@ namespace Systems {
         }
     }
 
+    static bool checkAllies(std::size_t fstId, std::size_t scdId)
+    {
+        Registry &registry = Registry::getInstance();
+        Registry::components<Types::Player> players = registry.getComponents<Types::Player>();
+        Registry::components<Types::Enemy> enemys = registry.getComponents<Types::Enemy>();
+        Registry::components<Types::PlayerAllies> playerAllies = registry.getComponents<Types::PlayerAllies>();
+        Registry::components<Types::EnemyAllies> enemyAllies = registry.getComponents<Types::EnemyAllies>();
+
+        if ((playerAllies.exist(fstId) && players.exist(scdId)) || (playerAllies.exist(scdId) && players.exist(fstId))) {
+            return true;
+        }
+        if ((enemyAllies.exist(fstId) && enemys.exist(scdId)) || (enemyAllies.exist(scdId) && enemys.exist(fstId))) {
+            return true;
+        }
+        return false;
+    }
+
     static void giveDamages(std::size_t firstEntity, std::size_t secondEntity)
     {
         Registry::components<Types::Damage> arrDamage =
             Registry::getInstance().getComponents<Types::Damage>();
         Registry::components<Types::Health> arrHealth =
             Registry::getInstance().getComponents<Types::Health>();
+
+        if (checkAllies(firstEntity, secondEntity)) {
+            return;
+        }
 
         if (arrDamage.exist(firstEntity) && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
@@ -141,16 +162,38 @@ namespace Systems {
         }
     }
 
+    void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry &registry = Registry::getInstance();
+        auto deadList = registry.getComponents<Types::Dead>();
+        auto deadIdList = deadList.getExistingsId();
+        Clock &clock = registry.getClock();
+
+        for (auto id : deadIdList) {
+            Types::Dead &dead = deadList[id];
+            if (static_cast<int>(dead.clockId) > -1 && clock.elapsedMillisecondsSince(dead.clockId) > dead.timeToWait) {
+                clock.restart(dead.clockId);
+                registry.removeEntity(id);
+            }
+        }
+    }
+
     static void executeDeathFunction(
         std::size_t id,
         Registry::components<Types::Dead> arrDead)
     {
-        if (arrDead[id].deathFunction != std::nullopt) {
-            arrDead[id].deathFunction.value()(id);
+        Types::Dead &deadComp = arrDead[id];
+        if (deadComp.deathFunction != std::nullopt) {
+            if (!deadComp.launched) {
+                deadComp.deathFunction.value()(id);
+                deadComp.clockId = Registry::getInstance().getClock().create();
+                deadComp.launched = true;
+            }
         } else {
             Registry::getInstance().removeEntity(id);
         }
     }
+
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Health> arrHealth =
@@ -185,12 +228,13 @@ namespace Systems {
     constexpr float fontScale                = 2.0F;
     const float playerWidth                  = 25.0F;
     const float playerHeight                 = 25.0F;
+    const std::size_t deadTime = 1500;
 
     void init(std::size_t managerId, std::size_t systemId)
     {
         std::size_t id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Types::Position>().insertBack(
-            playerPos);
+            {playerData, playerData + playerData + playerData});
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
             {playerPath, playerWidth, playerHeight, id});
         Registry::getInstance().getComponents<Types::Rect>().insertBack(
@@ -201,7 +245,7 @@ namespace Systems {
         // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
         Registry::getInstance().getComponents<Types::AnimRect>().insertBack({
             spriteRect,
-            {{2, 51, 46, 47},
+            {spriteRect, {51, 1, 46, 47},
               {101, 2, 48, 47},
               {152, 2, 46, 47},
               {201, 2, 46, 47}  },
@@ -222,12 +266,12 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Health>().insertBack(
             {playerHealth});
         Registry::getInstance().getComponents<Types::Dead>().insertBack(
-            {std::nullopt});
+            {std::nullopt, deadTime});
 
         id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Types::Enemy>().insertBack({});
         Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {playerData, playerData + playerData + playerData});
+            playerPos);
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
             {playerPath, playerWidth, playerHeight, id});
         Registry::getInstance().getComponents<Types::Rect>().insertBack(
@@ -236,7 +280,7 @@ namespace Systems {
             .getComponents<Types::CollisionRect>()
             .insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(
-            {std::nullopt});
+            {std::nullopt, deadTime});
         Registry::getInstance().setToFrontLayers(id);
 
         Registry::getInstance().getComponents<Raylib::Music>().insertBack(
@@ -256,32 +300,19 @@ namespace Systems {
         SystemManagersDirector::getInstance()
             .getSystemManager(managerId)
             .removeSystem(systemId);
-
-        SystemManagersDirector::getInstance()
-            .getSystemManager(managerId)
-            .removeSystem(systemId);
     }
 
+    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
+    {
+        return {
+            windowCollision,
+            init,
+            entitiesCollision,
+            moveEntities,
+            checkDestroyAfterDeathCallBack,
 #ifndef NDEBUG
-    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
-    {
-        return {
-            windowCollision,
-            init,
-            entitiesCollision,
-            moveEntities,
             debugCollisionRect,
-            deathChecker};
-    }
-#else
-    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
-    {
-        return {
-            windowCollision,
-            init,
-            entitiesCollision,
-            moveEntities,
-            deathChecker};
-    }
 #endif
+            deathChecker};
+    }
 } // namespace Systems

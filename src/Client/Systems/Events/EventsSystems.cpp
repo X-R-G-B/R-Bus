@@ -12,10 +12,12 @@
 #include "SceneManager.hpp"
 
 namespace Systems {
-    static void checkAnimRect(std::size_t id)
+    static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId)
     {
         Registry::components<Types::AnimRect> arrAnimRect =
             Registry::getInstance().getComponents<Types::AnimRect>();
+
+        clock_.restart(clockId);
 
         if (arrAnimRect.exist(id)) {
             Types::AnimRect &anim = arrAnimRect[id];
@@ -25,6 +27,8 @@ namespace Systems {
         }
     }
 
+    constexpr std::size_t elapsedBetweenMove = 20;
+
     void EventsSystems::playerMovement(
         std::size_t /*unused*/,
         std::size_t /*unused*/)
@@ -32,24 +36,31 @@ namespace Systems {
         Registry &registry = Registry::getInstance();
         Registry::components<Types::Position> arrPos =
             registry.getComponents<Types::Position>();
+        Registry::components<Types::Health> arrHealth =
+            registry.getComponents<Types::Health>();
         std::vector<std::size_t> ids = registry.getEntitiesByComponents(
-            {typeid(Types::Player), typeid(Types::Position)});
+            {typeid(Types::Player), typeid(Types::Position), typeid(Types::Health)});
+        Clock &clock_ = registry.getClock();
+        static std::size_t clockId = clock_.create(true);
 
         for (auto id : ids) {
+            if (clock_.elapsedMillisecondsSince(clockId) < elapsedBetweenMove || arrHealth[id].hp <= 0) {
+                continue;
+            }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
-                checkAnimRect(id);
+                checkAnimRect(id, clock_, clockId);
                 arrPos[id].x += 1;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
-                checkAnimRect(id);
+                checkAnimRect(id, clock_, clockId);
                 arrPos[id].x -= 1;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
-                checkAnimRect(id);
+                checkAnimRect(id, clock_, clockId);
                 arrPos[id].y -= 1;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
-                checkAnimRect(id);
+                checkAnimRect(id, clock_, clockId);
                 arrPos[id].y += 1;
             }
         }
@@ -60,7 +71,7 @@ namespace Systems {
     constexpr float bulletWidth  = 5.0F;
     constexpr float bulletHeight = 5.0F;
     const Types::CollisionRect collisionRect = {1, 1};
-    const Types::Velocity velocity           = {-0.7F, 0.0F};
+    const Types::Velocity velocity           = {0.7F, 0.0F};
     const Types::Missiles missileType        = {Types::MissileTypes::CLASSIC};
     const Types::Health health               = {1};
     const Types::Damage damage               = {10};
@@ -76,6 +87,8 @@ namespace Systems {
                 {arrPosition[id].x, arrPosition[id].y});
             Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
                 {bulletPath, bulletWidth, bulletHeight, entityId});
+            Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
+                {bulletWidth, bulletHeight});
             Registry::getInstance().getComponents<Types::Rect>().insertBack(
                 spriteRect);
             Registry::getInstance()
@@ -83,6 +96,7 @@ namespace Systems {
                 .insertBack(collisionRect);
             Registry::getInstance().getComponents<Types::Missiles>().insertBack(
                 missileType);
+            Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack({});
             Registry::getInstance().getComponents<Types::Velocity>().insertBack(
                 velocity);
             Registry::getInstance().getComponents<Types::Health>().insertBack(
@@ -93,16 +107,23 @@ namespace Systems {
         }
     }
 
+    const std::size_t waitTimeBullet = 1;
+
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        Registry &registry = Registry::getInstance();
         Registry::components<Types::Player> arrPlayer =
-            Registry::getInstance().getComponents<Types::Player>();
+            registry.getComponents<Types::Player>();
         Registry::components<Types::Position> arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
+            registry.getComponents<Types::Position>();
+        Clock &clock_ = registry.getClock();
+        static std::size_t clockId = clock_.create(true);
 
         std::vector<std::size_t> ids = arrPlayer.getExistingsId();
 
-        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE)) {
+        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE) &&
+            clock_.elapsedSecondsSince(clockId) > waitTimeBullet) {
+            clock_.restart(clockId);
             for (auto &id : ids) {
                 createMissile(id, arrPosition);
             }
