@@ -450,7 +450,7 @@ namespace Raylib {
     }
 
     Sprite::Sprite(Image image, float width, float height)
-        : _texture({0, 0, 0, 0}),
+        : _texture(),
           _width(width),
           _height(height)
     {
@@ -606,11 +606,11 @@ namespace Raylib {
 
     Text::Text(std::string text, Vector2 position, float fontSize, Color color)
         : _text(std::move(text)),
-          _position(position),
           _fontSize(fontSize),
+          _currentFontSize(fontSize),
           _color(color),
-          _pixelPosition(position),
-          _currentFontSize(fontSize)
+          _position(position),
+          _pixelPosition(position)
     {
     }
 

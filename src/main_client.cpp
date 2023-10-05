@@ -21,12 +21,14 @@
 //     return 0;
 // }
 
+#include "Logger.hpp"
 #include "SceneManager.hpp"
 
 int main()
 {
     SceneManager &sceneManager = SceneManager::getInstance();
 
+    Logger::info("Starting Game...");
     int res = sceneManager.run();
 
     return res;

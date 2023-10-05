@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <vector>
 #include "Clock.hpp"
+#include "Logger.hpp"
 #include "SceneManager.hpp"
 #include "SparseArray.hpp"
 
@@ -72,10 +73,13 @@ class Registry {
 
         Clock &getClock();
 
+        Logger::Logger &getLogger();
+
     private:
         Registry();
 
         Clock _clock;
+        Logger::Logger _logger;
 
         void initLayers(bool back);
 

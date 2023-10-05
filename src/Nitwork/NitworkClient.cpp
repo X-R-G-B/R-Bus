@@ -80,17 +80,16 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgInit_s packetMsgInit = {
-            .header =
-                {
-                         .magick1          = HEADER_CODE1,
-                         .ids_received     = getIdsReceived(),
-                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                         .id               = getPacketID(),
-                         .nb_action        = 1,
-                         .magick2          = HEADER_CODE2,
-                         },
-            .action  = {.magick = INIT},
-            .msgInit = {.magick = MAGICK_INIT                                                              }
+            {
+                HEADER_CODE1,
+                getIdsReceived(),
+                (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                getPacketID(),
+                1,
+                HEADER_CODE2,
+            },
+            {INIT},
+            {MAGICK_INIT}
         };
         Packet packet(
             packetMsgInit.header.id,
@@ -104,17 +103,16 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgReady_s packetMsgReady = {
-            .header =
-                {
-                         .magick1          = HEADER_CODE1,
-                         .ids_received     = getIdsReceived(),
-                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                         .id               = getPacketID(),
-                         .nb_action        = 1,
-                         .magick2          = HEADER_CODE2,
-                         },
-            .action   = {.magick = READY},
-            .msgReady = {.magick = MAGICK_READY                                                              }
+            {
+                HEADER_CODE1,
+                getIdsReceived(),
+                (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                getPacketID(),
+                1,
+                HEADER_CODE2,
+             },
+            {READY},
+            {MAGICK_READY}
         };
         Packet packet(
             packetMsgReady.header.id,

@@ -33,8 +33,8 @@ namespace Types {
                   moveRects(_moveRects),
                   attackRects(_attackRects),
                   deadRects(_deadRects),
-                  currentRectInList(0),
-                  currentRectList(Types::RectListType::DEFAULTRECT)
+                  currentRectList(Types::RectListType::DEFAULTRECT),
+                  currentRectInList(0)
             {
             }
             Rect defaultRect;

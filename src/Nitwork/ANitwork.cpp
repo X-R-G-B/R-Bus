@@ -5,6 +5,7 @@
 ** ANitwork
 */
 
+#include <thread>
 #include <algorithm>
 #include "ANitwork.hpp"
 

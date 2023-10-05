@@ -13,6 +13,7 @@
 #include "SystemManagersDirector.hpp"
 
 namespace Systems {
+
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry &registry                                = Registry::getInstance();
@@ -94,7 +95,51 @@ namespace Systems {
         }
     }
 
-    static void executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead)
+#ifndef NDEBUG
+    void debugCollisionRect(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<Types::CollisionRect> arrCollisionRect =
+            Registry::getInstance().getComponents<Types::CollisionRect>();
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::RectangleShape> arrRectangleShape =
+            Registry::getInstance().getComponents<Types::RectangleShape>();
+
+        std::vector<std::size_t> ids = arrCollisionRect.getExistingsId();
+
+        for (auto &id : ids) {
+            if (arrPosition.exist(id) && !arrRectangleShape.exist(id)) {
+                Registry::getInstance()
+                    .getComponents<Types::RectangleShape>()
+                    .insert(
+                        id,
+                        {arrCollisionRect[id].width,
+                         arrCollisionRect[id].height});
+            }
+        }
+    }
+#endif
+
+    void moveEntities(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::Velocity> arrVelocity =
+            Registry::getInstance().getComponents<Types::Velocity>();
+
+        std::vector<std::size_t> ids = arrPosition.getExistingsId();
+
+        for (auto &id : ids) {
+            if (arrVelocity.exist(id)) {
+                arrPosition[id].x += arrVelocity[id].speedX;
+                arrPosition[id].y += arrVelocity[id].speedY;
+            }
+        }
+    }
+
+    static void executeDeathFunction(
+        std::size_t id,
+        Registry::components<Types::Dead> arrDead)
     {
         if (arrDead[id].deathFunction != std::nullopt) {
             arrDead[id].deathFunction.value()(id);
@@ -102,7 +147,6 @@ namespace Systems {
             Registry::getInstance().removeEntity(id);
         }
     }
-
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Health> arrHealth =
@@ -117,10 +161,11 @@ namespace Systems {
         }
     }
 
-    const std::string musicPath              = "assets/Audio/Musics/Title.mp3";
-    const std::string soundPath              = "assets/Audio/Sounds/fire.ogg";
-    const std::string playerPath             = "assets/R-TypeSheet/r-typesheet14.gif";
-    const Types::Rect spriteRect             = {2, 2, 48, 48};
+    const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
+    const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
+    const std::string playerPath = "assets/R-TypeSheet/r-typesheet14.gif";
+    const std::string ennemyPath = "assets/R-TypeSheet/r-typesheet18.gif";
+    const Types::Rect spriteRect = {2, 2, 48, 48};
     const Types::CollisionRect collisionRect = {25, 25};
     const Raylib::Vector2 textPos            = {20, 50};
     constexpr int playerData                 = 10;
@@ -176,13 +221,39 @@ namespace Systems {
              textPos,
              fontScale,
              Raylib::DarkBlue});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack({enemyDamage});
-        Registry::getInstance().getComponents<Types::Health>().insertBack({playerHealth2});
-        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+        Registry::getInstance().getComponents<Types::Damage>().insertBack(
+            {enemyDamage});
+        Registry::getInstance().getComponents<Types::Health>().insertBack(
+            {playerHealth2});
+        SystemManagersDirector::getInstance()
+            .getSystemManager(managerId)
+            .removeSystem(systemId);
+
+        SystemManagersDirector::getInstance()
+            .getSystemManager(managerId)
+            .removeSystem(systemId);
     }
 
+#ifndef NDEBUG
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
     {
-        return {windowCollision, init, entitiesCollision, deathChecker};
+        return {
+            windowCollision,
+            init,
+            entitiesCollision,
+            moveEntities,
+            debugCollisionRect,
+            deathChecker};
     }
+#else
+    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
+    {
+        return {
+            windowCollision,
+            init,
+            entitiesCollision,
+            moveEntities,
+            deathChecker};
+    }
+#endif
 } // namespace Systems

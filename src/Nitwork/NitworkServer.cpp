@@ -101,15 +101,15 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgStartGame_s packetMsgStartGame = {
-            .header =
-                {.magick1          = HEADER_CODE1,
-                         .ids_received     = getIdsReceived(),
-                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                         .id               = getPacketID(),
-                         .nb_action        = 1,
-                         .magick2          = HEADER_CODE2},
-            .action       = {.magick = START_GAME},
-            .msgStartGame = {.magick = MAGICK_START_GAME,                                 .playerId = playerId}
+            {
+                HEADER_CODE1,
+                getIdsReceived(),
+                (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                getPacketID(),
+                1,
+                HEADER_CODE2},
+            {START_GAME},
+            {MAGICK_START_GAME, playerId}
         };
         Packet packet(
             packetMsgStartGame.header.id,
