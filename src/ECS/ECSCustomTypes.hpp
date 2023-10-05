@@ -37,6 +37,11 @@ namespace Types {
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Position, x, y);
     };
 
+    struct InitialPosition {
+             float x;
+             float y;
+    };
+
     struct Health {
             int hp;
     };

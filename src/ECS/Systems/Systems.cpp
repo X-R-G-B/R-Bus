@@ -115,9 +115,19 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Position>().insertBack(
             {Types::Position(parallaxData["position"])}
         );
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::getInstance().getComponents<Types::InitialPosition>().insertBack(
+            {arrPosition[id].x, arrPosition[id].y}
+        );
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(
             {Types::Velocity(parallaxData["velocity"])}
         );
+        if (parallaxData["rect"] != nullptr) {
+            Registry::getInstance().getComponents<Types::Rect>().insertBack(
+                {Types::Rect(parallaxData["rect"])}
+            );
+        }
         Registry::getInstance().getComponents<Types::Parallax>().insertBack(
             {}
         );
@@ -206,6 +216,21 @@ namespace Systems {
         }
     }
 
+    static void resetParallaxPosition(std::size_t id, Registry::components<Types::InitialPosition> &arrInitialPos, Registry::components<Types::Position> &arrPosition)
+    {
+        constexpr int maxOutParallaxLeft = -100;
+        constexpr int maxOutParallaxRight = 100;
+
+        if (arrPosition[id].x <= maxOutParallaxLeft) {
+            if (arrInitialPos[id].x >= maxOutParallaxRight) {
+                arrPosition[id].x = arrInitialPos[id].x;
+            } else {
+                arrPosition[id].x = arrInitialPos[id].x + maxOutParallaxRight;
+            }
+            arrPosition[id].y = arrInitialPos[id].y;
+        }
+    }
+
     void manageParallax(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
@@ -214,14 +239,14 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Parallax>();
         Registry::components<Types::Velocity> arrVelocity = 
             Registry::getInstance().getComponents<Types::Velocity>();
+        Registry::components<Types::InitialPosition> arrInitialPos =
+            Registry::getInstance().getComponents<Types::InitialPosition>();
 
         std::vector<std::size_t> ids = arrParallax.getExistingsId();
 
         for (auto &id : ids) {
-            if (arrPosition.exist(id) && arrVelocity.exist(id)) {
-                if (arrPosition[id].x <= -100) {
-                    arrPosition[id].x = 100;
-                }
+            if (arrPosition.exist(id) && arrVelocity.exist(id) && arrInitialPos.exist(id)) {
+                resetParallaxPosition(id, arrInitialPos, arrPosition);
             }
         }
     }
