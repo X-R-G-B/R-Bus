@@ -55,26 +55,22 @@ namespace Nitwork {
             // maps that will be used to handle the actions, in order to send or receive them
             std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
                 {
-                     INIT,
-                     std::make_pair(
-                         handleBodyT([this](actionHandler &actionHandler, const struct header_s &header) {
-                             handleBody<struct msgInit_s>(actionHandler, header);
-                         }),
-                         actionHandler([this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
-                             handleInitMsg(msg, endpoint);
-                         })
-                     )
+                    INIT,
+                 {handleBodyT([this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgInit_s>(actionHandler, header);
+                  }),
+                  actionHandler([this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      handleInitMsg(msg, endpoint);
+                  })}
                 },
                 {
                      READY,
-                     std::make_pair(
-                         handleBodyT([this](actionHandler &actionHandler, const struct header_s &header) {
-                             handleBody<struct msgReady_s>(actionHandler, header);
-                         }),
-                         actionHandler([this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
-                             handleReadyMsg(msg, endpoint);
-                         })
-                     )
+                 {handleBodyT([this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgReady_s>(actionHandler, header);
+                  }),
+                  actionHandler([this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      handleReadyMsg(msg, endpoint);
+                  })}
                 },
             };
             std::map<enum n_actionType_t, actionHandler> _actionToSendHandlers = {

@@ -60,14 +60,14 @@ namespace Nitwork {
             > _actionsHandlers = {
                 {
                     START_GAME,
-                    std::make_pair(
+                    {
                         handleBodyT([this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgStartGame_s>(handler, header);
                         }),
                         actionHandler([this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             handleStartGame(any, endpoint);
                         })
-                    ),
+                    },
                 }
             };
             std::map<
