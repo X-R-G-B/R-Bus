@@ -112,7 +112,7 @@ namespace Nitwork {
              getPacketID(),
              1, HEADER_CODE2},
             {START_GAME},
-            {MAGICK_START_GAME, playerId}
+            {MAGICK_START_GAME,             playerId               }
         };
         Packet packet(
             packetMsgStartGame.header.id,
