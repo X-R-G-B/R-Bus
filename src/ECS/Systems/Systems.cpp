@@ -67,12 +67,7 @@ namespace Systems {
     {
         Registry::components<Types::Damage> arrDamage =
             Registry::getInstance().getComponents<Types::Damage>();
-<<<<<<< Updated upstream
-        Registry::components<health_s> arrHealth = Registry::getInstance().getComponents<health_s>();
-=======
-        Registry::components<health_s> arrHealth =
-            Registry::getInstance().getComponents<health_s>();
->>>>>>> Stashed changes
+        Registry::components<struct health_s> arrHealth = Registry::getInstance().getComponents<struct health_s>();
 
         if (checkAllies(firstEntity, secondEntity)) {
             return;
@@ -260,6 +255,36 @@ namespace Systems {
         }
     }
 
+    constexpr float outsideWindowTopLeft  = -25.0F;
+    constexpr float outsideWindowBotRigth = 125.0F;
+
+    static bool isOutsideWindow(const Types::Position &pos)
+    {
+        if (pos.x < outsideWindowTopLeft || pos.x > outsideWindowBotRigth || pos.y < outsideWindowTopLeft
+            || pos.y > outsideWindowBotRigth) {
+            return (true);
+        }
+        return (false);
+    }
+
+    void manageOutsideWindowEntity(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::Parallax> arrParallax =
+            Registry::getInstance().getComponents<Types::Parallax>();
+
+        std::vector<std::size_t> ids = arrPosition.getExistingsId();
+
+        for (auto &id : ids) {
+            if (!arrParallax.exist(id)) {
+                if (isOutsideWindow(arrPosition[id])) {
+                    Registry::getInstance().removeEntity(id);
+                }
+            }
+        }
+    }
+
     static void resetParallaxPosition(
         std::size_t id,
         Registry::components<Types::InitialPosition> &arrInitialPos,
@@ -297,12 +322,7 @@ namespace Systems {
 
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-<<<<<<< Updated upstream
-        Registry::components<health_s> arrHealth  = Registry::getInstance().getComponents<health_s>();
-=======
-        Registry::components<health_s> arrHealth =
-            Registry::getInstance().getComponents<health_s>();
->>>>>>> Stashed changes
+        Registry::components<struct health_s> arrHealth  = Registry::getInstance().getComponents<struct health_s>();
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
@@ -361,6 +381,7 @@ namespace Systems {
 #else
 #endif
             deathChecker,
+            manageOutsideWindowEntity,
             manageParallax};
     }
 } // namespace Systems

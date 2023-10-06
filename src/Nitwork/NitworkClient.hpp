@@ -86,7 +86,7 @@ namespace Nitwork {
                     ENEMY_DEATH,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
-                            handleBody<struct msgEnemyDeath>(handler, header);
+                            handleBody<struct msgEnemyDeath_s>(handler, header);
                         },
                         [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             Systems::receiveEnemyDeath(any, endpoint);

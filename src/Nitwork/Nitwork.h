@@ -110,7 +110,7 @@ PACK(struct msgEnemyDeath_s {
 PACK(struct packetEnemyDeath_s {
         struct header_s header;
         struct action_s action;
-        struct msgLifeUpdate_s msgEnemyDeath;
+        struct msgEnemyDeath_s msgEnemyDeath;
 });
 
 #endif
