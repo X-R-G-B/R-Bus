@@ -7,8 +7,6 @@
 
 #include "SystemManager.hpp"
 
-#include <iostream>
-
 namespace Systems {
 
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
