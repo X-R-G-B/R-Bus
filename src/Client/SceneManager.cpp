@@ -7,11 +7,11 @@
 
 #include "SceneManager.hpp"
 #include "ClientSystems.hpp"
+#include "CustomTypes.hpp"
 #include "Logger.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
-#include "CustomTypes.hpp"
 
 constexpr int screenWidth  = 1920;
 constexpr int screenHeight = 1080;

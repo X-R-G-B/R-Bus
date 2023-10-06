@@ -5,8 +5,8 @@
 ** unloadRaylib
 */
 
-#include "Registry.hpp"
 #include "Raylib.hpp"
+#include "Registry.hpp"
 
 // static void unloadSounds(std::size_t id)
 // {

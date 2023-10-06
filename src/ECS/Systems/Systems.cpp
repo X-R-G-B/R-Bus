@@ -333,8 +333,8 @@ namespace Systems {
         }
     }
 
-    const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
-    const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
+    const std::string musicPath              = "assets/Audio/Musics/Title.mp3";
+    const std::string soundPath              = "assets/Audio/Sounds/fire.ogg";
     const Types::CollisionRect collisionRect = {25, 25};
     const Raylib::Vector2 textPos            = {20, 50};
     constexpr int playerData                 = 10;
@@ -344,7 +344,7 @@ namespace Systems {
     constexpr float musicVolume              = 0.10F;
     constexpr float soundVolume              = 0.13F;
     constexpr float fontScale                = 2.0F;
-    const std::string playerFile = "assets/Json/playerData.json";
+    const std::string playerFile             = "assets/Json/playerData.json";
 
     void initPlayer(std::size_t managerId, std::size_t systemId)
     {
@@ -383,11 +383,8 @@ namespace Systems {
              textPos,
              fontScale,
              Raylib::DarkBlue});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack(
-            {enemyDamage});
-        SystemManagersDirector::getInstance()
-            .getSystemManager(managerId)
-            .removeSystem(systemId);
+        Registry::getInstance().getComponents<Types::Damage>().insertBack({enemyDamage});
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
 
         Raylib::Music music(musicPath, musicVolume);
         Raylib::Sound sound(soundPath, soundVolume);
@@ -395,10 +392,8 @@ namespace Systems {
         // AUDIO
         Registry::getInstance().setToFrontLayers(id);
         Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Raylib::Music>().insertBack(
-            music);
-        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(
-            sound);
+        Registry::getInstance().getComponents<Raylib::Music>().insertBack(music);
+        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(sound);
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 

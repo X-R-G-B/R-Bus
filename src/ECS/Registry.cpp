@@ -30,7 +30,7 @@ std::size_t Registry::addEntity()
 void Registry::removeEntity(std::size_t id)
 {
     // SEE TO PUT ONLY FOR CLIENT
-    //unloadRaylibComponents(id);
+    // unloadRaylibComponents(id);
     //
     for (auto function : _removeComponentFunctions) {
         function(*this, id);
@@ -40,7 +40,7 @@ void Registry::removeEntity(std::size_t id)
 void Registry::clear()
 {
     // SEE TO PUT ONLY FOR CLIENT
-    //for (std::size_t i = 0; i < _entitiesNb; i++) {
+    // for (std::size_t i = 0; i < _entitiesNb; i++) {
     //    unloadRaylibComponents(i);
     //}
     //
