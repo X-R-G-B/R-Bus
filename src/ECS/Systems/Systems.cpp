@@ -381,7 +381,6 @@ namespace Systems {
         Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Raylib::Music>().insertBack(music);
         Registry::getInstance().getComponents<Raylib::Sound>().insertBack(sound);
-        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
