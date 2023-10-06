@@ -75,10 +75,21 @@ namespace Nitwork {
                     LIFE_UPDATE,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
-                            handleBody<struct msgStartGame_s>(handler, header);
+                            handleBody<struct msgLifeUpdate_s>(handler, header);
                         },
                         [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             Systems::receiveLifeUpdate(any, endpoint);
+                        }
+                    }
+                },
+                {
+                    ENEMY_DEATH,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgEnemyDeath>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveEnemyDeath(any, endpoint);
                         }
                     }
                 }

@@ -67,7 +67,12 @@ namespace Systems {
     {
         Registry::components<Types::Damage> arrDamage =
             Registry::getInstance().getComponents<Types::Damage>();
+<<<<<<< Updated upstream
         Registry::components<health_s> arrHealth = Registry::getInstance().getComponents<health_s>();
+=======
+        Registry::components<health_s> arrHealth =
+            Registry::getInstance().getComponents<health_s>();
+>>>>>>> Stashed changes
 
         if (checkAllies(firstEntity, secondEntity)) {
             return;
@@ -292,7 +297,12 @@ namespace Systems {
 
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+<<<<<<< Updated upstream
         Registry::components<health_s> arrHealth  = Registry::getInstance().getComponents<health_s>();
+=======
+        Registry::components<health_s> arrHealth =
+            Registry::getInstance().getComponents<health_s>();
+>>>>>>> Stashed changes
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
