@@ -14,3 +14,4 @@ target_sources(
 
 add_subdirectory(Graphic)
 add_subdirectory(Events)
+add_subdirectory(Network)

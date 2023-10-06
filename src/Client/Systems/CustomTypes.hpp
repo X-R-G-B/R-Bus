@@ -12,12 +12,17 @@
 #include "ECSCustomTypes.hpp"
 
 namespace Types {
-
     struct Rect {
             float x;
             float y;
             float width;
             float height;
+
+            NLOHMANN_DEFINE_TYPE_INTRUSIVE(Rect, x, y, width, height);
+    };
+
+    struct FontSize {
+            float fsz;
     };
 
     enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };
@@ -33,8 +38,8 @@ namespace Types {
                   moveRects(_moveRects),
                   attackRects(_attackRects),
                   deadRects(_deadRects),
-                  currentRectInList(0),
-                  currentRectList(Types::RectListType::DEFAULTRECT)
+                  currentRectList(Types::RectListType::DEFAULTRECT),
+                  currentRectInList(0)
             {
             }
             Rect defaultRect;

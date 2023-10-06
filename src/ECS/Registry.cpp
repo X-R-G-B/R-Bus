@@ -29,7 +29,9 @@ std::size_t Registry::addEntity()
 
 void Registry::removeEntity(std::size_t id)
 {
-    unloadRaylibComponents(id);
+    // SEE TO PUT ONLY FOR CLIENT
+    //unloadRaylibComponents(id);
+    //
     for (auto function : _removeComponentFunctions) {
         function(*this, id);
     }
@@ -37,9 +39,11 @@ void Registry::removeEntity(std::size_t id)
 
 void Registry::clear()
 {
-    for (std::size_t i = 0; i < _entitiesNb; i++) {
-        unloadRaylibComponents(i);
-    }
+    // SEE TO PUT ONLY FOR CLIENT
+    //for (std::size_t i = 0; i < _entitiesNb; i++) {
+    //    unloadRaylibComponents(i);
+    //}
+    //
     _data.clear();
     _addComponentPlaceFunctions.clear();
     _removeComponentFunctions.clear();
@@ -47,8 +51,7 @@ void Registry::clear()
     _entitiesNb = 0;
 }
 
-static std::vector<std::size_t>
-match(std::vector<std::size_t> fst, std::vector<std::size_t> scd)
+static std::vector<std::size_t> match(std::vector<std::size_t> fst, std::vector<std::size_t> scd)
 {
     std::vector<std::size_t> res;
 
@@ -71,8 +74,7 @@ std::vector<std::size_t> Registry::getExistings(std::type_index type)
     return (funcIt->second)(*this);
 }
 
-std::vector<std::size_t>
-Registry::getEntitiesByComponents(std::vector<std::type_index> types)
+std::vector<std::size_t> Registry::getEntitiesByComponents(std::vector<std::type_index> types)
 {
     auto it                      = types.begin();
     std::vector<std::size_t> res = getExistings(*it);
@@ -117,12 +119,15 @@ std::vector<std::vector<std::size_t>> Registry::getFrontLayers()
 
 void Registry::initLayers(bool back)
 {
-    auto max = static_cast<std::size_t>(
-        back ? BackLayers::BACKMAX : FrontLayers::FRONTMAX);
+    std::size_t max = 0;
+    if (back) {
+        max = static_cast<std::size_t>(BackLayers::BACKMAX);
+    } else {
+        max = static_cast<std::size_t>(FrontLayers::FRONTMAX);
+    }
 
     for (std::size_t i = 0; i < max; i++) {
-        std::vector<std::vector<std::size_t>> &layers =
-            back ? _backLayers : _frontLayers;
+        std::vector<std::vector<std::size_t>> &layers = back ? _backLayers : _frontLayers;
         layers.emplace_back();
     }
     if (back) {
@@ -151,4 +156,9 @@ Registry::Registry() : _entitiesNb(0)
 Clock &Registry::getClock()
 {
     return _clock;
+}
+
+Logger::Logger &Registry::getLogger()
+{
+    return _logger;
 }

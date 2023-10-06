@@ -6,8 +6,8 @@
 */
 
 #include "SceneManager.hpp"
-#include <iostream>
 #include "ClientSystems.hpp"
+#include "Logger.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
@@ -25,8 +25,7 @@ static void initRaylib()
 {
     Raylib::initWindow(screenWidth, screenHeight, "R-Bus");
     Raylib::setWindowState(Raylib::ConfigFlags::WINDOW_RESIZABLE);
-    Raylib::setTargetFPS(
-        Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
+    Raylib::setTargetFPS(Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
     Raylib::initAudioDevice();
 }
 
@@ -75,7 +74,7 @@ int SceneManager::run()
         }
         destroyRaylib();
     } catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
+        Logger::fatal(e.what());
         return ReturnValue::ERROR;
     }
     return ReturnValue::OK;

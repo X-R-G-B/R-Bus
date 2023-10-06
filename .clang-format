@@ -1,5 +1,5 @@
 Language: Cpp
-ColumnLimit: '80'
+ColumnLimit: '108'
 ReflowComments: true
 AlignAfterOpenBracket: AlwaysBreak
 AllowAllArgumentsOnNextLine: false
