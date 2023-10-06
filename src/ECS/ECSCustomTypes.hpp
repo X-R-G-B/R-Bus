@@ -14,6 +14,8 @@
 
 // all values are in percentage of the screen
 
+#include "MessageTypes.h"
+
 namespace Types {
 
     enum MissileTypes { CLASSIC };
@@ -40,10 +42,6 @@ namespace Types {
     struct InitialPosition {
             float x;
             float y;
-    };
-
-    struct Health {
-            int hp;
     };
 
     struct Damage {

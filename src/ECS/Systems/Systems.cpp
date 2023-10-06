@@ -67,8 +67,7 @@ namespace Systems {
     {
         Registry::components<Types::Damage> arrDamage =
             Registry::getInstance().getComponents<Types::Damage>();
-        Registry::components<Types::Health> arrHealth =
-            Registry::getInstance().getComponents<Types::Health>();
+        Registry::components<health_s> arrHealth = Registry::getInstance().getComponents<health_s>();
 
         if (checkAllies(firstEntity, secondEntity)) {
             return;
@@ -285,20 +284,6 @@ namespace Systems {
         }
     }
 
-    void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
-    {
-        Registry::components<Types::Health> arrHealth =
-            Registry::getInstance().getComponents<Types::Health>();
-        Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
-
-        std::vector<std::size_t> ids = arrHealth.getExistingsId();
-        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
-            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0 && arrDead.exist(*itIds)) {
-                executeDeathFunction(*itIds, arrDead);
-            }
-        }
-    }
-
     static void resetParallaxPosition(
         std::size_t id,
         Registry::components<Types::InitialPosition> &arrInitialPos,
@@ -334,6 +319,19 @@ namespace Systems {
         }
     }
 
+    void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<health_s> arrHealth  = Registry::getInstance().getComponents<health_s>();
+        Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
+
+        std::vector<std::size_t> ids = arrHealth.getExistingsId();
+        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
+            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0 && arrDead.exist(*itIds)) {
+                executeDeathFunction(*itIds, arrDead);
+            }
+        }
+    }
+
     const std::string playerFile = "assets/Json/playerData.json";
 
     void initPlayer(std::size_t managerId, std::size_t systemId)
@@ -363,38 +361,26 @@ namespace Systems {
             deadData.get<std::vector<Types::Rect>>()));
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
         Registry::getInstance().getComponents<Types::Damage>().insertBack({jsonData["damage"]});
-        Registry::getInstance().getComponents<Types::Health>().insertBack({jsonData["health"]});
+        Registry::getInstance().getComponents<struct health_s>().insertBack({jsonData["health"]});
         Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
         Registry::getInstance().setToFrontLayers(id);
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
+    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
+    {
+        return {
+            windowCollision,
+            initPlayer,
+            initParalax,
+            entitiesCollision,
+            moveEntities,
 #ifndef NDEBUG
-    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
-    {
-        return {
-            windowCollision,
-            initPlayer,
-            initParalax,
-            entitiesCollision,
-            moveEntities,
             debugCollisionRect,
-            deathChecker,
-            manageOutsideWindowEntity,
-            manageParallax};
-    }
 #else
-    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
-    {
-        return {
-            windowCollision,
-            initPlayer,
-            initParalax,
-            entitiesCollision,
-            moveEntities,
+#endif
             deathChecker,
             manageOutsideWindowEntity,
             manageParallax};
     }
-#endif
 } // namespace Systems

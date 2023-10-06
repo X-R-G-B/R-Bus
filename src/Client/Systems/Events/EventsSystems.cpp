@@ -31,11 +31,11 @@ namespace Systems {
 
     void EventsSystems::playerMovement(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry                            = Registry::getInstance();
-        Registry::components<Types::Position> arrPos  = registry.getComponents<Types::Position>();
-        Registry::components<Types::Health> arrHealth = registry.getComponents<Types::Health>();
-        std::vector<std::size_t> ids                  = registry.getEntitiesByComponents(
-            {typeid(Types::Player), typeid(Types::Position), typeid(Types::Health)});
+        Registry &registry                              = Registry::getInstance();
+        Registry::components<Types::Position> arrPos    = registry.getComponents<Types::Position>();
+        Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
+        std::vector<std::size_t> ids                    = registry.getEntitiesByComponents(
+            {typeid(Types::Player), typeid(Types::Position), typeid(struct health_s)});
         Clock &clock_              = registry.getClock();
         static std::size_t clockId = clock_.create(true);
 
@@ -69,7 +69,7 @@ namespace Systems {
     const Types::CollisionRect collisionRect = {1, 1};
     const Types::Velocity velocity           = {0.7F, 0.0F};
     const Types::Missiles missileType        = {Types::MissileTypes::CLASSIC};
-    const Types::Health health               = {1};
+    const health_s health                    = {1};
     const Types::Damage damage               = {10};
 
     static void createMissile(std::size_t id, Registry::components<Types::Position> &arrPosition)
@@ -88,7 +88,7 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
             Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack({});
             Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
-            Registry::getInstance().getComponents<Types::Health>().insertBack(health);
+            Registry::getInstance().getComponents<health_s>().insertBack(health);
             Registry::getInstance().getComponents<Types::Damage>().insertBack(damage);
             Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
             Registry::getInstance().setToFrontLayers(entityId);
