@@ -268,11 +268,12 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Rect>().insertBack({Types::Rect(jsonData["rect"])});
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
             {Types::CollisionRect(jsonData["collisionRect"])});
+        nlohmann::json animRectData = jsonData["animRect"];
         Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
             Types::Rect(jsonData["rect"]),
-            std::vector<Types::Rect>(jsonData["animRect"]["move"]),
-            std::vector<Types::Rect>(jsonData["animRect"]["attack"]),
-            std::vector<Types::Rect>(jsonData["animRect"]["dead"])));
+            std::vector<Types::Rect>(animRectData["move"]),
+            std::vector<Types::Rect>(animRectData["attack"]),
+            std::vector<Types::Rect>(animRectData["dead"])));
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
         Registry::getInstance().getComponents<Types::Damage>().insertBack({jsonData["damage"]});
         Registry::getInstance().getComponents<Types::Health>().insertBack({jsonData["health"]});
