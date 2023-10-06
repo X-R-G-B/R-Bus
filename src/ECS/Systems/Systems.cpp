@@ -209,7 +209,7 @@ namespace Systems {
     const std::string ennemyPath             = "assets/R-TypeSheet/r-typesheet18.gif";
     const Types::Rect spriteRect             = {2, 2, 48, 48};
     const Types::CollisionRect collisionRect = {25, 25};
-    const Raylib::Vector2 textPos            = {20, 50};
+    const Raylib::Vector2 textPos            = {5, 5};
     constexpr int playerData                 = 10;
     const Types::Position playerPos          = {50, 50};
     constexpr int playerDamage               = 1;
@@ -256,16 +256,18 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
         Registry::getInstance().setToFrontLayers(id);
 
+        Registry::getInstance().getComponents<Types::Damage>().insertBack({enemyDamage});
+        Registry::getInstance().getComponents<Types::Health>().insertBack({playerHealth2});
+
+        id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Raylib::Music>().insertBack({musicPath, musicVolume});
         Registry::getInstance().getComponents<Raylib::Sound>().insertBack({soundPath, soundVolume});
         Registry::getInstance().getComponents<Raylib::Text>().insertBack(
             {"Press SPACE to play music, ENTER to play sound, J to reset "
-             "scene, ARROWS to move",
+             "scene, ARROWS to move ",
              textPos,
              fontScale,
              Raylib::DarkBlue});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack({enemyDamage});
-        Registry::getInstance().getComponents<Types::Health>().insertBack({playerHealth2});
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
