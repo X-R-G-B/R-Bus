@@ -90,6 +90,7 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
             Registry::getInstance().getComponents<health_s>().insertBack(health);
             Registry::getInstance().getComponents<Types::Damage>().insertBack(damage);
+            Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
             Registry::getInstance().setToFrontLayers(entityId);
         }
     }

@@ -2,8 +2,8 @@
     "parallax": [
         {
             "spritePath": "assets/Map/preview.png",
-            "width": 100,
-            "height": 100,
+            "width": 100.0,
+            "height": 100.0,
             "position": {
                 "x": 0.0,
                 "y": 0.0
@@ -23,7 +23,7 @@
                 "y": 20.0
             },
             "velocity" : {
-                "speedX" : -0.3,
+                "speedX" : -0.8,
                 "speedY" :0.0
             },
             "rect" : {

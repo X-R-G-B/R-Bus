@@ -255,6 +255,36 @@ namespace Systems {
         }
     }
 
+    constexpr float outsideWindowTopLeft  = -25.0F;
+    constexpr float outsideWindowBotRigth = 125.0F;
+
+    static bool isOutsideWindow(const Types::Position &pos)
+    {
+        if (pos.x < outsideWindowTopLeft || pos.x > outsideWindowBotRigth || pos.y < outsideWindowTopLeft
+            || pos.y > outsideWindowBotRigth) {
+            return (true);
+        }
+        return (false);
+    }
+
+    void manageOutsideWindowEntity(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::Parallax> arrParallax =
+            Registry::getInstance().getComponents<Types::Parallax>();
+
+        std::vector<std::size_t> ids = arrPosition.getExistingsId();
+
+        for (auto &id : ids) {
+            if (!arrParallax.exist(id)) {
+                if (isOutsideWindow(arrPosition[id])) {
+                    Registry::getInstance().removeEntity(id);
+                }
+            }
+        }
+    }
+
     static void resetParallaxPosition(
         std::size_t id,
         Registry::components<Types::InitialPosition> &arrInitialPos,
@@ -351,6 +381,7 @@ namespace Systems {
 #else
 #endif
             deathChecker,
+            manageOutsideWindowEntity,
             manageParallax};
     }
 } // namespace Systems
