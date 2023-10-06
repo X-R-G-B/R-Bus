@@ -21,7 +21,7 @@ namespace Types {
     };
 
     struct FontSize {
-        float fsz;
+            float fsz;
     };
 
     enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };

@@ -6,9 +6,9 @@
 */
 
 #include "TextSystems.hpp"
+#include "CustomTypes.hpp"
 #include "Raylib.hpp"
 #include "SharedValues.hpp"
-#include "CustomTypes.hpp"
 
 namespace Systems {
 
@@ -21,17 +21,20 @@ namespace Systems {
 
     static void setPositionResponsive(Raylib::Text &text, Types::Position &pos)
     {
-        float x   = (pos.x * static_cast<float>(GetScreenWidth())) / denominator;
-        float y   = (pos.y* static_cast<float>(GetScreenHeight())) / denominator;
+        float x = (pos.x * static_cast<float>(GetScreenWidth())) / denominator;
+        float y = (pos.y * static_cast<float>(GetScreenHeight())) / denominator;
 
         text.setPixelPosition({x, y});
     }
 
     static void drawTextResponsive(std::size_t id, Raylib::Text &text)
     {
-        Registry::components<Raylib::Color> arrColor = Registry::getInstance().getComponents<Raylib::Color>();
-        Registry::components<Types::Position> arrPosition = Registry::getInstance().getComponents<Types::Position>();
-        Registry::components<Types::FontSize> arrFsz = Registry::getInstance().getComponents<Types::FontSize>();
+        Registry::components<Raylib::Color> arrColor =
+            Registry::getInstance().getComponents<Raylib::Color>();
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::FontSize> arrFsz =
+            Registry::getInstance().getComponents<Types::FontSize>();
 
         Types::FontSize defaultFsz = {text.getFontSize()};
         setFontSizeResponsive(text, defaultFsz);
