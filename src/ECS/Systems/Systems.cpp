@@ -125,7 +125,13 @@ namespace Systems {
         return jsonData;
     }
 
-    static void initParallaxEntity(nlohmann::json_abi_v3_11_2::basic_json<> &parallaxData)
+    constexpr int maxOutParallaxLeft  = -100;
+    constexpr int maxOutParallaxRight = 100;
+
+    static void initParallaxEntity(
+        nlohmann::json_abi_v3_11_2::basic_json<> &parallaxData,
+        const float maxOffsideParallax = 0,
+        bool isCopy                    = false)
     {
         std::size_t id = Registry::getInstance().addEntity();
 
@@ -133,18 +139,24 @@ namespace Systems {
             {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id});
         Registry::getInstance().getComponents<Types::Position>().insertBack(
             {Types::Position(parallaxData["position"])});
-        Registry::components<Types::Position> arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
-        Registry::getInstance().getComponents<Types::InitialPosition>().insertBack(
-            {arrPosition[id].x, arrPosition[id].y});
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(
             {Types::Velocity(parallaxData["velocity"])});
         if (parallaxData["rect"] != nullptr) {
             Registry::getInstance().getComponents<Types::Rect>().insertBack(
                 {Types::Rect(parallaxData["rect"])});
         }
-        Registry::getInstance().getComponents<Types::Parallax>().insertBack({});
         Registry::getInstance().setToBackLayers(id);
+        Registry::getInstance().getComponents<Types::Parallax>().insertBack({});
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        if (isCopy) {
+            arrPosition[id].x += maxOffsideParallax;
+        }
+        Registry::getInstance().getComponents<Types::InitialPosition>().insertBack(
+            {arrPosition[id].x, arrPosition[id].y});
+        if (parallaxData["copy"] != nullptr && parallaxData["copy"] == true && isCopy == false) {
+            initParallaxEntity(parallaxData, maxOutParallaxRight, true);
+        }
     }
 
     const std::string parallaxFile = "assets/Json/parallaxData.json";
@@ -249,9 +261,6 @@ namespace Systems {
         Registry::components<Types::InitialPosition> &arrInitialPos,
         Registry::components<Types::Position> &arrPosition)
     {
-        constexpr int maxOutParallaxLeft  = -100;
-        constexpr int maxOutParallaxRight = 100;
-
         if (arrPosition[id].x <= maxOutParallaxLeft) {
             if (arrInitialPos[id].x >= maxOutParallaxRight) {
                 arrPosition[id].x = arrInitialPos[id].x;
