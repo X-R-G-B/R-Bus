@@ -242,7 +242,7 @@ namespace Systems {
         } else {
             Registry::getInstance().removeEntity(id);
         }
-    } 
+    }
 
     static void resetParallaxPosition(
         std::size_t id,
