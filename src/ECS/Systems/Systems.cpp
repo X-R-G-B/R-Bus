@@ -44,8 +44,8 @@ namespace Systems {
     {
         Registry::components<Types::Damage> arrDamage =
             Registry::getInstance().getComponents<Types::Damage>();
-        Registry::components<Types::Health> arrHealth =
-            Registry::getInstance().getComponents<Types::Health>();
+        Registry::components<health_s> arrHealth =
+            Registry::getInstance().getComponents<health_s>();
 
         if (arrDamage.exist(firstEntity) && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
@@ -144,8 +144,8 @@ namespace Systems {
     }
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry::components<Types::Health> arrHealth =
-            Registry::getInstance().getComponents<Types::Health>();
+        Registry::components<health_s> arrHealth =
+            Registry::getInstance().getComponents<health_s>();
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
@@ -194,7 +194,7 @@ namespace Systems {
         Registry::getInstance().setToBackLayers(id);
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
         Registry::getInstance().getComponents<Types::Damage>().insertBack({playerDamage});
-        Registry::getInstance().getComponents<Types::Health>().insertBack({playerHealth});
+        Registry::getInstance().getComponents<health_s>().insertBack({playerHealth});
         Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
 
         id = Registry::getInstance().addEntity();
@@ -217,7 +217,7 @@ namespace Systems {
              fontScale,
              Raylib::DarkBlue});
         Registry::getInstance().getComponents<Types::Damage>().insertBack({enemyDamage});
-        Registry::getInstance().getComponents<Types::Health>().insertBack({playerHealth2});
+        Registry::getInstance().getComponents<health_s>().insertBack({playerHealth2});
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
 
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);

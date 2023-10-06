@@ -11,6 +11,8 @@
 #include <functional>
 #include <optional>
 
+#include "MessageTypes.h"
+
 namespace Types {
 
     enum MissileTypes { CLASSIC };
@@ -28,10 +30,6 @@ namespace Types {
     struct Position {
             float x;
             float y;
-    };
-
-    struct Health {
-            int hp;
     };
 
     struct Damage {

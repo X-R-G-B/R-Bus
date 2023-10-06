@@ -18,7 +18,6 @@
 #include <vector>
 #include "Clock.hpp"
 #include "Logger.hpp"
-#include "SceneManager.hpp"
 #include "SparseArray.hpp"
 
 enum LayerType { BACKLAYER, FRONTLAYER, DEFAULTLAYER };
