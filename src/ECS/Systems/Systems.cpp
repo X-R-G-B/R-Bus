@@ -256,6 +256,48 @@ namespace Systems {
         }
     }
 
+    constexpr int outsideWindowTopLeft = 0;
+    constexpr int outsideWindowBotRigth = 100;
+
+    static bool isOutsideWindow(const Types::Position &position)
+    {
+        if (position.x < outsideWindowTopLeft || position.x > outsideWindowBotRigth || position.y < outsideWindowTopLeft || position.y > outsideWindowBotRigth) {
+            return (true);
+        }
+        return (false);
+    }
+
+    void manageOutsideWindowEntity(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<Types::Position> arrPosition = Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::Parallax> arrParallax = Registry::getInstance().getComponents<Types::Parallax>();
+        Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
+
+        std::vector<std::size_t> ids = arrPosition.getExistingsId();
+
+        for (auto &id: ids) {
+            if (!arrParallax.exist(id)) {
+                if (isOutsideWindow(arrPosition[id])) {
+                    executeDeathFunction(id, arrDead);
+                }
+            }
+        }
+    }
+
+    void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<Types::Health> arrHealth =
+            Registry::getInstance().getComponents<Types::Health>();
+        Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
+
+        std::vector<std::size_t> ids = arrHealth.getExistingsId();
+        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
+            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0 && arrDead.exist(*itIds)) {
+                executeDeathFunction(*itIds, arrDead);
+            }
+        }
+    }
+
     static void resetParallaxPosition(
         std::size_t id,
         Registry::components<Types::InitialPosition> &arrInitialPos,
@@ -291,19 +333,6 @@ namespace Systems {
         }
     }
 
-    void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
-    {
-        Registry::components<Types::Health> arrHealth =
-            Registry::getInstance().getComponents<Types::Health>();
-        Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
-
-        std::vector<std::size_t> ids = arrHealth.getExistingsId();
-        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
-            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0 && arrDead.exist(*itIds)) {
-                executeDeathFunction(*itIds, arrDead);
-            }
-        }
-    }
 
     const std::string playerFile = "assets/Json/playerData.json";
 
@@ -351,6 +380,7 @@ namespace Systems {
             moveEntities,
             debugCollisionRect,
             deathChecker,
+            manageOutsideWindowEntity,
             manageParallax};
     }
 #else
@@ -363,6 +393,7 @@ namespace Systems {
             entitiesCollision,
             moveEntities,
             deathChecker,
+            manageOutsideWindowEntity,
             manageParallax};
     }
 #endif
