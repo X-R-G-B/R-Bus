@@ -6,6 +6,7 @@
 */
 
 #include "NitworkClient.hpp"
+#include "Registry.hpp"
 
 namespace Nitwork {
     NitworkClient::NitworkClient() : _resolver(_context)
@@ -32,7 +33,7 @@ namespace Nitwork {
         boost::asio::ip::udp::socket socket(_context);
         _socket.open(boost::asio::ip::udp::v4());
         if (!_socket.is_open()) {
-            std::cerr << "Error: socket not open" << std::endl;
+            Registry::getInstance().getLogger().error("Socket not open");
             return false;
         }
         return true;

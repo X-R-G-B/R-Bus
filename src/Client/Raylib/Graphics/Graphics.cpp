@@ -678,6 +678,16 @@ namespace Raylib {
         _pixelPosition = position;
     }
 
+    void Text::setColor(Color color)
+    {
+        _color = color;
+    }
+
+    Color Text::getColor() const
+    {
+        return _color;
+    }
+
     void Text::setCurrentFontSize(float fontSize)
     {
         _currentFontSize = fontSize;

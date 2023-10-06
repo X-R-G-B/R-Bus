@@ -21,6 +21,7 @@ namespace Systems {
     SystemManager::SystemManager(std::vector<std::function<void(std::size_t, std::size_t)>> systems)
         : _id(_managerNb),
           _originalSystems(std::move(systems)),
+          _modifiedSystems(_originalSystems),
           _modified(false)
     {
         _managerNb += 1;
@@ -34,20 +35,24 @@ namespace Systems {
             system(_id, i);
             i++;
         }
+        for (auto &id : _toRemove) {
+            auto it = _modifiedSystems.begin();
+            std::advance(it, id);
+            _modifiedSystems.erase(it);
+        }
+        _toRemove.clear();
     }
 
     void SystemManager::addSystem(std::function<void(std::size_t, std::size_t)> sys)
     {
-        setModifiedSystems();
+        _modified = true;
         _modifiedSystems.push_back(sys);
     }
 
     void SystemManager::removeSystem(std::size_t id)
     {
-        setModifiedSystems();
-        auto it = _modifiedSystems.begin();
-        std::advance(it, id);
-        _modifiedSystems.erase(it);
+        _modified = true;
+        _toRemove.push_back(id);
     }
 
     void SystemManager::resetChanges()
@@ -64,9 +69,4 @@ namespace Systems {
         return _originalSystems;
     }
 
-    void SystemManager::setModifiedSystems()
-    {
-        _modified        = true;
-        _modifiedSystems = _originalSystems;
-    }
 } // namespace Systems

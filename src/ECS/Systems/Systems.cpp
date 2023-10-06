@@ -7,6 +7,9 @@
 
 #include "Systems.hpp"
 #include <cstddef>
+#include <fstream>
+#include <nlohmann/json.hpp>
+#include <sstream>
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
@@ -40,12 +43,35 @@ namespace Systems {
         }
     }
 
+    static bool checkAllies(std::size_t fstId, std::size_t scdId)
+    {
+        Registry &registry                          = Registry::getInstance();
+        Registry::components<Types::Player> players = registry.getComponents<Types::Player>();
+        Registry::components<Types::Enemy> enemys   = registry.getComponents<Types::Enemy>();
+        Registry::components<Types::PlayerAllies> playerAllies =
+            registry.getComponents<Types::PlayerAllies>();
+        Registry::components<Types::EnemyAllies> enemyAllies = registry.getComponents<Types::EnemyAllies>();
+
+        if ((playerAllies.exist(fstId) && players.exist(scdId))
+            || (playerAllies.exist(scdId) && players.exist(fstId))) {
+            return true;
+        }
+        if ((enemyAllies.exist(fstId) && enemys.exist(scdId))
+            || (enemyAllies.exist(scdId) && enemys.exist(fstId))) {
+            return true;
+        }
+        return false;
+    }
+
     static void giveDamages(std::size_t firstEntity, std::size_t secondEntity)
     {
         Registry::components<Types::Damage> arrDamage =
             Registry::getInstance().getComponents<Types::Damage>();
-        Registry::components<health_s> arrHealth =
-            Registry::getInstance().getComponents<health_s>();
+        Registry::components<health_s> arrHealth = Registry::getInstance().getComponents<health_s>();
+
+        if (checkAllies(firstEntity, secondEntity)) {
+            return;
+        }
 
         if (arrDamage.exist(firstEntity) && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
@@ -79,6 +105,70 @@ namespace Systems {
             }
             itIds++;
         }
+    }
+
+    static nlohmann::json openJsonData(const std::string &path)
+    {
+        std::ifstream fileData(path);
+        std::ostringstream input;
+        nlohmann::json jsonData = {};
+
+        if (fileData.is_open()) {
+            input << fileData.rdbuf();
+            if (nlohmann::json::accept(input.str())) {
+                jsonData = nlohmann::json::parse(input.str());
+                return jsonData;
+            }
+        }
+        Registry::getInstance().getLogger().error("Could not load json file. An error occured");
+        return jsonData;
+    }
+
+    constexpr int maxOutParallaxLeft  = -100;
+    constexpr int maxOutParallaxRight = 100;
+
+    static void initParallaxEntity(
+        nlohmann::json_abi_v3_11_2::basic_json<> &parallaxData,
+        const float maxOffsideParallax = 0,
+        bool isCopy                    = false)
+    {
+        std::size_t id = Registry::getInstance().addEntity();
+
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
+            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id});
+        Registry::getInstance().getComponents<Types::Position>().insertBack(
+            {Types::Position(parallaxData["position"])});
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(
+            {Types::Velocity(parallaxData["velocity"])});
+        if (parallaxData["rect"] != nullptr) {
+            Registry::getInstance().getComponents<Types::Rect>().insertBack(
+                {Types::Rect(parallaxData["rect"])});
+        }
+        Registry::getInstance().setToBackLayers(id);
+        Registry::getInstance().getComponents<Types::Parallax>().insertBack({});
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        if (isCopy) {
+            arrPosition[id].x += maxOffsideParallax;
+        }
+        Registry::getInstance().getComponents<Types::InitialPosition>().insertBack(
+            {arrPosition[id].x, arrPosition[id].y});
+        if (parallaxData["copy"] != nullptr && parallaxData["copy"] == true && isCopy == false) {
+            initParallaxEntity(parallaxData, maxOutParallaxRight, true);
+        }
+    }
+
+    const std::string parallaxFile = "assets/Json/parallaxData.json";
+
+    void initParalax(std::size_t managerId, std::size_t systemId)
+    {
+        nlohmann::json jsonData = openJsonData(parallaxFile);
+
+        for (auto &e : jsonData["parallax"]) {
+            initParallaxEntity(e);
+        }
+
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
     void entitiesCollision(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -134,18 +224,105 @@ namespace Systems {
         }
     }
 
+    void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry &registry = Registry::getInstance();
+        auto deadList      = registry.getComponents<Types::Dead>();
+        auto deadIdList    = deadList.getExistingsId();
+        Clock &clock       = registry.getClock();
+
+        for (auto id : deadIdList) {
+            Types::Dead &dead = deadList[id];
+            if (static_cast<int>(dead.clockId) > -1
+                && clock.elapsedMillisecondsSince(dead.clockId) > dead.timeToWait) {
+                clock.restart(dead.clockId);
+                registry.removeEntity(id);
+            }
+        }
+    }
+
     static void executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead)
     {
-        if (arrDead[id].deathFunction != std::nullopt) {
-            arrDead[id].deathFunction.value()(id);
+        Types::Dead &deadComp = arrDead[id];
+        if (deadComp.deathFunction != std::nullopt) {
+            if (!deadComp.launched) {
+                deadComp.deathFunction.value()(id);
+                deadComp.clockId  = Registry::getInstance().getClock().create();
+                deadComp.launched = true;
+            }
         } else {
             Registry::getInstance().removeEntity(id);
         }
     }
+
+    constexpr float outsideWindowTopLeft  = -25.0F;
+    constexpr float outsideWindowBotRigth = 125.0F;
+
+    static bool isOutsideWindow(const Types::Position &pos)
+    {
+        if (pos.x < outsideWindowTopLeft || pos.x > outsideWindowBotRigth || pos.y < outsideWindowTopLeft
+            || pos.y > outsideWindowBotRigth) {
+            return (true);
+        }
+        return (false);
+    }
+
+    void manageOutsideWindowEntity(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::Parallax> arrParallax =
+            Registry::getInstance().getComponents<Types::Parallax>();
+
+        std::vector<std::size_t> ids = arrPosition.getExistingsId();
+
+        for (auto &id : ids) {
+            if (!arrParallax.exist(id)) {
+                if (isOutsideWindow(arrPosition[id])) {
+                    Registry::getInstance().removeEntity(id);
+                }
+            }
+        }
+    }
+
+    static void resetParallaxPosition(
+        std::size_t id,
+        Registry::components<Types::InitialPosition> &arrInitialPos,
+        Registry::components<Types::Position> &arrPosition)
+    {
+        if (arrPosition[id].x <= maxOutParallaxLeft) {
+            if (arrInitialPos[id].x >= maxOutParallaxRight) {
+                arrPosition[id].x = arrInitialPos[id].x;
+            } else {
+                arrPosition[id].x = arrInitialPos[id].x + maxOutParallaxRight;
+            }
+            arrPosition[id].y = arrInitialPos[id].y;
+        }
+    }
+
+    void manageParallax(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<Types::Position> arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::Parallax> arrParallax =
+            Registry::getInstance().getComponents<Types::Parallax>();
+        Registry::components<Types::Velocity> arrVelocity =
+            Registry::getInstance().getComponents<Types::Velocity>();
+        Registry::components<Types::InitialPosition> arrInitialPos =
+            Registry::getInstance().getComponents<Types::InitialPosition>();
+
+        std::vector<std::size_t> ids = arrParallax.getExistingsId();
+
+        for (auto &id : ids) {
+            if (arrPosition.exist(id) && arrVelocity.exist(id) && arrInitialPos.exist(id)) {
+                resetParallaxPosition(id, arrInitialPos, arrPosition);
+            }
+        }
+    }
+
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry::components<health_s> arrHealth =
-            Registry::getInstance().getComponents<health_s>();
+        Registry::components<health_s> arrHealth  = Registry::getInstance().getComponents<health_s>();
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
@@ -156,82 +333,55 @@ namespace Systems {
         }
     }
 
-    const std::string musicPath              = "assets/Audio/Musics/Title.mp3";
-    const std::string soundPath              = "assets/Audio/Sounds/fire.ogg";
-    const std::string playerPath             = "assets/R-TypeSheet/r-typesheet14.gif";
-    const std::string ennemyPath             = "assets/R-TypeSheet/r-typesheet18.gif";
-    const Types::Rect spriteRect             = {2, 2, 48, 48};
-    const Types::CollisionRect collisionRect = {25, 25};
-    const Raylib::Vector2 textPos            = {20, 50};
-    constexpr int playerData                 = 10;
-    const Types::Position playerPos          = {50, 50};
-    constexpr int playerDamage               = 1;
-    constexpr int enemyDamage                = 1;
-    constexpr int playerHealth               = 5;
-    constexpr int playerHealth2              = 5;
-    constexpr float musicVolume              = 0.02F;
-    constexpr float soundVolume              = 0.1F;
-    constexpr float fontScale                = 2.0F;
-    const float playerWidth                  = 25.0F;
-    const float playerHeight                 = 25.0F;
+    const std::string playerFile = "assets/Json/playerData.json";
 
-    void init(std::size_t managerId, std::size_t systemId)
+    void initPlayer(std::size_t managerId, std::size_t systemId)
     {
-        std::size_t id = Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Types::Position>().insertBack(playerPos);
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {playerPath, playerWidth, playerHeight, id});
-        Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
-        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
-        // NOLINTBEGIN(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
-        Registry::getInstance().getComponents<Types::AnimRect>().insertBack({
-            spriteRect,
-            {{2, 51, 46, 47},    {101, 2, 48, 47},   {152, 2, 46, 47},   {201, 2, 46, 47}  },
-            {{2, 51, 46, 47},    {101, 2, 48, 47},   {152, 2, 46, 47},   {201, 2, 46, 47}  },
-            {{180, 140, 18, 12}, {211, 140, 18, 12}, {230, 140, 18, 12}, {250, 140, 18, 12}}
-        });
-        // NOLINTEND(cppcoreguidelines-avoid-magic-numbers,readability-magic-numbers)
-        Registry::getInstance().setToBackLayers(id);
-        Registry::getInstance().getComponents<Types::Player>().insertBack({});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack({playerDamage});
-        Registry::getInstance().getComponents<health_s>().insertBack({playerHealth});
-        Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
+        nlohmann::json jsonData = openJsonData(playerFile);
+        std::size_t id          = Registry::getInstance().addEntity();
 
-        id = Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Types::Enemy>().insertBack({});
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {playerData, playerData + playerData + playerData});
+        if (jsonData["player"] == nullptr) {
+            return;
+        }
+        jsonData = jsonData["player"];
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {playerPath, playerWidth, playerHeight, id});
-        Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
-        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
+            {jsonData["spritePath"], jsonData["width"], jsonData["height"], id});
+        Registry::getInstance().getComponents<Types::Position>().insertBack(
+            {Types::Position(jsonData["position"])});
+        Registry::getInstance().getComponents<Types::Rect>().insertBack({Types::Rect(jsonData["rect"])});
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
+            {Types::CollisionRect(jsonData["collisionRect"])});
+        nlohmann::json animRectData = jsonData["animRect"];
+        nlohmann::json moveData     = animRectData["move"];
+        nlohmann::json attackData   = animRectData["attack"];
+        nlohmann::json deadData     = animRectData["dead"];
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
+            Types::Rect(jsonData["rect"]),
+            moveData.get<std::vector<Types::Rect>>(),
+            attackData.get<std::vector<Types::Rect>>(),
+            deadData.get<std::vector<Types::Rect>>()));
+        Registry::getInstance().getComponents<Types::Player>().insertBack({});
+        Registry::getInstance().getComponents<Types::Damage>().insertBack({jsonData["damage"]});
+        Registry::getInstance().getComponents<struct health_s>().insertBack({jsonData["health"]});
         Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
         Registry::getInstance().setToFrontLayers(id);
-
-        Registry::getInstance().getComponents<Raylib::Music>().insertBack({musicPath, musicVolume});
-        Registry::getInstance().getComponents<Raylib::Sound>().insertBack({soundPath, soundVolume});
-        Registry::getInstance().getComponents<Raylib::Text>().insertBack(
-            {"Press SPACE to play music, ENTER to play sound, J to reset "
-             "scene, ARROWS to move",
-             textPos,
-             fontScale,
-             Raylib::DarkBlue});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack({enemyDamage});
-        Registry::getInstance().getComponents<health_s>().insertBack({playerHealth2});
-        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
-
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
+    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
+    {
+        return {
+            windowCollision,
+            initPlayer,
+            initParalax,
+            entitiesCollision,
+            moveEntities,
 #ifndef NDEBUG
-    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
-    {
-        return {windowCollision, init, entitiesCollision, moveEntities, debugCollisionRect, deathChecker};
-    }
+            debugCollisionRect,
 #else
-    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
-    {
-        return {windowCollision, init, entitiesCollision, moveEntities, deathChecker};
-    }
 #endif
+            deathChecker,
+            manageOutsideWindowEntity,
+            manageParallax};
+    }
 } // namespace Systems
