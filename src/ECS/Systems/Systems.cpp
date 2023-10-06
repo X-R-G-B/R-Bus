@@ -12,8 +12,6 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
-#include <iostream>
-
 namespace Systems {
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
@@ -222,7 +220,6 @@ namespace Systems {
             music);
         Registry::getInstance().getComponents<Raylib::Sound>().insertBack(
             sound);
-            std::cout << "Music and sound added" << std::endl;
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()

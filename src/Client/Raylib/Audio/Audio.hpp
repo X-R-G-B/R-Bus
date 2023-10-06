@@ -10,8 +10,6 @@
 #include <string>
 #include "raylib.h"
 
-#include <iostream>
-
 namespace Raylib {
     // Audio device management functions
     void initAudioDevice();
@@ -46,7 +44,6 @@ namespace Raylib {
     class Music {
         public:
             Music(const std::string& fileName, float volume = 0.5f);
-            ~Music() { std::cout << "Music destructor" << std::endl;}
             void unload();
             bool isReady() const;
             void play() const;
