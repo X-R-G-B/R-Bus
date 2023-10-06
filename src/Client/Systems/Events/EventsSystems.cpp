@@ -62,7 +62,7 @@ namespace Systems {
         }
     }
 
-    const Types::Rect spriteRect             = {300, 121, 32, 10};
+    const Types::Rect spriteRect             = {200, 121, 32, 10};
     const std::string bulletPath             = "assets/R-TypeSheet/r-typesheet1.gif";
     constexpr float bulletWidth              = 5.0F;
     constexpr float bulletHeight             = 5.0F;
