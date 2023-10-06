@@ -21,6 +21,10 @@ namespace Types {
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Rect, x, y, width, height);
     };
 
+    struct FontSize {
+            float fsz;
+    };
+
     enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };
 
     struct AnimRect {
