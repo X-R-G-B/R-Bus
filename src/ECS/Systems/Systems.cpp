@@ -260,7 +260,8 @@ namespace Systems {
 
     static bool isOutsideWindow(const Types::Position &pos)
     {
-        if (pos.x < outsideWindowTopLeft || pos.x > outsideWindowBotRigth || pos.y < outsideWindowTopLeft || pos.y > outsideWindowBotRigth) {
+        if (pos.x < outsideWindowTopLeft || pos.x > outsideWindowBotRigth || pos.y < outsideWindowTopLeft
+            || pos.y > outsideWindowBotRigth) {
             return (true);
         }
         return (false);
