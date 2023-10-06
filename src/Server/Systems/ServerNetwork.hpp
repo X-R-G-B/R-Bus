@@ -5,11 +5,11 @@
 ** ServerNitwork
 */
 
-#pragma one
+#pragma once
 
 #include <any>
 #include <boost/asio.hpp>
 
 namespace Systems {
-    void handleLifeUpdate(const std::any & msg, boost::asio::ip::udp::endpoint &endpoint);
+    void handleLifeUpdateMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 }

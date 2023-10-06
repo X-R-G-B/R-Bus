@@ -86,13 +86,13 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgInit_s packetMsgInit = {
             {
-             HEADER_CODE1,                                                    getIdsReceived(),
+             HEADER_CODE1, getIdsReceived(),
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2,
              },
             {INIT},
-            {MAGICK_INIT                                                              }
+            {MAGICK_INIT}
         };
         Packet packet(
             packetMsgInit.header.id,
@@ -106,13 +106,13 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgReady_s packetMsgReady = {
             {
-             HEADER_CODE1,                                                    getIdsReceived(),
+             HEADER_CODE1, getIdsReceived(),
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2,
              },
             {READY},
-            {MAGICK_READY                                                              }
+            {MAGICK_READY}
         };
         Packet packet(
             packetMsgReady.header.id,

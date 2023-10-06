@@ -8,6 +8,7 @@
 #pragma once
 
 #include "ANitwork.hpp"
+#include "ServerNetwork.hpp"
 
 namespace Nitwork {
     class NitworkServer : public ANitwork {
@@ -28,6 +29,11 @@ namespace Nitwork {
 
             /* Messages creation methods */
             void addStarGameMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
+
+            void addLifeUpdateMessage(
+                boost::asio::ip::udp::endpoint &endpoint,
+                n_id_t playerId,
+                const struct health_s &life);
 
         private:
             NitworkServer() = default;
@@ -68,19 +74,21 @@ namespace Nitwork {
                   },
                   [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       handleReadyMsg(msg, endpoint);
+                  }}},
+                {LIFE_UPDATE,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgLifeUpdate_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::handleLifeUpdateMsg(msg, endpoint);
                   }}}
-//                {
-//                 LIFE_UPDATE,
-//                 {[this](actionHandler &actionHandler, const struct header_s &header) {
-//                      handleBody<struct msgLifeUpdate_s>(actionHandler, header);
-//                  },
-//                  [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
-//                      handleLifeUpdateMsg(msg, endpoint);
-//                  }}},
-//                },
             };
             std::map<enum n_actionType_t, actionHandler> _actionToSendHandlers = {
-                {START_GAME, [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                {LIFE_UPDATE,
+                 [this](std::any &any,              boost::asio::ip::udp::endpoint &endpoint) {
+                     sendData<struct packetLifeUpdate_s>(any, endpoint);
+                 }             },
+                {START_GAME,  [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                      sendData<struct packetMsgStartGame_s>(any, endpoint);
                  }}
             };
