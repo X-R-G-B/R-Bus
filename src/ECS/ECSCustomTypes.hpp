@@ -10,6 +10,9 @@
 #include <cstddef>
 #include <functional>
 #include <optional>
+#include "nlohmann/json.hpp"
+
+// all values are in percentage of the screen
 
 namespace Types {
 
@@ -18,6 +21,8 @@ namespace Types {
     struct CollisionRect {
             float width;
             float height;
+
+            NLOHMANN_DEFINE_TYPE_INTRUSIVE(CollisionRect, width, height);
     };
 
     struct RectangleShape {
@@ -26,6 +31,13 @@ namespace Types {
     };
 
     struct Position {
+            float x;
+            float y;
+
+            NLOHMANN_DEFINE_TYPE_INTRUSIVE(Position, x, y);
+    };
+
+    struct InitialPosition {
             float x;
             float y;
     };
@@ -41,6 +53,8 @@ namespace Types {
     struct Velocity {
             float speedX;
             float speedY;
+
+            NLOHMANN_DEFINE_TYPE_INTRUSIVE(Velocity, speedX, speedY);
     };
 
     struct Player { };
@@ -54,6 +68,8 @@ namespace Types {
     struct EnemyAllies { };
 
     struct Enemy { };
+
+    struct Parallax { };
 
     struct Dead {
             Dead(std::optional<std::function<void(std::size_t id)>> func, std::size_t time = 0)
