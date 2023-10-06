@@ -129,8 +129,7 @@ namespace Systems {
 
     static void initParallaxEntity(
         nlohmann::json_abi_v3_11_2::basic_json<> &parallaxData,
-        const float maxOffsideParallax = 0,
-        bool isCopy                    = false)
+        const float maxOffsideParallax = 0)
     {
         std::size_t id = Registry::getInstance().addEntity();
 
@@ -148,14 +147,11 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Parallax>().insertBack({});
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
-        if (isCopy) {
+        if (maxOffsideParallax > 0) {
             arrPosition[id].x += maxOffsideParallax;
         }
         Registry::getInstance().getComponents<Types::InitialPosition>().insertBack(
             {arrPosition[id].x, arrPosition[id].y});
-        if (parallaxData["copy"] != nullptr && parallaxData["copy"] == true && isCopy == false) {
-            initParallaxEntity(parallaxData, maxOutParallaxRight, true);
-        }
     }
 
     const std::string parallaxFile = "assets/Json/parallaxData.json";
@@ -166,8 +162,10 @@ namespace Systems {
 
         for (auto &e : jsonData["parallax"]) {
             initParallaxEntity(e);
+            if (e["copy"] != nullptr && e["copy"]) {
+                initParallaxEntity(e, maxOutParallaxRight);
+            }
         }
-
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
@@ -222,6 +220,48 @@ namespace Systems {
                 arrPosition[id].y += arrVelocity[id].speedY;
             }
         }
+    }
+
+    static void initEnnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &ennemyData)
+    {
+        std::size_t id = Registry::getInstance().addEntity();
+
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
+            Raylib::Sprite(ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id));
+        Registry::getInstance().getComponents<Types::Position>().insertBack(
+            {Types::Position(ennemyData["position"])});
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
+            (Types::CollisionRect(ennemyData["collisionRect"])));
+        Registry::getInstance().getComponents<Types::Rect>().insertBack((Types::Rect(ennemyData["rect"])));
+        // nlohmann::json animRectData = ennemyData["animRect"];
+        // nlohmann::json moveData     = animRectData["move"];
+        // nlohmann::json attackData   = animRectData["attack"];
+        // nlohmann::json deadData     = animRectData["dead"];
+        // Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
+        //     Types::Rect(ennemyData["rect"]),
+        //     moveData.get<std::vector<Types::Rect>>(),
+        //     attackData.get<std::vector<Types::Rect>>(),
+        //     deadData.get<std::vector<Types::Rect>>()));
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(
+            {Types::Velocity(ennemyData["velocity"])});
+        Registry::getInstance().getComponents<health_s>().insertBack({ennemyData["health"]});
+        Registry::getInstance().getComponents<Types::Damage>().insertBack({ennemyData["damage"]});
+    }
+
+    const std::string ennemyFile = "assets/Json/ennemyData.json";
+
+    void initEnnemy(std::size_t managerId, std::size_t systemId)
+    {
+        nlohmann::json jsonData = openJsonData(ennemyFile);
+
+        if (jsonData["ennemy"] == nullptr) {
+            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+            return;
+        }
+        for (auto &ennemyData : jsonData["ennemy"]) {
+            initEnnemyEntity(ennemyData);
+        }
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -341,6 +381,7 @@ namespace Systems {
         std::size_t id          = Registry::getInstance().addEntity();
 
         if (jsonData["player"] == nullptr) {
+            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
             return;
         }
         jsonData = jsonData["player"];
@@ -371,17 +412,18 @@ namespace Systems {
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
     {
         return {
-            windowCollision,
-            initPlayer,
-            initParalax,
-            entitiesCollision,
-            moveEntities,
 #ifndef NDEBUG
             debugCollisionRect,
 #else
 #endif
-            deathChecker,
+            windowCollision,
+            initPlayer,
+            initParalax,
+            initEnnemy,
+            entitiesCollision,
             manageOutsideWindowEntity,
+            deathChecker,
+            moveEntities,
             manageParallax};
     }
 } // namespace Systems

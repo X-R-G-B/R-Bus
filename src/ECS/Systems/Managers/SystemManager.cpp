@@ -31,6 +31,7 @@ namespace Systems {
     {
         std::size_t i = 0;
 
+        _toRemove.clear();
         for (auto &system : getSystems()) {
             system(_id, i);
             i++;
@@ -40,7 +41,6 @@ namespace Systems {
             std::advance(it, id);
             _modifiedSystems.erase(it);
         }
-        _toRemove.clear();
     }
 
     void SystemManager::addSystem(std::function<void(std::size_t, std::size_t)> sys)

@@ -1,0 +1,53 @@
+{
+    "ennemy" : [
+        {
+            "spritePath": "assets/R-TypeSheet/r-typesheet20.gif",
+            "damage": 10.0,
+            "health": 1.0,
+            "width": 10.0,
+            "height": 10.0,
+            "position" : {
+                "x": 70.0,
+                "y": 50.0
+            },
+            "rect": {
+                "x": 18.0,
+                "y": 67.0,
+                "width": 31.0,
+                "height": 30
+            },
+            "collisionRect": {
+                "width": 6.0,
+                "height": 6.0
+            },
+            "velocity": {
+                "speedX": -0.1,
+                "speedY": 0.0
+            },
+            "animRect": {
+                "move": [
+                    {
+                        "x": 18.0,
+                        "y": 67.0,
+                        "width": 31.0,
+                        "height": 30.0
+                    },
+                    {
+                        "x": 51.0,
+                        "y": 67.0,
+                        "width": 31.0,
+                        "height": 30.0
+                    },
+                    {
+                        "x": 85.0,
+                        "y": 69.0,
+                        "width": 30.0,
+                        "height": 29.0
+                    }
+                ],
+                "attack": [],
+                "dead": []
+            }
+        }
+    ]
+}
