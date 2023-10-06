@@ -370,10 +370,10 @@ namespace Systems {
 
     void initAudio(std::size_t /*managerId*/, std::size_t /*systemId*/)
     {
-        const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
-        const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
-        constexpr float musicVolume              = 0.10F;
-        constexpr float soundVolume              = 0.13F;
+        const std::string musicPath = "assets/Audio/Musics/Title.mp3";
+        const std::string soundPath = "assets/Audio/Sounds/fire.ogg";
+        constexpr float musicVolume = 0.10F;
+        constexpr float soundVolume = 0.13F;
 
         Raylib::Music music(musicPath, musicVolume);
         Raylib::Sound sound(soundPath, soundVolume);
