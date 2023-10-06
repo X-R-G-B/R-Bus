@@ -64,8 +64,7 @@ namespace Systems {
     {
         Registry::components<Types::Damage> arrDamage =
             Registry::getInstance().getComponents<Types::Damage>();
-        Registry::components<health_s> arrHealth =
-            Registry::getInstance().getComponents<health_s>();
+        Registry::components<health_s> arrHealth = Registry::getInstance().getComponents<health_s>();
 
         if (checkAllies(firstEntity, secondEntity)) {
             return;
@@ -191,8 +190,7 @@ namespace Systems {
 
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry::components<health_s> arrHealth =
-            Registry::getInstance().getComponents<health_s>();
+        Registry::components<health_s> arrHealth  = Registry::getInstance().getComponents<health_s>();
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
@@ -245,7 +243,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Damage>().insertBack({playerDamage});
         Registry::getInstance().getComponents<Types::Health>().insertBack({playerHealth});
         Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt, deadTime});
-    
+
         id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Types::Enemy>().insertBack({});
         Registry::getInstance().getComponents<Types::Position>().insertBack(playerPos);
