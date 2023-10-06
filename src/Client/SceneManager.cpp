@@ -6,8 +6,8 @@
 */
 
 #include "SceneManager.hpp"
-#include <iostream>
 #include "ClientSystems.hpp"
+#include "Logger.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
@@ -75,7 +75,7 @@ int SceneManager::run()
         }
         destroyRaylib();
     } catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
+        Logger::fatal(e.what());
         return ReturnValue::ERROR;
     }
     return ReturnValue::OK;
