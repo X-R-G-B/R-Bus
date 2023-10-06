@@ -31,10 +31,10 @@ namespace Systems {
 
     void EventsSystems::playerMovement(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry                            = Registry::getInstance();
-        Registry::components<Types::Position> arrPos  = registry.getComponents<Types::Position>();
+        Registry &registry                              = Registry::getInstance();
+        Registry::components<Types::Position> arrPos    = registry.getComponents<Types::Position>();
         Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
-        std::vector<std::size_t> ids                  = registry.getEntitiesByComponents(
+        std::vector<std::size_t> ids                    = registry.getEntitiesByComponents(
             {typeid(Types::Player), typeid(Types::Position), typeid(struct health_s)});
         Clock &clock_              = registry.getClock();
         static std::size_t clockId = clock_.create(true);
