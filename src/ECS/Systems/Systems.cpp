@@ -315,9 +315,9 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
             {Types::CollisionRect(jsonData["collisionRect"])});
         nlohmann::json animRectData = jsonData["animRect"];
-        nlohmann::json moveData = animRectData["move"];
-        nlohmann::json attackData = animRectData["attack"];
-        nlohmann::json deadData = animRectData["dead"];
+        nlohmann::json moveData     = animRectData["move"];
+        nlohmann::json attackData   = animRectData["attack"];
+        nlohmann::json deadData     = animRectData["dead"];
         Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
             Types::Rect(jsonData["rect"]),
             moveData.get<std::vector<Types::Rect>>(),
