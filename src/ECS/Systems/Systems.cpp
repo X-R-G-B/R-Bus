@@ -241,7 +241,7 @@ namespace Systems {
         Registry::getInstance().setToBackLayers(id);
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
         Registry::getInstance().getComponents<Types::Damage>().insertBack({playerDamage});
-        Registry::getInstance().getComponents<Types::Health>().insertBack({playerHealth});
+        Registry::getInstance().getComponents<struct health_s>().insertBack({playerHealth});
         Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt, deadTime});
 
         id = Registry::getInstance().addEntity();
@@ -255,7 +255,7 @@ namespace Systems {
         Registry::getInstance().setToFrontLayers(id);
 
         Registry::getInstance().getComponents<Types::Damage>().insertBack({enemyDamage});
-        Registry::getInstance().getComponents<Types::Health>().insertBack({playerHealth2});
+        Registry::getInstance().getComponents<struct health_s>().insertBack({playerHealth2});
 
         id = Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Raylib::Music>().insertBack({musicPath, musicVolume});

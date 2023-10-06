@@ -33,9 +33,9 @@ namespace Systems {
     {
         Registry &registry                            = Registry::getInstance();
         Registry::components<Types::Position> arrPos  = registry.getComponents<Types::Position>();
-        Registry::components<Types::Health> arrHealth = registry.getComponents<Types::Health>();
+        Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
         std::vector<std::size_t> ids                  = registry.getEntitiesByComponents(
-            {typeid(Types::Player), typeid(Types::Position), typeid(Types::Health)});
+            {typeid(Types::Player), typeid(Types::Position), typeid(struct health_s)});
         Clock &clock_              = registry.getClock();
         static std::size_t clockId = clock_.create(true);
 

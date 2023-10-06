@@ -4,7 +4,7 @@
 #include "Registry.hpp"
 
 namespace Systems {
-    void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint &endpoint)
+    void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint &)
     {
         struct msgLifeUpdate_s msg                      = std::any_cast<struct msgLifeUpdate_s>(any);
         Registry &registry                              = Registry::getInstance();
