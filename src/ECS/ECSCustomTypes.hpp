@@ -48,10 +48,25 @@ namespace Types {
     struct Missiles {
             MissileTypes type;
     };
+
+    struct PlayerAllies { };
+
+    struct EnemyAllies { };
+
     struct Enemy { };
 
     struct Dead {
+            Dead(std::optional<std::function<void(std::size_t id)>> func, std::size_t time = 0)
+                : deathFunction(func),
+                  timeToWait(time),
+                  launched(false)
+            {
+                clockId = static_cast<std::size_t>(-1);
+            };
             std::optional<std::function<void(std::size_t id)>> deathFunction;
+            std::size_t timeToWait;
+            std::size_t clockId;
+            bool launched;
     };
 
 } // namespace Types
