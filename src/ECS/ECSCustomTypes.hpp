@@ -10,8 +10,8 @@
 #include <cstddef>
 #include <functional>
 #include <optional>
-#include "nlohmann/json.hpp"
 #include "MessageTypes.h"
+#include "nlohmann/json.hpp"
 
 // all values are in percentage of the screen
 
@@ -67,11 +67,12 @@ namespace Types {
     static long int enemyNb = 0;
 
     struct Enemy {
-        Enemy() {
-            constId.value = enemyNb;
-            enemyNb++;
-        }
-        struct enemy_id_s constId;
+            Enemy()
+            {
+                constId.value = enemyNb;
+                enemyNb++;
+            }
+            struct enemy_id_s constId;
     };
 
     struct Parallax { };
