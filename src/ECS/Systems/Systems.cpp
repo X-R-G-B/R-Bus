@@ -333,17 +333,6 @@ namespace Systems {
         }
     }
 
-    const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
-    const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
-    const Types::CollisionRect collisionRect = {25, 25};
-    const Raylib::Vector2 textPos            = {20, 50};
-    constexpr int playerData                 = 10;
-    constexpr int enemyDamage                = 1;
-    constexpr int playerHealth               = 5;
-    constexpr int playerHealth2              = 5;
-    constexpr float musicVolume              = 0.10F;
-    constexpr float soundVolume              = 0.13F;
-    constexpr float fontScale                = 2.0F;
     const std::string playerFile = "assets/Json/playerData.json";
 
     void initPlayer(std::size_t managerId, std::size_t systemId)
@@ -376,30 +365,24 @@ namespace Systems {
         Registry::getInstance().getComponents<struct health_s>().insertBack({jsonData["health"]});
         Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
         Registry::getInstance().setToFrontLayers(id);
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+    }
 
-        Registry::getInstance().getComponents<Raylib::Text>().insertBack(
-            {"Press SPACE to play music, ENTER to play sound, J to reset "
-             "scene, ARROWS to move",
-             textPos,
-             fontScale,
-             Raylib::DarkBlue});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack(
-            {enemyDamage});
-        SystemManagersDirector::getInstance()
-            .getSystemManager(managerId)
-            .removeSystem(systemId);
+    void initAudio(std::size_t /*managerId*/, std::size_t /*systemId*/)
+    {
+        const std::string musicPath  = "assets/Audio/Musics/Title.mp3";
+        const std::string soundPath  = "assets/Audio/Sounds/fire.ogg";
+        constexpr float musicVolume              = 0.10F;
+        constexpr float soundVolume              = 0.13F;
 
         Raylib::Music music(musicPath, musicVolume);
         Raylib::Sound sound(soundPath, soundVolume);
 
-        // AUDIO
-        Registry::getInstance().setToFrontLayers(id);
         Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Raylib::Music>().insertBack(
             music);
         Registry::getInstance().getComponents<Raylib::Sound>().insertBack(
             sound);
-        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
@@ -408,10 +391,12 @@ namespace Systems {
             windowCollision,
             initPlayer,
             initParalax,
+            initAudio,
             entitiesCollision,
             moveEntities,
 #ifndef NDEBUG
             debugCollisionRect,
+#else
 #endif
             deathChecker,
             manageOutsideWindowEntity,
