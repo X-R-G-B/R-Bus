@@ -5,16 +5,11 @@
 ** Internal header for NitworkServer C
 */
 
+
 #ifndef NITWORK_H
     #define NITWORK_H
 
-    #ifdef __GNUC__
-        #define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
-    #endif
-
-    #ifdef _MSC_VER
-        #define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop))
-    #endif
+    #include "MessageTypes.h"
 
     #define HEADER_SIZE sizeof(struct header_s)
     #define TICKS_PER_SECOND 20
@@ -40,6 +35,7 @@ enum n_actionType_t {
     INIT = 1,
     READY = 2,
     START_GAME = 3,
+    LIFE_UPDATE = 4,
     N_ACTION_TYPE_MAX,
 };
 
@@ -90,6 +86,19 @@ PACK(struct packetMsgStartGame_s {
         struct header_s header;
         struct action_s action;
         struct msgStartGame_s msgStartGame;
+});
+
+/* Message Life Update */
+PACK(struct msgLifeUpdate_s {
+        n_magick_t magick;
+        n_id_t playerId;
+        struct health_s life;
+});
+
+PACK(struct packetLifeUpdate_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgLifeUpdate_s msg;
 });
 
 #endif

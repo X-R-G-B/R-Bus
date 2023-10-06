@@ -8,6 +8,7 @@
 #pragma once
 
 #include "ANitwork.hpp"
+#include "ClientNetwork.hpp"
 
 namespace Nitwork {
     class NitworkClient : public ANitwork {
@@ -69,6 +70,17 @@ namespace Nitwork {
                             handleStartGame(any, endpoint);
                         }
                     },
+                },
+                {
+                    LIFE_UPDATE,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgStartGame_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveLifeUpdate(any, endpoint);
+                        }
+                    }
                 }
             };
             std::map<
