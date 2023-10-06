@@ -20,6 +20,10 @@ namespace Types {
             float height;
     };
 
+    struct FontSize {
+        float fsz;
+    };
+
     enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };
 
     struct AnimRect {

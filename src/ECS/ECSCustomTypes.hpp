@@ -48,6 +48,7 @@ namespace Types {
     struct Missiles {
             MissileTypes type;
     };
+
     struct Enemy { };
 
     struct Dead {

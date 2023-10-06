@@ -186,6 +186,8 @@ namespace Raylib {
             void setFontSize(float fontSize);
             Vector2 getPosition() const;
             void setPixelPosition(Vector2 position);
+            Color getColor() const;
+            void setColor(Color color);
             void setCurrentFontSize(float fontSize);
 
         private:
