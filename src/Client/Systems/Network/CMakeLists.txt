@@ -9,9 +9,5 @@ target_include_directories(
 target_sources(
     ${PROJECT_NAME_CLIENT}
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/ClientSystems.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ClientNetwork.cpp
 )
-
-add_subdirectory(Graphic)
-add_subdirectory(Events)
-add_subdirectory(Network)
