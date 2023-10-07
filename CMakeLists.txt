@@ -85,6 +85,22 @@ if(CLANG_TIDY_EXE)
     endif()
 endif()
 
+# Add server or client definitions
+
+target_compile_definitions(
+    ${PROJECT_NAME_CLIENT}
+    PUBLIC
+    CLIENT
+)
+
+target_compile_definitions(
+    ${PROJECT_NAME_SERVER}
+    PUBLIC
+    SERVER
+)
+
+# Add compile options
+
 if(MSVC)
     target_compile_options(
         ${PROJECT_NAME_CLIENT}

@@ -72,8 +72,9 @@ class Registry {
 
         Clock &getClock();
 
-        // SEE TO PUT ONLY FOR CLIENT
-        // void unloadRaylibComponents(std::size_t id);
+    #ifdef CLIENT
+        void unloadRaylibComponents(std::size_t id);
+    #endif
 
         Logger::Logger &getLogger();
 
