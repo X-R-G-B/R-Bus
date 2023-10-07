@@ -23,11 +23,12 @@
     #define MAGICK_INIT '\x06'
     #define MAGICK_READY '\x17'
     #define MAGICK_START_GAME '\a'
+    #define MAGICK_LIFE_UPDATE '\x0b'
 
 
 typedef char n_magick_t;
 typedef int n_idsReceived_t;
-typedef int n_id_t;
+typedef unsigned int n_id_t;
 typedef int n_nbAction_t;
 
 enum n_actionType_t {

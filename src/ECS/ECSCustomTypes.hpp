@@ -57,6 +57,14 @@ namespace Types {
 
     struct Player { };
 
+    struct OtherPlayer {
+        public:
+            OtherPlayer(std::size_t id) : constId(id)
+            {
+            }
+            unsigned int constId;
+    };
+
     struct Missiles {
             MissileTypes type;
     };
