@@ -5,6 +5,7 @@
 ** Systems implementation
 */
 
+#include <iostream>
 #include "Systems.hpp"
 #include <cstddef>
 #include <fstream>
@@ -144,14 +145,12 @@ namespace Systems {
                 {Types::Rect(parallaxData["rect"])});
         }
         Registry::getInstance().setToBackLayers(id);
-        Registry::getInstance().getComponents<Types::Parallax>().insertBack({});
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         if (maxOffsideParallax > 0) {
             arrPosition[id].x += maxOffsideParallax;
         }
-        Registry::getInstance().getComponents<Types::InitialPosition>().insertBack(
-            {arrPosition[id].x, arrPosition[id].y});
+        Registry::getInstance().getComponents<Types::Parallax>().insertBack({arrPosition[id].x, arrPosition[id].y});
     }
 
     const std::string parallaxFile = "assets/Json/parallaxData.json";
@@ -264,6 +263,8 @@ namespace Systems {
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
+    std::size_t a =0;
+
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry &registry = Registry::getInstance();
@@ -275,23 +276,40 @@ namespace Systems {
             Types::Dead &dead = deadList[id];
             if (static_cast<int>(dead.clockId) > -1
                 && clock.elapsedMillisecondsSince(dead.clockId) > dead.timeToWait) {
-                clock.restart(dead.clockId);
+                std::cout << "destroy after time " << id << std::endl;
                 registry.removeEntity(id);
+                checkDestroyAfterDeathCallBack(a, a);
+                return;
             }
         }
+        std::cout << "after check after death" << std::endl;
     }
 
     static void executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead)
     {
-        Types::Dead &deadComp = arrDead[id];
-        if (deadComp.deathFunction != std::nullopt) {
+        if (arrDead.exist(id) && arrDead[id].deathFunction != std::nullopt) {
+            Types::Dead &deadComp = arrDead[id];
             if (!deadComp.launched) {
                 deadComp.deathFunction.value()(id);
                 deadComp.clockId  = Registry::getInstance().getClock().create();
                 deadComp.launched = true;
             }
         } else {
+            std::cout << "remove dead without callback" << std::endl;
             Registry::getInstance().removeEntity(id);
+        }
+    }
+
+    void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<health_s> arrHealth  = Registry::getInstance().getComponents<health_s>();
+        Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
+
+        std::vector<std::size_t> ids = arrHealth.getExistingsId();
+        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
+            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0) {
+                executeDeathFunction(*itIds, arrDead);
+            }
         }
     }
 
@@ -307,36 +325,40 @@ namespace Systems {
         return (false);
     }
 
-    void manageOutsideWindowEntity(std::size_t /*unused*/, std::size_t /*unused*/)
+    void 
+    destroyOutsideWindow(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Parallax> arrParallax =
             Registry::getInstance().getComponents<Types::Parallax>();
 
-        std::vector<std::size_t> ids = arrPosition.getExistingsId();
+        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
 
         for (auto &id : ids) {
-            if (!arrParallax.exist(id)) {
-                if (isOutsideWindow(arrPosition[id])) {
-                    Registry::getInstance().removeEntity(id);
+            if (!arrParallax.exist(id) && isOutsideWindow(arrPosition[id])) {
+                std::cout << "removeOutside " << id << " pos " << arrPosition[id].x << " " << arrPosition[id].y << std::endl;
+                for (auto id_ : arrParallax.getExistingsId()) {
+                    std::cout << id_ << std::endl;
                 }
+                Registry::getInstance().removeEntity(id);
+                std::cout << "after remove" << std::endl;
             }
         }
     }
 
     static void resetParallaxPosition(
         std::size_t id,
-        Registry::components<Types::InitialPosition> &arrInitialPos,
+        Registry::components<Types::Parallax> &arrParallax,
         Registry::components<Types::Position> &arrPosition)
     {
         if (arrPosition[id].x <= maxOutParallaxLeft) {
-            if (arrInitialPos[id].x >= maxOutParallaxRight) {
-                arrPosition[id].x = arrInitialPos[id].x;
+            if (arrParallax[id].x >= maxOutParallaxRight) {
+                arrPosition[id].x = arrParallax[id].x;
             } else {
-                arrPosition[id].x = arrInitialPos[id].x + maxOutParallaxRight;
+                arrPosition[id].x = arrParallax[id].x + maxOutParallaxRight;
             }
-            arrPosition[id].y = arrInitialPos[id].y;
+            arrPosition[id].y = arrParallax[id].y;
         }
     }
 
@@ -346,34 +368,16 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Parallax> arrParallax =
             Registry::getInstance().getComponents<Types::Parallax>();
-        Registry::components<Types::Velocity> arrVelocity =
-            Registry::getInstance().getComponents<Types::Velocity>();
-        Registry::components<Types::InitialPosition> arrInitialPos =
-            Registry::getInstance().getComponents<Types::InitialPosition>();
 
-        std::vector<std::size_t> ids = arrParallax.getExistingsId();
+        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::Position), typeid(Types::Parallax), typeid(Types::Velocity)});
 
         for (auto &id : ids) {
-            if (arrPosition.exist(id) && arrVelocity.exist(id) && arrInitialPos.exist(id)) {
-                resetParallaxPosition(id, arrInitialPos, arrPosition);
-            }
-        }
-    }
-
-    void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
-    {
-        Registry::components<health_s> arrHealth  = Registry::getInstance().getComponents<health_s>();
-        Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
-
-        std::vector<std::size_t> ids = arrHealth.getExistingsId();
-        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
-            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0 && arrDead.exist(*itIds)) {
-                executeDeathFunction(*itIds, arrDead);
-            }
+            resetParallaxPosition(id, arrParallax, arrPosition);
         }
     }
 
     const std::string playerFile = "assets/Json/playerData.json";
+    const std::size_t deathTime = 500;
 
     void initPlayer(std::size_t managerId, std::size_t systemId)
     {
@@ -404,7 +408,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Player>().insertBack({});
         Registry::getInstance().getComponents<Types::Damage>().insertBack({jsonData["damage"]});
         Registry::getInstance().getComponents<struct health_s>().insertBack({jsonData["health"]});
-        Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
+        Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt, deathTime});
         Registry::getInstance().setToFrontLayers(id);
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
@@ -417,13 +421,15 @@ namespace Systems {
 #else
 #endif
             windowCollision,
+            checkDestroyAfterDeathCallBack,
             initPlayer,
             initParalax,
             initEnnemy,
             entitiesCollision,
-            manageOutsideWindowEntity,
+            destroyOutsideWindow,
             deathChecker,
             moveEntities,
-            manageParallax};
+            manageParallax
+        };
     }
 } // namespace Systems

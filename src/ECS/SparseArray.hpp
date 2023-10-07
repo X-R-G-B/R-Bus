@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <iostream>
 #include <iterator>
 #include <vector>
 
@@ -97,6 +98,11 @@ class SparseArray {
     private:
         void removeDenses(std::size_t id, std::size_t sparseValue)
         {
+            std::cout << "remove id " << id << std::endl << "[";
+            for (auto id_ : _revSparse) {
+                std::cout << id_ << ", ";
+            }
+            std::cout << "]" << std::endl;
             auto it = _dense.begin();
             std::advance(it, sparseValue);
             _dense.erase(it);
@@ -113,11 +119,21 @@ class SparseArray {
                     (*it2)--;
                 }
             }
+            std::cout << "after remove" << std::endl;
+            for (auto id_ : _revSparse) {
+                std::cout << id_ << ", ";
+            }
+            std::cout << "]" << std::endl << std::endl;
         }
 
         void throwIfDontExist(std::size_t id)
         {
             if (!exist(id)) {
+                std::cout << "id " << id << std::endl << "[";
+                for (auto id_ : _sparse) {
+                    std::cout << id_ << ", ";
+                }
+                std::cout << "]" << std::endl;
                 throw std::runtime_error("SparseArrays: ID out of bounds!");
             }
         }
