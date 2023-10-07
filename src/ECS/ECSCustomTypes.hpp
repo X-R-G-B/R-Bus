@@ -74,9 +74,7 @@ namespace Types {
                 : deathFunction(func),
                   timeToWait(time),
                   clockId(static_cast<std::size_t>(-1)),
-                  launched(false)
-            {
-            };
+                  launched(false) {};
             std::optional<std::function<void(std::size_t id)>> deathFunction;
             std::size_t timeToWait;
             std::size_t clockId;

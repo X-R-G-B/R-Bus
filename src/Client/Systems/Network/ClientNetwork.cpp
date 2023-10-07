@@ -24,7 +24,7 @@ namespace Systems {
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
     {
         constexpr std::size_t delay = 10;
-        static auto clockId = Registry::getInstance().getClock().create();
+        static auto clockId         = Registry::getInstance().getClock().create();
         static std::map<std::size_t, Types::Position> positionsPlayerCached;
         Registry &registry = Registry::getInstance();
 
