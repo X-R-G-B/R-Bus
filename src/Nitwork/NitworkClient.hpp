@@ -31,6 +31,7 @@ namespace Nitwork {
             // Messages creation methods
             void addInitMsg();
             void addReadyMsg();
+            void addPositionRelativeMsg(struct position_relative_s pos);
 
         private:
             NitworkClient();
@@ -97,6 +98,12 @@ namespace Nitwork {
                     READY,
                         [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             sendData<struct packetMsgReady_s>(any, endpoint);
+                        }
+                },
+                {
+                    POSITION_RELATIVE,
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetPositionRelative_s>(any, endpoint);
                         }
                 }
             };
