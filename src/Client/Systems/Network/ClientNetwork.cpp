@@ -25,7 +25,7 @@ namespace Systems {
     {
         constexpr std::size_t delay = 10;
         static auto clockId         = Registry::getInstance().getClock().create();
-        static std::map<std::size_t, Types::Position> positionsPlayerCached;
+        static std::pair<std::size_t, Types::Position> positionPlayerCached;
         Registry &registry = Registry::getInstance();
 
         if (registry.getClock().elapsedMillisecondsSince(clockId) < delay) {
@@ -34,30 +34,22 @@ namespace Systems {
         auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::Player)});
         auto arrPosition = registry.getComponents<Types::Position>();
 
-        // send relative position
-        for (auto id : ids) {
-            if (!positionsPlayerCached.contains(id)) {
-                positionsPlayerCached[id] = arrPosition[id];
-            }
-            auto &posCached = positionsPlayerCached[id];
-            const auto &pos = arrPosition[id];
-            if (pos.x != posCached.x || pos.y != posCached.y) {
-                registry.getClock().restart(clockId);
-                struct position_relative_s msg = {
-                    .x = static_cast<char>(static_cast<int>(pos.x - posCached.x)),
-                    .y = static_cast<char>(static_cast<int>(pos.y - posCached.y)),
-                };
-                Nitwork::NitworkClient::getInstance().addPositionRelativeMsg(msg);
-            }
+        if (ids.empty()) {
+            return;
         }
-        // remove unused id cached
-        auto cursor = positionsPlayerCached.begin();
-        while (cursor != positionsPlayerCached.end()) {
-            if (std::find(ids.begin(), ids.end(), cursor->first) == ids.end()) {
-                cursor = positionsPlayerCached.erase(cursor);
-            } else {
-                ++cursor;
-            }
+        if (positionPlayerCached.first != ids[0]) {
+            positionPlayerCached.first  = ids[0];
+            positionPlayerCached.second = arrPosition[ids[0]];
+        }
+        auto &posCached = positionPlayerCached.second;
+        const auto &pos = arrPosition[positionPlayerCached.first];
+        if (pos.x != posCached.x || pos.y != posCached.y) {
+            registry.getClock().restart(clockId);
+            struct position_relative_s msg = {
+                .x = static_cast<char>(static_cast<int>(pos.x - posCached.x)),
+                .y = static_cast<char>(static_cast<int>(pos.y - posCached.y)),
+            };
+            Nitwork::NitworkClient::getInstance().addPositionRelativeMsg(msg);
         }
     }
 
