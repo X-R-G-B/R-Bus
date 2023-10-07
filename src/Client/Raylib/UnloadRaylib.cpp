@@ -10,8 +10,7 @@
 
 static void unloadSounds(std::size_t id)
 {
-    Registry::components<Raylib::Sound> arrSound =
-        Registry::getInstance().getComponents<Raylib::Sound>();
+    Registry::components<Raylib::Sound> arrSound = Registry::getInstance().getComponents<Raylib::Sound>();
 
     if (arrSound.exist(id)) {
         arrSound[id].unload();
@@ -20,8 +19,7 @@ static void unloadSounds(std::size_t id)
 
 static void unloadMusic(std::size_t id)
 {
-    Registry::components<Raylib::Music> arrMusic =
-        Registry::getInstance().getComponents<Raylib::Music>();
+    Registry::components<Raylib::Music> arrMusic = Registry::getInstance().getComponents<Raylib::Music>();
 
     if (arrMusic.exist(id)) {
         arrMusic[id].unload();
@@ -40,8 +38,7 @@ static void unloadSprite(std::size_t id)
 
 static void unloadImage(std::size_t id)
 {
-    Registry::components<Raylib::Image> arrImage =
-        Registry::getInstance().getComponents<Raylib::Image>();
+    Registry::components<Raylib::Image> arrImage = Registry::getInstance().getComponents<Raylib::Image>();
 
     if (arrImage.exist(id)) {
         arrImage[id].unloadImage();

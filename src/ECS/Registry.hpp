@@ -72,9 +72,9 @@ class Registry {
 
         Clock &getClock();
 
-    #ifdef CLIENT
+#ifdef CLIENT
         void unloadRaylibComponents(std::size_t id);
-    #endif
+#endif
 
         Logger::Logger &getLogger();
 
