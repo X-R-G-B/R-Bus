@@ -10,7 +10,9 @@
 #include <cstddef>
 #include <functional>
 #include <optional>
+external "C" {
 #include "MessageTypes.h"
+}
 #include "nlohmann/json.hpp"
 
 // all values are in percentage of the screen
