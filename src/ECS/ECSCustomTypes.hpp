@@ -70,7 +70,7 @@ namespace Types {
 
     struct Enemy {
         public:
-            Enemy() : constId(enemy_id_s{enemyNb})
+            Enemy() : constId(enemy_id_s {enemyNb})
             {
                 enemyNb++;
             }
