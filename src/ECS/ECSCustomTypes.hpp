@@ -10,7 +10,8 @@
 #include <cstddef>
 #include <functional>
 #include <optional>
-external "C" {
+external "C"
+{
 #include "MessageTypes.h"
 }
 #include "nlohmann/json.hpp"
