@@ -14,7 +14,7 @@ PACK(struct health_s {
 });
 
 PACK(struct enemy_id_s {
-    long int value;
+    unsigned int value;
 });
 
 #endif

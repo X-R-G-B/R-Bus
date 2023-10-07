@@ -10,11 +10,12 @@
 #include <cstddef>
 #include <functional>
 #include <optional>
-external "C"
+#include "nlohmann/json.hpp"
+
+extern "C"
 {
 #include "MessageTypes.h"
 }
-#include "nlohmann/json.hpp"
 
 // all values are in percentage of the screen
 
@@ -67,15 +68,15 @@ namespace Types {
 
     struct EnemyAllies { };
 
-    static long int enemyNb = 0;
-
     struct Enemy {
-            Enemy()
+        public:
+            Enemy() : constId(enemy_id_s{enemyNb})
             {
-                constId.value = enemyNb;
                 enemyNb++;
             }
-            struct enemy_id_s constId;
+            Enemy& operator=(const Types::Enemy&) = delete;
+            const struct enemy_id_s constId;
+            static unsigned int enemyNb;
     };
 
     struct Parallax { };
