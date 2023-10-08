@@ -59,7 +59,7 @@ namespace Types {
 
     struct OtherPlayer {
         public:
-            OtherPlayer(std::size_t id) : constId(id)
+            OtherPlayer(std::size_t id) : constId(static_cast<unsigned int>(id))
             {
             }
             unsigned int constId;
