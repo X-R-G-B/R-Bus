@@ -27,32 +27,10 @@ std::size_t Registry::addEntity()
     return _entitiesNb - 1;
 }
 
-static bool removeEntityFromLayer(std::size_t id, std::vector<std::size_t> &list)
-{
-    for (auto it = list.begin(); it != list.end();) {
-        if (*it == id) {
-            it = list.erase(it);
-            continue;
-        } else if (*it > id) {
-            (*it)--;
-        }
-        it++;
-    }
-    return false;
-}
-
 void Registry::removeEntity(std::size_t id)
 {
     for (auto function : _removeComponentFunctions) {
         function(*this, id);
-    }
-    return;
-    for (auto &layer : _backLayers) {
-        removeEntityFromLayer(id, layer);
-    }
-    removeEntityFromLayer(id, _defaultLayer);
-    for (auto &layer : _frontLayers) {
-        removeEntityFromLayer(id, layer);
     }
 }
 
