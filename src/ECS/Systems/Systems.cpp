@@ -264,7 +264,7 @@ namespace Systems {
 
     void initWave(std::size_t managerId, std::size_t systemId)
     {
-        std::size_t ennemyNumber     = 5;
+        static std::size_t ennemyNumber     = 5;
         const std::size_t spawnDelay = 2;
         Clock &clock                 = Registry::getInstance().getClock();
         static std::size_t clockId   = clock.create(true);
