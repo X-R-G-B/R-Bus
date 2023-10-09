@@ -14,6 +14,9 @@
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
+#ifdef CLIENT
+    #include "NitworkClient.hpp"
+#endif
 
 namespace Systems {
 
@@ -322,6 +325,18 @@ namespace Systems {
         }
     }
 
+#ifdef CLIENT
+    static void sendLifeUpdateToServer(std::size_t id, Registry::components<struct health_s> &arrHealth)
+    {
+        Registry::components<Types::Player> arrPlayer =
+            Registry::getInstance().getComponents<Types::Player>();
+
+        if (arrPlayer.exist(id)) {
+            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, arrHealth[id]);
+        }
+    }
+#endif
+
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<struct health_s> arrHealth =
@@ -332,6 +347,9 @@ namespace Systems {
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
         for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
             auto tmpId = (*itIds) - decrease;
+#ifdef CLIENT
+            sendLifeUpdateToServer(tmpId, arrHealth);
+#endif
             if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
                 executeDeathFunction(tmpId, arrDead, decrease);
             }

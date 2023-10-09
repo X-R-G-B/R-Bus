@@ -48,7 +48,9 @@ namespace Types {
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Velocity, speedX, speedY);
     };
 
-    struct Player { };
+    struct Player {
+            unsigned int constId;
+    };
 
     struct OtherPlayer {
         public:
