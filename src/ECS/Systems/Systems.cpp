@@ -135,8 +135,9 @@ namespace Systems {
         std::size_t id = Registry::getInstance().addEntity();
 
         Types::Velocity velocity = {Types::Velocity(parallaxData["velocity"])};
-        Raylib::Sprite sprite     = {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id};
-        Types::Position position  = {Types::Position(parallaxData["position"])};
+        Raylib::Sprite sprite =
+            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id};
+        Types::Position position = {Types::Position(parallaxData["position"])};
 
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
@@ -146,7 +147,7 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
         }
         Registry::getInstance().setToBackLayers(id);
-        Types::Parallax paralax  = {};
+        Types::Parallax paralax = {};
         Registry::getInstance().getComponents<Types::Parallax>().insertBack(paralax);
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
@@ -204,9 +205,7 @@ namespace Systems {
         for (auto &id : ids) {
             if (arrPosition.exist(id) && !arrRectangleShape.exist(id)) {
                 Types::RectangleShape rectShape = {arrCollisionRect[id].width, arrCollisionRect[id].height};
-                Registry::getInstance().getComponents<Types::RectangleShape>().insert(
-                    id,
-                    rectShape);
+                Registry::getInstance().getComponents<Types::RectangleShape>().insert(id, rectShape);
             }
         }
     }
@@ -398,13 +397,13 @@ namespace Systems {
 
         // Components
 
-        Types::Player playerComp = {};
-        Types::Dead deadComp = {std::nullopt};
+        Types::Player playerComp   = {};
+        Types::Dead deadComp       = {std::nullopt};
         struct health_s healthComp = {jsonData["health"]};
-        Types::Damage damageComp = {jsonData["damage"]};
-        Raylib::Sprite sprite = {jsonData["spritePath"], jsonData["width"], jsonData["height"], id};
-        Types::Position position = {Types::Position(jsonData["position"])};
-        Types::Rect rect = {Types::Rect(jsonData["rect"])};
+        Types::Damage damageComp   = {jsonData["damage"]};
+        Raylib::Sprite sprite      = {jsonData["spritePath"], jsonData["width"], jsonData["height"], id};
+        Types::Position position   = {Types::Position(jsonData["position"])};
+        Types::Rect rect           = {Types::Rect(jsonData["rect"])};
         Types::CollisionRect collisionRect = {Types::CollisionRect(jsonData["collisionRect"])};
 
         // AnimRect

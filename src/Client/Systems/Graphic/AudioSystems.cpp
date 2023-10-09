@@ -61,7 +61,6 @@ namespace Systems {
         }
     }
 
-
     void GraphicSystems::initAudio(std::size_t managerId, std::size_t systemId)
     {
         const std::string musicPath = "assets/Audio/Musics/Title.mp3";

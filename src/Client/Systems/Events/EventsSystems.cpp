@@ -64,20 +64,20 @@ namespace Systems {
 
     static void createMissile(std::size_t id, Registry::components<Types::Position> &arrPosition)
     {
-        Types::Rect spriteRect             = {200, 121, 32, 10};
-        const std::string bulletPath             = "assets/R-TypeSheet/r-typesheet1.gif";
-        constexpr float bulletWidth              = 5.0F;
-        constexpr float bulletHeight             = 5.0F;
-        Types::CollisionRect collisionRect1 = {1, 1};
-        Types::Velocity velocity           = {0.7F, 0.0F};
-        Types::Missiles missileType        = {Types::MissileTypes::CLASSIC};
-        Types::Dead deadComp = {std::nullopt};
+        Types::Rect spriteRect               = {200, 121, 32, 10};
+        const std::string bulletPath         = "assets/R-TypeSheet/r-typesheet1.gif";
+        constexpr float bulletWidth          = 5.0F;
+        constexpr float bulletHeight         = 5.0F;
+        Types::CollisionRect collisionRect1  = {1, 1};
+        Types::Velocity velocity             = {0.7F, 0.0F};
+        Types::Missiles missileType          = {Types::MissileTypes::CLASSIC};
+        Types::Dead deadComp                 = {std::nullopt};
         Types::PlayerAllies playerAlliesComp = {};
-        Types::Position position = {arrPosition[id].x, arrPosition[id].y};
-        Types::CollisionRect collisionRect2 = {bulletWidth, bulletHeight};
-        Raylib::Sprite sprite = {bulletPath, bulletWidth, bulletHeight, 0};
-        health_s healthComp                    = {1};
-        Types::Damage damageComp                = {10};
+        Types::Position position             = {arrPosition[id].x, arrPosition[id].y};
+        Types::CollisionRect collisionRect2  = {bulletWidth, bulletHeight};
+        Raylib::Sprite sprite                = {bulletPath, bulletWidth, bulletHeight, 0};
+        health_s healthComp                  = {1};
+        Types::Damage damageComp             = {10};
 
         if (arrPosition.exist(id)) {
             std::size_t entityId = Registry::getInstance().addEntity();
