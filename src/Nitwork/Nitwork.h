@@ -39,6 +39,7 @@ enum n_actionType_t {
     START_GAME = 3,
     LIFE_UPDATE,
     POSITION_RELATIVE,
+    POSITION_ABSOLUTE,
     N_ACTION_TYPE_MAX,
 };
 
@@ -114,6 +115,18 @@ PACK(struct packetPositionRelative_s {
         struct header_s header;
         struct action_s action;
         struct msgPositionRelative_s msg;
+});
+
+/* Message Position Absolute */
+PACK(struct msgPositionAbsolute_s {
+        n_magick_t magick;
+        struct position_absolute_s pos;
+});
+
+PACK(struct packetPositionAbsolute_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgPositionAbsolute_s msg;
 });
 
 #endif

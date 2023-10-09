@@ -32,6 +32,7 @@ namespace Nitwork {
             void addInitMsg();
             void addReadyMsg();
             void addPositionRelativeMsg(struct position_relative_s pos);
+            void addPositionAbsoluteMsg(struct position_absolute_s pos);
 
         private:
             NitworkClient();
@@ -104,6 +105,12 @@ namespace Nitwork {
                     POSITION_RELATIVE,
                         [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             sendData<struct packetPositionRelative_s>(any, endpoint);
+                        }
+                },
+                {
+                    POSITION_ABSOLUTE,
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetPositionAbsolute_s>(any, endpoint);
                         }
                 }
             };
