@@ -69,7 +69,7 @@ namespace Systems {
     const Types::CollisionRect collisionRect = {1, 1};
     const Types::Velocity velocity           = {0.7F, 0.0F};
     const Types::Missiles missileType        = {Types::MissileTypes::CLASSIC};
-    const health_s health                    = {1};
+    const struct health_s health             = {1};
     const Types::Damage damage               = {10};
 
     static void createMissile(std::size_t id, Registry::components<Types::Position> &arrPosition)

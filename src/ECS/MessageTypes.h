@@ -13,4 +13,8 @@ PACK(struct health_s {
     int hp;
 });
 
+PACK(struct enemy_id_s {
+    unsigned int value;
+});
+
 #endif
