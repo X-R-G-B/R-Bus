@@ -13,4 +13,9 @@ PACK(struct health_s {
     int hp;
 });
 
+PACK(struct position_relative_s {
+    char x;
+    char y;
+});
+
 #endif

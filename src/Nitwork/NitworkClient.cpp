@@ -120,4 +120,35 @@ namespace Nitwork {
             std::make_any<struct packetMsgReady_s>(packetMsgReady));
         addPacketToSend(_endpoint, packet);
     }
+
+    void NitworkClient::addPositionRelativeMsg(struct position_relative_s pos)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetPositionRelative_s packetMsgPositionRelative = {
+            .header =
+                {
+                         .magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2,
+                         },
+            .action =
+                {
+                         .magick = POSITION_RELATIVE,
+                         },
+            .msg =
+                {
+                         .magick = MAGICK_POSITION_RELATIVE,
+                         .pos    = pos,
+                         },
+        };
+        Packet packet(
+            packetMsgPositionRelative.header.id,
+            packetMsgPositionRelative.action.magick,
+            std::make_any<struct packetPositionRelative_s>(packetMsgPositionRelative));
+
+        addPacketToSend(_endpoint, packet);
+    }
 } // namespace Nitwork
