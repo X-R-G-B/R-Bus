@@ -9,8 +9,8 @@
 
 #include <string>
 #include <vector>
-#include "Raylib.hpp"
 #include "ECSCustomTypes.hpp"
+#include "Raylib.hpp"
 
 namespace Types {
     struct Rect {
@@ -27,20 +27,20 @@ namespace Types {
     };
 
     struct Origin {
-        float x;
-        float y;
+            float x;
+            float y;
     };
 
     struct Rotation {
-        float rotate;
+            float rotate;
     };
 
     struct Scale {
-        float size;
+            float size;
     };
 
     struct Color {
-        Raylib::Color color;
+            Raylib::Color color;
     };
 
     enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };
