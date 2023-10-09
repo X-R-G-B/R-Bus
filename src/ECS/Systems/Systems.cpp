@@ -339,7 +339,6 @@ namespace Systems {
     {
         nlohmann::json jsonData = openJsonData(playerFile);
         std::size_t id          = Registry::getInstance().addEntity();
-
         if (jsonData["player"] == nullptr) {
             return;
         }
@@ -368,12 +367,12 @@ namespace Systems {
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
-    void initAudio(std::size_t /*managerId*/, std::size_t /*systemId*/)
+    void initAudio(std::size_t managerId, std::size_t systemId)
     {
         const std::string musicPath = "assets/Audio/Musics/Title.mp3";
         const std::string soundPath = "assets/Audio/Sounds/fire.ogg";
-        constexpr float musicVolume = 0.10F;
-        constexpr float soundVolume = 0.13F;
+        constexpr float musicVolume = 0.60F;
+        constexpr float soundVolume = 0.63F;
 
         Raylib::Music music(musicPath, musicVolume);
         Raylib::Sound sound(soundPath, soundVolume);
@@ -381,6 +380,7 @@ namespace Systems {
         Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Raylib::Music>().insertBack(music);
         Registry::getInstance().getComponents<Raylib::Sound>().insertBack(sound);
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
@@ -388,8 +388,8 @@ namespace Systems {
         return {
             windowCollision,
             initPlayer,
-            initParalax,
             initAudio,
+            initParalax,
             entitiesCollision,
             moveEntities,
 #ifndef NDEBUG
