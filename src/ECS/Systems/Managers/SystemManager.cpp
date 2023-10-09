@@ -41,7 +41,7 @@ namespace Systems {
         std::sort(_toRemove.begin(), _toRemove.end());
         for (auto &id : _toRemove) {
             auto it = _modifiedSystems.begin();
-            std::advance(it, id);
+            std::advance(it, id  - decrease);
             _modifiedSystems.erase(it);
         }
     }
