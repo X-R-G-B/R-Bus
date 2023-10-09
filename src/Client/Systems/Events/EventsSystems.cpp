@@ -69,7 +69,7 @@ namespace Systems {
     const Types::CollisionRect collisionRect = {1, 1};
     const Types::Velocity velocity           = {0.7F, 0.0F};
     const Types::Missiles missileType        = {Types::MissileTypes::CLASSIC};
-    const health_s health                    = {1};
+    const struct health_s health                    = {1};
     const Types::Damage damage               = {10};
 
     static void createMissile(std::size_t id, Registry::components<Types::Position> &arrPosition)
@@ -88,7 +88,7 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
             Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack({});
             Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
-            Registry::getInstance().getComponents<health_s>().insertBack(health);
+            Registry::getInstance().getComponents<struct health_s>().insertBack(health);
             Registry::getInstance().getComponents<Types::Damage>().insertBack(damage);
             Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
             Registry::getInstance().setToFrontLayers(entityId);
