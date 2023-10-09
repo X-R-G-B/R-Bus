@@ -154,11 +154,6 @@ namespace Systems {
         if (maxOffsideParallax > 0) {
             arrPosition[id].x += maxOffsideParallax;
         }
-        Types::InitialPosition initialPos = {arrPosition[id].x, arrPosition[id].y};
-        Registry::getInstance().getComponents<Types::InitialPosition>().insertBack(initialPos);
-        if (parallaxData["copy"] != nullptr && parallaxData["copy"] == true && isCopy == false) {
-            initParallaxEntity(parallaxData, maxOutParallaxRight, true);
-        }
     }
 
     const std::string parallaxFile = "assets/Json/parallaxData.json";
@@ -232,26 +227,35 @@ namespace Systems {
     {
         std::size_t id = Registry::getInstance().addEntity();
 
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            Raylib::Sprite(ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id));
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {Types::Position(ennemyData["position"])});
-        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
-            (Types::CollisionRect(ennemyData["collisionRect"])));
-        Registry::getInstance().getComponents<Types::Rect>().insertBack((Types::Rect(ennemyData["rect"])));
+        Raylib::Sprite ennemy = {ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id};
+        Types::Position position = {Types::Position(ennemyData["position"])};
+        Types::CollisionRect collisionRect = {Types::CollisionRect(ennemyData["collisionRect"])};
+        Types::Rect rect = {Types::Rect(ennemyData["rect"])};
+        struct health_s healthComp = {ennemyData["health"]};
+        Types::Damage damageComp   = {ennemyData["damage"]};
+        Types::Velocity velocity   = {Types::Velocity(ennemyData["velocity"])};
+        
         nlohmann::json animRectData = ennemyData["animRect"];
         nlohmann::json moveData     = animRectData["move"];
         nlohmann::json attackData   = animRectData["attack"];
         nlohmann::json deadData     = animRectData["dead"];
-        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
+        
+        Types::AnimRect animRect  = 
+        {
             Types::Rect(ennemyData["rect"]),
             moveData.get<std::vector<Types::Rect>>(),
             attackData.get<std::vector<Types::Rect>>(),
-            deadData.get<std::vector<Types::Rect>>()));
-        Registry::getInstance().getComponents<Types::Velocity>().insertBack(
-            {Types::Velocity(ennemyData["velocity"])});
-        Registry::getInstance().getComponents<struct health_s>().insertBack({ennemyData["health"]});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack({ennemyData["damage"]});
+            deadData.get<std::vector<Types::Rect>>()
+        };
+
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(ennemy);
+        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
+        Registry::getInstance().getComponents<Types::Rect>().insertBack((rect));
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
+        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
     }
 
     const std::string ennemyFile = "assets/Json/ennemyData.json";
