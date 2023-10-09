@@ -228,25 +228,23 @@ namespace Systems {
         std::size_t id = Registry::getInstance().addEntity();
 
         Raylib::Sprite ennemy = {ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id};
-        Types::Position position = {Types::Position(ennemyData["position"])};
+        Types::Position position           = {Types::Position(ennemyData["position"])};
         Types::CollisionRect collisionRect = {Types::CollisionRect(ennemyData["collisionRect"])};
-        Types::Rect rect = {Types::Rect(ennemyData["rect"])};
-        struct health_s healthComp = {ennemyData["health"]};
-        Types::Damage damageComp   = {ennemyData["damage"]};
-        Types::Velocity velocity   = {Types::Velocity(ennemyData["velocity"])};
-        
+        Types::Rect rect                   = {Types::Rect(ennemyData["rect"])};
+        struct health_s healthComp         = {ennemyData["health"]};
+        Types::Damage damageComp           = {ennemyData["damage"]};
+        Types::Velocity velocity           = {Types::Velocity(ennemyData["velocity"])};
+
         nlohmann::json animRectData = ennemyData["animRect"];
         nlohmann::json moveData     = animRectData["move"];
         nlohmann::json attackData   = animRectData["attack"];
         nlohmann::json deadData     = animRectData["dead"];
-        
-        Types::AnimRect animRect  = 
-        {
+
+        Types::AnimRect animRect = {
             Types::Rect(ennemyData["rect"]),
             moveData.get<std::vector<Types::Rect>>(),
             attackData.get<std::vector<Types::Rect>>(),
-            deadData.get<std::vector<Types::Rect>>()
-        };
+            deadData.get<std::vector<Types::Rect>>()};
 
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(ennemy);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
