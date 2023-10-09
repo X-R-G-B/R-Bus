@@ -125,50 +125,6 @@ namespace Systems {
         return jsonData;
     }
 
-    constexpr int maxOutParallaxLeft  = -100;
-    constexpr int maxOutParallaxRight = 100;
-
-    static void initParallaxEntity(
-        nlohmann::json_abi_v3_11_2::basic_json<> &parallaxData,
-        const float maxOffsideParallax = 0)
-    {
-        std::size_t id = Registry::getInstance().addEntity();
-
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id});
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {Types::Position(parallaxData["position"])});
-        Registry::getInstance().getComponents<Types::Velocity>().insertBack(
-            {Types::Velocity(parallaxData["velocity"])});
-        if (parallaxData["rect"] != nullptr) {
-            Registry::getInstance().getComponents<Types::Rect>().insertBack(
-                {Types::Rect(parallaxData["rect"])});
-        }
-        Registry::getInstance().setToBackLayers(id);
-        Registry::components<Types::Position> arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
-        if (maxOffsideParallax > 0) {
-            arrPosition[id].x += maxOffsideParallax;
-        }
-        Registry::getInstance().getComponents<Types::Parallax>().insertBack(
-            {arrPosition[id].x, arrPosition[id].y});
-    }
-
-    const std::string parallaxFile = "assets/Json/parallaxData.json";
-
-    void initParalax(std::size_t managerId, std::size_t systemId)
-    {
-        nlohmann::json jsonData = openJsonData(parallaxFile);
-
-        for (auto &e : jsonData["parallax"]) {
-            initParallaxEntity(e);
-            if (e["copy"] != nullptr && e["copy"]) {
-                initParallaxEntity(e, maxOutParallaxRight);
-            }
-        }
-        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
-    }
-
     void entitiesCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry &registry                                = Registry::getInstance();
@@ -331,48 +287,25 @@ namespace Systems {
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
+#ifdef CLIENT
         Registry::components<Types::Parallax> arrParallax =
             Registry::getInstance().getComponents<Types::Parallax>();
+#endif
         std::vector<std::size_t> ids =
             Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
         std::size_t decrease = 0;
 
         for (auto &id : ids) {
             auto tmpId = id - decrease;
-            if (!arrParallax.exist(tmpId) && isOutsideWindow(arrPosition[tmpId])) {
+#ifdef CLIENT
+            bool isNotParallax = !arrParallax.exist(tmpId);
+#else
+            bool isNotParallax = true;
+#endif
+            if (isNotParallax && isOutsideWindow(arrPosition[tmpId])) {
                 Registry::getInstance().removeEntity(tmpId);
                 decrease++;
             }
-        }
-    }
-
-    static void resetParallaxPosition(
-        std::size_t id,
-        Registry::components<Types::Parallax> &arrParallax,
-        Registry::components<Types::Position> &arrPosition)
-    {
-        if (arrPosition[id].x <= maxOutParallaxLeft) {
-            if (arrParallax[id].x >= maxOutParallaxRight) {
-                arrPosition[id].x = arrParallax[id].x;
-            } else {
-                arrPosition[id].x = arrParallax[id].x + maxOutParallaxRight;
-            }
-            arrPosition[id].y = arrParallax[id].y;
-        }
-    }
-
-    void manageParallax(std::size_t /*unused*/, std::size_t /*unused*/)
-    {
-        Registry::components<Types::Position> arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
-        Registry::components<Types::Parallax> arrParallax =
-            Registry::getInstance().getComponents<Types::Parallax>();
-
-        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-            {typeid(Types::Position), typeid(Types::Parallax), typeid(Types::Velocity)});
-
-        for (auto &id : ids) {
-            resetParallaxPosition(id, arrParallax, arrPosition);
         }
     }
 
@@ -423,12 +356,11 @@ namespace Systems {
             windowCollision,
             checkDestroyAfterDeathCallBack,
             initPlayer,
-            initParalax,
             initEnnemy,
             entitiesCollision,
             destroyOutsideWindow,
             deathChecker,
             moveEntities,
-            manageParallax};
+        };
     }
 } // namespace Systems
