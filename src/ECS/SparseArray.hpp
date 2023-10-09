@@ -18,12 +18,12 @@ class SparseArray {
             _sparse.push_back(std::size_t(-1));
         }
 
-        void insertBack(const Component &value)
+        void insertBack(Component &value)
         {
             insert(_sparse.size() - 1, value);
         }
 
-        void insert(size_t id, const Component &value)
+        void insert(size_t id, Component &value)
         {
             if (id >= _sparse.size()) {
                 throw std::runtime_error("SparseArrays::insert: ID out of bounds!");

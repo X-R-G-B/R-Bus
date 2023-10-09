@@ -6,6 +6,7 @@
 */
 
 #include "SystemManager.hpp"
+#include <algorithm>
 
 namespace Systems {
 
