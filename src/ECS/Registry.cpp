@@ -5,7 +5,6 @@
 ** Registry
 */
 
-#include <iostream>
 #include "Registry.hpp"
 #include <string>
 #include "Clock.hpp"
@@ -44,44 +43,16 @@ static bool removeEntityFromLayer(std::size_t id, std::vector<std::size_t> &list
 
 void Registry::removeEntity(std::size_t id)
 {
-    std::cout << "REMOVE " << id << std::endl;
     for (auto function : _removeComponentFunctions) {
         function(*this, id);
     }
-    std::cout << std::endl;
     return;
-    std::cout << "removeEntity" << std::endl;
-    std::cout << "back" << std::endl;
-    for (auto i : _backLayers[0]) {
-        std::cout << i << std::endl;
-    }
-    std::cout << "default" << std::endl;
-    for (auto i : _defaultLayer) {
-        std::cout << i << std::endl;
-    }
-    std::cout << "front" << std::endl;
-    for (auto i : _frontLayers[0]) {
-        std::cout << i << std::endl;
-    }
     for (auto &layer : _backLayers) {
         removeEntityFromLayer(id, layer);
     }
     removeEntityFromLayer(id, _defaultLayer);
     for (auto &layer : _frontLayers) {
         removeEntityFromLayer(id, layer);
-    }
-    std::cout << "after removeEntity" << std::endl;
-    std::cout << "back" << std::endl;
-    for (auto i : _backLayers[0]) {
-        std::cout << i << std::endl;
-    }
-    std::cout << "default" << std::endl;
-    for (auto i : _defaultLayer) {
-        std::cout << i << std::endl;
-    }
-    std::cout << "front" << std::endl;
-    for (auto i : _frontLayers[0]) {
-        std::cout << i << std::endl;
     }
 }
 
@@ -131,7 +102,6 @@ std::vector<std::size_t> Registry::getEntitiesByComponents(std::vector<std::type
 
 void Registry::setToBackLayers(std::size_t id, BackLayers layer)
 {
-    std::cout << "addBack " << _backLayers[layer].size() << std::endl;
     removeFromDefaultLayer(id);
     _backLayers[layer].push_back(id);
 }
@@ -143,7 +113,6 @@ void Registry::setToDefaultLayer(std::size_t id)
 
 void Registry::setToFrontLayers(std::size_t id, FrontLayers layer)
 {
-    std::cout << "addFront" << _frontLayers[layer].size() << std::endl;
     removeFromDefaultLayer(id);
     _frontLayers[layer].push_back(id);
 }

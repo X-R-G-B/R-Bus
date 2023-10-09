@@ -5,7 +5,6 @@
 ** SystemManager implementation
 */
 
-#include <iostream>
 #include <algorithm>
 #include "SystemManager.hpp"
 
@@ -35,30 +34,16 @@ namespace Systems {
         std::size_t decrease = 0;
 
         _toRemove.clear();
-        std::cout << "systems size " << getSystems().size() << std::endl;
         for (auto &system : getSystems()) {
             system(_id, i);
             i++;
         }
-
-        bool a = false;
-        if (_toRemove.size() != 0) {
-            std::cout << "toremove" << std::endl;
-            for (auto id : _toRemove) {
-                std::cout << id << std::endl;
-            }
-            a = true;
-        }
         std::sort(_toRemove.begin(), _toRemove.end());
         for (auto &id : _toRemove) {
-            std::cout << "remove sys " << id << "decrease " << decrease << std::endl;
             auto it = _modifiedSystems.begin();
             std::advance(it, id);
             _modifiedSystems.erase(it - decrease);
             decrease++;
-        }
-        if (a) {
-            std::cout << "modified systems " << _modifiedSystems.size() << std::endl;
         }
     }
 
@@ -81,7 +66,7 @@ namespace Systems {
     void SystemManager::resetChanges()
     {
         _modified = false;
-        _modifiedSystems.clear();
+        _modifiedSystems = _originalSystems;
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> &SystemManager::getSystems()

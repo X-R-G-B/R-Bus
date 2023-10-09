@@ -5,7 +5,6 @@
 ** Death systems implementation
 */
 
-#include <iostream>
 #include "DeathSystems.hpp"
 #include <optional>
 #include <unordered_map>

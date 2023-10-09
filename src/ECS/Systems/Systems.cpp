@@ -5,7 +5,6 @@
 ** Systems implementation
 */
 
-#include <iostream>
 #include "Systems.hpp"
 #include <cstddef>
 #include <fstream>
@@ -232,15 +231,15 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
             (Types::CollisionRect(ennemyData["collisionRect"])));
         Registry::getInstance().getComponents<Types::Rect>().insertBack((Types::Rect(ennemyData["rect"])));
-        // nlohmann::json animRectData = ennemyData["animRect"];
-        // nlohmann::json moveData     = animRectData["move"];
-        // nlohmann::json attackData   = animRectData["attack"];
-        // nlohmann::json deadData     = animRectData["dead"];
-        // Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
-        //     Types::Rect(ennemyData["rect"]),
-        //     moveData.get<std::vector<Types::Rect>>(),
-        //     attackData.get<std::vector<Types::Rect>>(),
-        //     deadData.get<std::vector<Types::Rect>>()));
+        nlohmann::json animRectData = ennemyData["animRect"];
+        nlohmann::json moveData     = animRectData["move"];
+        nlohmann::json attackData   = animRectData["attack"];
+        nlohmann::json deadData     = animRectData["dead"];
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
+            Types::Rect(ennemyData["rect"]),
+            moveData.get<std::vector<Types::Rect>>(),
+            attackData.get<std::vector<Types::Rect>>(),
+            deadData.get<std::vector<Types::Rect>>()));
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(
             {Types::Velocity(ennemyData["velocity"])});
         Registry::getInstance().getComponents<health_s>().insertBack({ennemyData["health"]});
@@ -263,29 +262,26 @@ namespace Systems {
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
-    std::size_t a =0;
-
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry &registry = Registry::getInstance();
         auto deadList      = registry.getComponents<Types::Dead>();
         auto deadIdList    = deadList.getExistingsId();
         Clock &clock       = registry.getClock();
+        std::size_t decrease = 0;
 
         for (auto id : deadIdList) {
-            Types::Dead &dead = deadList[id];
+            auto tmpId = id - decrease;
+            Types::Dead &dead = deadList[tmpId];
             if (static_cast<int>(dead.clockId) > -1
                 && clock.elapsedMillisecondsSince(dead.clockId) > dead.timeToWait) {
-                std::cout << "destroy after time " << id << std::endl;
-                registry.removeEntity(id);
-                checkDestroyAfterDeathCallBack(a, a);
-                return;
+                registry.removeEntity(tmpId);
+                decrease++;
             }
         }
-        std::cout << "after check after death" << std::endl;
     }
 
-    static void executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead)
+    static void executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead, std::size_t &decrease)
     {
         if (arrDead.exist(id) && arrDead[id].deathFunction != std::nullopt) {
             Types::Dead &deadComp = arrDead[id];
@@ -295,8 +291,8 @@ namespace Systems {
                 deadComp.launched = true;
             }
         } else {
-            std::cout << "remove dead without callback" << std::endl;
             Registry::getInstance().removeEntity(id);
+            decrease++;
         }
     }
 
@@ -304,11 +300,13 @@ namespace Systems {
     {
         Registry::components<health_s> arrHealth  = Registry::getInstance().getComponents<health_s>();
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
+        std::size_t decrease = 0;
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
         for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
-            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0) {
-                executeDeathFunction(*itIds, arrDead);
+            auto tmpId = (*itIds) - decrease;
+            if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
+                executeDeathFunction(tmpId, arrDead, decrease);
             }
         }
     }
@@ -332,17 +330,14 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Parallax> arrParallax =
             Registry::getInstance().getComponents<Types::Parallax>();
-
         std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
+        std::size_t decrease = 0;
 
         for (auto &id : ids) {
-            if (!arrParallax.exist(id) && isOutsideWindow(arrPosition[id])) {
-                std::cout << "removeOutside " << id << " pos " << arrPosition[id].x << " " << arrPosition[id].y << std::endl;
-                for (auto id_ : arrParallax.getExistingsId()) {
-                    std::cout << id_ << std::endl;
-                }
-                Registry::getInstance().removeEntity(id);
-                std::cout << "after remove" << std::endl;
+            auto tmpId = id - decrease;
+            if (!arrParallax.exist(tmpId) && isOutsideWindow(arrPosition[tmpId])) {
+                Registry::getInstance().removeEntity(tmpId);
+                decrease++;
             }
         }
     }

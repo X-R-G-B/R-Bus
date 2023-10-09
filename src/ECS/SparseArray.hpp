@@ -7,9 +7,10 @@
 
 #pragma once
 
-#include <iostream>
 #include <iterator>
 #include <vector>
+
+#include "ECSCustomTypes.hpp"
 
 template <typename Component>
 class SparseArray {
@@ -48,7 +49,12 @@ class SparseArray {
             }
             std::size_t sparseValue = _sparse[id];
             if (int(sparseValue) != -1) {
-                removeDenses(id, sparseValue);
+                removeDenses(sparseValue);
+            }
+            for (auto revIt2 = _revSparse.begin(); revIt2 != _revSparse.end(); revIt2++) {
+                if (*revIt2 > id) {
+                    (*revIt2)--;
+                }
             }
             auto it = _sparse.begin();
             std::advance(it, id);
@@ -96,44 +102,24 @@ class SparseArray {
         }
 
     private:
-        void removeDenses(std::size_t id, std::size_t sparseValue)
+        void removeDenses(std::size_t sparseValue)
         {
-            std::cout << "remove id " << id << std::endl << "[";
-            for (auto id_ : _revSparse) {
-                std::cout << id_ << ", ";
-            }
-            std::cout << "]" << std::endl;
             auto it = _dense.begin();
             std::advance(it, sparseValue);
             _dense.erase(it);
             auto revIt = _revSparse.begin();
             std::advance(revIt, sparseValue);
             _revSparse.erase(revIt);
-            for (auto revIt2 = _revSparse.begin(); revIt2 != _revSparse.end(); revIt2++) {
-                if (*revIt2 > id) {
-                    (*revIt2)--;
-                }
-            }
             for (auto it2 = _sparse.begin(); it2 != _sparse.end(); it2++) {
                 if (static_cast<int>(*it2) > static_cast<int>(sparseValue)) {
                     (*it2)--;
                 }
             }
-            std::cout << "after remove" << std::endl;
-            for (auto id_ : _revSparse) {
-                std::cout << id_ << ", ";
-            }
-            std::cout << "]" << std::endl << std::endl;
         }
 
         void throwIfDontExist(std::size_t id)
         {
             if (!exist(id)) {
-                std::cout << "id " << id << std::endl << "[";
-                for (auto id_ : _sparse) {
-                    std::cout << id_ << ", ";
-                }
-                std::cout << "]" << std::endl;
                 throw std::runtime_error("SparseArrays: ID out of bounds!");
             }
         }

@@ -5,7 +5,6 @@
 ** SpriteSystems implementation
 */
 
-#include <iostream>
 #include "SpriteSystems.hpp"
 #include "CustomTypes.hpp"
 #include "Logger.hpp"
