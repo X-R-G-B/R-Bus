@@ -149,7 +149,8 @@ namespace Systems {
         if (maxOffsideParallax > 0) {
             arrPosition[id].x += maxOffsideParallax;
         }
-        Registry::getInstance().getComponents<Types::Parallax>().insertBack({arrPosition[id].x, arrPosition[id].y});
+        Registry::getInstance().getComponents<Types::Parallax>().insertBack(
+            {arrPosition[id].x, arrPosition[id].y});
     }
 
     const std::string parallaxFile = "assets/Json/parallaxData.json";
@@ -264,14 +265,14 @@ namespace Systems {
 
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry = Registry::getInstance();
-        auto deadList      = registry.getComponents<Types::Dead>();
-        auto deadIdList    = deadList.getExistingsId();
-        Clock &clock       = registry.getClock();
+        Registry &registry   = Registry::getInstance();
+        auto deadList        = registry.getComponents<Types::Dead>();
+        auto deadIdList      = deadList.getExistingsId();
+        Clock &clock         = registry.getClock();
         std::size_t decrease = 0;
 
         for (auto id : deadIdList) {
-            auto tmpId = id - decrease;
+            auto tmpId        = id - decrease;
             Types::Dead &dead = deadList[tmpId];
             if (static_cast<int>(dead.clockId) > -1
                 && clock.elapsedMillisecondsSince(dead.clockId) > dead.timeToWait) {
@@ -281,7 +282,8 @@ namespace Systems {
         }
     }
 
-    static void executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead, std::size_t &decrease)
+    static void
+    executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead, std::size_t &decrease)
     {
         if (arrDead.exist(id) && arrDead[id].deathFunction != std::nullopt) {
             Types::Dead &deadComp = arrDead[id];
@@ -300,7 +302,7 @@ namespace Systems {
     {
         Registry::components<health_s> arrHealth  = Registry::getInstance().getComponents<health_s>();
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
-        std::size_t decrease = 0;
+        std::size_t decrease                      = 0;
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
         for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
@@ -323,14 +325,14 @@ namespace Systems {
         return (false);
     }
 
-    void 
-    destroyOutsideWindow(std::size_t /*unused*/, std::size_t /*unused*/)
+    void destroyOutsideWindow(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Parallax> arrParallax =
             Registry::getInstance().getComponents<Types::Parallax>();
-        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
+        std::vector<std::size_t> ids =
+            Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
         std::size_t decrease = 0;
 
         for (auto &id : ids) {
@@ -364,7 +366,8 @@ namespace Systems {
         Registry::components<Types::Parallax> arrParallax =
             Registry::getInstance().getComponents<Types::Parallax>();
 
-        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::Position), typeid(Types::Parallax), typeid(Types::Velocity)});
+        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::Parallax), typeid(Types::Velocity)});
 
         for (auto &id : ids) {
             resetParallaxPosition(id, arrParallax, arrPosition);
@@ -372,7 +375,7 @@ namespace Systems {
     }
 
     const std::string playerFile = "assets/Json/playerData.json";
-    const std::size_t deathTime = 500;
+    const std::size_t deathTime  = 500;
 
     void initPlayer(std::size_t managerId, std::size_t systemId)
     {
@@ -424,7 +427,6 @@ namespace Systems {
             destroyOutsideWindow,
             deathChecker,
             moveEntities,
-            manageParallax
-        };
+            manageParallax};
     }
 } // namespace Systems
