@@ -107,4 +107,4 @@ namespace Systems::ParallaxSystems {
             manageParallax,
         };
     }
-}
+} // namespace Systems::ParallaxSystems

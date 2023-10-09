@@ -9,10 +9,10 @@
 #include "AudioSystems.hpp"
 #include "DeathSystems.hpp"
 #include "ECSCustomTypes.hpp"
-#include "SpriteSystems.hpp"
-#include "TextSystems.hpp"
 #include "ParallaxSystems.hpp"
 #include "Registry.hpp"
+#include "SpriteSystems.hpp"
+#include "TextSystems.hpp"
 
 namespace Systems {
 
@@ -44,8 +44,8 @@ namespace Systems {
         std::vector<std::function<void(std::size_t, std::size_t)>> textSystems   = getTextSystems();
         std::vector<std::function<void(std::size_t, std::size_t)>> deathSystems =
             DeathSystems::getDeathSystems();
-        std::vector<std::function<void(std::size_t, std::size_t)>> parallaxSystems = ParallaxSystems::getParallaxSystems();
-
+        std::vector<std::function<void(std::size_t, std::size_t)>> parallaxSystems =
+            ParallaxSystems::getParallaxSystems();
 
 #ifndef NDEBUG
         audioSystems.insert(audioSystems.end(), debugCollisionRect);
