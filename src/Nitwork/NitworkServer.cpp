@@ -112,7 +112,7 @@ namespace Nitwork {
              getPacketID(),
              1, HEADER_CODE2},
             {START_GAME},
-            {MAGICK_START_GAME,             playerId               }
+            {MAGICK_START_GAME, playerId}
         };
         Packet packet(
             packetMsgStartGame.header.id,
@@ -137,8 +137,8 @@ namespace Nitwork {
                          .id               = getPacketID(),
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action = {.magick = LIFE_UPDATE           },
-            .msg    = {.magick = MAGICK_LIFE_UPDATE,                     .playerId = playerId,     .life = life                                                 }
+            .action = {.magick = LIFE_UPDATE},
+            .msg    = {.magick = MAGICK_LIFE_UPDATE, .playerId = playerId, .life = life}
         };
         Packet packet(
             packetLifeUpdate.header.id,

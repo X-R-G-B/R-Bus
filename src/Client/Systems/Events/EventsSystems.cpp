@@ -7,6 +7,7 @@
 
 #include "EventsSystems.hpp"
 #include "CustomTypes.hpp"
+#include "NitworkClient.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
@@ -70,7 +71,7 @@ namespace Systems {
         constexpr float bulletHeight         = 5.0F;
         Types::CollisionRect collisionRect1  = {1, 1};
         Types::Velocity velocity             = {0.7F, 0.0F};
-        Types::Missiles missileType          = {Types::MissileTypes::CLASSIC};
+        Types::Missiles missileType          = {CLASSIC};
         Types::Dead deadComp                 = {std::nullopt};
         Types::PlayerAllies playerAlliesComp = {};
         Types::Position position             = {arrPosition[id].x, arrPosition[id].y};
@@ -94,6 +95,11 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
             Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
             Registry::getInstance().setToFrontLayers(entityId);
+            // send bullet to server
+            Nitwork::NitworkClient::getInstance().addNewBulletMsg(
+                {static_cast<char>(static_cast<int>(position.x)),
+                 static_cast<char>(static_cast<int>(position.y))},
+                missileType.type);
         }
     }
 

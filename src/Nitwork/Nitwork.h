@@ -25,6 +25,7 @@
     #define MAGICK_START_GAME '\a'
     #define MAGICK_POSITION_RELATIVE '\b'
     #define MAGICK_LIFE_UPDATE '\x0b'
+    #define MAGICK_NEW_BULLET '\x0c'
 
 
 typedef char n_magick_t;
@@ -39,6 +40,7 @@ enum n_actionType_t {
     START_GAME = 3,
     LIFE_UPDATE,
     POSITION_RELATIVE,
+    NEW_BULLET,
     N_ACTION_TYPE_MAX,
 };
 
@@ -114,6 +116,19 @@ PACK(struct packetPositionRelative_s {
         struct header_s header;
         struct action_s action;
         struct msgPositionRelative_s msg;
+});
+
+/* Message New Bullet */
+PACK(struct msgNewBullet_s {
+        n_magick_t magick;
+        struct absolute_position_s pos;
+        missileTypes_e missileType;
+});
+
+PACK(struct packetNewBullet_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgNewBullet_s msg;
 });
 
 #endif
