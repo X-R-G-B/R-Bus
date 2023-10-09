@@ -17,4 +17,9 @@ PACK(struct enemy_id_s {
     unsigned int value;
 });
 
+PACK(struct position_relative_s {
+    char x;
+    char y;
+});
+
 #endif
