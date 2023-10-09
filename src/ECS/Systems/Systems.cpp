@@ -134,24 +134,26 @@ namespace Systems {
     {
         std::size_t id = Registry::getInstance().addEntity();
 
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id});
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {Types::Position(parallaxData["position"])});
-        Registry::getInstance().getComponents<Types::Velocity>().insertBack(
-            {Types::Velocity(parallaxData["velocity"])});
+        Types::Velocity velocity = {Types::Velocity(parallaxData["velocity"])};
+        Raylib::Sprite sprite =
+            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id};
+        Types::Position position = {Types::Position(parallaxData["position"])};
+
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
+        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
         if (parallaxData["rect"] != nullptr) {
-            Registry::getInstance().getComponents<Types::Rect>().insertBack(
-                {Types::Rect(parallaxData["rect"])});
+            Types::Rect rect = {Types::Rect(parallaxData["rect"])};
+            Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
         }
         Registry::getInstance().setToBackLayers(id);
+        Types::Parallax paralax = {};
+        Registry::getInstance().getComponents<Types::Parallax>().insertBack(paralax);
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         if (maxOffsideParallax > 0) {
             arrPosition[id].x += maxOffsideParallax;
         }
-        Registry::getInstance().getComponents<Types::Parallax>().insertBack(
-            {arrPosition[id].x, arrPosition[id].y});
     }
 
     const std::string parallaxFile = "assets/Json/parallaxData.json";
@@ -197,9 +199,8 @@ namespace Systems {
 
         for (auto &id : ids) {
             if (arrPosition.exist(id) && !arrRectangleShape.exist(id)) {
-                Registry::getInstance().getComponents<Types::RectangleShape>().insert(
-                    id,
-                    {arrCollisionRect[id].width, arrCollisionRect[id].height});
+                Types::RectangleShape rectShape = {arrCollisionRect[id].width, arrCollisionRect[id].height};
+                Registry::getInstance().getComponents<Types::RectangleShape>().insert(id, rectShape);
             }
         }
     }
@@ -226,26 +227,33 @@ namespace Systems {
     {
         std::size_t id = Registry::getInstance().addEntity();
 
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            Raylib::Sprite(ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id));
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {Types::Position(ennemyData["position"])});
-        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
-            (Types::CollisionRect(ennemyData["collisionRect"])));
-        Registry::getInstance().getComponents<Types::Rect>().insertBack((Types::Rect(ennemyData["rect"])));
+        Raylib::Sprite ennemy = {ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id};
+        Types::Position position           = {Types::Position(ennemyData["position"])};
+        Types::CollisionRect collisionRect = {Types::CollisionRect(ennemyData["collisionRect"])};
+        Types::Rect rect                   = {Types::Rect(ennemyData["rect"])};
+        struct health_s healthComp         = {ennemyData["health"]};
+        Types::Damage damageComp           = {ennemyData["damage"]};
+        Types::Velocity velocity           = {Types::Velocity(ennemyData["velocity"])};
+
         nlohmann::json animRectData = ennemyData["animRect"];
         nlohmann::json moveData     = animRectData["move"];
         nlohmann::json attackData   = animRectData["attack"];
         nlohmann::json deadData     = animRectData["dead"];
-        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
+
+        Types::AnimRect animRect = {
             Types::Rect(ennemyData["rect"]),
             moveData.get<std::vector<Types::Rect>>(),
             attackData.get<std::vector<Types::Rect>>(),
-            deadData.get<std::vector<Types::Rect>>()));
-        Registry::getInstance().getComponents<Types::Velocity>().insertBack(
-            {Types::Velocity(ennemyData["velocity"])});
-        Registry::getInstance().getComponents<struct health_s>().insertBack({ennemyData["health"]});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack({ennemyData["damage"]});
+            deadData.get<std::vector<Types::Rect>>()};
+
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(ennemy);
+        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
+        Registry::getInstance().getComponents<Types::Rect>().insertBack((rect));
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
+        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
     }
 
     const std::string ennemyFile = "assets/Json/ennemyData.json";
@@ -383,32 +391,46 @@ namespace Systems {
     {
         nlohmann::json jsonData = openJsonData(playerFile);
         std::size_t id          = Registry::getInstance().addEntity();
-
         if (jsonData["player"] == nullptr) {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
             return;
         }
         jsonData = jsonData["player"];
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {jsonData["spritePath"], jsonData["width"], jsonData["height"], id});
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {Types::Position(jsonData["position"])});
-        Registry::getInstance().getComponents<Types::Rect>().insertBack({Types::Rect(jsonData["rect"])});
-        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
-            {Types::CollisionRect(jsonData["collisionRect"])});
+
+        // Components
+
+        Types::Player playerComp   = {};
+        Types::Dead deadComp       = {std::nullopt};
+        struct health_s healthComp = {jsonData["health"]};
+        Types::Damage damageComp   = {jsonData["damage"]};
+        Raylib::Sprite sprite      = {jsonData["spritePath"], jsonData["width"], jsonData["height"], id};
+        Types::Position position   = {Types::Position(jsonData["position"])};
+        Types::Rect rect           = {Types::Rect(jsonData["rect"])};
+        Types::CollisionRect collisionRect = {Types::CollisionRect(jsonData["collisionRect"])};
+
+        // AnimRect
         nlohmann::json animRectData = jsonData["animRect"];
         nlohmann::json moveData     = animRectData["move"];
         nlohmann::json attackData   = animRectData["attack"];
         nlohmann::json deadData     = animRectData["dead"];
-        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
+
+        Types::AnimRect animRect = {
             Types::Rect(jsonData["rect"]),
             moveData.get<std::vector<Types::Rect>>(),
             attackData.get<std::vector<Types::Rect>>(),
-            deadData.get<std::vector<Types::Rect>>()));
-        Registry::getInstance().getComponents<Types::Player>().insertBack({});
-        Registry::getInstance().getComponents<Types::Damage>().insertBack({jsonData["damage"]});
-        Registry::getInstance().getComponents<struct health_s>().insertBack({jsonData["health"]});
-        Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt, deathTime});
+            deadData.get<std::vector<Types::Rect>>()};
+
+        // Add components to registry
+
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
+        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+        Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
+        Registry::getInstance().getComponents<Types::Player>().insertBack(playerComp);
+        Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
+        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
         Registry::getInstance().setToFrontLayers(id);
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }

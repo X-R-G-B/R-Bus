@@ -39,6 +39,11 @@ namespace Raylib {
         SetSoundVolume(_sound, volume);
     }
 
+    bool Sound::isReady() const
+    {
+        return IsSoundReady(_sound);
+    }
+
     void Sound::unload()
     {
         UnloadSound(_sound);
@@ -115,7 +120,7 @@ namespace Raylib {
 
     bool Music::isReady() const
     {
-        return IsMusicStreamPlaying(_music);
+        return IsMusicReady(_music);
     }
 
     void Music::play() const
