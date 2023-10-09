@@ -12,6 +12,25 @@
 #include "SharedValues.hpp"
 
 namespace Systems {
+
+    static Raylib::Vector2 calculatePosition(const float x, const float y)
+    {
+        Raylib::Vector2 pos = {0, 0};
+
+        pos.x = (x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
+        pos.y = (y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
+        return (pos);
+    }
+
+    static Raylib::Vector2 calculateSize(Raylib::Sprite &sprite)
+    {
+        Raylib::Vector2 size = {0, 0};
+
+        size.x = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator;
+        size.y = (sprite.getHeight() * static_cast<float>(Raylib::getScreenHeight())) / denominator;
+        return (size);
+    }
+
     static std::vector<Types::Rect> getCurrentList(Types::AnimRect &animRect)
     {
         switch (animRect.currentRectList) {
@@ -104,7 +123,6 @@ namespace Systems {
 
     static void drawSpriteWithoutRect(Types::Position &position, Raylib::Sprite &sprite, std::size_t entityId)
     {
-        Registry::components<Types::Scale> arrScale = Registry::getInstance().getComponents<Types::Scale>();
         Registry::components<Types::Rotation> arrRotation = Registry::getInstance().getComponents<Types::Rotation>();
         Registry::components<Types::Color> arrColor = Registry::getInstance().getComponents<Types::Color>();
         float scale               = 1.0F;
@@ -112,16 +130,11 @@ namespace Systems {
         Raylib::Color tint  = Raylib::White;
         Raylib::Vector2 spritePos = {0, 0};
 
-        scale = arrScale.exist(entityId) ? arrScale[entityId].size : scale;
         rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
         tint = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
-        float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
-        float y = (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
-
         scale = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator
             / static_cast<float>(sprite.getTextureWidth());
-        spritePos = {x, y};
-
+        spritePos = calculatePosition(position.x, position.y);
         sprite.drawEx(spritePos, rotation, scale, tint);
     }
 
@@ -131,21 +144,20 @@ namespace Systems {
         Registry::components<Types::Color> arrColor = Registry::getInstance().getComponents<Types::Color>();
         Registry::components<Types::Origin> arrOrigin = Registry::getInstance().getComponents<Types::Origin>();
         Types::Origin origin   = {0, 0};
+        Raylib::Vector2 size = {0, 0};
+        Raylib::Vector2 pos = {0, 0};
         float rotation           = 0;
         Raylib::Color tint = Raylib::White;
 
         origin = arrOrigin.exist(entityId) ? Types::Origin({arrOrigin[entityId].x, arrOrigin[entityId].y}) : origin;
         rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
         tint = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
-        float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
-        float y = (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
-
-        float width  = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator;
-        float height = (sprite.getHeight() * static_cast<float>(Raylib::getScreenHeight())) / denominator;
+        pos = calculatePosition(position.x, position.y);
+        size = calculateSize(sprite);
 
         sprite.drawPro(
             Raylib::Rectangle(rect.x, rect.y, rect.width, rect.height),
-            Raylib::Rectangle(x, y, width, height),
+            Raylib::Rectangle(pos.x, pos.y, size.x, size.y),
             Raylib::Vector2(origin.x, origin.y),
             rotation,
             tint);
