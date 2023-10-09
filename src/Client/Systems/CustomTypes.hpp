@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include "ECSCustomTypes.hpp"
+#include "Raylib.hpp"
 
 namespace Types {
     struct Rect {
@@ -23,6 +24,23 @@ namespace Types {
 
     struct FontSize {
             float fsz;
+    };
+
+    struct Origin {
+            float x;
+            float y;
+    };
+
+    struct Rotation {
+            float rotate;
+    };
+
+    struct Scale {
+            float size;
+    };
+
+    struct Color {
+            Raylib::Color color;
     };
 
     enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };

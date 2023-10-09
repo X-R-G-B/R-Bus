@@ -43,7 +43,6 @@ namespace Systems {
             auto it = _modifiedSystems.begin();
             std::advance(it, id);
             _modifiedSystems.erase(it - decrease);
-            decrease++;
         }
     }
 
@@ -65,7 +64,7 @@ namespace Systems {
 
     void SystemManager::resetChanges()
     {
-        _modified = false;
+        _modified        = false;
         _modifiedSystems = _originalSystems;
     }
 
