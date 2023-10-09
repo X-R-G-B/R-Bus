@@ -335,10 +335,10 @@ namespace Systems {
         struct health_s healthComp = {jsonData["health"]};
         Types::Damage damageComp   = {jsonData["damage"]};
 #ifdef CLIENT
-        Raylib::Sprite sprite      = {jsonData["spritePath"], jsonData["width"], jsonData["height"], id};
+        Raylib::Sprite sprite = {jsonData["spritePath"], jsonData["width"], jsonData["height"], id};
 #endif
-        Types::Position position   = {Types::Position(jsonData["position"])};
-        Types::Rect rect           = {Types::Rect(jsonData["rect"])};
+        Types::Position position           = {Types::Position(jsonData["position"])};
+        Types::Rect rect                   = {Types::Rect(jsonData["rect"])};
         Types::CollisionRect collisionRect = {Types::CollisionRect(jsonData["collisionRect"])};
 
         // AnimRect
