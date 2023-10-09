@@ -10,7 +10,6 @@
 #include <iterator>
 #include <vector>
 
-
 template <typename Component>
 class SparseArray {
     public:
