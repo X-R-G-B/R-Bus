@@ -18,25 +18,25 @@ class SparseArray {
             _sparse.push_back(std::size_t(-1));
         }
 
-        void insertBack(const Component &value)
+        void insertBack(Component &value)
         {
             insert(_sparse.size() - 1, value);
         }
 
-        void insert(size_t id, const Component &value)
+        void insert(size_t id, Component &value)
         {
             if (id >= _sparse.size()) {
                 throw std::runtime_error("SparseArrays::insert: ID out of bounds!");
             }
 
             if (static_cast<int>(_sparse[id]) > -1) {
-                _dense[_sparse[id]]     = value;
+                _dense[_sparse[id]]     = std::move(value);
                 _revSparse[_sparse[id]] = id;
                 return;
             }
 
             _sparse[id] = _dense.size();
-            _dense.push_back(value);
+            _dense.push_back(std::move(value));
             _revSparse.push_back(id);
         }
 

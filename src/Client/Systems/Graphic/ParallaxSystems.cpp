@@ -33,24 +33,26 @@ namespace Systems::ParallaxSystems {
     {
         std::size_t id = Registry::getInstance().addEntity();
 
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id});
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {Types::Position(parallaxData["position"])});
-        Registry::getInstance().getComponents<Types::Velocity>().insertBack(
-            {Types::Velocity(parallaxData["velocity"])});
+        Types::Velocity velocity = {Types::Velocity(parallaxData["velocity"])};
+        Raylib::Sprite sprite =
+            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id};
+        Types::Position position = {Types::Position(parallaxData["position"])};
+
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
+        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
         if (parallaxData["rect"] != nullptr) {
-            Registry::getInstance().getComponents<Types::Rect>().insertBack(
-                {Types::Rect(parallaxData["rect"])});
+            Types::Rect rect = {Types::Rect(parallaxData["rect"])};
+            Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
         }
         Registry::getInstance().setToBackLayers(id);
+        Types::Parallax paralax = {};
+        Registry::getInstance().getComponents<Types::Parallax>().insertBack(paralax);
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         if (maxOffsideParallax > 0) {
             arrPosition[id].x += maxOffsideParallax;
         }
-        Registry::getInstance().getComponents<Types::Parallax>().insertBack(
-            {arrPosition[id].x, arrPosition[id].y});
     }
 
     const std::string parallaxFile = "assets/Json/parallaxData.json";
