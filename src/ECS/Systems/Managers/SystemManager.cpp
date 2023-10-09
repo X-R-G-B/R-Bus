@@ -6,6 +6,7 @@
 */
 
 #include "SystemManager.hpp"
+#include <algorithm>
 
 namespace Systems {
 
@@ -29,36 +30,43 @@ namespace Systems {
 
     void SystemManager::updateSystems()
     {
-        std::size_t i = 0;
+        std::size_t i        = 0;
+        std::size_t decrease = 0;
 
+        _toRemove.clear();
         for (auto &system : getSystems()) {
             system(_id, i);
             i++;
         }
+        std::sort(_toRemove.begin(), _toRemove.end());
         for (auto &id : _toRemove) {
             auto it = _modifiedSystems.begin();
-            std::advance(it, id);
+            std::advance(it, id - decrease);
             _modifiedSystems.erase(it);
+            decrease++;
         }
-        _toRemove.clear();
     }
 
     void SystemManager::addSystem(std::function<void(std::size_t, std::size_t)> sys)
     {
-        _modified = true;
+        if (!_modified) {
+            _modified = true;
+        }
         _modifiedSystems.push_back(sys);
     }
 
     void SystemManager::removeSystem(std::size_t id)
     {
-        _modified = true;
+        if (!_modified) {
+            _modified = true;
+        }
         _toRemove.push_back(id);
     }
 
     void SystemManager::resetChanges()
     {
-        _modified = false;
-        _modifiedSystems.clear();
+        _modified        = false;
+        _modifiedSystems = _originalSystems;
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> &SystemManager::getSystems()

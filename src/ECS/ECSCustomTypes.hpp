@@ -42,11 +42,6 @@ namespace Types {
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Position, x, y);
     };
 
-    struct InitialPosition {
-            float x;
-            float y;
-    };
-
     struct Damage {
             int damage;
     };
@@ -59,6 +54,14 @@ namespace Types {
     };
 
     struct Player { };
+
+    struct OtherPlayer {
+        public:
+            OtherPlayer(unsigned int id) : constId(id)
+            {
+            }
+            unsigned int constId;
+    };
 
     struct Missiles {
             MissileTypes type;
@@ -79,16 +82,17 @@ namespace Types {
             static unsigned int enemyNb;
     };
 
-    struct Parallax { };
+    struct Parallax {
+            float x;
+            float y;
+    };
 
     struct Dead {
             Dead(std::optional<std::function<void(std::size_t id)>> func, std::size_t time = 0)
                 : deathFunction(func),
                   timeToWait(time),
-                  launched(false)
-            {
-                clockId = static_cast<std::size_t>(-1);
-            };
+                  clockId(static_cast<std::size_t>(-1)),
+                  launched(false) {};
             std::optional<std::function<void(std::size_t id)>> deathFunction;
             std::size_t timeToWait;
             std::size_t clockId;

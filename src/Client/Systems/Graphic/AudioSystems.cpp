@@ -8,6 +8,7 @@
 #include "AudioSystems.hpp"
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
+#include "SystemManagersDirector.hpp"
 
 namespace Systems {
     void GraphicSystems::soundEffectPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -59,8 +60,23 @@ namespace Systems {
             }
         }
     }
+
+    void GraphicSystems::initAudio(std::size_t managerId, std::size_t systemId)
+    {
+        constexpr float musicVolume = 0.60F;
+        constexpr float soundVolume = 0.63F;
+
+        Raylib::Music music(musicPath, musicVolume);
+        Raylib::Sound sound(soundPath, soundVolume);
+
+        Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Raylib::Music>().insertBack(music);
+        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(sound);
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> GraphicSystems::getAudioSystems()
     {
-        return {soundEffectPlayer, musicPlayer, playSoundWithKey};
+        return {soundEffectPlayer, musicPlayer, playSoundWithKey, initAudio};
     }
 } // namespace Systems

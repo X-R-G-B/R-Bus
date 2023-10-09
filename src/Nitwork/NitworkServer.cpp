@@ -122,4 +122,28 @@ namespace Nitwork {
                   << std::endl;
         addPacketToSend(endpoint, packet);
     }
+
+    void NitworkServer::addLifeUpdateMessage(
+        boost::asio::ip::udp::endpoint &endpoint,
+        n_id_t playerId,
+        const struct health_s &life)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetLifeUpdate_s packetLifeUpdate = {
+            .header =
+                {.magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2},
+            .action = {.magick = LIFE_UPDATE           },
+            .msg    = {.magick = MAGICK_LIFE_UPDATE,                     .playerId = playerId,     .life = life                                                 }
+        };
+        Packet packet(
+            packetLifeUpdate.header.id,
+            packetLifeUpdate.action.magick,
+            std::make_any<struct packetLifeUpdate_s>(packetLifeUpdate));
+        addPacketToSend(endpoint, packet);
+    }
 } // namespace Nitwork

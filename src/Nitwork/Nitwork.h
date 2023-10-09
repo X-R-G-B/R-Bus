@@ -23,11 +23,13 @@
     #define MAGICK_INIT '\x06'
     #define MAGICK_READY '\x17'
     #define MAGICK_START_GAME '\a'
+    #define MAGICK_POSITION_RELATIVE '\b'
+    #define MAGICK_LIFE_UPDATE '\x0b'
 
 
 typedef char n_magick_t;
 typedef int n_idsReceived_t;
-typedef int n_id_t;
+typedef unsigned int n_id_t;
 typedef int n_nbAction_t;
 
 enum n_actionType_t {
@@ -37,6 +39,7 @@ enum n_actionType_t {
     START_GAME = 3,
     LIFE_UPDATE = 4,
     ENEMY_DEATH = 5,
+    POSITION_RELATIVE = 6,
     N_ACTION_TYPE_MAX,
 };
 
@@ -111,6 +114,18 @@ PACK(struct packetEnemyDeath_s {
         struct header_s header;
         struct action_s action;
         struct msgEnemyDeath_s msgEnemyDeath;
+});
+
+/* Message Position Relative */
+PACK(struct msgPositionRelative_s {
+        n_magick_t magick;
+        struct position_relative_s pos;
+});
+
+PACK(struct packetPositionRelative_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgPositionRelative_s msg;
 });
 
 #endif
