@@ -151,4 +151,10 @@ namespace Nitwork {
 
         addPacketToSend(_endpoint, packet);
     }
+
+    void NitworkClient::addEnemyDeathMessage(const std::size_t id)
+    {
+        addPacketToSend(_endpoint, pack)
+    }
+
 } // namespace Nitwork

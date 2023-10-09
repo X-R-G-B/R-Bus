@@ -15,6 +15,12 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
+#ifndef CLIENT
+    #include "NitworkClient.hpp"
+#else
+    #include "NitworkServer.hpp"
+#end
+
 namespace Systems {
 
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -297,6 +303,15 @@ namespace Systems {
             Registry::getInstance().removeEntity(id);
             decrease++;
         }
+    }
+
+    static void handleDeathPacket()
+    {
+        #ifndef CLIENT
+            NitworkClient::getInstance().
+        #else
+        
+        #end
     }
 
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
