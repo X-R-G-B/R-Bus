@@ -2,6 +2,7 @@
 #include "CustomTypes.hpp"
 #include "ECSCustomTypes.hpp"
 #include "Graphics.hpp"
+#include "Logger.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #include "nlohmann/json.hpp"
@@ -33,26 +34,25 @@ namespace Systems::ParallaxSystems {
     {
         std::size_t id = Registry::getInstance().addEntity();
 
-        Types::Velocity velocity = {Types::Velocity(parallaxData["velocity"])};
-        Raylib::Sprite sprite =
-            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id};
-        Types::Position position = {Types::Position(parallaxData["position"])};
-
+        Raylib::Sprite sprite = {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id};
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
+
+        Types::Position position = {Types::Position(parallaxData["position"])};
+        if (maxOffsideParallax > 0) {
+            position.x += maxOffsideParallax;
+        }
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+
+        Types::Velocity velocity = {Types::Velocity(parallaxData["velocity"])};
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
+
         if (parallaxData["rect"] != nullptr) {
             Types::Rect rect = {Types::Rect(parallaxData["rect"])};
             Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
         }
         Registry::getInstance().setToBackLayers(id);
-        Types::Parallax paralax = {};
+        Types::Parallax paralax = {position.x, position.y};
         Registry::getInstance().getComponents<Types::Parallax>().insertBack(paralax);
-        Registry::components<Types::Position> arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
-        if (maxOffsideParallax > 0) {
-            arrPosition[id].x += maxOffsideParallax;
-        }
     }
 
     const std::string parallaxFile = "assets/Json/parallaxData.json";
