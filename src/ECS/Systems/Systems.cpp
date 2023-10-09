@@ -67,7 +67,8 @@ namespace Systems {
     {
         Registry::components<Types::Damage> arrDamage =
             Registry::getInstance().getComponents<Types::Damage>();
-        Registry::components<struct health_s> arrHealth = Registry::getInstance().getComponents<struct health_s>();
+        Registry::components<struct health_s> arrHealth =
+            Registry::getInstance().getComponents<struct health_s>();
 
         if (checkAllies(firstEntity, secondEntity)) {
             return;
@@ -300,7 +301,8 @@ namespace Systems {
 
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry::components<struct health_s> arrHealth  = Registry::getInstance().getComponents<struct health_s>();
+        Registry::components<struct health_s> arrHealth =
+            Registry::getInstance().getComponents<struct health_s>();
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
         std::size_t decrease                      = 0;
 
