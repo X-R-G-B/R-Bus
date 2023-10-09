@@ -57,7 +57,7 @@ namespace Systems {
     {
         constexpr std::size_t delay = 1;
         static auto clockId         = Registry::getInstance().getClock().create();
-        Registry &registry = Registry::getInstance();
+        Registry &registry          = Registry::getInstance();
 
         if (registry.getClock().elapsedSecondsSince(clockId) < delay) {
             return;
