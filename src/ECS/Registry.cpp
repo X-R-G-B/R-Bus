@@ -5,8 +5,8 @@
 ** Registry
 */
 
-#include <iostream>
 #include "Registry.hpp"
+#include <iostream>
 #include <string>
 #include "Clock.hpp"
 

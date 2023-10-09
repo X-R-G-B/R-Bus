@@ -5,10 +5,10 @@
 ** Systems implementation
 */
 
-#include <iostream>
 #include "Systems.hpp"
 #include <cstddef>
 #include <fstream>
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include "CustomTypes.hpp"
@@ -150,7 +150,8 @@ namespace Systems {
         if (maxOffsideParallax > 0) {
             arrPosition[id].x += maxOffsideParallax;
         }
-        Registry::getInstance().getComponents<Types::Parallax>().insertBack({arrPosition[id].x, arrPosition[id].y});
+        Registry::getInstance().getComponents<Types::Parallax>().insertBack(
+            {arrPosition[id].x, arrPosition[id].y});
     }
 
     const std::string parallaxFile = "assets/Json/parallaxData.json";
@@ -260,13 +261,13 @@ namespace Systems {
     }
 
     const std::string ennemyToLoad = "assets/Json/ennemyData.json";
-    const std::size_t spawnDelay = 2;
+    const std::size_t spawnDelay   = 2;
 
     void waveManager(std::size_t managerId, std::size_t systemId)
     {
         static std::size_t nbrToLoad = 5;
-        Clock &clock = Registry::getInstance().getClock();
-        static std::size_t clockId = clock.create(true);
+        Clock &clock                 = Registry::getInstance().getClock();
+        static std::size_t clockId   = clock.create(true);
 
         if (clock.elapsedSecondsSince(clockId) > spawnDelay) {
             std::cout << "Init ennemy" << std::endl;
@@ -280,7 +281,7 @@ namespace Systems {
         }
     }
 
-    std::size_t a =0;
+    std::size_t a = 0;
 
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
     {
@@ -342,19 +343,20 @@ namespace Systems {
         return (false);
     }
 
-    void 
-    destroyOutsideWindow(std::size_t /*unused*/, std::size_t /*unused*/)
+    void destroyOutsideWindow(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Parallax> arrParallax =
             Registry::getInstance().getComponents<Types::Parallax>();
 
-        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
+        std::vector<std::size_t> ids =
+            Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
 
         for (auto &id : ids) {
             if (!arrParallax.exist(id) && isOutsideWindow(arrPosition[id])) {
-                std::cout << "removeOutside " << id << " pos " << arrPosition[id].x << " " << arrPosition[id].y << std::endl;
+                std::cout << "removeOutside " << id << " pos " << arrPosition[id].x << " "
+                          << arrPosition[id].y << std::endl;
                 for (auto id_ : arrParallax.getExistingsId()) {
                     std::cout << id_ << std::endl;
                 }
@@ -386,7 +388,8 @@ namespace Systems {
         Registry::components<Types::Parallax> arrParallax =
             Registry::getInstance().getComponents<Types::Parallax>();
 
-        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::Position), typeid(Types::Parallax), typeid(Types::Velocity)});
+        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::Parallax), typeid(Types::Velocity)});
 
         for (auto &id : ids) {
             resetParallaxPosition(id, arrParallax, arrPosition);
@@ -394,7 +397,7 @@ namespace Systems {
     }
 
     const std::string playerFile = "assets/Json/playerData.json";
-    const std::size_t deathTime = 500;
+    const std::size_t deathTime  = 500;
 
     void initPlayer(std::size_t managerId, std::size_t systemId)
     {
@@ -446,7 +449,6 @@ namespace Systems {
             waveManager,
             deathChecker,
             moveEntities,
-            manageParallax
-        };
+            manageParallax};
     }
 } // namespace Systems

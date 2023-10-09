@@ -5,8 +5,8 @@
 ** SpriteSystems implementation
 */
 
-#include <iostream>
 #include "SpriteSystems.hpp"
+#include <iostream>
 #include "CustomTypes.hpp"
 #include "Logger.hpp"
 #include "Raylib.hpp"

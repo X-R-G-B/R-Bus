@@ -5,9 +5,9 @@
 ** SystemManager implementation
 */
 
-#include <iostream>
-#include <algorithm>
 #include "SystemManager.hpp"
+#include <algorithm>
+#include <iostream>
 
 namespace Systems {
 
@@ -31,7 +31,7 @@ namespace Systems {
 
     void SystemManager::updateSystems()
     {
-        std::size_t i = 0;
+        std::size_t i        = 0;
         std::size_t decrease = 0;
 
         _toRemove.clear();
