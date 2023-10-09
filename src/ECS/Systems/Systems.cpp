@@ -232,35 +232,52 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
             (Types::CollisionRect(ennemyData["collisionRect"])));
         Registry::getInstance().getComponents<Types::Rect>().insertBack((Types::Rect(ennemyData["rect"])));
-        // nlohmann::json animRectData = ennemyData["animRect"];
-        // nlohmann::json moveData     = animRectData["move"];
-        // nlohmann::json attackData   = animRectData["attack"];
-        // nlohmann::json deadData     = animRectData["dead"];
-        // Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
-        //     Types::Rect(ennemyData["rect"]),
-        //     moveData.get<std::vector<Types::Rect>>(),
-        //     attackData.get<std::vector<Types::Rect>>(),
-        //     deadData.get<std::vector<Types::Rect>>()));
+        nlohmann::json animRectData = ennemyData["animRect"];
+        nlohmann::json moveData     = animRectData["move"];
+        nlohmann::json attackData   = animRectData["attack"];
+        nlohmann::json deadData     = animRectData["dead"];
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
+            Types::Rect(ennemyData["rect"]),
+            moveData.get<std::vector<Types::Rect>>(),
+            attackData.get<std::vector<Types::Rect>>(),
+            deadData.get<std::vector<Types::Rect>>()));
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(
             {Types::Velocity(ennemyData["velocity"])});
         Registry::getInstance().getComponents<health_s>().insertBack({ennemyData["health"]});
         Registry::getInstance().getComponents<Types::Damage>().insertBack({ennemyData["damage"]});
     }
 
-    const std::string ennemyFile = "assets/Json/ennemyData.json";
-
-    void initEnnemy(std::size_t managerId, std::size_t systemId)
+    static void initEnnemy(const std::string &path)
     {
-        nlohmann::json jsonData = openJsonData(ennemyFile);
+        nlohmann::json jsonData = openJsonData(path);
 
         if (jsonData["ennemy"] == nullptr) {
-            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
             return;
         }
         for (auto &ennemyData : jsonData["ennemy"]) {
             initEnnemyEntity(ennemyData);
         }
-        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+    }
+
+    const std::string ennemyToLoad = "assets/Json/ennemyData.json";
+    const std::size_t spawnDelay = 2;
+
+    void waveManager(std::size_t managerId, std::size_t systemId)
+    {
+        static std::size_t nbrToLoad = 5;
+        Clock &clock = Registry::getInstance().getClock();
+        static std::size_t clockId = clock.create(true);
+
+        if (clock.elapsedSecondsSince(clockId) > spawnDelay) {
+            std::cout << "Init ennemy" << std::endl;
+            clock.restart(clockId);
+            nbrToLoad--;
+            initEnnemy(ennemyToLoad);
+        }
+        std::cout << "ntm" << std::endl;
+        if (nbrToLoad <= 0) {
+            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+        }
     }
 
     std::size_t a =0;
@@ -424,9 +441,9 @@ namespace Systems {
             checkDestroyAfterDeathCallBack,
             initPlayer,
             initParalax,
-            initEnnemy,
             entitiesCollision,
             destroyOutsideWindow,
+            waveManager,
             deathChecker,
             moveEntities,
             manageParallax
