@@ -15,7 +15,6 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
-
 namespace Systems {
 
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -265,10 +264,10 @@ namespace Systems {
 
     void initWave(std::size_t managerId, std::size_t systemId)
     {
-        std::size_t ennemyNumber = 5;
+        std::size_t ennemyNumber     = 5;
         const std::size_t spawnDelay = 2;
-        Clock &clock = Registry::getInstance().getClock();
-        static std::size_t clockId = clock.create(true);
+        Clock &clock                 = Registry::getInstance().getClock();
+        static std::size_t clockId   = clock.create(true);
 
         if (clock.elapsedSecondsSince(clockId) > spawnDelay) {
             initEnnemy(ennemyFile);
