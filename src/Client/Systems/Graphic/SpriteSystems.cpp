@@ -102,13 +102,19 @@ namespace Systems {
         }
     }
 
-    static void drawSpriteWithoutRect(Types::Position &position, Raylib::Sprite &sprite)
+    static void drawSpriteWithoutRect(Types::Position &position, Raylib::Sprite &sprite, std::size_t entityId)
     {
+        Registry::components<Types::Scale> arrScale = Registry::getInstance().getComponents<Types::Scale>();
+        Registry::components<Types::Rotation> arrRotation = Registry::getInstance().getComponents<Types::Rotation>();
+        Registry::components<Types::Color> arrColor = Registry::getInstance().getComponents<Types::Color>();
         float scale               = 1.0F;
         float rotation            = 0;
-        const Raylib::Color tint  = Raylib::White;
+        Raylib::Color tint  = Raylib::White;
         Raylib::Vector2 spritePos = {0, 0};
 
+        scale = arrScale.exist(entityId) ? arrScale[entityId].size : scale;
+        rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
+        tint = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
         float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
         float y = (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
@@ -119,12 +125,18 @@ namespace Systems {
         sprite.drawEx(spritePos, rotation, scale, tint);
     }
 
-    static void drawSpriteWithRect(Types::Position &position, Raylib::Sprite &sprite, Types::Rect &rect)
+    static void drawSpriteWithRect(Types::Position &position, Raylib::Sprite &sprite, Types::Rect &rect, std::size_t entityId)
     {
-        Raylib::Vector2 origin   = {0, 0};
+        Registry::components<Types::Rotation> arrRotation = Registry::getInstance().getComponents<Types::Rotation>();
+        Registry::components<Types::Color> arrColor = Registry::getInstance().getComponents<Types::Color>();
+        Registry::components<Types::Origin> arrOrigin = Registry::getInstance().getComponents<Types::Origin>();
+        Types::Origin origin   = {0, 0};
         float rotation           = 0;
-        const Raylib::Color tint = Raylib::White;
+        Raylib::Color tint = Raylib::White;
 
+        origin = arrOrigin.exist(entityId) ? Types::Origin({arrOrigin[entityId].x, arrOrigin[entityId].y}) : origin;
+        rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
+        tint = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
         float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
         float y = (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
 
@@ -134,7 +146,7 @@ namespace Systems {
         sprite.drawPro(
             Raylib::Rectangle(rect.x, rect.y, rect.width, rect.height),
             Raylib::Rectangle(x, y, width, height),
-            origin,
+            Raylib::Vector2(origin.x, origin.y),
             rotation,
             tint);
     }
@@ -149,9 +161,9 @@ namespace Systems {
         for (auto id : list) {
             if (arrPosition.exist(id)) {
                 if (arrRect.exist(id)) {
-                    drawSpriteWithRect(arrPosition[id], arrSprite[id], arrRect[id]);
+                    drawSpriteWithRect(arrPosition[id], arrSprite[id], arrRect[id], id);
                 } else {
-                    drawSpriteWithoutRect(arrPosition[id], arrSprite[id]);
+                    drawSpriteWithoutRect(arrPosition[id], arrSprite[id], id);
                 }
             }
         }
