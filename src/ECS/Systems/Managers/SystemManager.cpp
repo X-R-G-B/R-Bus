@@ -5,6 +5,7 @@
 ** SystemManager implementation
 */
 
+#include <algorithm>
 #include "SystemManager.hpp"
 
 namespace Systems {
