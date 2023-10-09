@@ -198,7 +198,7 @@ namespace Systems {
         std::vector<std::size_t> ids = arrCollisionRect.getExistingsId();
 
         for (auto &id : ids) {
-            if (arrPosition.exist(id) && !arrRectangleShape.exist(id)) {
+            if (arrPosition.exist(id) && arrRectangleShape.exist(id) == false) {
                 Registry::getInstance().getComponents<Types::RectangleShape>().insert(
                     id,
                     {arrCollisionRect[id].width, arrCollisionRect[id].height});

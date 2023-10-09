@@ -1,0 +1,15 @@
+{
+    "wave1": {
+        "ennemiesData": [
+            {
+                "ennemyData": "assets/Json/ennemyData.json",
+                "numbers": 5
+            },
+            {
+                "ennemyData": "assets/Json/ennemyData2.json",
+                "numbers": 1
+            }
+        ],
+        "spawnDelay": 5
+    }
+}

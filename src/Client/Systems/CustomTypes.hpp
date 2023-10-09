@@ -26,17 +26,8 @@ namespace Types {
             float fsz;
     };
 
-    struct Origin {
-            float x;
-            float y;
-    };
-
     struct Rotation {
             float rotate;
-    };
-
-    struct Scale {
-            float size;
     };
 
     struct Color {

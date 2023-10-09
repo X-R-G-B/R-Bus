@@ -22,6 +22,16 @@ namespace Systems {
         return (pos);
     }
 
+    static Raylib::Vector2 calculateOrigin(Raylib::Sprite &sprite)
+    {
+        Raylib::Vector2 origin = {0, 0};
+        const float denominator = 2.0F;
+
+        origin.x = sprite.getWidth() / denominator;
+        origin.y = sprite.getHeight() / denominator;
+        return (origin);
+    }
+
     static Raylib::Vector2 calculateSize(Raylib::Sprite &sprite)
     {
         Raylib::Vector2 size = {0, 0};
@@ -149,19 +159,17 @@ namespace Systems {
         Registry::components<Types::Rotation> arrRotation =
             Registry::getInstance().getComponents<Types::Rotation>();
         Registry::components<Types::Color> arrColor = Registry::getInstance().getComponents<Types::Color>();
-        Registry::components<Types::Origin> arrOrigin = Registry::getInstance().getComponents<Types::Origin>();
-        Types::Origin origin   = {0, 0};
+        Raylib::Vector2 origin = {0, 0};
         Raylib::Vector2 size = {0, 0};
         Raylib::Vector2 pos = {0, 0};
         float rotation           = 0;
         Raylib::Color tint = Raylib::White;
 
-        origin   = arrOrigin.exist(entityId) ? Types::Origin({arrOrigin[entityId].x, arrOrigin[entityId].y})
-                                             : origin;
         rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
         tint = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
         pos = calculatePosition(position.x, position.y);
         size = calculateSize(sprite);
+        origin = calculateOrigin(sprite);
 
         sprite.drawPro(
             Raylib::Rectangle(rect.x, rect.y, rect.width, rect.height),
@@ -207,6 +215,6 @@ namespace Systems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> GraphicSystems::getSpriteSystems()
     {
-        return {rectIncrementation, rectRenderer, spriteRenderer};
+        return {rectIncrementation, spriteRenderer, rectRenderer};
     }
 } // namespace Systems
