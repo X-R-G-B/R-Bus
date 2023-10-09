@@ -271,7 +271,7 @@ namespace Nitwork {
     n_idsReceived_t ANitwork::getIdsReceived()
     {
         n_idsReceived_t idsReceived = 0;
-        int lastId                  = 0;
+        n_id_t lastId               = 0;
         bool isPresent              = false;
 
         if (_receivedPacketsIds.empty()) {

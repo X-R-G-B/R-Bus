@@ -35,10 +35,13 @@ namespace Systems {
             system(_id, i);
             i++;
         }
+        std::size_t decrease = 0;
+        std::sort(_toRemove.begin(), _toRemove.end());
         for (auto &id : _toRemove) {
             auto it = _modifiedSystems.begin();
-            std::advance(it, id);
+            std::advance(it, id - decrease);
             _modifiedSystems.erase(it);
+            decrease++;
         }
         _toRemove.clear();
     }
@@ -58,7 +61,7 @@ namespace Systems {
     void SystemManager::resetChanges()
     {
         _modified = false;
-        _modifiedSystems.clear();
+        _modifiedSystems = _originalSystems;
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> &SystemManager::getSystems()
