@@ -10,7 +10,6 @@
 #include <iterator>
 #include <vector>
 
-#include "ECSCustomTypes.hpp"
 
 template <typename Component>
 class SparseArray {
