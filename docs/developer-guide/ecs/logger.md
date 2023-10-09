@@ -46,3 +46,30 @@ LogLevel Logger::getLogLevel() const;
 ```
 
 ### Examples
+
+Exemple of how to use the logger to print messages of different levels.
+
+```cpp
+Logger::fatal("fatal message");
+Logger::error("error message");
+Logger::warn("warn message");
+Logger::info("info message");
+Logger::debug("debug message");
+Logger::trace("trace message");
+```
+
+Exemple of how to use the logger to change and retrieve the current log level.
+
+```cpp
+void Logger::setLogLevel(LogLevel::Info);
+LogLevel logLevel = Logger::getLogLevel();
+```
+
+Exemple of how to use the logger to subscribe to log messages of different levels.
+
+```cpp
+Logger::subscribeCallback(LogLevel::Info, "myCallback", [](const std::string &message) {
+    std::cout << message << std::endl;
+});
+Logger::unsubscribeCallback(LogLevel::Info, "myCallback");
+```
