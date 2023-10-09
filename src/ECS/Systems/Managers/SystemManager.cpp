@@ -42,7 +42,7 @@ namespace Systems {
         for (auto &id : _toRemove) {
             auto it = _modifiedSystems.begin();
             std::advance(it, id);
-            _modifiedSystems.erase(it - decrease);
+            _modifiedSystems.erase(it);
         }
     }
 
