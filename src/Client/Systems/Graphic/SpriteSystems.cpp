@@ -133,8 +133,8 @@ namespace Systems {
         Raylib::Vector2 spritePos                   = {0, 0};
 
         rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
-        tint = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
-        scale = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator
+        tint     = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
+        scale    = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator
             / static_cast<float>(sprite.getTextureWidth());
         spritePos = calculatePosition(position.x, position.y);
         sprite.drawEx(spritePos, rotation, scale, tint);
@@ -149,19 +149,20 @@ namespace Systems {
         Registry::components<Types::Rotation> arrRotation =
             Registry::getInstance().getComponents<Types::Rotation>();
         Registry::components<Types::Color> arrColor = Registry::getInstance().getComponents<Types::Color>();
-        Registry::components<Types::Origin> arrOrigin = Registry::getInstance().getComponents<Types::Origin>();
-        Types::Origin origin   = {0, 0};
+        Registry::components<Types::Origin> arrOrigin =
+            Registry::getInstance().getComponents<Types::Origin>();
+        Types::Origin origin = {0, 0};
         Raylib::Vector2 size = {0, 0};
-        Raylib::Vector2 pos = {0, 0};
-        float rotation           = 0;
-        Raylib::Color tint = Raylib::White;
+        Raylib::Vector2 pos  = {0, 0};
+        float rotation       = 0;
+        Raylib::Color tint   = Raylib::White;
 
         origin   = arrOrigin.exist(entityId) ? Types::Origin({arrOrigin[entityId].x, arrOrigin[entityId].y})
                                              : origin;
         rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
-        tint = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
-        pos = calculatePosition(position.x, position.y);
-        size = calculateSize(sprite);
+        tint     = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
+        pos      = calculatePosition(position.x, position.y);
+        size     = calculateSize(sprite);
 
         sprite.drawPro(
             Raylib::Rectangle(rect.x, rect.y, rect.width, rect.height),
