@@ -82,8 +82,7 @@ namespace Types {
             {
                 enemyNb++;
             }
-            Enemy& operator=(const Types::Enemy&) = delete;
-            const struct enemy_id_s constId;
+            struct enemy_id_s constId;
             static unsigned int enemyNb;
     };
 

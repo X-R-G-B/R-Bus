@@ -35,10 +35,14 @@ namespace Nitwork {
                 n_id_t playerId,
                 const struct health_s &life);
 
+            void addEnemyDeathMessage(n_id_t enemyId);
+
         private:
             NitworkServer() = default;
 
             bool startNitworkConfig(int port, const std::string &ip) final;
+
+            void sendToAllClients(const Packet &packet);
 
             void handleBodyAction(
                 const struct header_s &header,

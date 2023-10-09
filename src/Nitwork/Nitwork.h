@@ -25,6 +25,7 @@
     #define MAGICK_START_GAME '\a'
     #define MAGICK_POSITION_RELATIVE '\b'
     #define MAGICK_LIFE_UPDATE '\x0b'
+    #define MAGICK_ENEMY_DEATH '\x0c'
 
 
 typedef char n_magick_t;
@@ -95,6 +96,7 @@ PACK(struct packetMsgStartGame_s {
 /* Message Life Update */
 PACK(struct msgLifeUpdate_s {
         n_magick_t magick;
+        n_id_t playerId;
         struct health_s life;
 });
 
