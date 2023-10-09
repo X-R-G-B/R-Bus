@@ -18,25 +18,25 @@ class SparseArray {
             _sparse.push_back(std::size_t(-1));
         }
 
-        void insertBack(const Component &value)
+        void insertBack(Component &value)
         {
             insert(_sparse.size() - 1, value);
         }
 
-        void insert(size_t id, const Component &value)
+        void insert(size_t id, Component &value)
         {
             if (id >= _sparse.size()) {
                 throw std::runtime_error("SparseArrays::insert: ID out of bounds!");
             }
 
             if (static_cast<int>(_sparse[id]) > -1) {
-                _dense[_sparse[id]]     = value;
+                _dense[_sparse[id]]     = std::move(value);
                 _revSparse[_sparse[id]] = id;
                 return;
             }
 
             _sparse[id] = _dense.size();
-            _dense.push_back(value);
+            _dense.push_back(std::move(value));
             _revSparse.push_back(id);
         }
 
@@ -47,7 +47,12 @@ class SparseArray {
             }
             std::size_t sparseValue = _sparse[id];
             if (int(sparseValue) != -1) {
-                removeDenses(id, sparseValue);
+                removeDenses(sparseValue);
+            }
+            for (auto revIt2 = _revSparse.begin(); revIt2 != _revSparse.end(); revIt2++) {
+                if (*revIt2 > id) {
+                    (*revIt2)--;
+                }
             }
             auto it = _sparse.begin();
             std::advance(it, id);
@@ -95,7 +100,7 @@ class SparseArray {
         }
 
     private:
-        void removeDenses(std::size_t id, std::size_t sparseValue)
+        void removeDenses(std::size_t sparseValue)
         {
             auto it = _dense.begin();
             std::advance(it, sparseValue);
@@ -103,11 +108,6 @@ class SparseArray {
             auto revIt = _revSparse.begin();
             std::advance(revIt, sparseValue);
             _revSparse.erase(revIt);
-            for (auto revIt2 = _revSparse.begin(); revIt2 != _revSparse.end(); revIt2++) {
-                if (*revIt2 > id) {
-                    (*revIt2)--;
-                }
-            }
             for (auto it2 = _sparse.begin(); it2 != _sparse.end(); it2++) {
                 if (static_cast<int>(*it2) > static_cast<int>(sparseValue)) {
                     (*it2)--;

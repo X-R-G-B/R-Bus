@@ -29,6 +29,9 @@ std::size_t Registry::addEntity()
 
 void Registry::removeEntity(std::size_t id)
 {
+#ifdef CLIENT
+    unloadRaylibComponents(id);
+#endif
     for (auto function : _removeComponentFunctions) {
         function(*this, id);
     }
@@ -36,6 +39,11 @@ void Registry::removeEntity(std::size_t id)
 
 void Registry::clear()
 {
+#ifdef CLIENT
+    for (std::size_t i = 0; i < _entitiesNb; i++) {
+        unloadRaylibComponents(i);
+    }
+#endif
     _data.clear();
     _addComponentPlaceFunctions.clear();
     _removeComponentFunctions.clear();
@@ -91,7 +99,8 @@ void Registry::setToDefaultLayer(std::size_t id)
 
 void Registry::setToFrontLayers(std::size_t id, FrontLayers layer)
 {
-    _backLayers[layer].push_back(id);
+    removeFromDefaultLayer(id);
+    _frontLayers[layer].push_back(id);
 }
 
 std::vector<std::vector<std::size_t>> Registry::getBackLayers()

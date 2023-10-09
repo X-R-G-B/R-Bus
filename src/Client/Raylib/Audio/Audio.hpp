@@ -21,6 +21,7 @@ namespace Raylib {
     class Sound {
         public:
             Sound(const std::string& fileName, float volume = 0.5f);
+            bool isReady() const;
             void unload();
             void play() const;
             void stop() const;

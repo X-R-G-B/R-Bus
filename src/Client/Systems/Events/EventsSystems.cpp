@@ -62,40 +62,42 @@ namespace Systems {
         }
     }
 
-    const Types::Rect spriteRect             = {200, 121, 32, 10};
-    const std::string bulletPath             = "assets/R-TypeSheet/r-typesheet1.gif";
-    constexpr float bulletWidth              = 5.0F;
-    constexpr float bulletHeight             = 5.0F;
-    const Types::CollisionRect collisionRect = {1, 1};
-    const Types::Velocity velocity           = {0.7F, 0.0F};
-    const Types::Missiles missileType        = {Types::MissileTypes::CLASSIC};
-    const struct health_s health             = {1};
-    const Types::Damage damage               = {10};
-
     static void createMissile(std::size_t id, Registry::components<Types::Position> &arrPosition)
     {
+        Types::Rect spriteRect               = {200, 121, 32, 10};
+        const std::string bulletPath         = "assets/R-TypeSheet/r-typesheet1.gif";
+        constexpr float bulletWidth          = 5.0F;
+        constexpr float bulletHeight         = 5.0F;
+        Types::CollisionRect collisionRect1  = {1, 1};
+        Types::Velocity velocity             = {0.7F, 0.0F};
+        Types::Missiles missileType          = {Types::MissileTypes::CLASSIC};
+        Types::Dead deadComp                 = {std::nullopt};
+        Types::PlayerAllies playerAlliesComp = {};
+        Types::Position position             = {arrPosition[id].x, arrPosition[id].y};
+        Types::CollisionRect collisionRect2  = {bulletWidth, bulletHeight};
+        Raylib::Sprite sprite                = {bulletPath, bulletWidth, bulletHeight, 0};
+        health_s healthComp                  = {1};
+        Types::Damage damageComp             = {10};
+
         if (arrPosition.exist(id)) {
             std::size_t entityId = Registry::getInstance().addEntity();
 
-            Registry::getInstance().getComponents<Types::Position>().insertBack(
-                {arrPosition[id].x, arrPosition[id].y});
-            Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-                {bulletPath, bulletWidth, bulletHeight, entityId});
-            Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
-                {bulletWidth, bulletHeight});
+            Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+            Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
+            Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect1);
             Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
-            Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
+            Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect2);
             Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
-            Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack({});
+            Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
             Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
-            Registry::getInstance().getComponents<health_s>().insertBack(health);
-            Registry::getInstance().getComponents<Types::Damage>().insertBack(damage);
-            Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
+            Registry::getInstance().getComponents<health_s>().insertBack(healthComp);
+            Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
+            Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
             Registry::getInstance().setToFrontLayers(entityId);
         }
     }
 
-    const std::size_t waitTimeBullet = 1;
+    const std::size_t waitTimeBullet = 500;
 
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
@@ -108,7 +110,7 @@ namespace Systems {
         std::vector<std::size_t> ids = arrPlayer.getExistingsId();
 
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE)
-            && clock_.elapsedSecondsSince(clockId) > waitTimeBullet) {
+            && clock_.elapsedMillisecondsSince(clockId) > waitTimeBullet) {
             clock_.restart(clockId);
             for (auto &id : ids) {
                 createMissile(id, arrPosition);
