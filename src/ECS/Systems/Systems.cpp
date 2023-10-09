@@ -11,7 +11,9 @@
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include "CustomTypes.hpp"
-#include "Raylib.hpp"
+#ifdef CLIENT
+    #include "Raylib.hpp"
+#endif
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
@@ -160,7 +162,9 @@ namespace Systems {
     {
         std::size_t id = Registry::getInstance().addEntity();
 
+#ifdef CLIENT
         Raylib::Sprite ennemy = {ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id};
+#endif
         Types::Position position           = {Types::Position(ennemyData["position"])};
         Types::CollisionRect collisionRect = {Types::CollisionRect(ennemyData["collisionRect"])};
         Types::Rect rect                   = {Types::Rect(ennemyData["rect"])};
@@ -179,7 +183,9 @@ namespace Systems {
             attackData.get<std::vector<Types::Rect>>(),
             deadData.get<std::vector<Types::Rect>>()};
 
+#ifdef CLIENT
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(ennemy);
+#endif
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Rect>().insertBack((rect));
@@ -328,7 +334,9 @@ namespace Systems {
         Types::Dead deadComp       = {std::nullopt};
         struct health_s healthComp = {jsonData["health"]};
         Types::Damage damageComp   = {jsonData["damage"]};
+#ifdef CLIENT
         Raylib::Sprite sprite      = {jsonData["spritePath"], jsonData["width"], jsonData["height"], id};
+#endif
         Types::Position position   = {Types::Position(jsonData["position"])};
         Types::Rect rect           = {Types::Rect(jsonData["rect"])};
         Types::CollisionRect collisionRect = {Types::CollisionRect(jsonData["collisionRect"])};
@@ -347,7 +355,9 @@ namespace Systems {
 
         // Add components to registry
 
+#ifdef CLIENT
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
+#endif
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
