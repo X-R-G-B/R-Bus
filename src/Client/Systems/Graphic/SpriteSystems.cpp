@@ -121,14 +121,16 @@ namespace Systems {
         }
     }
 
-    static void drawSpriteWithoutRect(Types::Position &position, Raylib::Sprite &sprite, std::size_t entityId)
+    static void
+    drawSpriteWithoutRect(Types::Position &position, Raylib::Sprite &sprite, std::size_t entityId)
     {
-        Registry::components<Types::Rotation> arrRotation = Registry::getInstance().getComponents<Types::Rotation>();
+        Registry::components<Types::Rotation> arrRotation =
+            Registry::getInstance().getComponents<Types::Rotation>();
         Registry::components<Types::Color> arrColor = Registry::getInstance().getComponents<Types::Color>();
-        float scale               = 1.0F;
-        float rotation            = 0;
-        Raylib::Color tint  = Raylib::White;
-        Raylib::Vector2 spritePos = {0, 0};
+        float scale                                 = 1.0F;
+        float rotation                              = 0;
+        Raylib::Color tint                          = Raylib::White;
+        Raylib::Vector2 spritePos                   = {0, 0};
 
         rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
         tint = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
@@ -138,9 +140,14 @@ namespace Systems {
         sprite.drawEx(spritePos, rotation, scale, tint);
     }
 
-    static void drawSpriteWithRect(Types::Position &position, Raylib::Sprite &sprite, Types::Rect &rect, std::size_t entityId)
+    static void drawSpriteWithRect(
+        Types::Position &position,
+        Raylib::Sprite &sprite,
+        Types::Rect &rect,
+        std::size_t entityId)
     {
-        Registry::components<Types::Rotation> arrRotation = Registry::getInstance().getComponents<Types::Rotation>();
+        Registry::components<Types::Rotation> arrRotation =
+            Registry::getInstance().getComponents<Types::Rotation>();
         Registry::components<Types::Color> arrColor = Registry::getInstance().getComponents<Types::Color>();
         Registry::components<Types::Origin> arrOrigin = Registry::getInstance().getComponents<Types::Origin>();
         Types::Origin origin   = {0, 0};
@@ -149,7 +156,8 @@ namespace Systems {
         float rotation           = 0;
         Raylib::Color tint = Raylib::White;
 
-        origin = arrOrigin.exist(entityId) ? Types::Origin({arrOrigin[entityId].x, arrOrigin[entityId].y}) : origin;
+        origin   = arrOrigin.exist(entityId) ? Types::Origin({arrOrigin[entityId].x, arrOrigin[entityId].y})
+                                             : origin;
         rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
         tint = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
         pos = calculatePosition(position.x, position.y);

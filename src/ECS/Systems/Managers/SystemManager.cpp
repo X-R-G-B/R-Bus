@@ -60,7 +60,7 @@ namespace Systems {
 
     void SystemManager::resetChanges()
     {
-        _modified = false;
+        _modified        = false;
         _modifiedSystems = _originalSystems;
     }
 
