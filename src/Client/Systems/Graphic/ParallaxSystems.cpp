@@ -34,7 +34,8 @@ namespace Systems::ParallaxSystems {
     {
         std::size_t id = Registry::getInstance().addEntity();
 
-        Raylib::Sprite sprite = {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id};
+        Raylib::Sprite sprite =
+            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id};
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
 
         Types::Position position = {Types::Position(parallaxData["position"])};
