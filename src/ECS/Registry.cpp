@@ -91,7 +91,8 @@ void Registry::setToDefaultLayer(std::size_t id)
 
 void Registry::setToFrontLayers(std::size_t id, FrontLayers layer)
 {
-    _backLayers[layer].push_back(id);
+    removeFromDefaultLayer(id);
+    _frontLayers[layer].push_back(id);
 }
 
 std::vector<std::vector<std::size_t>> Registry::getBackLayers()

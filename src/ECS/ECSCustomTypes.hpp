@@ -39,11 +39,6 @@ namespace Types {
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Position, x, y);
     };
 
-    struct InitialPosition {
-            float x;
-            float y;
-    };
-
     struct Damage {
             int damage;
     };
@@ -75,7 +70,10 @@ namespace Types {
 
     struct Enemy { };
 
-    struct Parallax { };
+    struct Parallax {
+            float x;
+            float y;
+    };
 
     struct Dead {
             Dead(std::optional<std::function<void(std::size_t id)>> func, std::size_t time = 0)
