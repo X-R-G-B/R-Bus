@@ -97,7 +97,7 @@ namespace Systems {
         }
     }
 
-    const std::size_t waitTimeBullet = 1;
+    const std::size_t waitTimeBullet = 500;
 
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
@@ -110,7 +110,7 @@ namespace Systems {
         std::vector<std::size_t> ids = arrPlayer.getExistingsId();
 
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE)
-            && clock_.elapsedSecondsSince(clockId) > waitTimeBullet) {
+            && clock_.elapsedMillisecondsSince(clockId) > waitTimeBullet) {
             clock_.restart(clockId);
             for (auto &id : ids) {
                 createMissile(id, arrPosition);

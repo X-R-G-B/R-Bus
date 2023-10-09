@@ -47,7 +47,12 @@ class SparseArray {
             }
             std::size_t sparseValue = _sparse[id];
             if (int(sparseValue) != -1) {
-                removeDenses(id, sparseValue);
+                removeDenses(sparseValue);
+            }
+            for (auto revIt2 = _revSparse.begin(); revIt2 != _revSparse.end(); revIt2++) {
+                if (*revIt2 > id) {
+                    (*revIt2)--;
+                }
             }
             auto it = _sparse.begin();
             std::advance(it, id);
@@ -95,7 +100,7 @@ class SparseArray {
         }
 
     private:
-        void removeDenses(std::size_t id, std::size_t sparseValue)
+        void removeDenses(std::size_t sparseValue)
         {
             auto it = _dense.begin();
             std::advance(it, sparseValue);
@@ -103,11 +108,6 @@ class SparseArray {
             auto revIt = _revSparse.begin();
             std::advance(revIt, sparseValue);
             _revSparse.erase(revIt);
-            for (auto revIt2 = _revSparse.begin(); revIt2 != _revSparse.end(); revIt2++) {
-                if (*revIt2 > id) {
-                    (*revIt2)--;
-                }
-            }
             for (auto it2 = _sparse.begin(); it2 != _sparse.end(); it2++) {
                 if (static_cast<int>(*it2) > static_cast<int>(sparseValue)) {
                     (*it2)--;

@@ -67,7 +67,8 @@ namespace Systems {
     {
         Registry::components<Types::Damage> arrDamage =
             Registry::getInstance().getComponents<Types::Damage>();
-        Registry::components<health_s> arrHealth = Registry::getInstance().getComponents<health_s>();
+        Registry::components<struct health_s> arrHealth =
+            Registry::getInstance().getComponents<struct health_s>();
 
         if (checkAllies(firstEntity, secondEntity)) {
             return;
@@ -129,8 +130,7 @@ namespace Systems {
 
     static void initParallaxEntity(
         nlohmann::json_abi_v3_11_2::basic_json<> &parallaxData,
-        const float maxOffsideParallax = 0,
-        bool isCopy                    = false)
+        const float maxOffsideParallax = 0)
     {
         std::size_t id = Registry::getInstance().addEntity();
 
@@ -150,7 +150,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Parallax>().insertBack(paralax);
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
-        if (isCopy) {
+        if (maxOffsideParallax > 0) {
             arrPosition[id].x += maxOffsideParallax;
         }
         Types::InitialPosition initialPos = {arrPosition[id].x, arrPosition[id].y};
@@ -168,8 +168,10 @@ namespace Systems {
 
         for (auto &e : jsonData["parallax"]) {
             initParallaxEntity(e);
+            if (e["copy"] != nullptr && e["copy"]) {
+                initParallaxEntity(e, maxOutParallaxRight);
+            }
         }
-
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
@@ -227,27 +229,72 @@ namespace Systems {
         }
     }
 
+    static void initEnnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &ennemyData)
+    {
+        std::size_t id = Registry::getInstance().addEntity();
+
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
+            Raylib::Sprite(ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id));
+        Registry::getInstance().getComponents<Types::Position>().insertBack(
+            {Types::Position(ennemyData["position"])});
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
+            (Types::CollisionRect(ennemyData["collisionRect"])));
+        Registry::getInstance().getComponents<Types::Rect>().insertBack((Types::Rect(ennemyData["rect"])));
+        nlohmann::json animRectData = ennemyData["animRect"];
+        nlohmann::json moveData     = animRectData["move"];
+        nlohmann::json attackData   = animRectData["attack"];
+        nlohmann::json deadData     = animRectData["dead"];
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(Types::AnimRect(
+            Types::Rect(ennemyData["rect"]),
+            moveData.get<std::vector<Types::Rect>>(),
+            attackData.get<std::vector<Types::Rect>>(),
+            deadData.get<std::vector<Types::Rect>>()));
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(
+            {Types::Velocity(ennemyData["velocity"])});
+        Registry::getInstance().getComponents<struct health_s>().insertBack({ennemyData["health"]});
+        Registry::getInstance().getComponents<Types::Damage>().insertBack({ennemyData["damage"]});
+    }
+
+    const std::string ennemyFile = "assets/Json/ennemyData.json";
+
+    void initEnnemy(std::size_t managerId, std::size_t systemId)
+    {
+        nlohmann::json jsonData = openJsonData(ennemyFile);
+
+        if (jsonData["ennemy"] == nullptr) {
+            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+            return;
+        }
+        for (auto &ennemyData : jsonData["ennemy"]) {
+            initEnnemyEntity(ennemyData);
+        }
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+    }
+
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry &registry = Registry::getInstance();
-        auto deadList      = registry.getComponents<Types::Dead>();
-        auto deadIdList    = deadList.getExistingsId();
-        Clock &clock       = registry.getClock();
+        Registry &registry   = Registry::getInstance();
+        auto deadList        = registry.getComponents<Types::Dead>();
+        auto deadIdList      = deadList.getExistingsId();
+        Clock &clock         = registry.getClock();
+        std::size_t decrease = 0;
 
         for (auto id : deadIdList) {
-            Types::Dead &dead = deadList[id];
+            auto tmpId        = id - decrease;
+            Types::Dead &dead = deadList[tmpId];
             if (static_cast<int>(dead.clockId) > -1
                 && clock.elapsedMillisecondsSince(dead.clockId) > dead.timeToWait) {
-                clock.restart(dead.clockId);
-                registry.removeEntity(id);
+                registry.removeEntity(tmpId);
+                decrease++;
             }
         }
     }
 
-    static void executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead)
+    static void
+    executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead, std::size_t &decrease)
     {
-        Types::Dead &deadComp = arrDead[id];
-        if (deadComp.deathFunction != std::nullopt) {
+        if (arrDead.exist(id) && arrDead[id].deathFunction != std::nullopt) {
+            Types::Dead &deadComp = arrDead[id];
             if (!deadComp.launched) {
                 deadComp.deathFunction.value()(id);
                 deadComp.clockId  = Registry::getInstance().getClock().create();
@@ -255,6 +302,23 @@ namespace Systems {
             }
         } else {
             Registry::getInstance().removeEntity(id);
+            decrease++;
+        }
+    }
+
+    void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry::components<struct health_s> arrHealth =
+            Registry::getInstance().getComponents<struct health_s>();
+        Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
+        std::size_t decrease                      = 0;
+
+        std::vector<std::size_t> ids = arrHealth.getExistingsId();
+        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
+            auto tmpId = (*itIds) - decrease;
+            if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
+                executeDeathFunction(tmpId, arrDead, decrease);
+            }
         }
     }
 
@@ -270,36 +334,37 @@ namespace Systems {
         return (false);
     }
 
-    void manageOutsideWindowEntity(std::size_t /*unused*/, std::size_t /*unused*/)
+    void destroyOutsideWindow(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Parallax> arrParallax =
             Registry::getInstance().getComponents<Types::Parallax>();
-
-        std::vector<std::size_t> ids = arrPosition.getExistingsId();
+        std::vector<std::size_t> ids =
+            Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
+        std::size_t decrease = 0;
 
         for (auto &id : ids) {
-            if (!arrParallax.exist(id)) {
-                if (isOutsideWindow(arrPosition[id])) {
-                    Registry::getInstance().removeEntity(id);
-                }
+            auto tmpId = id - decrease;
+            if (!arrParallax.exist(tmpId) && isOutsideWindow(arrPosition[tmpId])) {
+                Registry::getInstance().removeEntity(tmpId);
+                decrease++;
             }
         }
     }
 
     static void resetParallaxPosition(
         std::size_t id,
-        Registry::components<Types::InitialPosition> &arrInitialPos,
+        Registry::components<Types::Parallax> &arrParallax,
         Registry::components<Types::Position> &arrPosition)
     {
         if (arrPosition[id].x <= maxOutParallaxLeft) {
-            if (arrInitialPos[id].x >= maxOutParallaxRight) {
-                arrPosition[id].x = arrInitialPos[id].x;
+            if (arrParallax[id].x >= maxOutParallaxRight) {
+                arrPosition[id].x = arrParallax[id].x;
             } else {
-                arrPosition[id].x = arrInitialPos[id].x + maxOutParallaxRight;
+                arrPosition[id].x = arrParallax[id].x + maxOutParallaxRight;
             }
-            arrPosition[id].y = arrInitialPos[id].y;
+            arrPosition[id].y = arrParallax[id].y;
         }
     }
 
@@ -309,40 +374,24 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Parallax> arrParallax =
             Registry::getInstance().getComponents<Types::Parallax>();
-        Registry::components<Types::Velocity> arrVelocity =
-            Registry::getInstance().getComponents<Types::Velocity>();
-        Registry::components<Types::InitialPosition> arrInitialPos =
-            Registry::getInstance().getComponents<Types::InitialPosition>();
 
-        std::vector<std::size_t> ids = arrParallax.getExistingsId();
+        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::Parallax), typeid(Types::Velocity)});
 
         for (auto &id : ids) {
-            if (arrPosition.exist(id) && arrVelocity.exist(id) && arrInitialPos.exist(id)) {
-                resetParallaxPosition(id, arrInitialPos, arrPosition);
-            }
-        }
-    }
-
-    void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
-    {
-        Registry::components<health_s> arrHealth  = Registry::getInstance().getComponents<health_s>();
-        Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
-
-        std::vector<std::size_t> ids = arrHealth.getExistingsId();
-        for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
-            if (arrHealth.exist(*itIds) && arrHealth[*itIds].hp <= 0 && arrDead.exist(*itIds)) {
-                executeDeathFunction(*itIds, arrDead);
-            }
+            resetParallaxPosition(id, arrParallax, arrPosition);
         }
     }
 
     const std::string playerFile = "assets/Json/playerData.json";
+    const std::size_t deathTime  = 500;
 
     void initPlayer(std::size_t managerId, std::size_t systemId)
     {
         nlohmann::json jsonData = openJsonData(playerFile);
         std::size_t id          = Registry::getInstance().addEntity();
         if (jsonData["player"] == nullptr) {
+            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
             return;
         }
         jsonData = jsonData["player"];
@@ -388,17 +437,19 @@ namespace Systems {
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
     {
         return {
-            windowCollision,
-            initPlayer,
-            initParalax,
-            entitiesCollision,
-            moveEntities,
 #ifndef NDEBUG
             debugCollisionRect,
 #else
 #endif
+            windowCollision,
+            checkDestroyAfterDeathCallBack,
+            initPlayer,
+            initParalax,
+            initEnnemy,
+            entitiesCollision,
+            destroyOutsideWindow,
             deathChecker,
-            manageOutsideWindowEntity,
+            moveEntities,
             manageParallax};
     }
 } // namespace Systems
