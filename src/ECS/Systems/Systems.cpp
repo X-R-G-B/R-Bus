@@ -15,6 +15,7 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
+
 namespace Systems {
 
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -248,20 +249,35 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Damage>().insertBack({ennemyData["damage"]});
     }
 
-    const std::string ennemyFile = "assets/Json/ennemyData.json";
-
-    void initEnnemy(std::size_t managerId, std::size_t systemId)
+    static void initEnnemy(const std::string &path)
     {
-        nlohmann::json jsonData = openJsonData(ennemyFile);
+        nlohmann::json jsonData = openJsonData(path);
 
         if (jsonData["ennemy"] == nullptr) {
-            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
             return;
         }
         for (auto &ennemyData : jsonData["ennemy"]) {
             initEnnemyEntity(ennemyData);
         }
-        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+    }
+
+    const std::string ennemyFile = "assets/Json/ennemyData.json";
+
+    void initWave(std::size_t managerId, std::size_t systemId)
+    {
+        std::size_t ennemyNumber = 5;
+        const std::size_t spawnDelay = 2;
+        Clock &clock = Registry::getInstance().getClock();
+        static std::size_t clockId = clock.create(true);
+
+        if (clock.elapsedSecondsSince(clockId) > spawnDelay) {
+            initEnnemy(ennemyFile);
+            ennemyNumber--;
+            clock.restart(clockId);
+        }
+        if (ennemyNumber <= 0) {
+            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+        }
     }
 
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -424,10 +440,10 @@ namespace Systems {
             checkDestroyAfterDeathCallBack,
             initPlayer,
             initParalax,
-            initEnnemy,
             entitiesCollision,
             destroyOutsideWindow,
             deathChecker,
+            initWave,
             moveEntities,
             manageParallax};
     }
