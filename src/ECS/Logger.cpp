@@ -39,9 +39,9 @@ namespace Logger {
     }
 
     Logger::Logger(LogLevel logLevel)
-        : _logLevel(logLevel),
+        : _logLevel(logLevel)
 #ifdef _WIN32
-          _hConsole(GetStdHandle(STD_OUTPUT_HANDLE))
+        , _hConsole(GetStdHandle(STD_OUTPUT_HANDLE))
 #endif
     {
     }
@@ -106,8 +106,8 @@ namespace Logger {
     {
 #ifdef _WIN32
         static std::map<LogLevel, WORD> colors = {
-            {LogLevel::Fatal,       static_cast<WORD>(FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY)  },
-            {LogLevel::Error,       static_cast<WORD>(FOREGROUND_RED | FOREGROUND_INTENSITY)                    },
+            {LogLevel::Fatal,       static_cast<WORD>(FOREGROUND_RED | FOREGROUND_INTENSITY)                    },
+            {LogLevel::Error,       static_cast<WORD>(FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY)  },
             {LogLevel::Warn,        static_cast<WORD>(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY)},
             {LogLevel::Info,        static_cast<WORD>(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY) },
             {LogLevel::Debug,       static_cast<WORD>(FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY)},
@@ -138,15 +138,19 @@ namespace Logger {
             {LogLevel::MAXLOGLEVEL, "\033[0m" },
         };
 
-        auto const now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-        auto it        = _callbacks.find(levelT);
-        std::stringstream s;
+        std::time_t rawtime = 0;
+        struct tm *timeinfo = nullptr;
+        std::string time;
         std::string mes;
+        auto it = _callbacks.find(levelT);
 
-        s << "[" << std::ctime(&now) << "] [" << level << "] " << message;
-        mes = s.str();
-        std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL] << std::endl;
-
+        std::time(&rawtime);
+        timeinfo = std::localtime(&rawtime);
+        time     = std::asctime(timeinfo);
+        time.erase(time.find_last_of("\n"));
+        mes = time + " [" + level + "] " + message;
+        std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL]
+                  << std::endl;
         if (it != _callbacks.end()) {
             for (auto &it1 : it->second) {
                 it1.second(mes);
