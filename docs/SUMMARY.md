@@ -33,6 +33,8 @@
 
 - [ECS](developer-guide/ecs/README.md)
     - [UML](developer-guide/ecs/uml.md)
+    - [Clock](developer-guide/ecs/clock.md)
+    - [Logger](developer-guide/ecs/logger.md)
 
 - [Server](developer-guide/server/README.md)
 
