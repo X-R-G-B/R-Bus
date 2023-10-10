@@ -8,7 +8,8 @@
 #pragma once
 
 #include <string>
-extern "C" {
+extern "C"
+{
 #include "raylib.h"
 }
 #include "Geometry.hpp"

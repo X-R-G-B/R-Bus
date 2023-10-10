@@ -8,7 +8,8 @@
 #pragma once
 
 #include <cstdint>
-extern "C" {
+extern "C"
+{
 #include "raylib.h"
 }
 
