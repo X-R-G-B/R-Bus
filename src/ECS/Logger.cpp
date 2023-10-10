@@ -38,7 +38,12 @@ namespace Logger {
         Registry::getInstance().getLogger().trace(message);
     }
 
-    Logger::Logger(LogLevel logLevel) : _logLevel(logLevel)
+    Logger::Logger(LogLevel logLevel)
+        : _logLevel(logLevel)
+#ifdef _WIN32
+          ,
+          _hConsole(GetStdHandle(STD_OUTPUT_HANDLE))
+#endif
     {
     }
 
@@ -100,38 +105,6 @@ namespace Logger {
 
     void Logger::print(LogLevel levelT, const std::string &level, const std::string &message)
     {
-#ifdef __linux__
-        static std::map<LogLevel, std::string> colors = {
-            {LogLevel::Fatal,       "\033[31m"},
-            {LogLevel::Error,       "\033[33m"},
-            {LogLevel::Warn,        "\033[34m"},
-            {LogLevel::Info,        "\033[32m"},
-            {LogLevel::Debug,       "\033[38m"},
-            {LogLevel::Trace,       "\033[30m"},
-            {LogLevel::MAXLOGLEVEL, "\033[0m" },
-        };
-#elif __APPLE__
-        static std::map<LogLevel, std::string> colors = {
-            {LogLevel::Fatal,       "\033[31m"},
-            {LogLevel::Error,       "\033[33m"},
-            {LogLevel::Warn,        "\033[34m"},
-            {LogLevel::Info,        "\033[32m"},
-            {LogLevel::Debug,       "\033[38m"},
-            {LogLevel::Trace,       "\033[30m"},
-            {LogLevel::MAXLOGLEVEL, "\033[0m" },
-        };
-#else
-        static std::map<LogLevel, std::string> colors = {
-            {LogLevel::Fatal,       ""},
-            {LogLevel::Error,       ""},
-            {LogLevel::Warn,        ""},
-            {LogLevel::Info,        ""},
-            {LogLevel::Debug,       ""},
-            {LogLevel::Trace,       ""},
-            {LogLevel::MAXLOGLEVEL, ""},
-        };
-#endif
-
         auto const now = std::chrono::system_clock::now();
         auto it        = _callbacks.find(levelT);
         std::stringstream s;
@@ -142,7 +115,40 @@ namespace Logger {
             s << now << " [" << level << "] " << message;
         }
         mes = s.str();
+
+#ifdef _WIN32
+        static std::map<LogLevel, WORD> colors = {
+            {LogLevel::Fatal,       static_cast<WORD>(FOREGROUND_RED | FOREGROUND_INTENSITY)                    },
+            {LogLevel::Error,       static_cast<WORD>(FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY)  },
+            {LogLevel::Warn,        static_cast<WORD>(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY)},
+            {LogLevel::Info,        static_cast<WORD>(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY) },
+            {LogLevel::Debug,       static_cast<WORD>(FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY)},
+            {LogLevel::Trace,       static_cast<WORD>(FOREGROUND_RED | FOREGROUND_INTENSITY)                    },
+            {LogLevel::MAXLOGLEVEL, static_cast<WORD>(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE)      },
+        };
+
+        if (_hConsole != INVALID_HANDLE_VALUE) {
+            SetConsoleTextAttribute(_hConsole, colors[levelT]);
+            std::cerr << mes << std::endl;
+            SetConsoleTextAttribute(_hConsole, colors[LogLevel::MAXLOGLEVEL]);
+        } else {
+            std::cerr << message << std::endl;
+        }
+
+#else
+        static std::map<LogLevel, std::string> colors = {
+            {LogLevel::Fatal,       "\033[31m"},
+            {LogLevel::Error,       "\033[33m"},
+            {LogLevel::Warn,        "\033[34m"},
+            {LogLevel::Info,        "\033[32m"},
+            {LogLevel::Debug,       "\033[38m"},
+            {LogLevel::Trace,       "\033[30m"},
+            {LogLevel::MAXLOGLEVEL, "\033[0m" },
+        };
+
         std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL] << std::endl;
+#endif
+
         if (it != _callbacks.end()) {
             for (auto &it1 : it->second) {
                 it1.second(mes);
