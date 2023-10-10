@@ -232,7 +232,7 @@ namespace Nitwork {
                 {
                          .magick = LIFE_UPDATE,
                          },
-            .msgLifeUpdate  =
+            .msgLifeUpdate =
                 {
                          .magick   = MAGICK_LIFE_UPDATE,
                          .playerId = playerId,
