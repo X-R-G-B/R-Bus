@@ -10,7 +10,7 @@ namespace Systems {
         auto msg                                        = std::any_cast<struct msgLifeUpdate_s>(any);
         Registry &registry                              = Registry::getInstance();
         Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
-        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+        std::vector<std::size_t> ids                    = Registry::getInstance().getEntitiesByComponents(
             {typeid(struct health_s), typeid(Types::Player)});
 
         if (ids.empty()) {
