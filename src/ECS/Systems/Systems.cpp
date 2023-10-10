@@ -92,9 +92,9 @@ namespace Systems {
         if (arrDamage.exist(firstEntity) && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
                 arrHealth[secondEntity].hp -= arrDamage[firstEntity].damage;
-                #ifdef CLIENT
+#ifdef CLIENT
                 sendLifeUpdateToServer(secondEntity, arrHealth);
-                #endif
+#endif
             }
         }
     }
