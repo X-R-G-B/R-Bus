@@ -55,10 +55,10 @@ static std::vector<std::size_t> match(std::vector<std::size_t> fst, std::vector<
 {
     std::vector<std::size_t> res;
 
-    for (auto it = fst.begin(); it != fst.end(); it++) {
-        for (auto scdIt = scd.begin(); scdIt != scd.end(); scdIt++) {
-            if (*it == *scdIt) {
-                res.push_back(*it);
+    for (auto &it : fst) {
+        for (auto &scdIt : scd) {
+            if (it == scdIt) {
+                res.push_back(it);
             }
         }
     }
