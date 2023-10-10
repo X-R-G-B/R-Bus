@@ -12,4 +12,5 @@
 
 namespace Systems {
     void handleLifeUpdateMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
+    void handleClientEnemyDeath(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 }

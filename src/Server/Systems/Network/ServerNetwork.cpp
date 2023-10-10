@@ -32,4 +32,27 @@ namespace Systems {
             }
         }
     }
+
+    void handleClientEnemyDeath(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        const struct msgClientEnemyDeath_s &msgClientEnemyDeath = std::any_cast<struct msgClientEnemyDeath_s>(msg);
+        auto &registry = Registry::getInstance();
+
+        if (msgClientEnemyDeath.magick != MAGICK_CLIENT_ENEMY_DEATH) {
+            Logger::error("Error: magick is not CLIENT_ENEMY_DEATH");
+            return;
+        }
+        auto &arrEnemies = registry.getComponents<Types::Enemy>();
+        auto it = std::find_if(arrEnemies.begin(), arrEnemies.end(), [&msgClientEnemyDeath](auto &enemy) {
+            return enemy.constId.value == msgClientEnemyDeath.enemyId.value;
+        });
+        if (it == arrEnemies.end()) {
+            return;
+        }
+        auto index = std::distance(arrEnemies.begin(), it);
+        if (arrEnemies.exist(index)) {
+            return;
+        }
+        Nitwork::NitworkServer::addNewEnemyMessage(endpoint, arrEnemies[index]);
+    }
 } // namespace Systems
