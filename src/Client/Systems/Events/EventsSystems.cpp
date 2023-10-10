@@ -5,6 +5,7 @@
 ** EventsSystems implementation
 */
 
+#include <iostream>
 #include "EventsSystems.hpp"
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
@@ -92,6 +93,7 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Damage>().insertBack(damage);
             Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
             Registry::getInstance().setToFrontLayers(entityId);
+            std::cout << "bullet: " << entityId << std::endl;
         }
     }
 

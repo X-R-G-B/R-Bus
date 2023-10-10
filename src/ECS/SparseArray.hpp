@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <iostream>
+#include "ECSCustomTypes.hpp"
 #include <iterator>
 #include <vector>
 
@@ -48,6 +50,13 @@ class SparseArray {
             std::size_t sparseValue = _sparse[id];
             if (int(sparseValue) != -1) {
                 removeDenses(sparseValue);
+            }
+            if (typeid(Component) == typeid(Types::PlayerAllies)) {
+                std::cout << "[";
+                for (auto id_ : _revSparse) {
+                    std::cout << id_ << ", " << std::endl;
+                }
+                std::cout << "]" << std::endl << std::endl;
             }
             for (auto revIt2 = _revSparse.begin(); revIt2 != _revSparse.end(); revIt2++) {
                 if (*revIt2 > id) {

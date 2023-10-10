@@ -5,6 +5,7 @@
 ** Systems implementation
 */
 
+#include <iostream>
 #include "Systems.hpp"
 #include <cstddef>
 #include <fstream>
@@ -52,14 +53,27 @@ namespace Systems {
             registry.getComponents<Types::PlayerAllies>();
         Registry::components<Types::EnemyAllies> enemyAllies = registry.getComponents<Types::EnemyAllies>();
 
+        std::cout << "fstid: " << fstId << " scdid: " << scdId << std::endl;
+        std::cout << playerAllies.exist(fstId) << " " << players.exist(fstId) << std::endl;
+        std::cout << playerAllies.exist(scdId) << " " << players.exist(scdId) << std::endl;
+        auto list = playerAllies.getExistingsId();
+        std::cout << "[";
+        for (auto id : list) {
+            std::cout << id << ", ";
+        }
+        std::cout << "]" << std::endl << std::endl;
         if ((playerAllies.exist(fstId) && players.exist(scdId))
             || (playerAllies.exist(scdId) && players.exist(fstId))) {
+            std::cout << "tb" << std::endl;
             return true;
         }
         if ((enemyAllies.exist(fstId) && enemys.exist(scdId))
-            || (enemyAllies.exist(scdId) && enemys.exist(fstId))) {
+            || (enemyAllies.exist(scdId) && enemys.exist(fstId)) ||
+            (enemyAllies.exist(fstId) && enemyAllies.exist(scdId)) ||
+            (enemys.exist(fstId) && enemys.exist(scdId))) {
             return true;
         }
+        std::cout << "oe" << std::endl;
         return false;
     }
 
@@ -222,14 +236,16 @@ namespace Systems {
         }
     }
 
-    static void initEnnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &ennemyData)
+    static void initEnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &ennemyData, int count)
     {
         std::size_t id = Registry::getInstance().addEntity();
 
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
             Raylib::Sprite(ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id));
-        Registry::getInstance().getComponents<Types::Position>().insertBack(
-            {Types::Position(ennemyData["position"])});
+        Types::Position pos(ennemyData["position"]);
+        pos.x += count * count;
+        std::cout << "pos " << pos.x << " " << pos.y << std::endl;
+        Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
             (Types::CollisionRect(ennemyData["collisionRect"])));
         Registry::getInstance().getComponents<Types::Rect>().insertBack((Types::Rect(ennemyData["rect"])));
@@ -250,18 +266,22 @@ namespace Systems {
 
     const std::string ennemyFile = "assets/Json/ennemyData.json";
 
-    void initEnnemy(std::size_t managerId, std::size_t systemId)
+    void initEnemy(std::size_t managerId, std::size_t systemId)
     {
         nlohmann::json jsonData = openJsonData(ennemyFile);
+        static int count = 5;
 
         if (jsonData["ennemy"] == nullptr) {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
             return;
         }
         for (auto &ennemyData : jsonData["ennemy"]) {
-            initEnnemyEntity(ennemyData);
+            initEnemyEntity(ennemyData, count);
         }
-        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+        if (count >= 8) {
+            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+        }
+        count++;
     }
 
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -424,7 +444,7 @@ namespace Systems {
             checkDestroyAfterDeathCallBack,
             initPlayer,
             initParalax,
-            initEnnemy,
+            initEnemy,
             entitiesCollision,
             destroyOutsideWindow,
             deathChecker,

@@ -29,9 +29,11 @@ std::size_t Registry::addEntity()
 
 void Registry::removeEntity(std::size_t id)
 {
+    std::cout << "REMOVE " << id << std::endl;
     for (auto function : _removeComponentFunctions) {
         function(*this, id);
     }
+    _entitiesNb--;
 }
 
 void Registry::clear()
