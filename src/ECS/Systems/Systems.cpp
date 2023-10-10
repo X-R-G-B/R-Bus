@@ -334,7 +334,6 @@ namespace Systems {
     }
 
     const std::string playerFile = "assets/Json/playerData.json";
-    const std::size_t deathTime  = 500;
 
     void initPlayer(std::size_t managerId, std::size_t systemId)
     {
@@ -349,7 +348,7 @@ namespace Systems {
         // Components
 
         Types::Player playerComp   = {};
-        Types::Dead deadComp       = {std::nullopt};
+        Types::Dead deadComp       = {jsonData["deadTime"]};
         struct health_s healthComp = {jsonData["health"]};
         Types::Damage damageComp   = {jsonData["damage"]};
 #ifdef CLIENT
