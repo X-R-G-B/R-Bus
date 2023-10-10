@@ -13,6 +13,10 @@ PACK(struct health_s {
     int hp;
 });
 
+PACK(struct enemy_id_s {
+    unsigned int id;
+});
+
 PACK(struct position_relative_s {
     char x;
     char y;
