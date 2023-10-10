@@ -6,7 +6,6 @@
 */
 
 #include "Registry.hpp"
-#include <iostream>
 #include <string>
 #include "Clock.hpp"
 
@@ -50,20 +49,6 @@ void Registry::removeEntity(std::size_t id)
     for (auto function : _removeComponentFunctions) {
         function(*this, id);
     }
-    std::cout << "id: " << id << std::endl;
-    std::cout << "removeEntity" << std::endl;
-    std::cout << "back" << std::endl;
-    for (auto i : _backLayers[0]) {
-        std::cout << i << std::endl;
-    }
-    std::cout << "default" << std::endl;
-    for (auto i : _defaultLayer) {
-        std::cout << i << std::endl;
-    }
-    std::cout << "front" << std::endl;
-    for (auto i : _frontLayers[0]) {
-        std::cout << i << std::endl;
-    }
     for (auto &layer : _backLayers) {
         removeEntityFromLayer(id, layer);
     }
@@ -72,20 +57,6 @@ void Registry::removeEntity(std::size_t id)
     for (auto &layer : _frontLayers) {
         removeEntityFromLayer(id, layer);
     }
-    std::cout << "after removeEntity" << std::endl;
-    std::cout << "back" << std::endl;
-    for (auto i : _backLayers[0]) {
-        std::cout << i << std::endl;
-    }
-    std::cout << "default" << std::endl;
-    for (auto i : _defaultLayer) {
-        std::cout << i << std::endl;
-    }
-    std::cout << "front" << std::endl;
-    for (auto i : _frontLayers[0]) {
-        std::cout << i << std::endl;
-    }
-    std::cout << std::endl;
 }
 
 void Registry::clear()

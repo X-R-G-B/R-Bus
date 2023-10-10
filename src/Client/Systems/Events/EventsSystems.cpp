@@ -6,7 +6,6 @@
 */
 
 #include "EventsSystems.hpp"
-#include <iostream>
 #include "CustomTypes.hpp"
 #include "NitworkClient.hpp"
 #include "Raylib.hpp"
@@ -94,7 +93,6 @@ namespace Systems {
         Registry::getInstance().getComponents<health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
-        std::cout << "missile id: " << entityId << std::endl;
         Registry::getInstance().setToFrontLayers(entityId);
         // send bullet to server
         Nitwork::NitworkClient::getInstance().addNewBulletMsg(

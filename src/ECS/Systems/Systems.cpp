@@ -8,7 +8,6 @@
 #include "Systems.hpp"
 #include <cstddef>
 #include <fstream>
-#include <iostream>
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include "CustomTypes.hpp"
@@ -385,7 +384,6 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
-        std::cout << "player id: " << id << std::endl;
         Registry::getInstance().setToFrontLayers(id);
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
