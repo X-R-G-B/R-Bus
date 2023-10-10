@@ -1,5 +1,5 @@
-#include <string>
 #include <fstream>
+#include <string>
 #include "CustomTypes.hpp"
 #include "ECSCustomTypes.hpp"
 #include "Graphics.hpp"
