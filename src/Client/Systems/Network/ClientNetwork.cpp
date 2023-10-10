@@ -29,7 +29,7 @@ namespace Systems {
         std::vector<std::size_t> ids               = enemies.getExistingsId();
 
         for (auto id : ids) {
-            if (enemies[id].getConstId().value == enemyDeath.enemyId.value) {
+            if (enemies[id].getConstId().id == enemyDeath.enemyId.id) {
                 Registry::getInstance().removeEntity(id);
                 return;
             }
