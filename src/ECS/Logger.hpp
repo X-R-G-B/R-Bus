@@ -21,7 +21,8 @@
             #define BOOST_ASIO_ENABLE_CANCELIO
         #endif
     #endif
-extern "C" {
+extern "C"
+{
     #include <windows.h>
 }
     // Because raylib uses these names as function parameters
