@@ -41,9 +41,11 @@ namespace Types {
             float size;
     };
 
+#ifdef CLIENT
     struct Color {
             Raylib::Color color;
     };
+#endif
 
     enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };
 
