@@ -326,8 +326,13 @@ namespace Systems {
         }
     }
 
-    static void sendEnemyDeath(std::size_t id)
+    static void sendEnemyDeath(std::size_t id, Registry::components<struct health_s> &arrHealth)
     {
+        auto &arrEnemies = Registry::getInstance().getComponents<Types::Enemy>();
+
+        if (!arrEnemies.exist(id)) {
+            return;
+        }
 #ifdef CLIENT
         //        Nitwork::NitworkClient::getInstance().addEnemyDeathMessage(id);
 #else
@@ -346,7 +351,7 @@ namespace Systems {
         for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
             auto tmpId = (*itIds) - decrease;
             if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
-                sendEnemyDeath(tmpId);
+                sendEnemyDeath(tmpId, arrHealth);
                 executeDeathFunction(tmpId, arrDead, decrease);
             }
         }
