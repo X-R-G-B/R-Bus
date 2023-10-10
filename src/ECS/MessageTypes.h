@@ -14,7 +14,7 @@ PACK(struct health_s {
 });
 
 PACK(struct enemy_id_s {
-    unsigned int value;
+    unsigned int id;
 });
 
 PACK(struct position_relative_s {
