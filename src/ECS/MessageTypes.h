@@ -22,4 +22,9 @@ PACK(struct position_relative_s {
     char y;
 });
 
+PACK(struct position_absolute_s {
+    int x;
+    int y;
+});
+
 #endif

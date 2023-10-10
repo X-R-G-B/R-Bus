@@ -68,8 +68,30 @@ namespace Systems {
         }
     }
 
+    void sendPositionAbsolute(std::size_t /* unused */, std::size_t /* unused */)
+    {
+        constexpr std::size_t delay = 1;
+        static auto clockId         = Registry::getInstance().getClock().create();
+        Registry &registry          = Registry::getInstance();
+
+        if (registry.getClock().elapsedSecondsSince(clockId) < delay) {
+            return;
+        }
+        auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::Player)});
+        auto arrPosition = registry.getComponents<Types::Position>();
+
+        if (ids.empty()) {
+            return;
+        }
+        struct position_absolute_s msg = {
+            .x = static_cast<int>(arrPosition[ids[0]].x),
+            .y = static_cast<int>(arrPosition[ids[0]].y),
+        };
+        Nitwork::NitworkClient::getInstance().addPositionAbsoluteMsg(msg);
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()
     {
-        return {sendPositionRelative};
+        return {sendPositionRelative, sendPositionAbsolute};
     }
 } // namespace Systems
