@@ -6,6 +6,7 @@
 */
 
 #include "Registry.hpp"
+#include <iostream>
 #include <string>
 #include "Clock.hpp"
 
@@ -27,6 +28,20 @@ std::size_t Registry::addEntity()
     return _entitiesNb - 1;
 }
 
+static bool removeEntityFromLayer(std::size_t id, std::vector<std::size_t> &list)
+{
+    for (auto it = list.begin(); it != list.end();) {
+        if (*it == id) {
+            it = list.erase(it);
+            continue;
+        } else if (*it > id) {
+            (*it)--;
+        }
+        it++;
+    }
+    return false;
+}
+
 void Registry::removeEntity(std::size_t id)
 {
 #ifdef CLIENT
@@ -35,6 +50,42 @@ void Registry::removeEntity(std::size_t id)
     for (auto function : _removeComponentFunctions) {
         function(*this, id);
     }
+    std::cout << "id: " << id << std::endl;
+    std::cout << "removeEntity" << std::endl;
+    std::cout << "back" << std::endl;
+    for (auto i : _backLayers[0]) {
+        std::cout << i << std::endl;
+    }
+    std::cout << "default" << std::endl;
+    for (auto i : _defaultLayer) {
+        std::cout << i << std::endl;
+    }
+    std::cout << "front" << std::endl;
+    for (auto i : _frontLayers[0]) {
+        std::cout << i << std::endl;
+    }
+    for (auto &layer : _backLayers) {
+        removeEntityFromLayer(id, layer);
+    }
+    removeEntityFromLayer(id, _defaultLayer);
+    ;
+    for (auto &layer : _frontLayers) {
+        removeEntityFromLayer(id, layer);
+    }
+    std::cout << "after removeEntity" << std::endl;
+    std::cout << "back" << std::endl;
+    for (auto i : _backLayers[0]) {
+        std::cout << i << std::endl;
+    }
+    std::cout << "default" << std::endl;
+    for (auto i : _defaultLayer) {
+        std::cout << i << std::endl;
+    }
+    std::cout << "front" << std::endl;
+    for (auto i : _frontLayers[0]) {
+        std::cout << i << std::endl;
+    }
+    std::cout << std::endl;
 }
 
 void Registry::clear()
@@ -48,6 +99,13 @@ void Registry::clear()
     _addComponentPlaceFunctions.clear();
     _removeComponentFunctions.clear();
     _getExistingsId.clear();
+    for (auto &layer : _backLayers) {
+        layer.clear();
+    }
+    _defaultLayer.clear();
+    for (auto &layer : _frontLayers) {
+        layer.clear();
+    }
     _entitiesNb = 0;
 }
 
@@ -55,10 +113,10 @@ static std::vector<std::size_t> match(std::vector<std::size_t> fst, std::vector<
 {
     std::vector<std::size_t> res;
 
-    for (auto it = fst.begin(); it != fst.end(); it++) {
-        for (auto scdIt = scd.begin(); scdIt != scd.end(); scdIt++) {
-            if (*it == *scdIt) {
-                res.push_back(*it);
+    for (auto &it : fst) {
+        for (auto &scdIt : scd) {
+            if (it == scdIt) {
+                res.push_back(it);
             }
         }
     }
@@ -88,17 +146,20 @@ std::vector<std::size_t> Registry::getEntitiesByComponents(std::vector<std::type
 
 void Registry::setToBackLayers(std::size_t id, BackLayers layer)
 {
+    std::cout << "setToBack " << id << std::endl;
     removeFromDefaultLayer(id);
     _backLayers[layer].push_back(id);
 }
 
 void Registry::setToDefaultLayer(std::size_t id)
 {
+    std::cout << "setToDefault " << id << std::endl;
     _defaultLayer.push_back(id);
 }
 
 void Registry::setToFrontLayers(std::size_t id, FrontLayers layer)
 {
+    std::cout << "setToFront " << id << std::endl;
     removeFromDefaultLayer(id);
     _frontLayers[layer].push_back(id);
 }

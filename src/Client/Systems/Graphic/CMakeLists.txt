@@ -14,4 +14,5 @@ target_sources(
     ${CMAKE_CURRENT_SOURCE_DIR}/SpriteSystems.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/TextSystems.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/DeathSystems.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/ParallaxSystems.cpp
 )
