@@ -8,7 +8,6 @@
 #include "Systems.hpp"
 #include <cstddef>
 #include <fstream>
-#include <iostream>
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include "CustomTypes.hpp"
@@ -240,7 +239,6 @@ namespace Systems {
             Types::Dead &dead = deadList[tmpId];
             if (static_cast<int>(dead.clockId) > -1
                 && clock.elapsedMillisecondsSince(dead.clockId) > dead.timeToWait) {
-                std::cout << "removeEntity" << std::endl;
                 registry.removeEntity(tmpId);
                 decrease++;
             }
@@ -250,18 +248,14 @@ namespace Systems {
     static void
     executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead, std::size_t &decrease)
     {
-        std::cout << "execute" << std::endl;
-        if (arrDead.exist(id)) {
-            std::cout << "yes" << std::endl;
+        if (arrDead.exist(id) && arrDead[id].deathFunction != std::nullopt) {
             Types::Dead &deadComp = arrDead[id];
-            if (!deadComp.launched && deadComp.deathFunction != std::nullopt) {
-                std::cout << "yes2" << std::endl;
+            if (!deadComp.launched) {
                 deadComp.deathFunction.value()(id);
                 deadComp.clockId  = Registry::getInstance().getClock().create();
                 deadComp.launched = true;
             }
         } else {
-            std::cout << "no" << std::endl;
             Registry::getInstance().removeEntity(id);
             decrease++;
         }
@@ -279,7 +273,7 @@ namespace Systems {
             auto tmpId = id - decrease;
             if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
                 executeDeathFunction(tmpId, arrDead, decrease);
-            }
+            } 
         }
     }
 
@@ -336,7 +330,7 @@ namespace Systems {
         // Components
 
         Types::Player playerComp = {};
-        Types::Dead deadComp(jsonData["deadTime"]);
+        Types::Dead deadComp = {jsonData["deadTime"]};
         struct health_s healthComp = {jsonData["health"]};
         Types::Damage damageComp   = {jsonData["damage"]};
 #ifdef CLIENT

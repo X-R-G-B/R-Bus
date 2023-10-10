@@ -54,7 +54,6 @@ void Registry::removeEntity(std::size_t id)
         removeEntityFromLayer(id, layer);
     }
     removeEntityFromLayer(id, _defaultLayer);
-    ;
     for (auto &layer : _frontLayers) {
         removeEntityFromLayer(id, layer);
     }
