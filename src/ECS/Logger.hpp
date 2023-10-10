@@ -14,13 +14,7 @@
 #ifdef _WIN32
     #define NOGDI  // All GDI defines and routines
     #define NOUSER // All USER defines and routines
-    #ifdef BOOST_OS_WINDOWS
-        #define _WIN32_WINNT 0x0501
-        #if _WIN32_WINNT <= 0x0501
-            #define BOOST_ASIO_DISABLE_IOCP
-            #define BOOST_ASIO_ENABLE_CANCELIO
-        #endif
-    #endif
+    #include <boost/asio.hpp>
 extern "C" {
     #include <windows.h>
 }
