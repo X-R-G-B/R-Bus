@@ -10,7 +10,9 @@
 #include <string>
 #include <vector>
 #include "ECSCustomTypes.hpp"
-#include "Raylib.hpp"
+#ifdef CLIENT
+    #include "Raylib.hpp"
+#endif
 
 namespace Types {
     struct Rect {
