@@ -12,12 +12,12 @@
 #include <string>
 
 #ifdef _WIN32
-    #define NOGDI // All GDI defines and routines
-	#define NOUSER // All USER defines and routines
+    #define NOGDI  // All GDI defines and routines
+    #define NOUSER // All USER defines and routines
     #include <windows.h>
     // Because raylib uses these names as function parameters
     #undef near
-	#undef far
+    #undef far
 #endif
 
 namespace Logger {
@@ -154,8 +154,8 @@ namespace Logger {
             std::map<LogLevel, std::map<std::string, std::function<void(const std::string &)>>> _callbacks;
             LogLevel _logLevel;
 
-            #ifdef _WIN32
-                HANDLE _hConsole;
-            #endif
+#ifdef _WIN32
+            HANDLE _hConsole;
+#endif
     };
 } // namespace Logger
