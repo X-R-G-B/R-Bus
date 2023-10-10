@@ -43,8 +43,9 @@ enum n_actionType_t {
     LIFE_UPDATE = 4,
     ENEMY_DEATH = 5,
     POSITION_RELATIVE = 6,
-    NEW_ENEMY = 7,
+    POSITION_ABSOLUTE = 7,
     NEW_BULLET = 8,
+    NEW_ENEMY = 9,
     N_ACTION_TYPE_MAX,
 };
 
@@ -161,14 +162,26 @@ PACK(struct packetNewEnemy_s {
 /* Message New Bullet */
 PACK(struct msgNewBullet_s {
         n_magick_t magick;
-        struct absolute_position_s pos;
+        struct position_absolute_s pos;
         missileTypes_e missileType;
 });
 
 PACK(struct packetNewBullet_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgNewBullet_s msg;
+});
+
+/* Message Position Absolute */
+PACK(struct msgPositionAbsolute_s {
+        n_magick_t magick;
+        struct position_absolute_s pos;
+});
+
+PACK(struct packetPositionAbsolute_s {
         struct header_s header;
         struct action_s action;
-        struct msgNewBullet_s msg;
+        struct msgPositionAbsolute_s msg;
 });
 
 #endif

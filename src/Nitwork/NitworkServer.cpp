@@ -169,7 +169,7 @@ namespace Nitwork {
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
             .action        = {.magick = ENEMY_DEATH},
-            .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH,                                 .enemyId = {.value = enemyId}               }
+            .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH,                                 .enemyId = {.id = enemyId}               }
         };
         Packet packet(
             packetEnemyDeath.header.id,

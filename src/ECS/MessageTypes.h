@@ -20,7 +20,7 @@ PACK(struct health_s {
 });
 
 PACK(struct enemy_id_s {
-    unsigned int value;
+    unsigned int id;
 });
 
 PACK(struct position_relative_s {
@@ -28,15 +28,15 @@ PACK(struct position_relative_s {
     char y;
 });
 
-PACK(struct absolute_position_s {
-    char x;
-    char y;
+PACK(struct position_absolute_s {
+    int x;
+    int y;
 });
 
 PACK(struct enemy_infos_s {
     struct enemy_id_s id;
     struct health_s life;
-    struct absolute_position_s pos;
+    struct position_absolute_s pos;
     enemy_type_e type;
 });
 

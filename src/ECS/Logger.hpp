@@ -11,6 +11,21 @@
 #include <map>
 #include <string>
 
+#ifdef _WIN32
+    #define NOGDI  // All GDI defines and routines
+    #define NOUSER // All USER defines and routines
+    #include <boost/asio.hpp>
+extern "C"
+{
+    #include <windows.h>
+}
+    // Because raylib uses these names as function parameters
+    #undef near
+    #undef far
+    #undef min
+    #undef max
+#endif
+
 namespace Logger {
     enum class LogLevel : int {
         NOLOG       = -1,
@@ -144,5 +159,9 @@ namespace Logger {
             void print(LogLevel levelT, const std::string &level, const std::string &message);
             std::map<LogLevel, std::map<std::string, std::function<void(const std::string &)>>> _callbacks;
             LogLevel _logLevel;
+
+#ifdef _WIN32
+            HANDLE _hConsole;
+#endif
     };
 } // namespace Logger

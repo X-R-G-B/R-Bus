@@ -47,7 +47,7 @@ namespace Systems {
         auto arrHealth   = registry.getComponents<struct health_s>();
         auto arrPos      = registry.getComponents<Types::Position>();
         auto it = std::find_if(arrEnemies.begin(), arrEnemies.end(), [&msgClientEnemyDeath](auto &enemy) {
-            return enemy.constId.value == msgClientEnemyDeath.enemyId.value;
+            return enemy.getConstId().id == msgClientEnemyDeath.enemyId.id;
         });
         if (it == arrEnemies.end()) {
             return;
@@ -59,12 +59,12 @@ namespace Systems {
         Nitwork::NitworkServer::getInstance().addNewEnemyMessage(
             endpoint,
             {
-                .id   = arrEnemies[index].constId,
+                .id   = arrEnemies[index].getConstId(),
                 .life = arrHealth[index],
                 .pos =
                     {static_cast<char>(static_cast<int>(arrPos[index].x)),
                           static_cast<char>(static_cast<int>(arrPos[index].y))},
-                .type = arrEnemies[index].type
+                .type = arrEnemies[index].getType(),
         });
     }
 } // namespace Systems
