@@ -5,10 +5,10 @@
 ** Systems implementation
 */
 
-#include <iostream>
 #include "Systems.hpp"
 #include <cstddef>
 #include <fstream>
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include "CustomTypes.hpp"
@@ -335,7 +335,7 @@ namespace Systems {
 
         // Components
 
-        Types::Player playerComp   = {};
+        Types::Player playerComp = {};
         Types::Dead deadComp(jsonData["deadTime"]);
         struct health_s healthComp = {jsonData["health"]};
         Types::Damage damageComp   = {jsonData["damage"]};
