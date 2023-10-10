@@ -105,7 +105,6 @@ namespace Logger {
 
     void Logger::print(LogLevel levelT, const std::string &level, const std::string &message)
     {
-
         auto const now = std::chrono::system_clock::now();
         auto it        = _callbacks.find(levelT);
         std::stringstream s;
@@ -155,7 +154,6 @@ namespace Logger {
                 it1.second(mes);
             }
         }
-
     }
 
     void Logger::subscribeCallback(
