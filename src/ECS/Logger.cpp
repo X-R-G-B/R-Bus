@@ -7,10 +7,10 @@
 
 #include "Logger.hpp"
 #include <chrono>
+#include <ctime>
 #include <iostream>
 #include <sstream>
 #include "Registry.hpp"
-#include "date/date.h"
 
 namespace Logger {
     void fatal(const std::string &message)
@@ -38,7 +38,11 @@ namespace Logger {
         Registry::getInstance().getLogger().trace(message);
     }
 
-    Logger::Logger(LogLevel logLevel) : _logLevel(logLevel)
+    Logger::Logger(LogLevel logLevel)
+        : _logLevel(logLevel),
+#ifdef _WIN32
+          _hConsole(GetStdHandle(STD_OUTPUT_HANDLE))
+#endif
     {
     }
 
@@ -100,54 +104,55 @@ namespace Logger {
 
     void Logger::print(LogLevel levelT, const std::string &level, const std::string &message)
     {
-#ifdef __linux__
-        static std::map<LogLevel, std::string> colors = {
-            {LogLevel::Fatal,       "\033[31m"},
-            {LogLevel::Error,       "\033[33m"},
-            {LogLevel::Warn,        "\033[34m"},
-            {LogLevel::Info,        "\033[32m"},
-            {LogLevel::Debug,       "\033[38m"},
-            {LogLevel::Trace,       "\033[30m"},
-            {LogLevel::MAXLOGLEVEL, "\033[0m" },
+#ifdef _WIN32
+        static std::map<LogLevel, WORD> colors = {
+            {LogLevel::Fatal,       static_cast<WORD>(FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY)  },
+            {LogLevel::Error,       static_cast<WORD>(FOREGROUND_RED | FOREGROUND_INTENSITY)                    },
+            {LogLevel::Warn,        static_cast<WORD>(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY)},
+            {LogLevel::Info,        static_cast<WORD>(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY) },
+            {LogLevel::Debug,       static_cast<WORD>(FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY)},
+            {LogLevel::Trace,       static_cast<WORD>(FOREGROUND_RED | FOREGROUND_INTENSITY)                    },
+            {LogLevel::MAXLOGLEVEL, static_cast<WORD>(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE)      },
         };
-#elif __APPLE__
-        static std::map<LogLevel, std::string> colors = {
-            {LogLevel::Fatal,       "\033[31m"},
-            {LogLevel::Error,       "\033[33m"},
-            {LogLevel::Warn,        "\033[34m"},
-            {LogLevel::Info,        "\033[32m"},
-            {LogLevel::Debug,       "\033[38m"},
-            {LogLevel::Trace,       "\033[30m"},
-            {LogLevel::MAXLOGLEVEL, "\033[0m" },
-        };
+
+        if (_hConsole != INVALID_HANDLE_VALUE) {
+            SetConsoleTextAttribute(_hConsole, colors[levelT]);
+            std::time_t now = std::time(0);
+            std::tm localTime;
+            localtime_s(&localTime, &now);
+            char buffer[80];
+            std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &localTime);
+            std::cerr << "[" << buffer << "] [" << level << "] " << message << std::endl;
+            SetConsoleTextAttribute(_hConsole, colors[LogLevel::MAXLOGLEVEL]);
+        } else {
+            std::cerr << message << std::endl;
+        }
 #else
         static std::map<LogLevel, std::string> colors = {
-            {LogLevel::Fatal,       ""},
-            {LogLevel::Error,       ""},
-            {LogLevel::Warn,        ""},
-            {LogLevel::Info,        ""},
-            {LogLevel::Debug,       ""},
-            {LogLevel::Trace,       ""},
-            {LogLevel::MAXLOGLEVEL, ""},
+            {LogLevel::Fatal,       "\033[31m"},
+            {LogLevel::Error,       "\033[33m"},
+            {LogLevel::Warn,        "\033[34m"},
+            {LogLevel::Info,        "\033[32m"},
+            {LogLevel::Debug,       "\033[38m"},
+            {LogLevel::Trace,       "\033[30m"},
+            {LogLevel::MAXLOGLEVEL, "\033[0m" },
         };
-#endif
 
-        auto const now = std::chrono::system_clock::now();
+        auto const now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
         auto it        = _callbacks.find(levelT);
         std::stringstream s;
         std::string mes;
 
-        {
-            using namespace date;
-            s << now << " [" << level << "] " << message;
-        }
+        s << "[" << std::ctime(&now) << "] [" << level << "] " << message;
         mes = s.str();
         std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL] << std::endl;
+
         if (it != _callbacks.end()) {
             for (auto &it1 : it->second) {
                 it1.second(mes);
             }
         }
+#endif
     }
 
     void Logger::subscribeCallback(
