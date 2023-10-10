@@ -43,6 +43,8 @@ namespace Systems {
             return;
         }
         auto &arrEnemies = registry.getComponents<Types::Enemy>();
+        auto arrHealth = registry.getComponents<struct health_s>();
+        auto arrPos = registry.getComponents<Types::Position>();
         auto it = std::find_if(arrEnemies.begin(), arrEnemies.end(), [&msgClientEnemyDeath](auto &enemy) {
             return enemy.constId.value == msgClientEnemyDeath.enemyId.value;
         });
@@ -50,9 +52,14 @@ namespace Systems {
             return;
         }
         auto index = std::distance(arrEnemies.begin(), it);
-        if (arrEnemies.exist(index)) {
+        if (!arrEnemies.exist(index) || !arrHealth.exist(index) || !arrPos.exist(index)) {
             return;
         }
-        Nitwork::NitworkServer::addNewEnemyMessage(endpoint, arrEnemies[index]);
+        Nitwork::NitworkServer::addNewEnemyMessage(endpoint, {
+            arrEnemies[index].constId,
+            arrHealth[index],
+            arrPos[index],
+            arrEnemies[index].type
+        });
     }
 } // namespace Systems

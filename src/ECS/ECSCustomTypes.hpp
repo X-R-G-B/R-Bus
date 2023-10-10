@@ -73,12 +73,13 @@ namespace Types {
 
     struct Enemy {
         public:
-            Enemy() : constId(enemy_id_s {enemyNb})
+            Enemy(enum enemy_type_e type) : constId(enemy_id_s {enemyNb}), type(type)
             {
                 enemyNb++;
             }
             struct enemy_id_s constId;
             static unsigned int enemyNb;
+            enum enemy_type_e type;
     };
 
     struct Parallax {
