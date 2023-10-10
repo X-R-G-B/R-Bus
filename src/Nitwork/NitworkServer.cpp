@@ -144,8 +144,8 @@ namespace Nitwork {
                          .id               = getPacketID(),
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action = {.magick = LIFE_UPDATE           },
-            .msgLifeUpdate    = {.magick = MAGICK_LIFE_UPDATE,                     .playerId = playerId,     .life = life                                                 }
+            .action        = {.magick = LIFE_UPDATE           },
+            .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE,                     .playerId = playerId,     .life = life                                                 }
         };
         Packet packet(
             packetLifeUpdate.header.id,
@@ -158,16 +158,15 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetEnemyDeath_s packetEnemyDeath = {
-            .header = {
-                .magick1          = HEADER_CODE1,
-                .ids_received     = getIdsReceived(),
-                .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                .id               = getPacketID(),
-                .nb_action        = 1,
-                .magick2          = HEADER_CODE2
-            },
-            .action = {.magick = ENEMY_DEATH},
-            .msgEnemyDeath    = {.magick = MAGICK_ENEMY_DEATH, .enemyId = {.value = enemyId}}
+            .header =
+                {.magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2},
+            .action        = {.magick = ENEMY_DEATH},
+            .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH,                                 .enemyId = {.value = enemyId}               }
         };
         Packet packet(
             packetEnemyDeath.header.id,
