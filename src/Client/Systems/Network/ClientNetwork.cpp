@@ -10,13 +10,28 @@ namespace Systems {
         auto msg                                        = std::any_cast<struct msgLifeUpdate_s>(any);
         Registry &registry                              = Registry::getInstance();
         Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
-        std::vector<std::size_t> ids =
-            registry.getEntitiesByComponents({typeid(struct health_s), typeid(Types::Player)});
+        std::vector<std::size_t> ids                    = Registry::getInstance().getEntitiesByComponents(
+            {typeid(struct health_s), typeid(Types::Player)});
+
+        if (ids.empty()) {
+            return;
+        }
+        struct health_s &life = arrHealth[ids[0]];
+        if (life.hp != msg.life.hp) {
+            life.hp = msg.life.hp;
+        }
+    }
+
+    void receiveEnemyDeath(std::any &any, boost::asio::ip::udp::endpoint &)
+    {
+        const auto enemyDeath                      = std::any_cast<struct msgEnemyDeath_s>(any);
+        Registry::components<Types::Enemy> enemies = Registry::getInstance().getComponents<Types::Enemy>();
+        std::vector<std::size_t> ids               = enemies.getExistingsId();
 
         for (auto id : ids) {
-            struct health_s &life = arrHealth[id];
-            if (life.hp != msg.life.hp) {
-                life.hp = msg.life.hp;
+            if (enemies[id].getConstId().id == enemyDeath.enemyId.id) {
+                Registry::getInstance().removeEntity(id);
+                return;
             }
         }
     }

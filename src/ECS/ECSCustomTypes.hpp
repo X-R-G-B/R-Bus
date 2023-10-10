@@ -12,9 +12,12 @@
 #include <optional>
 #include "nlohmann/json.hpp"
 
-// all values are in percentage of the screen
-
+extern "C"
+{
 #include "MessageTypes.h"
+}
+
+// all values are in percentage of the screen
 
 namespace Types {
 
@@ -68,7 +71,21 @@ namespace Types {
 
     struct EnemyAllies { };
 
-    struct Enemy { };
+    struct Enemy {
+        public:
+            Enemy() : _constId(enemy_id_s {_enemyNb})
+            {
+                _enemyNb++;
+            }
+            [[nodiscard]] const enemy_id_s &getConstId() const
+            {
+                return _constId;
+            }
+
+        private:
+            enemy_id_s _constId;
+            static unsigned int _enemyNb;
+    };
 
     struct Parallax {
             float x;
