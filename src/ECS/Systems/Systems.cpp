@@ -6,7 +6,6 @@
 */
 
 #include "Systems.hpp"
-#include <cstddef>
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <sstream>
@@ -14,6 +13,12 @@
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
+#ifdef CLIENT
+#include "NitworkClient.hpp"
+#else
+#include "NitworkServer.hpp"
+#endif
+
 
 namespace Systems {
 
@@ -322,6 +327,15 @@ namespace Systems {
         }
     }
 
+    static void sendEnemyDeath(std::size_t id)
+    {
+        #ifdef CLIENT
+//        Nitwork::NitworkClient::getInstance().addEnemyDeathMessage(id);
+        #else
+        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(id);
+        #endif
+    }
+
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<struct health_s> arrHealth =
@@ -333,6 +347,7 @@ namespace Systems {
         for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
             auto tmpId = (*itIds) - decrease;
             if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
+                sendEnemyDeath(tmpId);
                 executeDeathFunction(tmpId, arrDead, decrease);
             }
         }
