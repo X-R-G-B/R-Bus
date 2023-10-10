@@ -24,12 +24,6 @@ namespace Systems {
         return _systemManagers[id];
     }
 
-    std::size_t SystemManagersDirector::addSystemManager()
-    {
-        _systemManagers.emplace_back();
-        return _systemManagers.size() - 1;
-    }
-
     std::size_t SystemManagersDirector::addSystemManager(
         std::vector<std::function<void(std::size_t, std::size_t)>> systems)
     {
