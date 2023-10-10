@@ -6,7 +6,6 @@
 */
 
 #include "Registry.hpp"
-#include <iostream>
 #include <string>
 #include "Clock.hpp"
 
@@ -50,20 +49,7 @@ void Registry::removeEntity(std::size_t id)
     for (auto function : _removeComponentFunctions) {
         function(*this, id);
     }
-    std::cout << "id: " << id << std::endl;
-    std::cout << "removeEntity" << std::endl;
-    std::cout << "back" << std::endl;
-    for (auto i : _backLayers[0]) {
-        std::cout << i << std::endl;
-    }
-    std::cout << "default" << std::endl;
-    for (auto i : _defaultLayer) {
-        std::cout << i << std::endl;
-    }
-    std::cout << "front" << std::endl;
-    for (auto i : _frontLayers[0]) {
-        std::cout << i << std::endl;
-    }
+    _entitiesNb--;
     for (auto &layer : _backLayers) {
         removeEntityFromLayer(id, layer);
     }
@@ -72,20 +58,6 @@ void Registry::removeEntity(std::size_t id)
     for (auto &layer : _frontLayers) {
         removeEntityFromLayer(id, layer);
     }
-    std::cout << "after removeEntity" << std::endl;
-    std::cout << "back" << std::endl;
-    for (auto i : _backLayers[0]) {
-        std::cout << i << std::endl;
-    }
-    std::cout << "default" << std::endl;
-    for (auto i : _defaultLayer) {
-        std::cout << i << std::endl;
-    }
-    std::cout << "front" << std::endl;
-    for (auto i : _frontLayers[0]) {
-        std::cout << i << std::endl;
-    }
-    std::cout << std::endl;
 }
 
 void Registry::clear()
@@ -146,20 +118,17 @@ std::vector<std::size_t> Registry::getEntitiesByComponents(std::vector<std::type
 
 void Registry::setToBackLayers(std::size_t id, BackLayers layer)
 {
-    std::cout << "setToBack " << id << std::endl;
     removeFromDefaultLayer(id);
     _backLayers[layer].push_back(id);
 }
 
 void Registry::setToDefaultLayer(std::size_t id)
 {
-    std::cout << "setToDefault " << id << std::endl;
     _defaultLayer.push_back(id);
 }
 
 void Registry::setToFrontLayers(std::size_t id, FrontLayers layer)
 {
-    std::cout << "setToFront " << id << std::endl;
     removeFromDefaultLayer(id);
     _frontLayers[layer].push_back(id);
 }
