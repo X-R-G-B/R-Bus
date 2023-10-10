@@ -5,28 +5,18 @@
 #include "Registry.hpp"
 
 namespace Systems {
-    static bool getPlayerId(std::size_t &id)
-    {
-        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-            {typeid(struct health_s), typeid(Types::Player)});
-        if (ids.empty()) {
-            return false;
-        }
-        id = ids[0];
-        return true;
-    }
-
     void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         auto msg                                        = std::any_cast<struct msgLifeUpdate_s>(any);
         Registry &registry                              = Registry::getInstance();
         Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
-        std::size_t id                                  = 0;
+        std::vector<std::size_t> ids                    = Registry::getInstance().getEntitiesByComponents(
+            {typeid(struct health_s), typeid(Types::Player)});
 
-        if (!getPlayerId(id)) {
+        if (ids.empty()) {
             return;
         }
-        struct health_s &life = arrHealth[id];
+        struct health_s &life = arrHealth[ids[0]];
         if (life.hp != msg.life.hp) {
             life.hp = msg.life.hp;
         }
@@ -36,14 +26,13 @@ namespace Systems {
     {
         const auto enemyDeath                      = std::any_cast<struct msgEnemyDeath_s>(any);
         Registry::components<Types::Enemy> enemies = Registry::getInstance().getComponents<Types::Enemy>();
-        std::size_t id                             = 0;
+        std::vector<std::size_t> ids               = enemies.getExistingsId();
 
-        if (!getPlayerId(id)) {
-            return;
-        }
-        if (enemies[id].getConstId().value == enemyDeath.enemyId.value) {
-            Registry::getInstance().removeEntity(id);
-            return;
+        for (auto id : ids) {
+            if (enemies[id].getConstId().id == enemyDeath.enemyId.id) {
+                Registry::getInstance().removeEntity(id);
+                return;
+            }
         }
     }
 
@@ -79,8 +68,30 @@ namespace Systems {
         }
     }
 
+    void sendPositionAbsolute(std::size_t /* unused */, std::size_t /* unused */)
+    {
+        constexpr std::size_t delay = 1;
+        static auto clockId         = Registry::getInstance().getClock().create();
+        Registry &registry          = Registry::getInstance();
+
+        if (registry.getClock().elapsedSecondsSince(clockId) < delay) {
+            return;
+        }
+        auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::Player)});
+        auto arrPosition = registry.getComponents<Types::Position>();
+
+        if (ids.empty()) {
+            return;
+        }
+        struct position_absolute_s msg = {
+            .x = static_cast<int>(arrPosition[ids[0]].x),
+            .y = static_cast<int>(arrPosition[ids[0]].y),
+        };
+        Nitwork::NitworkClient::getInstance().addPositionAbsoluteMsg(msg);
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()
     {
-        return {sendPositionRelative};
+        return {sendPositionRelative, sendPositionAbsolute};
     }
 } // namespace Systems

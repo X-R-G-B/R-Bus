@@ -21,8 +21,6 @@ extern "C"
 
 namespace Types {
 
-    enum MissileTypes { CLASSIC };
-
     struct CollisionRect {
             float width;
             float height;
@@ -64,7 +62,7 @@ namespace Types {
     };
 
     struct Missiles {
-            MissileTypes type;
+            missileTypes_e type;
     };
 
     struct PlayerAllies { };
@@ -93,6 +91,11 @@ namespace Types {
     };
 
     struct Dead {
+            Dead(std::size_t time = 0)
+                : deathFunction(std::nullopt),
+                  timeToWait(time),
+                  clockId(static_cast<std::size_t>(-1)),
+                  launched(false) {};
             Dead(std::optional<std::function<void(std::size_t id)>> func, std::size_t time = 0)
                 : deathFunction(func),
                   timeToWait(time),

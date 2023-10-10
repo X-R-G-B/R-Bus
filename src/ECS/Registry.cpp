@@ -27,6 +27,20 @@ std::size_t Registry::addEntity()
     return _entitiesNb - 1;
 }
 
+static bool removeEntityFromLayer(std::size_t id, std::vector<std::size_t> &list)
+{
+    for (auto it = list.begin(); it != list.end();) {
+        if (*it == id) {
+            it = list.erase(it);
+            continue;
+        } else if (*it > id) {
+            (*it)--;
+        }
+        it++;
+    }
+    return false;
+}
+
 void Registry::removeEntity(std::size_t id)
 {
 #ifdef CLIENT
@@ -34,6 +48,14 @@ void Registry::removeEntity(std::size_t id)
 #endif
     for (auto function : _removeComponentFunctions) {
         function(*this, id);
+    }
+    _entitiesNb--;
+    for (auto &layer : _backLayers) {
+        removeEntityFromLayer(id, layer);
+    }
+    removeEntityFromLayer(id, _defaultLayer);
+    for (auto &layer : _frontLayers) {
+        removeEntityFromLayer(id, layer);
     }
 }
 
@@ -66,10 +88,10 @@ static std::vector<std::size_t> match(std::vector<std::size_t> fst, std::vector<
 {
     std::vector<std::size_t> res;
 
-    for (auto it = fst.begin(); it != fst.end(); it++) {
-        for (auto scdIt = scd.begin(); scdIt != scd.end(); scdIt++) {
-            if (*it == *scdIt) {
-                res.push_back(*it);
+    for (auto &it : fst) {
+        for (auto &scdIt : scd) {
+            if (it == scdIt) {
+                res.push_back(it);
             }
         }
     }
