@@ -6,7 +6,6 @@
 */
 
 #include "Registry.hpp"
-#include <string>
 #include "Clock.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -117,20 +116,17 @@ std::vector<std::size_t> Registry::getEntitiesByComponents(std::vector<std::type
 
 void Registry::setToBackLayers(std::size_t id, BackLayers layer)
 {
-    std::cout << "setToBack " << id << std::endl;
     removeFromDefaultLayer(id);
     _backLayers[layer].push_back(id);
 }
 
 void Registry::setToDefaultLayer(std::size_t id)
 {
-    std::cout << "setToDefault " << id << std::endl;
     _defaultLayer.push_back(id);
 }
 
 void Registry::setToFrontLayers(std::size_t id, FrontLayers layer)
 {
-    std::cout << "setToFront " << id << std::endl;
     removeFromDefaultLayer(id);
     _frontLayers[layer].push_back(id);
 }
