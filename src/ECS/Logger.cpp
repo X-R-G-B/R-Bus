@@ -10,12 +10,7 @@
 #include <iostream>
 #include <sstream>
 #include "Registry.hpp"
-
-#ifdef _WIN32
-    #include <ctime>
-#else
-    #include "date/date.h"
-#endif
+#include "date/date.h"
 
 namespace Logger {
     void fatal(const std::string &message)
@@ -110,6 +105,18 @@ namespace Logger {
 
     void Logger::print(LogLevel levelT, const std::string &level, const std::string &message)
     {
+
+        auto const now = std::chrono::system_clock::now();
+        auto it        = _callbacks.find(levelT);
+        std::stringstream s;
+        std::string mes;
+
+        {
+            using namespace date;
+            s << now << " [" << level << "] " << message;
+        }
+        mes = s.str();
+
 #ifdef _WIN32
         static std::map<LogLevel, WORD> colors = {
             {LogLevel::Fatal,       static_cast<WORD>(FOREGROUND_RED | FOREGROUND_INTENSITY)                    },
@@ -123,16 +130,12 @@ namespace Logger {
 
         if (_hConsole != INVALID_HANDLE_VALUE) {
             SetConsoleTextAttribute(_hConsole, colors[levelT]);
-            std::time_t now = std::time(0);
-            std::tm localTime;
-            localtime_s(&localTime, &now);
-            char buffer[80];
-            std::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", &localTime);
-            std::cerr << "[" << buffer << "] [" << level << "] " << message << std::endl;
+            std::cerr << mes << std::endl;
             SetConsoleTextAttribute(_hConsole, colors[LogLevel::MAXLOGLEVEL]);
         } else {
             std::cerr << message << std::endl;
         }
+
 #else
         static std::map<LogLevel, std::string> colors = {
             {LogLevel::Fatal,       "\033[31m"},
@@ -144,23 +147,15 @@ namespace Logger {
             {LogLevel::MAXLOGLEVEL, "\033[0m" },
         };
 
-        auto const now = std::chrono::system_clock::now();
-        auto it        = _callbacks.find(levelT);
-        std::stringstream s;
-        std::string mes;
-
-        {
-            using namespace date;
-            s << now << " [" << level << "] " << message;
-        }
-        mes = s.str();
         std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL] << std::endl;
+#endif
+
         if (it != _callbacks.end()) {
             for (auto &it1 : it->second) {
                 it1.second(mes);
             }
         }
-#endif
+
     }
 
     void Logger::subscribeCallback(

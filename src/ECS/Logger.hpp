@@ -18,6 +18,8 @@
     // Because raylib uses these names as function parameters
     #undef near
     #undef far
+    #undef min
+    #undef max
 #endif
 
 namespace Logger {
