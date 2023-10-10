@@ -15,7 +15,8 @@
     #define NOGDI  // All GDI defines and routines
     #define NOUSER // All USER defines and routines
     #include <boost/asio.hpp>
-extern "C" {
+extern "C"
+{
     #include <windows.h>
 }
     // Because raylib uses these names as function parameters
