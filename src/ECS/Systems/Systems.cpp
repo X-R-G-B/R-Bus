@@ -16,11 +16,10 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #ifdef CLIENT
-#include "NitworkClient.hpp"
+    #include "NitworkClient.hpp"
 #else
-#include "NitworkServer.hpp"
+    #include "NitworkServer.hpp"
 #endif
-
 
 namespace Systems {
 
@@ -166,7 +165,7 @@ namespace Systems {
     static void initEnnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &ennemyData)
     {
 #ifdef CLIENT
-        std::size_t id = Registry::getInstance().addEntity();
+        std::size_t id        = Registry::getInstance().addEntity();
         Raylib::Sprite ennemy = {ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id};
 #endif
         Types::Position position           = {Types::Position(ennemyData["position"])};
@@ -267,11 +266,11 @@ namespace Systems {
 
     static void sendEnemyDeath(std::size_t id)
     {
-        #ifdef CLIENT
-//        Nitwork::NitworkClient::getInstance().addEnemyDeathMessage(id);
-        #else
+#ifdef CLIENT
+        //        Nitwork::NitworkClient::getInstance().addEnemyDeathMessage(id);
+#else
         Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(id);
-        #endif
+#endif
     }
 
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)

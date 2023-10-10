@@ -35,7 +35,8 @@ namespace Systems {
 
     void handleClientEnemyDeath(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
     {
-        const struct msgClientEnemyDeath_s &msgClientEnemyDeath = std::any_cast<struct msgClientEnemyDeath_s>(msg);
+        const struct msgClientEnemyDeath_s &msgClientEnemyDeath =
+            std::any_cast<struct msgClientEnemyDeath_s>(msg);
         auto &registry = Registry::getInstance();
 
         if (msgClientEnemyDeath.magick != MAGICK_CLIENT_ENEMY_DEATH) {
@@ -43,8 +44,8 @@ namespace Systems {
             return;
         }
         auto &arrEnemies = registry.getComponents<Types::Enemy>();
-        auto arrHealth = registry.getComponents<struct health_s>();
-        auto arrPos = registry.getComponents<Types::Position>();
+        auto arrHealth   = registry.getComponents<struct health_s>();
+        auto arrPos      = registry.getComponents<Types::Position>();
         auto it = std::find_if(arrEnemies.begin(), arrEnemies.end(), [&msgClientEnemyDeath](auto &enemy) {
             return enemy.constId.value == msgClientEnemyDeath.enemyId.value;
         });
@@ -55,12 +56,15 @@ namespace Systems {
         if (!arrEnemies.exist(index) || !arrHealth.exist(index) || !arrPos.exist(index)) {
             return;
         }
-        Nitwork::NitworkServer::getInstance().addNewEnemyMessage(endpoint,
-        {
-            .id = arrEnemies[index].constId,
-            .life = arrHealth[index],
-            .pos = {static_cast<char>(static_cast<int>(arrPos[index].x)), static_cast<char>(static_cast<int>(arrPos[index].y))},
-            .type = arrEnemies[index].type
+        Nitwork::NitworkServer::getInstance().addNewEnemyMessage(
+            endpoint,
+            {
+                .id   = arrEnemies[index].constId,
+                .life = arrHealth[index],
+                .pos =
+                    {static_cast<char>(static_cast<int>(arrPos[index].x)),
+                          static_cast<char>(static_cast<int>(arrPos[index].y))},
+                .type = arrEnemies[index].type
         });
     }
 } // namespace Systems

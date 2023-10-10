@@ -5,10 +5,10 @@
 ** NitworkServer
 */
 
+#include "NitworkServer.hpp"
+#include "ECSCustomTypes.hpp"
 #include "Logger.hpp"
 #include "Registry.hpp"
-#include "ECSCustomTypes.hpp"
-#include "NitworkServer.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -122,7 +122,7 @@ namespace Nitwork {
              getPacketID(),
              1, HEADER_CODE2},
             {START_GAME},
-            {MAGICK_START_GAME, playerId}
+            {MAGICK_START_GAME,             playerId               }
         };
         Packet packet(
             packetMsgStartGame.header.id,
@@ -147,8 +147,8 @@ namespace Nitwork {
                          .id               = getPacketID(),
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action = {.magick = LIFE_UPDATE           },
-            .msgLifeUpdate    = {.magick = MAGICK_LIFE_UPDATE,                     .playerId = playerId,     .life = life                                                 }
+            .action        = {.magick = LIFE_UPDATE           },
+            .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE,                     .playerId = playerId,     .life = life                                                 }
         };
         Packet packet(
             packetLifeUpdate.header.id,
@@ -161,16 +161,15 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetEnemyDeath_s packetEnemyDeath = {
-            .header = {
-                .magick1          = HEADER_CODE1,
-                .ids_received     = getIdsReceived(),
-                .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                .id               = getPacketID(),
-                .nb_action        = 1,
-                .magick2          = HEADER_CODE2
-            },
-            .action = {.magick = ENEMY_DEATH},
-            .msgEnemyDeath    = {.magick = MAGICK_ENEMY_DEATH, .enemyId = {.value = enemyId}}
+            .header =
+                {.magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2},
+            .action        = {.magick = ENEMY_DEATH},
+            .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH,                                 .enemyId = {.value = enemyId}               }
         };
         Packet packet(
             packetEnemyDeath.header.id,
@@ -179,20 +178,21 @@ namespace Nitwork {
         sendToAllClients(packet);
     }
 
-    void NitworkServer::addNewEnemyMessage(boost::asio::ip::udp::endpoint &endpoint, const struct enemy_infos_s &enemyInfos)
+    void NitworkServer::addNewEnemyMessage(
+        boost::asio::ip::udp::endpoint &endpoint,
+        const struct enemy_infos_s &enemyInfos)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetNewEnemy_s packetNewEnemy = {
-            .header = {
-                .magick1          = HEADER_CODE1,
-                .ids_received     = getIdsReceived(),
-                .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                .id               = getPacketID(),
-                .nb_action        = 1,
-                .magick2          = HEADER_CODE2
-            },
+            .header =
+                {.magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2},
             .action = {.magick = NEW_ENEMY},
-            .msg = {.magick = MAGICK_NEW_ENEMY, .enemyInfos = enemyInfos}
+            .msg    = {.magick = MAGICK_NEW_ENEMY,                                 .enemyInfos = enemyInfos               }
         };
         Packet packet(
             packetNewEnemy.header.id,
