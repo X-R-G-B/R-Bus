@@ -8,7 +8,9 @@
 #pragma once
 
 #include <cstdint>
+extern "C" {
 #include "raylib.h"
+}
 
 namespace Raylib {
 

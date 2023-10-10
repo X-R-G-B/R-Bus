@@ -8,7 +8,9 @@
 #pragma once
 
 #include <string>
+extern "C" {
 #include "raylib.h"
+}
 
 namespace Raylib {
     // Audio device management functions
