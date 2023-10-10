@@ -14,7 +14,9 @@
 #ifdef _WIN32
     #define NOGDI  // All GDI defines and routines
     #define NOUSER // All USER defines and routines
+extern "C" {
     #include <windows.h>
+}
     // Because raylib uses these names as function parameters
     #undef near
     #undef far
