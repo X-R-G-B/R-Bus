@@ -71,13 +71,6 @@ void Registry::clear()
     _addComponentPlaceFunctions.clear();
     _removeComponentFunctions.clear();
     _getExistingsId.clear();
-    for (auto &layer : _backLayers) {
-        layer.clear();
-    }
-    _defaultLayer.clear();
-    for (auto &layer : _frontLayers) {
-        layer.clear();
-    }
     _entitiesNb = 0;
 
     // Clear sprites layers

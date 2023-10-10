@@ -96,8 +96,7 @@ namespace Systems {
         Registry::getInstance().setToFrontLayers(entityId);
         // send bullet to server
         Nitwork::NitworkClient::getInstance().addNewBulletMsg(
-            {static_cast<char>(static_cast<int>(position.x)),
-             static_cast<char>(static_cast<int>(position.y))},
+            {static_cast<int>(position.x), static_cast<int>(position.y)},
             missileType.type);
     }
 

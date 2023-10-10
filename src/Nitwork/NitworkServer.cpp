@@ -137,8 +137,8 @@ namespace Nitwork {
                          .id               = getPacketID(),
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action = {.magick = LIFE_UPDATE           },
-            .msg    = {.magick = MAGICK_LIFE_UPDATE,                     .playerId = playerId,     .life = life                                                 }
+            .action        = {.magick = LIFE_UPDATE           },
+            .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE,                     .playerId = playerId,     .life = life                                                 }
         };
         Packet packet(
             packetLifeUpdate.header.id,
