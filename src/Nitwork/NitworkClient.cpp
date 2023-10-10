@@ -86,13 +86,13 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgInit_s packetMsgInit = {
             {
-             HEADER_CODE1,                                                    getIdsReceived(),
+             HEADER_CODE1, getIdsReceived(),
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2,
              },
             {INIT},
-            {MAGICK_INIT                                                              }
+            {MAGICK_INIT}
         };
         Packet packet(
             packetMsgInit.header.id,
@@ -106,13 +106,13 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgReady_s packetMsgReady = {
             {
-             HEADER_CODE1,                                                    getIdsReceived(),
+             HEADER_CODE1, getIdsReceived(),
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2,
              },
             {READY},
-            {MAGICK_READY                                                              }
+            {MAGICK_READY}
         };
         Packet packet(
             packetMsgReady.header.id,
@@ -153,34 +153,64 @@ namespace Nitwork {
     }
 
     void
-    NitworkClient::addNewBulletMsg(const struct absolute_position_s &pos, const missileTypes_e &missileType)
+    NitworkClient::addNewBulletMsg(const struct position_absolute_s &pos, const missileTypes_e &missileType)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetNewBullet_s packetNewBullet = {
             .header =
                 {
-                         .magick1          = HEADER_CODE1,
-                         .ids_received     = getIdsReceived(),
-                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                         .id               = getPacketID(),
-                         .nb_action        = 1,
-                         .magick2          = HEADER_CODE2,
-                         },
+                    .magick1          = HEADER_CODE1,
+                    .ids_received     = getIdsReceived(),
+                    .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                    .id               = getPacketID(),
+                    .nb_action        = 1,
+                    .magick2          = HEADER_CODE2,
+                },
             .action =
                 {
-                         .magick = NEW_BULLET,
-                         },
+                    .magick = NEW_BULLET,
+                },
             .msg =
                 {
-                         .magick      = MAGICK_NEW_BULLET,
-                         .pos         = pos,
-                         .missileType = missileType,
-                         },
+                    .magick      = MAGICK_NEW_BULLET,
+                    .pos         = pos,
+                    .missileType = missileType,
+                },
         };
         Packet packet(
             packetNewBullet.header.id,
             packetNewBullet.action.magick,
             std::make_any<struct packetNewBullet_s>(packetNewBullet));
+        addPacketToSend(_endpoint, packet);
+    };
+
+    void NitworkClient::addPositionAbsoluteMsg(struct position_absolute_s pos)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetPositionAbsolute_s packetMsgPositionRelative = {
+            .header =
+                {
+                    .magick1          = HEADER_CODE1,
+                    .ids_received     = getIdsReceived(),
+                    .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                    .id               = getPacketID(),
+                    .nb_action        = 1,
+                    .magick2          = HEADER_CODE2,
+                },
+            .action =
+                {
+                    .magick = POSITION_RELATIVE,
+                },
+            .msg =
+                {
+                    .magick = MAGICK_POSITION_RELATIVE,
+                    .pos    = pos,
+                },
+        };
+        Packet packet(
+            packetMsgPositionRelative.header.id,
+            packetMsgPositionRelative.action.magick,
+            std::make_any<struct packetPositionAbsolute_s>(packetMsgPositionRelative));
 
         addPacketToSend(_endpoint, packet);
     }

@@ -8,7 +8,10 @@
 #pragma once
 
 #include <string>
+extern "C"
+{
 #include "raylib.h"
+}
 #include "Geometry.hpp"
 #include "Inputs.hpp"
 #include "Registry.hpp"
