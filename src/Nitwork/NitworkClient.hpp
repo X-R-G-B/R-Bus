@@ -33,6 +33,7 @@ namespace Nitwork {
             void addReadyMsg();
             void addPositionRelativeMsg(struct position_relative_s pos);
             void addPositionAbsoluteMsg(struct position_absolute_s pos);
+            void addNewBulletMsg(const struct position_absolute_s &pos, const missileTypes_e &missileType);
 
         private:
             NitworkClient();

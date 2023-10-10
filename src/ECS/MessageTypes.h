@@ -9,6 +9,8 @@
         #define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop))
     #endif
 
+enum missileTypes_e { CLASSIC };
+
 PACK(struct health_s {
     int hp;
 });

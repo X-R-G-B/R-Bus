@@ -21,8 +21,6 @@ extern "C"
 
 namespace Types {
 
-    enum MissileTypes { CLASSIC };
-
     struct CollisionRect {
             float width;
             float height;
@@ -64,7 +62,7 @@ namespace Types {
     };
 
     struct Missiles {
-            MissileTypes type;
+            missileTypes_e type;
     };
 
     struct PlayerAllies { };
