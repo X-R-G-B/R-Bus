@@ -11,8 +11,8 @@
 #include <iostream>
 #include <list>
 #include <mutex>
-#include "Logger.hpp"
 #include "INitwork.hpp"
+#include "Logger.hpp"
 
 namespace Nitwork {
     constexpr int MAX_PACKET_SIZE = 1024;

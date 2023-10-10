@@ -5,8 +5,8 @@
 ** NitworkServer
 */
 
-#include "Logger.hpp"
 #include "NitworkServer.hpp"
+#include "Logger.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -52,9 +52,10 @@ namespace Nitwork {
             std::cerr << "Error: action not found" << std::endl;
             return;
         }
-        Logger::info("Received packet from " + endpoint.address().to_string() + ":" +
-                     std::to_string(endpoint.port()) + " with id " +
-                     std::to_string(header.id) + " and action of type " + std::to_string(action->magick));
+        Logger::info(
+            "Received packet from " + endpoint.address().to_string() + ":" + std::to_string(endpoint.port())
+            + " with id " + std::to_string(header.id) + " and action of type "
+            + std::to_string(action->magick));
         it->second.first(it->second.second, header);
     }
 
@@ -116,7 +117,7 @@ namespace Nitwork {
              getPacketID(),
              1, HEADER_CODE2},
             {START_GAME},
-            {MAGICK_START_GAME, playerId}
+            {MAGICK_START_GAME,             playerId               }
         };
         Packet packet(
             packetMsgStartGame.header.id,
@@ -141,8 +142,8 @@ namespace Nitwork {
                          .id               = getPacketID(),
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action        = {.magick = LIFE_UPDATE},
-            .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE, .playerId = playerId, .life = life}
+            .action        = {.magick = LIFE_UPDATE           },
+            .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE,                     .playerId = playerId,     .life = life                                                 }
         };
         Packet packet(
             packetLifeUpdate.header.id,

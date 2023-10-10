@@ -57,9 +57,10 @@ namespace Nitwork {
             std::cerr << "Error: action not found" << std::endl;
             return;
         }
-        Logger::info("Received packet from " + endpoint.address().to_string() + ":" +
-                     std::to_string(endpoint.port()) + " with id " +
-                     std::to_string(header.id) + " and action of type " + std::to_string(action->magick));
+        Logger::info(
+            "Received packet from " + endpoint.address().to_string() + ":" + std::to_string(endpoint.port())
+            + " with id " + std::to_string(header.id) + " and action of type "
+            + std::to_string(action->magick));
         it->second.first(it->second.second, header);
     }
 
@@ -89,13 +90,13 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgInit_s packetMsgInit = {
             {
-             HEADER_CODE1, getIdsReceived(),
+             HEADER_CODE1,                                                    getIdsReceived(),
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2,
              },
             {INIT},
-            {MAGICK_INIT}
+            {MAGICK_INIT                                                              }
         };
         Packet packet(
             packetMsgInit.header.id,
@@ -109,13 +110,13 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgReady_s packetMsgReady = {
             {
-             HEADER_CODE1, getIdsReceived(),
+             HEADER_CODE1,                                                    getIdsReceived(),
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2,
              },
             {READY},
-            {MAGICK_READY}
+            {MAGICK_READY                                                              }
         };
         Packet packet(
             packetMsgReady.header.id,
