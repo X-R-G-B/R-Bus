@@ -14,7 +14,10 @@
 
 // all values are in percentage of the screen
 
+extern "C"
+{
 #include "MessageTypes.h"
+}
 
 namespace Types {
 
