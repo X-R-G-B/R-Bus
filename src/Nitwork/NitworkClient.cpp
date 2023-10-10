@@ -86,13 +86,13 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgInit_s packetMsgInit = {
             {
-             HEADER_CODE1, getIdsReceived(),
+             HEADER_CODE1,                                                    getIdsReceived(),
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2,
              },
             {INIT},
-            {MAGICK_INIT}
+            {MAGICK_INIT                                                              }
         };
         Packet packet(
             packetMsgInit.header.id,
@@ -106,13 +106,13 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgReady_s packetMsgReady = {
             {
-             HEADER_CODE1, getIdsReceived(),
+             HEADER_CODE1,                                                    getIdsReceived(),
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2,
              },
             {READY},
-            {MAGICK_READY}
+            {MAGICK_READY                                                              }
         };
         Packet packet(
             packetMsgReady.header.id,
@@ -159,23 +159,23 @@ namespace Nitwork {
         struct packetNewBullet_s packetNewBullet = {
             .header =
                 {
-                    .magick1          = HEADER_CODE1,
-                    .ids_received     = getIdsReceived(),
-                    .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                    .id               = getPacketID(),
-                    .nb_action        = 1,
-                    .magick2          = HEADER_CODE2,
-                },
+                         .magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2,
+                         },
             .action =
                 {
-                    .magick = NEW_BULLET,
-                },
+                         .magick = NEW_BULLET,
+                         },
             .msg =
                 {
-                    .magick      = MAGICK_NEW_BULLET,
-                    .pos         = pos,
-                    .missileType = missileType,
-                },
+                         .magick      = MAGICK_NEW_BULLET,
+                         .pos         = pos,
+                         .missileType = missileType,
+                         },
         };
         Packet packet(
             packetNewBullet.header.id,
@@ -190,22 +190,22 @@ namespace Nitwork {
         struct packetPositionAbsolute_s packetMsgPositionRelative = {
             .header =
                 {
-                    .magick1          = HEADER_CODE1,
-                    .ids_received     = getIdsReceived(),
-                    .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                    .id               = getPacketID(),
-                    .nb_action        = 1,
-                    .magick2          = HEADER_CODE2,
-                },
+                         .magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2,
+                         },
             .action =
                 {
-                    .magick = POSITION_RELATIVE,
-                },
+                         .magick = POSITION_RELATIVE,
+                         },
             .msg =
                 {
-                    .magick = MAGICK_POSITION_RELATIVE,
-                    .pos    = pos,
-                },
+                         .magick = MAGICK_POSITION_RELATIVE,
+                         .pos    = pos,
+                         },
         };
         Packet packet(
             packetMsgPositionRelative.header.id,
