@@ -55,11 +55,12 @@ namespace Systems {
         if (!arrEnemies.exist(index) || !arrHealth.exist(index) || !arrPos.exist(index)) {
             return;
         }
-        Nitwork::NitworkServer::addNewEnemyMessage(endpoint, {
-            arrEnemies[index].constId,
-            arrHealth[index],
-            arrPos[index],
-            arrEnemies[index].type
+        Nitwork::NitworkServer::getInstance().addNewEnemyMessage(endpoint,
+        {
+            .id = arrEnemies[index].constId,
+            .life = arrHealth[index],
+            .pos = {static_cast<char>(static_cast<int>(arrPos[index].x)), static_cast<char>(static_cast<int>(arrPos[index].y))},
+            .type = arrEnemies[index].type
         });
     }
 } // namespace Systems

@@ -10,8 +10,10 @@
     #endif
 
 enum enemy_type_e {
-    CLASSIC = 0,
+    CLASSIC_ENEMY = 0,
 };
+
+enum missileTypes_e { CLASSIC };
 
 PACK(struct health_s {
     int hp;
@@ -22,6 +24,11 @@ PACK(struct enemy_id_s {
 });
 
 PACK(struct position_relative_s {
+    char x;
+    char y;
+});
+
+PACK(struct absolute_position_s {
     char x;
     char y;
 });
