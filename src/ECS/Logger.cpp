@@ -41,7 +41,8 @@ namespace Logger {
     Logger::Logger(LogLevel logLevel)
         : _logLevel(logLevel)
 #ifdef _WIN32
-        , _hConsole(GetStdHandle(STD_OUTPUT_HANDLE))
+          ,
+          _hConsole(GetStdHandle(STD_OUTPUT_HANDLE))
 #endif
     {
     }
@@ -149,8 +150,7 @@ namespace Logger {
         time     = std::asctime(timeinfo);
         time.erase(time.find_last_of("\n"));
         mes = time + " [" + level + "] " + message;
-        std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL]
-                  << std::endl;
+        std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL] << std::endl;
         if (it != _callbacks.end()) {
             for (auto &it1 : it->second) {
                 it1.second(mes);
