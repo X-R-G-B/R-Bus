@@ -3,6 +3,7 @@
         "spritePath": "assets/R-TypeSheet/r-typesheet14.gif",
         "damage": 10.0,
         "health": 1.0,
+        "deadTime": 1000,
         "width": 10.0,
         "height" : 10.0,
         "rect": {
