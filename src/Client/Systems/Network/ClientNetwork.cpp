@@ -5,28 +5,18 @@
 #include "Registry.hpp"
 
 namespace Systems {
-    static bool getPlayerId(std::size_t &id)
-    {
-        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-            {typeid(struct health_s), typeid(Types::Player)});
-        if (ids.empty()) {
-            return false;
-        }
-        id = ids[0];
-        return true;
-    }
-
     void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         auto msg                                        = std::any_cast<struct msgLifeUpdate_s>(any);
         Registry &registry                              = Registry::getInstance();
         Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
-        std::size_t id                                  = 0;
+        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+            {typeid(struct health_s), typeid(Types::Player)});
 
-        if (!getPlayerId(id)) {
+        if (ids.empty()) {
             return;
         }
-        struct health_s &life = arrHealth[id];
+        struct health_s &life = arrHealth[ids[0]];
         if (life.hp != msg.life.hp) {
             life.hp = msg.life.hp;
         }
@@ -36,14 +26,13 @@ namespace Systems {
     {
         const auto enemyDeath                      = std::any_cast<struct msgEnemyDeath_s>(any);
         Registry::components<Types::Enemy> enemies = Registry::getInstance().getComponents<Types::Enemy>();
-        std::size_t id                             = 0;
+        std::vector<std::size_t> ids               = enemies.getExistingsId();
 
-        if (!getPlayerId(id)) {
-            return;
-        }
-        if (enemies[id].getConstId().value == enemyDeath.enemyId.value) {
-            Registry::getInstance().removeEntity(id);
-            return;
+        for (auto id : ids) {
+            if (enemies[id].getConstId().value == enemyDeath.enemyId.value) {
+                Registry::getInstance().removeEntity(id);
+                return;
+            }
         }
     }
 
