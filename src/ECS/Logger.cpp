@@ -7,10 +7,15 @@
 
 #include "Logger.hpp"
 #include <chrono>
-#include <ctime>
 #include <iostream>
 #include <sstream>
 #include "Registry.hpp"
+
+#ifdef _WIN32
+    #include <ctime>
+#else
+    #include "date/date.h"
+#endif
 
 namespace Logger {
     void fatal(const std::string &message)
@@ -139,17 +144,16 @@ namespace Logger {
             {LogLevel::MAXLOGLEVEL, "\033[0m" },
         };
 
-        std::time_t rawtime = 0;
-        struct tm *timeinfo = nullptr;
-        std::string time;
+        auto const now = std::chrono::system_clock::now();
+        auto it        = _callbacks.find(levelT);
+        std::stringstream s;
         std::string mes;
-        auto it = _callbacks.find(levelT);
 
-        std::time(&rawtime);
-        timeinfo = std::localtime(&rawtime);
-        time     = std::asctime(timeinfo);
-        time.erase(time.find_last_of("\n"));
-        mes = time + " [" + level + "] " + message;
+        {
+            using namespace date;
+            s << now << " [" << level << "] " << message;
+        }
+        mes = s.str();
         std::cerr << colors[levelT] << mes << colors[LogLevel::MAXLOGLEVEL] << std::endl;
         if (it != _callbacks.end()) {
             for (auto &it1 : it->second) {
