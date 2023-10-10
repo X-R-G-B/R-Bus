@@ -326,7 +326,7 @@ namespace Systems {
         }
     }
 
-    static void sendEnemyDeath(std::size_t id, Registry::components<struct health_s> &arrHealth)
+    static void sendEnemyDeath(std::size_t id)
     {
         auto &arrEnemies = Registry::getInstance().getComponents<Types::Enemy>();
 
@@ -351,7 +351,7 @@ namespace Systems {
         for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
             auto tmpId = (*itIds) - decrease;
             if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
-                sendEnemyDeath(tmpId, arrHealth);
+                sendEnemyDeath(tmpId);
                 executeDeathFunction(tmpId, arrDead, decrease);
             }
         }
