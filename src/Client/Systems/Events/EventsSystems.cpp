@@ -78,7 +78,7 @@ namespace Systems {
         Types::Position position             = {pos.x, pos.y};
         Types::CollisionRect collisionRect2  = {bulletWidth, bulletHeight};
         Raylib::Sprite sprite                = {bulletPath, bulletWidth, bulletHeight, entityId};
-        struct health_s healthComp                  = {1};
+        struct health_s healthComp           = {1};
         Types::Damage damageComp             = {10};
 
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);

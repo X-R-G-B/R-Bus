@@ -273,7 +273,7 @@ namespace Systems {
             auto tmpId = id - decrease;
             if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
                 executeDeathFunction(tmpId, arrDead, decrease);
-            } 
+            }
         }
     }
 
@@ -329,8 +329,8 @@ namespace Systems {
 
         // Components
 
-        Types::Player playerComp = {};
-        Types::Dead deadComp = {jsonData["deadTime"]};
+        Types::Player playerComp   = {};
+        Types::Dead deadComp       = {jsonData["deadTime"]};
         struct health_s healthComp = {jsonData["health"]};
         Types::Damage damageComp   = {jsonData["damage"]};
 #ifdef CLIENT
