@@ -122,7 +122,7 @@ namespace Nitwork {
              getPacketID(),
              1, HEADER_CODE2},
             {START_GAME},
-            {MAGICK_START_GAME,             playerId               }
+            {MAGICK_START_GAME, playerId}
         };
         Packet packet(
             packetMsgStartGame.header.id,
@@ -147,8 +147,8 @@ namespace Nitwork {
                          .id               = getPacketID(),
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action        = {.magick = LIFE_UPDATE           },
-            .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE,                     .playerId = playerId,     .life = life                                                 }
+            .action        = {.magick = LIFE_UPDATE},
+            .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE, .playerId = playerId, .life = life}
         };
         Packet packet(
             packetLifeUpdate.header.id,
@@ -169,7 +169,7 @@ namespace Nitwork {
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
             .action        = {.magick = ENEMY_DEATH},
-            .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH,                                 .enemyId = {.id = enemyId}               }
+            .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH, .enemyId = {.id = enemyId}}
         };
         Packet packet(
             packetEnemyDeath.header.id,
@@ -192,7 +192,7 @@ namespace Nitwork {
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
             .action = {.magick = NEW_ENEMY},
-            .msg    = {.magick = MAGICK_NEW_ENEMY,                                 .enemyInfos = enemyInfos               }
+            .msg    = {.magick = MAGICK_NEW_ENEMY, .enemyInfos = enemyInfos}
         };
         Packet packet(
             packetNewEnemy.header.id,
