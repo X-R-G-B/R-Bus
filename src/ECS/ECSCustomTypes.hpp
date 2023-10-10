@@ -73,13 +73,18 @@ namespace Types {
 
     struct Enemy {
         public:
-            Enemy() : constId(enemy_id_s {enemyNb})
+            Enemy() : _constId(enemy_id_s {_enemyNb})
             {
-                enemyNb++;
+                _enemyNb++;
             }
-            Enemy& operator=(const Types::Enemy&) = delete;
-            const struct enemy_id_s constId;
-            static unsigned int enemyNb;
+            [[nodiscard]] const enemy_id_s &getConstId() const
+            {
+                return _constId;
+            }
+
+        private:
+            enemy_id_s _constId;
+            static unsigned int _enemyNb;
     };
 
     struct Parallax {

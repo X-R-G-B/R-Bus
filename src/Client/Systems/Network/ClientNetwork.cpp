@@ -34,14 +34,14 @@ namespace Systems {
 
     void receiveEnemyDeath(std::any &any, boost::asio::ip::udp::endpoint &)
     {
-        struct msgEnemyDeath_s enemyDeath          = std::any_cast<struct msgEnemyDeath_s>(any);
+        const auto enemyDeath                      = std::any_cast<struct msgEnemyDeath_s>(any);
         Registry::components<Types::Enemy> enemies = Registry::getInstance().getComponents<Types::Enemy>();
         std::size_t id                             = 0;
 
         if (!getPlayerId(id)) {
             return;
         }
-        if (enemies[id].constId.value == enemyDeath.enemyId.value) {
+        if (enemies[id].getConstId().value == enemyDeath.enemyId.value) {
             Registry::getInstance().removeEntity(id);
             return;
         }

@@ -95,6 +95,7 @@ PACK(struct packetMsgStartGame_s {
 /* Message Life Update */
 PACK(struct msgLifeUpdate_s {
         n_magick_t magick;
+        n_id_t playerId;
         struct health_s life;
 });
 
