@@ -66,6 +66,18 @@ namespace Systems {
         return false;
     }
 
+#ifdef CLIENT
+    static void sendLifeUpdateToServer(std::size_t id, Registry::components<struct health_s> &arrHealth)
+    {
+        Registry::components<Types::Player> arrPlayer =
+            Registry::getInstance().getComponents<Types::Player>();
+
+        if (arrPlayer.exist(id)) {
+            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, arrHealth[id]);
+        }
+    }
+#endif
+
     static void giveDamages(std::size_t firstEntity, std::size_t secondEntity)
     {
         Registry::components<Types::Damage> arrDamage =
@@ -80,6 +92,9 @@ namespace Systems {
         if (arrDamage.exist(firstEntity) && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
                 arrHealth[secondEntity].hp -= arrDamage[firstEntity].damage;
+                #ifdef CLIENT
+                sendLifeUpdateToServer(secondEntity, arrHealth);
+                #endif
             }
         }
     }
@@ -325,18 +340,6 @@ namespace Systems {
         }
     }
 
-#ifdef CLIENT
-    static void sendLifeUpdateToServer(std::size_t id, Registry::components<struct health_s> &arrHealth)
-    {
-        Registry::components<Types::Player> arrPlayer =
-            Registry::getInstance().getComponents<Types::Player>();
-
-        if (arrPlayer.exist(id)) {
-            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, arrHealth[id]);
-        }
-    }
-#endif
-
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<struct health_s> arrHealth =
@@ -347,9 +350,6 @@ namespace Systems {
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
         for (auto itIds = ids.begin(); itIds != ids.end(); itIds++) {
             auto tmpId = (*itIds) - decrease;
-#ifdef CLIENT
-            sendLifeUpdateToServer(tmpId, arrHealth);
-#endif
             if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
                 executeDeathFunction(tmpId, arrDead, decrease);
             }
