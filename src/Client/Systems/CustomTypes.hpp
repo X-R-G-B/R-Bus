@@ -10,7 +10,9 @@
 #include <string>
 #include <vector>
 #include "ECSCustomTypes.hpp"
-#include "Raylib.hpp"
+#ifdef CLIENT
+    #include "Raylib.hpp"
+#endif
 
 namespace Types {
     struct Rect {
@@ -39,9 +41,11 @@ namespace Types {
             float size;
     };
 
+#ifdef CLIENT
     struct Color {
             Raylib::Color color;
     };
+#endif
 
     enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };
 
