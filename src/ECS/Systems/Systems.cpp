@@ -5,10 +5,10 @@
 ** Systems implementation
 */
 
-#include <iostream>
 #include "Systems.hpp"
 #include <cstddef>
 #include <fstream>
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include "CustomTypes.hpp"

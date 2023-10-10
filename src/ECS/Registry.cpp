@@ -5,8 +5,8 @@
 ** Registry
 */
 
-#include <iostream>
 #include "Registry.hpp"
+#include <iostream>
 #include <string>
 #include "Clock.hpp"
 
@@ -67,7 +67,8 @@ void Registry::removeEntity(std::size_t id)
     for (auto &layer : _backLayers) {
         removeEntityFromLayer(id, layer);
     }
-    removeEntityFromLayer(id, _defaultLayer);;
+    removeEntityFromLayer(id, _defaultLayer);
+    ;
     for (auto &layer : _frontLayers) {
         removeEntityFromLayer(id, layer);
     }

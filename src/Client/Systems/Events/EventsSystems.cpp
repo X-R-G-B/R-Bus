@@ -5,8 +5,8 @@
 ** EventsSystems implementation
 */
 
-#include <iostream>
 #include "EventsSystems.hpp"
+#include <iostream>
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
@@ -105,7 +105,8 @@ namespace Systems {
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Clock &clock_                                     = registry.getClock();
         static std::size_t clockId                        = clock_.create(true);
-        std::vector<std::size_t> ids = registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
+        std::vector<std::size_t> ids =
+            registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE)
             && clock_.elapsedMillisecondsSince(clockId) > waitTimeBullet) {
