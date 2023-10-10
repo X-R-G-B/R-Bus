@@ -165,7 +165,7 @@ namespace Systems {
     static void initEnnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &ennemyData)
     {
 #ifdef CLIENT
-        std::size_t id = Registry::getInstance().addEntity();
+        std::size_t id        = Registry::getInstance().addEntity();
         Raylib::Sprite ennemy = {ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id};
 #endif
         Types::Position position           = {Types::Position(ennemyData["position"])};
