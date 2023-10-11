@@ -37,6 +37,13 @@ namespace Nitwork {
         return true;
     }
 
+    void NitworkServer::sendToAllClients(const Packet &packet)
+    {
+        for (auto &endpoint : _endpoints) {
+            addPacketToSend(endpoint, packet);
+        }
+    }
+
     void NitworkServer::handleBodyAction(
         const struct header_s &header,
         const boost::asio::ip::udp::endpoint &endpoint)
@@ -150,5 +157,26 @@ namespace Nitwork {
             packetLifeUpdate.action.magick,
             std::make_any<struct packetLifeUpdate_s>(packetLifeUpdate));
         addPacketToSend(endpoint, packet);
+    }
+
+    void NitworkServer::addEnemyDeathMessage(n_id_t enemyId)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetEnemyDeath_s packetEnemyDeath = {
+            .header =
+                {.magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2},
+            .action        = {.magick = ENEMY_DEATH},
+            .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH,                                 .enemyId = {.id = enemyId}               }
+        };
+        Packet packet(
+            packetEnemyDeath.header.id,
+            packetEnemyDeath.action.magick,
+            std::make_any<struct packetEnemyDeath_s>(packetEnemyDeath));
+        sendToAllClients(packet);
     }
 } // namespace Nitwork

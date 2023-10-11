@@ -6,7 +6,6 @@
 */
 
 #include "Systems.hpp"
-#include <cstddef>
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <sstream>
@@ -18,6 +17,8 @@
 #include "SystemManagersDirector.hpp"
 #ifdef CLIENT
     #include "NitworkClient.hpp"
+#else
+    #include "NitworkServer.hpp"
 #endif
 
 namespace Systems {
@@ -178,9 +179,8 @@ namespace Systems {
 
     static void initEnnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &ennemyData)
     {
-        std::size_t id = Registry::getInstance().addEntity();
-
 #ifdef CLIENT
+        std::size_t id        = Registry::getInstance().addEntity();
         Raylib::Sprite ennemy = {ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id};
 #endif
         Types::Position position           = {Types::Position(ennemyData["position"])};
@@ -279,6 +279,20 @@ namespace Systems {
         }
     }
 
+    static void sendEnemyDeath(std::size_t id)
+    {
+        auto &arrEnemies = Registry::getInstance().getComponents<Types::Enemy>();
+
+        if (!arrEnemies.exist(id)) {
+            return;
+        }
+#ifdef CLIENT
+        //        Nitwork::NitworkClient::getInstance().addEnemyDeathMessage(id);
+#else
+        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(id);
+#endif
+    }
+
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<struct health_s> arrHealth =
@@ -290,6 +304,7 @@ namespace Systems {
         for (auto &id : ids) {
             auto tmpId = id - decrease;
             if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
+                sendEnemyDeath(tmpId);
                 executeDeathFunction(tmpId, arrDead, decrease);
             }
         }

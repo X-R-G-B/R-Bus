@@ -5,6 +5,7 @@
 #include "Registry.hpp"
 
 namespace Systems {
+
     void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         auto msg                                        = std::any_cast<struct msgLifeUpdate_s>(any);

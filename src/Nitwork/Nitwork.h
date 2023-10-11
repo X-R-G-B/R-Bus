@@ -25,6 +25,7 @@
     #define MAGICK_START_GAME '\a'
     #define MAGICK_POSITION_RELATIVE '\b'
     #define MAGICK_LIFE_UPDATE '\x0b'
+    #define MAGICK_ENEMY_DEATH '\x0c'
     #define MAGICK_NEW_BULLET '\x0c'
 
 

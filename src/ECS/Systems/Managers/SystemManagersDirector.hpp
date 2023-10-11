@@ -15,7 +15,6 @@ namespace Systems {
         public:
             static SystemManagersDirector &getInstance();
             SystemManager &getSystemManager(std::size_t);
-            std::size_t addSystemManager();
             std::size_t addSystemManager(std::vector<std::function<void(std::size_t, std::size_t)>>);
             void removeSystemManager(std::size_t);
             void resetChanges();
