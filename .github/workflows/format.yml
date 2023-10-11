@@ -70,6 +70,7 @@ jobs:
         run: |
           git config --global user.name 'Github Actions'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git config --global --add safe.directory $(pwd)
           git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
           git commit -am "FORMAT-AUTO: automatic format on pull request #${{ github.event.number }}"
           git push
