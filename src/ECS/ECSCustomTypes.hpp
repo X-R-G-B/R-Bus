@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <functional>
 #include <optional>
+#include <mutex>
 #include "nlohmann/json.hpp"
 extern "C"
 {
@@ -71,12 +72,18 @@ namespace Types {
 
     struct Enemy {
         public:
-            Enemy(enum enemy_type_e type) : _constId(enemy_id_s {_enemyNb}), _type(type)
+            Enemy(enum enemy_type_e type) : _type(type)
             {
+                std::lock_guard<std::mutex> lock(_mutex);
+
+                _constId = enemy_id_s {_enemyNb};
                 _enemyNb++;
             }
-            Enemy() : _constId(enemy_id_s {_enemyNb}), _type(CLASSIC_ENEMY)
+            Enemy() : _type(CLASSIC_ENEMY)
             {
+                std::lock_guard<std::mutex> lock(_mutex);
+
+                _constId = enemy_id_s {_enemyNb};
                 _enemyNb++;
             }
 
@@ -93,6 +100,7 @@ namespace Types {
             enemy_id_s _constId;
             static unsigned int _enemyNb;
             enum enemy_type_e _type;
+            static std::mutex _mutex;
     };
 
     struct Parallax {
