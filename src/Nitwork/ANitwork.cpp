@@ -92,24 +92,17 @@ namespace Nitwork {
     void ANitwork::stop()
     {
         _isRunning = false;
-
-        std::cout << "1" << std::endl;
-        _clockThread.join();
-        std::cout << "2" << std::endl;
-//        _socket.close();
-        _workGuard.reset();
-        _tickConvVar.notify_all();
         _context.stop();
-        std::cout << "3" << std::endl;
         for (auto &thread : _pool) {
-            std::cout << "thread is joinable : " << thread.joinable() << std::endl;
+            _tickMutex.lock();
+            _tickConvVar.notify_all();
+            _tickMutex.unlock();
             if (thread.joinable()) {
                 thread.join();
             }
         }
-        std::cout << "4" << std::endl;
+        _clockThread.join();
         _pool.clear();
-        std::cout << "5" << std::endl;
     }
 
     void ANitwork::startReceiveHandler()
@@ -128,7 +121,7 @@ namespace Nitwork {
 
     void ANitwork::callReceiveHandler(const std::string &message)
     {
-        std::cerr << message << std::endl;
+        Logger::error(message);
         startReceiveHandler();
     }
 
@@ -199,7 +192,7 @@ namespace Nitwork {
     void ANitwork::startInputHandler()
     {
         boost::asio::post(_context, [this]() {
-            std::unique_lock<std::mutex> lockTick(_tickMutex, std::defer_lock);
+            std::unique_lock<std::mutex> lockTick(_tickMutex);
 
             try {
                 while (_isRunning) {
@@ -214,7 +207,6 @@ namespace Nitwork {
                     _actions.clear();
                     _inputQueueMutex.unlock();
                 }
-                Logger::info("NITWORK: Input handler stopped");
             } catch (std::exception &e) {
                 std::cerr << e.what() << std::endl;
             }
@@ -237,7 +229,7 @@ namespace Nitwork {
     void ANitwork::startOutputHandler()
     {
         boost::asio::post(_context, [this]() {
-            std::unique_lock<std::mutex> lockTick(_tickMutex, std::defer_lock);
+            std::unique_lock<std::mutex> lockTick(_tickMutex);
             const std::map<enum n_actionType_t, actionHandler> &actionToSendHandlers =
                 getActionToSendHandlers();
 
@@ -252,7 +244,6 @@ namespace Nitwork {
                     _outputQueue.clear();
                     _outputQueueMutex.unlock();
                 }
-                Logger::info("NITWORK: Output handler stopped");
             } catch (std::exception &e) {
                 std::cerr << e.what() << std::endl;
             }

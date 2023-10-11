@@ -23,7 +23,6 @@ int main()
     while (isRunning) {
         Systems::SystemManagersDirector::getInstance().getSystemManager(0).updateSystems();
     }
-    std::cout << "caca" << std::endl;
     Nitwork::NitworkServer::getInstance().stop();
     return 0;
 }
