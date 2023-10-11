@@ -12,11 +12,11 @@
 #include <functional>
 #include <vector>
 
-enum ReturnValue { OK = 0, ERROR = 84 };
+enum class ReturnValue { OK = 0, ERROR = 84, VALUE_MAX, };
 
-enum Scene { MENU, MAIN_GAME, SCENE_MAX };
+enum class Scene { MENU, MAIN_GAME, SCENE_MAX };
 
-enum SystemManagers { GAME, EVENTS, DISPLAY };
+enum class SystemManagers { GAME, EVENTS, DISPLAY };
 
 class SceneManager {
     public:
@@ -31,10 +31,10 @@ class SceneManager {
 
         Scene _currentScene;
         bool _stop;
-        const std::array<std::vector<SystemManagers>, 2> _scenes = {
-            std::vector<SystemManagers> {EVENTS, GAME, DISPLAY},
-            std::vector<SystemManagers> {EVENTS, GAME, DISPLAY}
-        };
+        const std::array<std::vector<SystemManagers>, 2> _scenes = {{
+            {SystemManagers::EVENTS, SystemManagers::GAME, SystemManagers::DISPLAY},
+            {SystemManagers::EVENTS, SystemManagers::GAME, SystemManagers::DISPLAY}
+        }};
 
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
         static bool _init;

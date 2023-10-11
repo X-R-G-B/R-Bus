@@ -106,7 +106,7 @@ namespace Nitwork {
                      sendData<struct packetLifeUpdate_s>(any, endpoint);
                  }             },
                 {START_GAME,  [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                     sendData<struct packetMsgStartGame_s>(any, endpoint);
+                     sendData<struct packetMsgStartWave_s>(any, endpoint);
                  }}
             };
     };

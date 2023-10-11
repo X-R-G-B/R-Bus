@@ -88,15 +88,15 @@ PACK(struct packetMsgReady_s {
 });
 
 /* Message Start Game */
-PACK(struct msgStartGame_s {
+PACK(struct msgStartWave_s {
         n_magick_t magick;
         n_id_t playerId;
 });
 
-PACK(struct packetMsgStartGame_s {
+PACK(struct packetMsgStartWave_s {
         struct header_s header;
         struct action_s action;
-        struct msgStartGame_s msgStartGame;
+        struct msgStartWave_s msgStartWave;
 });
 
 /* Message Enemy Nb */

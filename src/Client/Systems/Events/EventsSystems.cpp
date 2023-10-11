@@ -124,10 +124,10 @@ namespace Systems {
     {
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
             SceneManager &sceneManager = SceneManager::getInstance();
-            if (sceneManager.getCurrentScene() == MAIN_GAME) {
-                sceneManager.changeScene(MENU);
+            if (sceneManager.getCurrentScene() == Scene::MAIN_GAME) {
+                sceneManager.changeScene(Scene::MENU);
             } else {
-                sceneManager.changeScene(MAIN_GAME);
+                sceneManager.changeScene(Scene::MAIN_GAME);
             }
         }
     }

@@ -411,7 +411,6 @@ namespace Systems {
             entitiesCollision,
             destroyOutsideWindow,
             deathChecker,
-            initWave,
             moveEntities};
     }
 } // namespace Systems

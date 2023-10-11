@@ -66,18 +66,18 @@ int SceneManager::run()
         while (!_stop && !Raylib::windowShouldClose()) {
             Raylib::beginDrawing();
             Raylib::clearBackground(Raylib::DarkGray);
-            auto scene = _scenes.at(_currentScene);
+            auto scene = _scenes.at(static_cast<std::size_t>(_currentScene));
             for (auto &systemManager : scene) {
-                director.getSystemManager(systemManager).updateSystems();
+                director.getSystemManager(static_cast<std::size_t>(systemManager)).updateSystems();
             }
             Raylib::endDrawing();
         }
         destroyRaylib();
     } catch (std::exception &e) {
         Logger::fatal(e.what());
-        return ReturnValue::ERROR;
+        return static_cast<int>(ReturnValue::ERROR);
     }
-    return ReturnValue::OK;
+    return static_cast<int>(ReturnValue::OK);
 }
 
 void SceneManager::changeScene(Scene scene)
