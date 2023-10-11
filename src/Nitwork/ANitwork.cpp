@@ -17,20 +17,21 @@ namespace Nitwork {
     bool ANitwork::start(int port, int threadNb, int tick, const std::string &ip)
     {
         try {
+            _isRunning = true;
             if (!startNitworkConfig(port, ip)) {
-                std::cerr << "Error: Nitwork config failed" << std::endl;
+                Logger::fatal("NITWORK: Nitwork config failed");
                 return false;
             }
             startInputHandler();
             startOutputHandler();
             if (!startNitworkThreads(threadNb, tick)) {
-                std::cerr << "Error: Nitwork threads failed" << std::endl;
+                Logger::fatal("NITWORK: Nitwork threads failed");
                 return false;
             }
             startReceiveHandler();
-            std::cout << "Nitwork started on port " << port << std::endl;
+            Logger::info("NITWORK: Nitwork started on port " + std::to_string(port));
         } catch (std::exception &e) {
-            std::cerr << "Nitwork Error : " << e.what() << std::endl;
+            Logger::fatal("NITWORK: Nitwork failed to start" + std::string(e.what()));
             return false;
         }
         return true;
@@ -43,11 +44,11 @@ namespace Nitwork {
                 try {
                     _context.run();
                 } catch (std::exception &e) {
-                    std::cerr << "Error: " << e.what() << std::endl;
+                    Logger::fatal("NITWORK: " + std::string(e.what()));
                 }
             });
             if (!_pool.back().joinable()) {
-                std::cerr << "Error: thread nb: " << i << " not joinable" << std::endl;
+                Logger::fatal("NITWORK: Thread nb: " + std::to_string(i) + " not joinable");
                 return false;
             }
         }
@@ -58,7 +59,7 @@ namespace Nitwork {
     {
         _clockThread = std::thread([this, tick]() {
             try {
-                while (true) {
+                while (_isRunning) {
                     std::this_thread::sleep_for(std::chrono::milliseconds(tick));
                     std::unique_lock<std::mutex> lockTick(_tickMutex);
                     _tickConvVar.notify_one();
@@ -89,6 +90,7 @@ namespace Nitwork {
 
     void ANitwork::stop()
     {
+        _isRunning = false;
         _context.stop();
         for (auto &thread : _pool) {
             thread.join();
@@ -187,7 +189,7 @@ namespace Nitwork {
             std::unique_lock<std::mutex> lockQueue(_inputQueueMutex, std::defer_lock);
 
             try {
-                while (true) {
+                while (_isRunning) {
                     _tickConvVar.wait(lockTick);
                     lockQueue.lock();
                     _actions.sort([](auto &a, auto &b) {
@@ -227,7 +229,7 @@ namespace Nitwork {
                 getActionToSendHandlers();
 
             try {
-                while (true) {
+                while (_isRunning) {
                     _tickConvVar.wait(lockTick);
                     lockQueue.lock();
                     _outputQueue.sort([](auto &a, auto &b) {
@@ -296,6 +298,7 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_outputQueueMutex);
 
+        Logger::info("NITWORK: Adding packet to send of type: " + std::to_string(packet.action));
         _outputQueue.emplace_back(endpoint, packet);
     }
 } // namespace Nitwork

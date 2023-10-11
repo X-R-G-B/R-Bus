@@ -11,14 +11,12 @@
 #include <functional>
 #include <optional>
 #include "nlohmann/json.hpp"
-
 extern "C"
 {
 #include "MessageTypes.h"
 }
 
 // all values are in percentage of the screen
-
 namespace Types {
 
     struct CollisionRect {
@@ -51,7 +49,9 @@ namespace Types {
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Velocity, speedX, speedY);
     };
 
-    struct Player { };
+    struct Player {
+            unsigned int constId;
+    };
 
     struct OtherPlayer {
         public:

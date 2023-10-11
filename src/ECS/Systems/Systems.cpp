@@ -69,6 +69,18 @@ namespace Systems {
         return false;
     }
 
+#ifdef CLIENT
+    static void sendLifeUpdateToServer(std::size_t id, Registry::components<struct health_s> &arrHealth)
+    {
+        Registry::components<Types::Player> arrPlayer =
+            Registry::getInstance().getComponents<Types::Player>();
+
+        if (arrPlayer.exist(id)) {
+            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, arrHealth[id]);
+        }
+    }
+#endif
+
     static void giveDamages(std::size_t firstEntity, std::size_t secondEntity)
     {
         Registry::components<Types::Damage> arrDamage =
@@ -83,6 +95,9 @@ namespace Systems {
         if (arrDamage.exist(firstEntity) && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
                 arrHealth[secondEntity].hp -= arrDamage[firstEntity].damage;
+#ifdef CLIENT
+                sendLifeUpdateToServer(secondEntity, arrHealth);
+#endif
             }
         }
     }

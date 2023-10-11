@@ -12,6 +12,7 @@
 #include <list>
 #include <mutex>
 #include "INitwork.hpp"
+#include "Logger.hpp"
 
 namespace Nitwork {
     constexpr int MAX_PACKET_SIZE = 1024;
@@ -33,11 +34,11 @@ namespace Nitwork {
             void sendData(std::any &rawData, boost::asio::ip::udp::endpoint &endpoint)
             {
                 if (rawData.type() != typeid(T)) {
-                    std::cerr << "Error: invalid type" << std::endl;
+                    Logger::error("NITWORK: Invalid type");
                     return;
                 }
                 if constexpr (sizeof(T) > MAX_PACKET_SIZE) {
-                    std::cerr << "Error: package too big" << std::endl;
+                    Logger::error("NITWORK: Package too big");
                     return;
                 }
                 T data = std::any_cast<T>(rawData);
@@ -46,12 +47,13 @@ namespace Nitwork {
                     boost::asio::buffer(&data, sizeof(T)),
                     endpoint,
                     [](const boost::system::error_code &error, std::size_t bytes_sent) {
+                        Logger::info("NITWORK: Package sent");
                         if (error) {
-                            std::cerr << "Error: " << error.message() << std::endl;
+                            Logger::error("NITWORK: " + std::string(error.message()));
                             return;
                         }
                         if (bytes_sent != sizeof(T)) {
-                            std::cerr << "Error: package not sent" << std::endl;
+                            Logger::error("NITWORK: Package not sent");
                             return;
                         }
                     });
@@ -106,7 +108,7 @@ namespace Nitwork {
                 const boost::system::error_code &error)
             {
                 if (error) {
-                    std::cerr << "Error: " << error.message() << std::endl;
+                    Logger::error("NITWORK: " + std::string(error.message()));
                     startReceiveHandler();
                     return;
                 }
@@ -150,6 +152,8 @@ namespace Nitwork {
             std::mutex _packetsSentMutex;        // Mutex for the packets sent
 
         private:
+            bool _isRunning = false; // A boolean to know if the NitworkServer is running
+
             n_id_t _packetId; // The packet id
 
             std::mutex _inputQueueMutex;          // Mutex for the input queue
