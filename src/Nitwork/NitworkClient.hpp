@@ -96,6 +96,17 @@ namespace Nitwork {
                             Systems::receiveEnemyDeath(any, endpoint);
                         }
                     }
+                },
+                {
+                    ENEMY_NB,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgEnemyNb_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveEnemyNb(any, endpoint);
+                        }
+                    }
                 }
             };
             std::map<

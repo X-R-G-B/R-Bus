@@ -40,12 +40,13 @@ enum n_actionType_t {
     INIT = 1,
     READY = 2,
     START_GAME = 3,
-    LIFE_UPDATE = 4,
-    ENEMY_DEATH = 5,
-    POSITION_RELATIVE = 6,
-    POSITION_ABSOLUTE = 7,
-    NEW_BULLET = 8,
-    NEW_ENEMY = 9,
+    ENEMY_NB = 4,
+    LIFE_UPDATE = 5,
+    ENEMY_DEATH = 6,
+    POSITION_RELATIVE = 7,
+    POSITION_ABSOLUTE = 8,
+    NEW_BULLET = 9,
+    NEW_ENEMY = 10,
     N_ACTION_TYPE_MAX,
 };
 
@@ -96,6 +97,18 @@ PACK(struct packetMsgStartGame_s {
         struct header_s header;
         struct action_s action;
         struct msgStartGame_s msgStartGame;
+});
+
+/* Message Enemy Nb */
+PACK(struct msgEnemyNb_s {
+        n_magick_t magick;
+        n_id_t enemyNb;
+});
+
+PACK(struct packetMsgEnemyNb_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgEnemyNb_s msgEnemyNb;
 });
 
 /* Message Life Update */

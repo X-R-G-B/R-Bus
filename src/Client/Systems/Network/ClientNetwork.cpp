@@ -36,6 +36,12 @@ namespace Systems {
         }
     }
 
+    void receiveEnemyNb(std::any &any, boost::asio::ip::udp::endpoint &)
+    {
+        const auto enemyNb = std::any_cast<struct msgEnemyNb_s>(any);
+        Types::Enemy::setEnemyNb(enemyNb.enemyNb);
+    }
+
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
     {
         constexpr std::size_t delay = 10;
