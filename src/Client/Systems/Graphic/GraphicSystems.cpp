@@ -8,7 +8,7 @@
 #include "GraphicSystems.hpp"
 #include "AudioSystems.hpp"
 #include "DeathSystems.hpp"
-#include "ECSCustomTypes.hpp"
+#include "CustomTypes.hpp"
 #include "ParallaxSystems.hpp"
 #include "Registry.hpp"
 #include "SpriteSystems.hpp"

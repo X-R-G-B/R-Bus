@@ -27,11 +27,6 @@ namespace Types {
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(CollisionRect, width, height);
     };
 
-    struct RectangleShape {
-            float width;
-            float height;
-    };
-
     struct Position {
             float x;
             float y;
