@@ -1,9 +1,9 @@
 #include <csignal>
 #include "Logger.hpp"
 #include "NitworkServer.hpp"
+#include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
-#include "Registry.hpp"
 
 static bool isRunning = true;
 

@@ -180,7 +180,8 @@ namespace Nitwork {
                         return std::size_t(packet.second.id) == header.last_id_received - index;
                     });
                 if (packet == _packetsSent.end()) {
-                    Logger::error("NITWORK: packet not found: " + std::to_string(header.last_id_received - index));
+                    Logger::error(
+                        "NITWORK: packet not found: " + std::to_string(header.last_id_received - index));
                     continue;
                 }
                 auto newPacket = _updatePacketHandlers[packet->second.action](packet->second);

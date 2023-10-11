@@ -24,8 +24,8 @@
 #include <cstddef>
 #include "Logger.hpp"
 #include "NitworkClient.hpp"
-#include "SceneManager.hpp"
 #include "Registry.hpp"
+#include "SceneManager.hpp"
 
 constexpr int EXIT_EPITECH = 84;
 

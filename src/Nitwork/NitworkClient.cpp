@@ -50,7 +50,9 @@ namespace Nitwork {
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (endpoint.address().to_string() != _endpoint.address().to_string()) {
-            Logger::error("NITWORK: endpoint " + endpoint.address().to_string() + " is not the server" + _endpoint.address().to_string());
+            Logger::error(
+                "NITWORK: endpoint " + endpoint.address().to_string() + " is not the server"
+                + _endpoint.address().to_string());
             return;
         }
         auto it = _actionsHandlers.find(action->magick);
