@@ -1,7 +1,7 @@
 #include <csignal>
 #include "Logger.hpp"
-#include "SystemManagersDirector.hpp"
 #include "NitworkServer.hpp"
+#include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
 
 static bool isRunning = true;
