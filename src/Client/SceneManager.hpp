@@ -14,7 +14,7 @@
 
 namespace Scene {
 
-    enum class ReturnValue { OK = 0, RET_ERROR = 84  };
+    enum class ReturnValue { OK = 0, RET_ERROR = 84 };
 
     enum class Scene { MENU, MAIN_GAME, SCENE_MAX };
 
@@ -33,14 +33,14 @@ namespace Scene {
 
             Scene _currentScene;
             bool _stop;
-            const std::array<std::vector<SystemManagers>, 2> _scenes = {{
-                {SystemManagers::EVENTS, SystemManagers::GAME, SystemManagers::DISPLAY},
-                {SystemManagers::EVENTS, SystemManagers::GAME, SystemManagers::DISPLAY}
-            }};
+            const std::array<std::vector<SystemManagers>, 2> _scenes = {
+                {{SystemManagers::EVENTS, SystemManagers::GAME, SystemManagers::DISPLAY},
+                 {SystemManagers::EVENTS, SystemManagers::GAME, SystemManagers::DISPLAY}}
+            };
 
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static bool _init;
             static SceneManager _instance;
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
     };
-}
+} // namespace Scene

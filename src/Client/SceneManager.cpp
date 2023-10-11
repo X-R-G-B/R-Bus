@@ -99,4 +99,4 @@ namespace Scene {
         _stop = true;
     }
 
-}
+} // namespace Scene
