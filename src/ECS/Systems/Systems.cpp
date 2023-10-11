@@ -5,7 +5,6 @@
 ** Systems implementation
 */
 
-#include <iostream>
 #include "Systems.hpp"
 #include <fstream>
 #include <nlohmann/json.hpp>
@@ -90,13 +89,11 @@ namespace Systems {
             Registry::getInstance().getComponents<struct health_s>();
 
         if (checkAllies(firstEntity, secondEntity)) {
-            std::cout << "whut" << std::endl;
             return;
         }
 
         if (arrDamage.exist(firstEntity) && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
-                std::cout << "damage " << arrHealth[secondEntity].hp << " " << arrDamage[firstEntity].damage << std::endl;
                 arrHealth[secondEntity].hp -= arrDamage[firstEntity].damage;
 #ifdef CLIENT
                 sendLifeUpdateToServer(secondEntity, arrHealth);
