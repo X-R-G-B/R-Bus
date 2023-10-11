@@ -102,6 +102,7 @@ namespace Nitwork {
             return;
         }
         _endpoints.emplace_back(endpoint);
+        addStarGameMessage(endpoint, _endpoints.size());
     }
 
     void NitworkServer::handleReadyMsg(
@@ -116,6 +117,30 @@ namespace Nitwork {
     /* End Handle packet (msg) Section */
 
     /* Message Creation Section */
+    void NitworkServer::addPlayerInitMessage(
+        boost::asio::ip::udp::endpoint &endpoint,
+        n_id_t playerId)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetMsgPlayerInit_s packetMsgPlayerInit = {
+            .header = {.magick1          = HEADER_CODE1,
+                       .ids_received     = getIdsReceived(),
+                       .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                       .id               = getPacketID(),
+                       .nb_action        = 1,
+                       .magick2          = HEADER_CODE2},
+            .action = {.magick = INIT},
+            .msg    = {.magick = MAGICK_INIT, .playerId = playerId}
+        };
+        Packet packet(
+            packetMsgPlayerInit.header.id,
+            packetMsgPlayerInit.action.magick,
+            std::make_any<struct packetMsgPlayerInit_s>(packetMsgPlayerInit));
+        std::cout << "Send PLAYER_INIT to " << endpoint.address().to_string() << ":" << endpoint.port()
+                  << std::endl;
+        addPacketToSend(endpoint, packet);
+    }
+
     void NitworkServer::addStarGameMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);

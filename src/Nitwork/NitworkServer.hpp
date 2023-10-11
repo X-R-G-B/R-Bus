@@ -41,6 +41,10 @@ namespace Nitwork {
                 boost::asio::ip::udp::endpoint &endpoint,
                 const struct enemy_infos_s &enemyInfos);
 
+            void addPlayerInitMessage(
+                boost::asio::ip::udp::endpoint &endpoint,
+                n_id_t playerId);
+
         private:
             NitworkServer() = default;
 
@@ -101,6 +105,12 @@ namespace Nitwork {
                   }}},
             };
             std::map<enum n_actionType_t, actionHandler> _actionToSendHandlers = {
+                {
+                    INIT,
+                    [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                        sendData<struct packetMsgInit_s>(any, endpoint);
+                    },
+                },
                 {LIFE_UPDATE,
                  [this](std::any &any,              boost::asio::ip::udp::endpoint &endpoint) {
                      sendData<struct packetLifeUpdate_s>(any, endpoint);

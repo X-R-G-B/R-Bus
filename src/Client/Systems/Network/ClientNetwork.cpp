@@ -36,6 +36,16 @@ namespace Systems {
         }
     }
 
+    void receivePlayerInit(std::any &any, boost::asio::ip::udp::endpoint &)
+    {
+        const auto playerInit = std::any_cast<struct msgPlayerInit_s>(any);
+        Registry &registry    = Registry::getInstance();
+        auto &arrPlayer = registry.getComponents<Types::Player>();
+
+        Logger::info("Player id: " + std::to_string(playerInit.playerId));
+        arrPlayer[0].constId = playerInit.playerId;
+    }
+
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
     {
         constexpr std::size_t delay = 10;
