@@ -55,6 +55,9 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
+      - name: Set safe git
+        run: git config --global --add safe.directory $(pwd)
+
       - name: Install dependencies
         run: sudo ./scripts/install-deps-linux.sh
 
@@ -65,12 +68,14 @@ jobs:
         id: git-check
         run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
 
+      - name: Show modified
+        run: git diff
+
       - name: Push changes
         if: steps.git-check.outputs.modified == 'true'
         run: |
           git config --global user.name 'Github Actions'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git config --global --add safe.directory $(pwd)
           git remote set-url origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
           git commit -am "FORMAT-AUTO: automatic format on pull request #${{ github.event.number }}"
           git push
