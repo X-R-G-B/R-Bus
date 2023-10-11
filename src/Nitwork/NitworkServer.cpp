@@ -6,7 +6,9 @@
 */
 
 #include "NitworkServer.hpp"
+#include "ECSCustomTypes.hpp"
 #include "Logger.hpp"
+#include "Registry.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -107,7 +109,7 @@ namespace Nitwork {
         boost::asio::ip::udp::endpoint &endpoint /* unused */)
     {
         if (!isClientAlreadyConnected(endpoint)) {
-            std::cerr << "Client not connected" << std::endl;
+            Logger::info("Client not connected");
             return;
         }
     }
@@ -178,5 +180,28 @@ namespace Nitwork {
             packetEnemyDeath.action.magick,
             std::make_any<struct packetEnemyDeath_s>(packetEnemyDeath));
         sendToAllClients(packet);
+    }
+
+    void NitworkServer::addNewEnemyMessage(
+        boost::asio::ip::udp::endpoint &endpoint,
+        const struct enemy_infos_s &enemyInfos)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetNewEnemy_s packetNewEnemy = {
+            .header =
+                {.magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2},
+            .action = {.magick = NEW_ENEMY},
+            .msg    = {.magick = MAGICK_NEW_ENEMY,                                 .enemyInfos = enemyInfos               }
+        };
+        Packet packet(
+            packetNewEnemy.header.id,
+            packetNewEnemy.action.magick,
+            std::make_any<struct packetNewEnemy_s>(packetNewEnemy));
+        addPacketToSend(endpoint, packet);
     }
 } // namespace Nitwork

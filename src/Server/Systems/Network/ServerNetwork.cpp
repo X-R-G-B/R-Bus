@@ -32,4 +32,39 @@ namespace Systems {
             }
         }
     }
+
+    void handleClientEnemyDeath(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        const struct msgClientEnemyDeath_s &msgClientEnemyDeath =
+            std::any_cast<struct msgClientEnemyDeath_s>(msg);
+        auto &registry = Registry::getInstance();
+
+        if (msgClientEnemyDeath.magick != MAGICK_CLIENT_ENEMY_DEATH) {
+            Logger::error("Error: magick is not CLIENT_ENEMY_DEATH");
+            return;
+        }
+        auto &arrEnemies = registry.getComponents<Types::Enemy>();
+        auto arrHealth   = registry.getComponents<struct health_s>();
+        auto arrPos      = registry.getComponents<Types::Position>();
+        auto it = std::find_if(arrEnemies.begin(), arrEnemies.end(), [&msgClientEnemyDeath](auto &enemy) {
+            return enemy.getConstId().id == msgClientEnemyDeath.enemyId.id;
+        });
+        if (it == arrEnemies.end()) {
+            return;
+        }
+        auto index = std::distance(arrEnemies.begin(), it);
+        if (!arrEnemies.exist(index) || !arrHealth.exist(index) || !arrPos.exist(index)) {
+            return;
+        }
+        Nitwork::NitworkServer::getInstance().addNewEnemyMessage(
+            endpoint,
+            {
+                .id   = arrEnemies[index].getConstId(),
+                .life = arrHealth[index],
+                .pos =
+                    {static_cast<char>(static_cast<int>(arrPos[index].x)),
+                          static_cast<char>(static_cast<int>(arrPos[index].y))},
+                .type = arrEnemies[index].getType(),
+        });
+    }
 } // namespace Systems
