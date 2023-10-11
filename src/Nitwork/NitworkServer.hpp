@@ -56,6 +56,8 @@ namespace Nitwork {
             void handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
             void handleReadyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
+
+            void handleRelativePositionMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static NitworkServer _instance; // instance of the NitworkServer (singleton)
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)

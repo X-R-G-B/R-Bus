@@ -99,11 +99,31 @@ namespace Nitwork {
 
     void NitworkServer::handleReadyMsg(
         const std::any & /* unused */,
+        boost::asio::ip::udp::endpoint &endpoint)
+    {
+        if (!isClientAlreadyConnected(endpoint)) {
+            std::cerr << "Client not connected" << std::endl;
+            return;
+        }
+    }
+
+    void NitworkServer::handleRelativePositionMsg(
+        const std::any &msg,
         boost::asio::ip::udp::endpoint &endpoint /* unused */)
     {
         if (!isClientAlreadyConnected(endpoint)) {
             std::cerr << "Client not connected" << std::endl;
             return;
+        }
+        auto pos = std::any_cast<struct position_relative_s>(msg);
+        struct position_relative_broadcast_s posBroadcast = {
+            .x = pos.x,
+            .y = pos.y,
+            .playerId = 0, // TODO: PLAYERID
+        };
+        for (auto &endpoint : _endpoints) {
+            Packet packet = {};
+            addPacketToSend(endpoint, packet);
         }
     }
     /* End Handle packet (msg) Section */
