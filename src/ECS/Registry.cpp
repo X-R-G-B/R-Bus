@@ -6,7 +6,6 @@
 */
 
 #include "Registry.hpp"
-#include <string>
 #include "Clock.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)

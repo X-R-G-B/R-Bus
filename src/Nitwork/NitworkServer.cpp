@@ -48,7 +48,7 @@ namespace Nitwork {
 
     void NitworkServer::handleBodyAction(
         const struct header_s &header,
-        const boost::asio::ip::udp::endpoint & /* unused */)
+        const boost::asio::ip::udp::endpoint &endpoint)
     {
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
@@ -61,6 +61,10 @@ namespace Nitwork {
             std::cerr << "Error: action not found" << std::endl;
             return;
         }
+        Logger::info(
+            "Received packet from " + endpoint.address().to_string() + ":" + std::to_string(endpoint.port())
+            + " with id " + std::to_string(header.id) + " and action of type "
+            + std::to_string(action->magick));
         it->second.first(it->second.second, header);
     }
 

@@ -57,6 +57,10 @@ namespace Nitwork {
             std::cerr << "Error: action not found" << std::endl;
             return;
         }
+        Logger::info(
+            "Received packet from " + endpoint.address().to_string() + ":" + std::to_string(endpoint.port())
+            + " with id " + std::to_string(header.id) + " and action of type "
+            + std::to_string(action->magick));
         it->second.first(it->second.second, header);
     }
 
@@ -211,6 +215,38 @@ namespace Nitwork {
             packetMsgPositionRelative.header.id,
             packetMsgPositionRelative.action.magick,
             std::make_any<struct packetPositionAbsolute_s>(packetMsgPositionRelative));
+
+        addPacketToSend(_endpoint, packet);
+    }
+
+    void NitworkClient::addLifeUpdateMsg(n_id_t playerId, const struct health_s &life)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetLifeUpdate_s packetLifeUpdate = {
+            .header =
+                {
+                         .magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2,
+                         },
+            .action =
+                {
+                         .magick = LIFE_UPDATE,
+                         },
+            .msgLifeUpdate =
+                {
+                         .magick   = MAGICK_LIFE_UPDATE,
+                         .playerId = playerId,
+                         .life     = life,
+                         },
+        };
+        Packet packet(
+            packetLifeUpdate.header.id,
+            packetLifeUpdate.action.magick,
+            std::make_any<struct packetLifeUpdate_s>(packetLifeUpdate));
 
         addPacketToSend(_endpoint, packet);
     }
