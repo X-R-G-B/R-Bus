@@ -55,7 +55,7 @@ int main(int ac, char **av)
     }
     Nitwork::NitworkClient::getInstance().addInitMsg();
     Nitwork::NitworkClient::getInstance().addReadyMsg();
-    SceneManager &sceneManager = SceneManager::getInstance();
+    auto &sceneManager = Scene::SceneManager::getInstance();
 
     Logger::info("Starting Game...");
     int res = sceneManager.run();

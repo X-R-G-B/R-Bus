@@ -13,86 +13,90 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
-constexpr int screenWidth  = 1920;
-constexpr int screenHeight = 1080;
+namespace Scene {
 
-// NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
-bool SceneManager::_init             = false;
-SceneManager SceneManager::_instance = SceneManager();
-// NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
+    constexpr int screenWidth  = 1920;
+    constexpr int screenHeight = 1080;
 
-static void initRaylib()
-{
-    Raylib::initWindow(screenWidth, screenHeight, "R-Bus");
-    Raylib::setWindowState(Raylib::ConfigFlags::WINDOW_RESIZABLE);
-    Raylib::setTargetFPS(Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
-    Raylib::initAudioDevice();
-}
+    // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
+    bool SceneManager::_init             = false;
+    SceneManager SceneManager::_instance = SceneManager();
+    // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
-static void initSystemManagers()
-{
-    auto &director = Systems::SystemManagersDirector::getInstance();
-
-    for (auto systems : Systems::getSystemsGroups()) {
-        director.addSystemManager(systems);
+    static void initRaylib()
+    {
+        Raylib::initWindow(screenWidth, screenHeight, "R-Bus");
+        Raylib::setWindowState(Raylib::ConfigFlags::WINDOW_RESIZABLE);
+        Raylib::setTargetFPS(Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
+        Raylib::initAudioDevice();
     }
-    initRaylib();
-}
 
-SceneManager &SceneManager::getInstance()
-{
-    if (!_init) {
-        _init = true;
-        initSystemManagers();
-    }
-    return _instance;
-}
+    static void initSystemManagers()
+    {
+        auto &director = Systems::SystemManagersDirector::getInstance();
 
-SceneManager::SceneManager() : _currentScene(Scene::MENU), _stop(false)
-{
-}
-
-static void destroyRaylib()
-{
-    Raylib::closeAudioDevice();
-    Raylib::closeWindow();
-}
-
-int SceneManager::run()
-{
-    auto &director = Systems::SystemManagersDirector::getInstance();
-
-    try {
-        while (!_stop && !Raylib::windowShouldClose()) {
-            Raylib::beginDrawing();
-            Raylib::clearBackground(Raylib::DarkGray);
-            auto scene = _scenes.at(static_cast<std::size_t>(_currentScene));
-            for (auto &systemManager : scene) {
-                director.getSystemManager(static_cast<std::size_t>(systemManager)).updateSystems();
-            }
-            Raylib::endDrawing();
+        for (auto systems : Systems::getSystemsGroups()) {
+            director.addSystemManager(systems);
         }
-        destroyRaylib();
-    } catch (std::exception &e) {
-        Logger::fatal(e.what());
-        return static_cast<int>(ReturnValue::ERROR);
+        initRaylib();
     }
-    return static_cast<int>(ReturnValue::OK);
-}
 
-void SceneManager::changeScene(Scene scene)
-{
-    _currentScene = scene;
-    Registry::getInstance().clear();
-    Systems::SystemManagersDirector::getInstance().resetChanges();
-}
+    SceneManager &SceneManager::getInstance()
+    {
+        if (!_init) {
+            _init = true;
+            initSystemManagers();
+        }
+        return _instance;
+    }
 
-Scene SceneManager::getCurrentScene() const
-{
-    return _currentScene;
-}
+    SceneManager::SceneManager() : _currentScene(Scene::MENU), _stop(false)
+    {
+    }
 
-void SceneManager::stop()
-{
-    _stop = true;
+    static void destroyRaylib()
+    {
+        Raylib::closeAudioDevice();
+        Raylib::closeWindow();
+    }
+
+    int SceneManager::run()
+    {
+        auto &director = Systems::SystemManagersDirector::getInstance();
+
+        try {
+            while (!_stop && !Raylib::windowShouldClose()) {
+                Raylib::beginDrawing();
+                Raylib::clearBackground(Raylib::DarkGray);
+                auto scene = _scenes.at(static_cast<std::size_t>(_currentScene));
+                for (auto &systemManager : scene) {
+                    director.getSystemManager(static_cast<std::size_t>(systemManager)).updateSystems();
+                }
+                Raylib::endDrawing();
+            }
+            destroyRaylib();
+        } catch (std::exception &e) {
+            Logger::fatal(e.what());
+            return static_cast<int>(ReturnValue::RET_ERROR);
+        }
+        return static_cast<int>(ReturnValue::OK);
+    }
+
+    void SceneManager::changeScene(Scene scene)
+    {
+        _currentScene = scene;
+        Registry::getInstance().clear();
+        Systems::SystemManagersDirector::getInstance().resetChanges();
+    }
+
+    Scene SceneManager::getCurrentScene() const
+    {
+        return _currentScene;
+    }
+
+    void SceneManager::stop()
+    {
+        _stop = true;
+    }
+
 }

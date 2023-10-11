@@ -43,7 +43,7 @@ namespace Systems {
     {
         const auto enemyNb = std::any_cast<struct msgEnemyNb_s>(any);
         Types::Enemy::setEnemyNb(enemyNb.enemyNb);
-        SystemManagersDirector::getInstance().getSystemManager(static_cast<std::size_t>(SystemManagers::GAME)).addSystem(initWave);
+        SystemManagersDirector::getInstance().getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::GAME)).addSystem(initWave);
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
