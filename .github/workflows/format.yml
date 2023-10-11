@@ -46,6 +46,7 @@ jobs:
 
   auto-format:
     runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker:latest
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.event_name == 'pull_request' }}
 
     steps:
