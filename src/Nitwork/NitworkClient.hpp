@@ -66,6 +66,17 @@ namespace Nitwork {
                 std::pair<handleBodyT, actionHandler>
             > _actionsHandlers = {
                 {
+                    INIT,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgInit_s>(handler, header);
+                        },
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receivePlayerInit(any, endpoint);
+                        }
+                    },
+                },
+                {
                     START_GAME,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
