@@ -40,7 +40,7 @@ namespace Systems {
     {
         const auto playerInit = std::any_cast<struct msgPlayerInit_s>(any);
         Registry &registry    = Registry::getInstance();
-        auto &arrPlayer = registry.getComponents<Types::Player>();
+        auto &arrPlayer       = registry.getComponents<Types::Player>();
 
         Logger::info("Player id: " + std::to_string(playerInit.playerId));
         arrPlayer[0].constId = playerInit.playerId;
