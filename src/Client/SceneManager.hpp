@@ -12,7 +12,7 @@
 #include <functional>
 #include <vector>
 
-enum class ReturnValue { OK = 0, ERROR = 84, VALUE_MAX, };
+enum class ReturnValue { OK = 0, ERROR = 84};
 
 enum class Scene { MENU, MAIN_GAME, SCENE_MAX };
 
