@@ -3,6 +3,7 @@
 #include "NitworkServer.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
+#include "Registry.hpp"
 
 static bool isRunning = true;
 
@@ -15,6 +16,9 @@ static void signalHandler(int signum)
 
 int main()
 {
+#ifndef NDEBUG
+    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
+#endif
     Logger::info("Starting Server...");
     Nitwork::NitworkServer::getInstance().start(4242);
     Systems::SystemManagersDirector::getInstance().addSystemManager(Systems::getECSSystems());

@@ -25,6 +25,7 @@
 #include "Logger.hpp"
 #include "NitworkClient.hpp"
 #include "SceneManager.hpp"
+#include "Registry.hpp"
 
 constexpr int EXIT_EPITECH = 84;
 
@@ -47,6 +48,9 @@ static bool checkArgs(int ac, char **av)
 
 int main(int ac, char **av)
 {
+#ifndef NDEBUG
+    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
+#endif
     if (!checkArgs(ac, av)) {
         return EXIT_EPITECH;
     }
