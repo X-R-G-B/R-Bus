@@ -13,8 +13,8 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #ifdef CLIENT
-    #include "Raylib.hpp"
     #include "NitworkClient.hpp"
+    #include "Raylib.hpp"
 #else
     #include "NitworkServer.hpp"
 #endif
