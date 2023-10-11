@@ -11,14 +11,13 @@
 #include <functional>
 #include <optional>
 #include "nlohmann/json.hpp"
+extern "C"
+{
+#include "MessageTypes.h"
+}
 
 // all values are in percentage of the screen
-
-#include "MessageTypes.h"
-
 namespace Types {
-
-    enum MissileTypes { CLASSIC };
 
     struct CollisionRect {
             float width;
@@ -50,7 +49,9 @@ namespace Types {
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Velocity, speedX, speedY);
     };
 
-    struct Player { };
+    struct Player {
+            unsigned int constId;
+    };
 
     struct OtherPlayer {
         public:
@@ -61,14 +62,28 @@ namespace Types {
     };
 
     struct Missiles {
-            MissileTypes type;
+            missileTypes_e type;
     };
 
     struct PlayerAllies { };
 
     struct EnemyAllies { };
 
-    struct Enemy { };
+    struct Enemy {
+        public:
+            Enemy() : _constId(enemy_id_s {_enemyNb})
+            {
+                _enemyNb++;
+            }
+            [[nodiscard]] const enemy_id_s &getConstId() const
+            {
+                return _constId;
+            }
+
+        private:
+            enemy_id_s _constId;
+            static unsigned int _enemyNb;
+    };
 
     struct Parallax {
             float x;
@@ -76,6 +91,11 @@ namespace Types {
     };
 
     struct Dead {
+            Dead(std::size_t time = 0)
+                : deathFunction(std::nullopt),
+                  timeToWait(time),
+                  clockId(static_cast<std::size_t>(-1)),
+                  launched(false) {};
             Dead(std::optional<std::function<void(std::size_t id)>> func, std::size_t time = 0)
                 : deathFunction(func),
                   timeToWait(time),

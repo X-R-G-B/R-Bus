@@ -25,6 +25,8 @@
     #define MAGICK_START_GAME '\a'
     #define MAGICK_POSITION_RELATIVE '\b'
     #define MAGICK_LIFE_UPDATE '\x0b'
+    #define MAGICK_ENEMY_DEATH '\x0c'
+    #define MAGICK_NEW_BULLET '\x0c'
 
 
 typedef char n_magick_t;
@@ -37,8 +39,11 @@ enum n_actionType_t {
     INIT = 1,
     READY = 2,
     START_GAME = 3,
-    LIFE_UPDATE,
-    POSITION_RELATIVE,
+    LIFE_UPDATE = 4,
+    ENEMY_DEATH = 5,
+    POSITION_RELATIVE = 6,
+    POSITION_ABSOLUTE = 7,
+    NEW_BULLET = 8,
     N_ACTION_TYPE_MAX,
 };
 
@@ -101,7 +106,19 @@ PACK(struct msgLifeUpdate_s {
 PACK(struct packetLifeUpdate_s {
         struct header_s header;
         struct action_s action;
-        struct msgLifeUpdate_s msg;
+        struct msgLifeUpdate_s msgLifeUpdate;
+});
+
+/* Message Enemy Death */
+PACK(struct msgEnemyDeath_s {
+        n_magick_t magick;
+        struct enemy_id_s enemyId;
+});
+
+PACK(struct packetEnemyDeath_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgEnemyDeath_s msgEnemyDeath;
 });
 
 /* Message Position Relative */
@@ -114,6 +131,31 @@ PACK(struct packetPositionRelative_s {
         struct header_s header;
         struct action_s action;
         struct msgPositionRelative_s msg;
+});
+
+/* Message New Bullet */
+PACK(struct msgNewBullet_s {
+        n_magick_t magick;
+        struct position_absolute_s pos;
+        missileTypes_e missileType;
+});
+
+PACK(struct packetNewBullet_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgNewBullet_s msg;
+});
+
+/* Message Position Absolute */
+PACK(struct msgPositionAbsolute_s {
+        n_magick_t magick;
+        struct position_absolute_s pos;
+});
+
+PACK(struct packetPositionAbsolute_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgPositionAbsolute_s msg;
 });
 
 #endif

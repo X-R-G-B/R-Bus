@@ -43,6 +43,7 @@ namespace Systems {
             auto it = _modifiedSystems.begin();
             std::advance(it, id - decrease);
             _modifiedSystems.erase(it);
+            decrease++;
         }
     }
 

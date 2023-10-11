@@ -7,6 +7,7 @@
 
 #include "EventsSystems.hpp"
 #include "CustomTypes.hpp"
+#include "NitworkClient.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
@@ -62,37 +63,41 @@ namespace Systems {
         }
     }
 
-    const Types::Rect spriteRect             = {200, 121, 32, 10};
-    const std::string bulletPath             = "assets/R-TypeSheet/r-typesheet1.gif";
-    constexpr float bulletWidth              = 5.0F;
-    constexpr float bulletHeight             = 5.0F;
-    const Types::CollisionRect collisionRect = {1, 1};
-    const Types::Velocity velocity           = {0.7F, 0.0F};
-    const Types::Missiles missileType        = {Types::MissileTypes::CLASSIC};
-    const struct health_s health             = {1};
-    const Types::Damage damage               = {10};
-
-    static void createMissile(std::size_t id, Registry::components<Types::Position> &arrPosition)
+    static void createMissile(Types::Position &pos)
     {
-        if (arrPosition.exist(id)) {
-            std::size_t entityId = Registry::getInstance().addEntity();
+        std::size_t entityId = Registry::getInstance().addEntity();
 
-            Registry::getInstance().getComponents<Types::Position>().insertBack(
-                {arrPosition[id].x, arrPosition[id].y});
-            Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(
-                {bulletPath, bulletWidth, bulletHeight, entityId});
-            Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(
-                {bulletWidth, bulletHeight});
-            Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
-            Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
-            Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
-            Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack({});
-            Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
-            Registry::getInstance().getComponents<struct health_s>().insertBack(health);
-            Registry::getInstance().getComponents<Types::Damage>().insertBack(damage);
-            Registry::getInstance().getComponents<Types::Dead>().insertBack({std::nullopt});
-            Registry::getInstance().setToFrontLayers(entityId);
-        }
+        Types::Rect spriteRect               = {200, 121, 32, 10};
+        const std::string bulletPath         = "assets/R-TypeSheet/r-typesheet1.gif";
+        constexpr float bulletWidth          = 5.0F;
+        constexpr float bulletHeight         = 5.0F;
+        Types::CollisionRect collisionRect1  = {1, 1};
+        Types::Velocity velocity             = {0.7F, 0.0F};
+        Types::Missiles missileType          = {CLASSIC};
+        Types::Dead deadComp                 = {};
+        Types::PlayerAllies playerAlliesComp = {};
+        Types::Position position             = {pos.x, pos.y};
+        Types::CollisionRect collisionRect2  = {bulletWidth, bulletHeight};
+        Raylib::Sprite sprite                = {bulletPath, bulletWidth, bulletHeight, entityId};
+        struct health_s healthComp           = {1};
+        Types::Damage damageComp             = {10};
+
+        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect1);
+        Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect2);
+        Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
+        Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
+        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
+        Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
+        Registry::getInstance().setToFrontLayers(entityId);
+        // send bullet to server
+        Nitwork::NitworkClient::getInstance().addNewBulletMsg(
+            {static_cast<int>(position.x), static_cast<int>(position.y)},
+            missileType.type);
     }
 
     const std::size_t waitTimeBullet = 500;
@@ -100,18 +105,17 @@ namespace Systems {
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry &registry                                = Registry::getInstance();
-        Registry::components<Types::Player> arrPlayer     = registry.getComponents<Types::Player>();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Clock &clock_                                     = registry.getClock();
         static std::size_t clockId                        = clock_.create(true);
-
-        std::vector<std::size_t> ids = arrPlayer.getExistingsId();
+        std::vector<std::size_t> ids =
+            registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE)
             && clock_.elapsedMillisecondsSince(clockId) > waitTimeBullet) {
             clock_.restart(clockId);
             for (auto &id : ids) {
-                createMissile(id, arrPosition);
+                createMissile(arrPosition[id]);
             }
         }
     }
