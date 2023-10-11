@@ -21,8 +21,8 @@ extern "C"
 namespace Types {
 
     struct CollisionRect {
-            float width;
-            float height;
+            int width;
+            int height;
 
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(CollisionRect, width, height);
     };

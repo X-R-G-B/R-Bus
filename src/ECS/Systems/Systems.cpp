@@ -32,7 +32,7 @@ namespace Systems {
         std::vector<std::size_t> ids = registry.getEntitiesByComponents(
             {typeid(Types::Player), typeid(Types::Position), typeid(Types::CollisionRect)});
 
-        const float maxPercent = 100.0F;
+        const int maxScreenSize = 100; // in percent
         for (std::size_t id : ids) {
             if (arrPosition[id].x < 0) {
                 arrPosition[id].x = 0;
@@ -40,11 +40,11 @@ namespace Systems {
             if (arrPosition[id].y < 0) {
                 arrPosition[id].y = 0;
             }
-            if (arrPosition[id].x + arrCollisionRect[id].width > maxPercent) {
-                arrPosition[id].x = maxPercent - arrCollisionRect[id].width;
+            if (arrPosition[id].x + arrCollisionRect[id].width > maxScreenSize) {
+                arrPosition[id].x = static_cast<float>(maxScreenSize - arrCollisionRect[id].width);
             }
-            if (arrPosition[id].y + arrCollisionRect[id].height > maxPercent) {
-                arrPosition[id].y = maxPercent - arrCollisionRect[id].height;
+            if (arrPosition[id].y + arrCollisionRect[id].height > maxScreenSize) {
+                arrPosition[id].y = static_cast<float>(maxScreenSize - arrCollisionRect[id].height);
             }
         }
     }

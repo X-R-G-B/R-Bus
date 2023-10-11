@@ -69,8 +69,8 @@ namespace Systems {
 
         Types::Rect spriteRect               = {200, 121, 32, 10};
         const std::string bulletPath         = "assets/R-TypeSheet/r-typesheet1.gif";
-        constexpr float bulletWidth          = 5.0F;
-        constexpr float bulletHeight         = 5.0F;
+        constexpr int bulletWidth          = 5;
+        constexpr int bulletHeight         = 5;
         Types::CollisionRect collisionRect1  = {1, 1};
         Types::Velocity velocity             = {0.7F, 0.0F};
         Types::Missiles missileType          = {CLASSIC};

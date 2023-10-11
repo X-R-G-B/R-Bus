@@ -30,7 +30,10 @@ namespace Systems {
 
         for (auto &id : ids) {
             if (arrPosition.exist(id) && !arrRectangleShape.exist(id)) {
-                Types::RectangleShape rectShape = {arrCollisionRect[id].width, arrCollisionRect[id].height};
+                Types::RectangleShape rectShape = {
+                    static_cast<float>(arrCollisionRect[id].width),
+                    static_cast<float>(arrCollisionRect[id].height)
+                };
                 Registry::getInstance().getComponents<Types::RectangleShape>().insert(id, rectShape);
             }
         }
