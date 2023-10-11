@@ -31,7 +31,7 @@ constexpr int EXIT_EPITECH = 84;
 static bool checkArgs(int ac, char **av)
 {
     if (ac != 3) {
-        Logger::error("Usage: ./rtype_client <ip>");
+        Logger::error("Usage: ./rtype_client <ip> <port>");
         return false;
     }
     if (std::stoi(av[2]) < 0 || std::stoi(av[2]) > 65535) {

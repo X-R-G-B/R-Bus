@@ -160,21 +160,28 @@ namespace Systems {
         }
     }
 
+    const std::size_t moveTime = 50;
+
     void moveEntities(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Velocity> arrVelocity =
             Registry::getInstance().getComponents<Types::Velocity>();
-
+        Clock &clock = Registry::getInstance().getClock();
+        static std::size_t clockId = clock.create();
         std::vector<std::size_t> ids = arrPosition.getExistingsId();
 
+        if (clock.elapsedMillisecondsSince(clockId) < moveTime) {
+            return;
+        }
         for (auto &id : ids) {
             if (arrVelocity.exist(id)) {
                 arrPosition[id].x += arrVelocity[id].speedX;
                 arrPosition[id].y += arrVelocity[id].speedY;
             }
         }
+        clock.restart(clockId);
     }
 
     static void initEnnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &ennemyData)
