@@ -46,6 +46,7 @@ jobs:
 
   auto-format:
     runs-on: ubuntu-latest
+    container: epitechcontent/epitest-docker:latest
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.event_name == 'pull_request' }}
 
     steps:
@@ -53,6 +54,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
+
+      - name: Set safe git
+        run: git config --global --add safe.directory $(pwd)
 
       - name: Install dependencies
         run: sudo ./scripts/install-deps-linux.sh
@@ -63,6 +67,9 @@ jobs:
       - name: Check for modified files
         id: git-check
         run: echo "modified=$(if git diff-index --quiet HEAD --; then echo "false"; else echo "true"; fi)" >> $GITHUB_OUTPUT
+
+      - name: Show modified
+        run: git diff
 
       - name: Push changes
         if: steps.git-check.outputs.modified == 'true'
