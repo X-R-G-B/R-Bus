@@ -160,7 +160,7 @@ namespace Systems {
         }
     }
 
-    const std::size_t moveTime = 50;
+    const std::size_t moveTime = 20;
 
     void moveEntities(std::size_t /*unused*/, std::size_t /*unused*/)
     {
