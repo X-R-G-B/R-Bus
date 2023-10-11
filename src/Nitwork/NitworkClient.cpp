@@ -32,7 +32,7 @@ namespace Nitwork {
         _endpoint = *_resolver.resolve(boost::asio::ip::udp::v4(), ip, std::to_string(port)).begin();
         boost::asio::ip::udp::socket socket(_context);
         _socket.open(boost::asio::ip::udp::v4());
-        _socket.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), port));
+        _socket.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 0));
         if (!_socket.is_open()) {
             Registry::getInstance().getLogger().error("Socket not open");
             return false;
