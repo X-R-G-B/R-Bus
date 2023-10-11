@@ -9,8 +9,8 @@
 
 #include <cstddef>
 #include <functional>
-#include <optional>
 #include <mutex>
+#include <optional>
 #include "nlohmann/json.hpp"
 extern "C"
 {
