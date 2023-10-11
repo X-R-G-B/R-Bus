@@ -16,11 +16,10 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #ifdef CLIENT
-#include "NitworkClient.hpp"
+    #include "NitworkClient.hpp"
 #else
-#include "NitworkServer.hpp"
+    #include "NitworkServer.hpp"
 #endif
-
 
 namespace Systems {
 
@@ -70,6 +69,18 @@ namespace Systems {
         return false;
     }
 
+#ifdef CLIENT
+    static void sendLifeUpdateToServer(std::size_t id, Registry::components<struct health_s> &arrHealth)
+    {
+        Registry::components<Types::Player> arrPlayer =
+            Registry::getInstance().getComponents<Types::Player>();
+
+        if (arrPlayer.exist(id)) {
+            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, arrHealth[id]);
+        }
+    }
+#endif
+
     static void giveDamages(std::size_t firstEntity, std::size_t secondEntity)
     {
         Registry::components<Types::Damage> arrDamage =
@@ -84,6 +95,9 @@ namespace Systems {
         if (arrDamage.exist(firstEntity) && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
                 arrHealth[secondEntity].hp -= arrDamage[firstEntity].damage;
+#ifdef CLIENT
+                sendLifeUpdateToServer(secondEntity, arrHealth);
+#endif
             }
         }
     }
@@ -165,9 +179,8 @@ namespace Systems {
 
     static void initEnnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &ennemyData)
     {
-        std::size_t id = Registry::getInstance().addEntity();
-
 #ifdef CLIENT
+        std::size_t id        = Registry::getInstance().addEntity();
         Raylib::Sprite ennemy = {ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id};
 #endif
         Types::Position position           = {Types::Position(ennemyData["position"])};
@@ -268,11 +281,16 @@ namespace Systems {
 
     static void sendEnemyDeath(std::size_t id)
     {
-        #ifdef CLIENT
-//        Nitwork::NitworkClient::getInstance().addEnemyDeathMessage(id);
-        #else
+        auto &arrEnemies = Registry::getInstance().getComponents<Types::Enemy>();
+
+        if (!arrEnemies.exist(id)) {
+            return;
+        }
+#ifdef CLIENT
+        //        Nitwork::NitworkClient::getInstance().addEnemyDeathMessage(id);
+#else
         Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(id);
-        #endif
+#endif
     }
 
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -331,7 +349,6 @@ namespace Systems {
     }
 
     const std::string playerFile = "assets/Json/playerData.json";
-    const std::size_t deathTime  = 500;
 
     void initPlayer(std::size_t managerId, std::size_t systemId)
     {
@@ -346,7 +363,7 @@ namespace Systems {
         // Components
 
         Types::Player playerComp   = {};
-        Types::Dead deadComp       = {std::nullopt};
+        Types::Dead deadComp       = {jsonData["deadTime"]};
         struct health_s healthComp = {jsonData["health"]};
         Types::Damage damageComp   = {jsonData["damage"]};
 #ifdef CLIENT

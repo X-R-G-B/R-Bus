@@ -12,13 +12,14 @@
 #include <list>
 #include <mutex>
 #include "INitwork.hpp"
+#include "Logger.hpp"
 
 namespace Nitwork {
     constexpr int MAX_PACKET_SIZE = 1024;
 
     class ANitwork : public INitwork {
         public:
-            virtual ~ANitwork()               = default;
+            ~ANitwork() override              = default;
             ANitwork(const ANitwork &)        = delete;
             ANitwork(const ANitwork &&)       = delete;
             void operator=(const ANitwork &)  = delete;
@@ -33,11 +34,11 @@ namespace Nitwork {
             void sendData(std::any &rawData, boost::asio::ip::udp::endpoint &endpoint)
             {
                 if (rawData.type() != typeid(T)) {
-                    std::cerr << "Error: invalid type" << std::endl;
+                    Logger::error("NITWORK: Invalid type");
                     return;
                 }
                 if constexpr (sizeof(T) > MAX_PACKET_SIZE) {
-                    std::cerr << "Error: package too big" << std::endl;
+                    Logger::error("NITWORK: Package too big");
                     return;
                 }
                 T data = std::any_cast<T>(rawData);
@@ -46,12 +47,13 @@ namespace Nitwork {
                     boost::asio::buffer(&data, sizeof(T)),
                     endpoint,
                     [](const boost::system::error_code &error, std::size_t bytes_sent) {
+                        Logger::info("NITWORK: Package sent");
                         if (error) {
-                            std::cerr << "Error: " << error.message() << std::endl;
+                            Logger::error("NITWORK: " + std::string(error.message()));
                             return;
                         }
                         if (bytes_sent != sizeof(T)) {
-                            std::cerr << "Error: package not sent" << std::endl;
+                            Logger::error("NITWORK: Package not sent");
                             return;
                         }
                     });
@@ -71,8 +73,10 @@ namespace Nitwork {
             template <typename B>
             void handleBody(const actionHandler &handler, const struct header_s &header)
             {
+                // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
                 auto *body = reinterpret_cast<B *>(
                     _receiveBuffer.data() + sizeof(struct header_s) + sizeof(struct action_s));
+                // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
                 handleBodyDatas<B>(handler, header, *body, boost::system::error_code());
             }
 
@@ -106,7 +110,7 @@ namespace Nitwork {
                 const boost::system::error_code &error)
             {
                 if (error) {
-                    std::cerr << "Error: " << error.message() << std::endl;
+                    Logger::error("NITWORK: " + std::string(error.message()));
                     startReceiveHandler();
                     return;
                 }
@@ -130,6 +134,7 @@ namespace Nitwork {
                 const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, Packet> &data);
 
         protected:
+            // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
             boost::asio::io_context _context; // The main context
             boost::asio::ip::udp::socket
                 _socket; // The socket which will be used to send and receive the actions
@@ -148,8 +153,11 @@ namespace Nitwork {
             std::mutex _receivedPacketsIdsMutex; // Mutex for the received packets ids
             std::mutex _outputQueueMutex;        // Mutex for the output queue
             std::mutex _packetsSentMutex;        // Mutex for the packets sent
+            // NOLINTEND(cppcoreguidelines-non-private-member-variables-in-classes)
 
         private:
+            bool _isRunning = false; // A boolean to know if the NitworkServer is running
+
             n_id_t _packetId; // The packet id
 
             std::mutex _inputQueueMutex;          // Mutex for the input queue

@@ -37,6 +37,10 @@ namespace Nitwork {
 
             void addEnemyDeathMessage(n_id_t enemyId);
 
+            void addNewEnemyMessage(
+                boost::asio::ip::udp::endpoint &endpoint,
+                const struct enemy_infos_s &enemyInfos);
+
         private:
             NitworkServer() = default;
 
@@ -53,11 +57,14 @@ namespace Nitwork {
 
             bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
 
+            /* BEGIN handle messages methods */
             void handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
             void handleReadyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
             void handleRelativePositionMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
+            /* END handle messages methods */
+
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static NitworkServer _instance; // instance of the NitworkServer (singleton)
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
@@ -87,7 +94,14 @@ namespace Nitwork {
                   },
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::handleLifeUpdateMsg(msg, endpoint);
-                  }}}
+                  }}},
+                {ENEMY_DEATH,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgEnemyDeath_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::handleClientEnemyDeath(msg, endpoint);
+                  }}},
             };
             std::map<enum n_actionType_t, actionHandler> _actionToSendHandlers = {
                 {LIFE_UPDATE,

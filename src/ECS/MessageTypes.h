@@ -11,12 +11,18 @@
 
 typedef unsigned int n_id_t;
 
+enum enemy_type_e {
+    CLASSIC_ENEMY = 0,
+};
+
+enum missileTypes_e { CLASSIC };
+
 PACK(struct health_s {
     int hp;
 });
 
 PACK(struct enemy_id_s {
-    unsigned int value;
+    unsigned int id;
 });
 
 PACK(struct position_relative_s {
@@ -28,6 +34,18 @@ PACK(struct position_relative_broadcast_s {
     char x;
     char y;
     n_id_t playerId;
+});
+
+PACK(struct position_absolute_s {
+    int x;
+    int y;
+});
+
+PACK(struct enemy_infos_s {
+    struct enemy_id_s id;
+    struct health_s life;
+    struct position_absolute_s pos;
+    enemy_type_e type;
 });
 
 #endif

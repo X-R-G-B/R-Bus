@@ -1,11 +1,12 @@
-#include "Logger.hpp"
-#include "Systems.hpp"
-#include "SystemManagersDirector.hpp"
 #include <csignal>
+#include "Logger.hpp"
+#include "SystemManagersDirector.hpp"
+#include "Systems.hpp"
 
 static bool isRunning = true;
 
-static void signalHandler( int signum ) {
+static void signalHandler(int signum)
+{
     Logger::info("Interrupt signal (" + std::to_string(signum) + ") received.");
     isRunning = false;
 }
