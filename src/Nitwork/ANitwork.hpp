@@ -153,6 +153,8 @@ namespace Nitwork {
 
         private:
             bool _isRunning = false; // A boolean to know if the NitworkServer is running
+            boost::asio::executor_work_guard<boost::asio::io_context::executor_type>
+                _workGuard = boost::asio::make_work_guard(_context); // The work guard
 
             n_id_t _packetId; // The packet id
 
