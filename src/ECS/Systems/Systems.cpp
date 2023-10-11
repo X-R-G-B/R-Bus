@@ -10,6 +10,7 @@
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include "CustomTypes.hpp"
+#include "Maths.hpp"
 #ifdef CLIENT
     #include "Raylib.hpp"
 #endif
@@ -171,8 +172,15 @@ namespace Systems {
 
         for (auto &id : ids) {
             if (arrVelocity.exist(id)) {
-                arrPosition[id].x += arrVelocity[id].speedX;
-                arrPosition[id].y += arrVelocity[id].speedY;
+                // arrPosition[id].x += arrVelocity[id].speedX;
+                // arrPosition[id].y += arrVelocity[id].speedY;
+                // REPLACE WHEN POSITION WILL BE AN INT
+                double posX = arrPosition[id].x;
+                double posY = arrPosition[id].y;
+                double speedX = Maths::integrerToDecimalWithTwoDecimals(arrVelocity[id].speedX);
+                double speedY = Maths::integrerToDecimalWithTwoDecimals(arrVelocity[id].speedY);
+                arrPosition[id].x = posX + speedX;
+                arrPosition[id].y = posY + speedY;
             }
         }
     }

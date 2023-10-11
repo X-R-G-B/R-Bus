@@ -72,7 +72,7 @@ namespace Systems {
         constexpr int bulletWidth          = 5;
         constexpr int bulletHeight         = 5;
         Types::CollisionRect collisionRect1  = {1, 1};
-        Types::Velocity velocity             = {0.7F, 0.0F};
+        Types::Velocity velocity             = {70, 0};
         Types::Missiles missileType          = {CLASSIC};
         Types::Dead deadComp                 = {};
         Types::PlayerAllies playerAlliesComp = {};

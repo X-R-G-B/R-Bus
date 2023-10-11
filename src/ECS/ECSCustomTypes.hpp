@@ -39,8 +39,8 @@ namespace Types {
     };
 
     struct Velocity {
-            float speedX;
-            float speedY;
+            int speedX;
+            int speedY;
 
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Velocity, speedX, speedY);
     };
