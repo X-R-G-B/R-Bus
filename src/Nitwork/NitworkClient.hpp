@@ -65,6 +65,17 @@ namespace Nitwork {
                 std::pair<handleBodyT, actionHandler>
             > _actionsHandlers = {
                 {
+                    INIT,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgInit_s>(handler, header);
+                        },
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receivePlayerInit(any, endpoint);
+                        }
+                    },
+                },
+                {
                     START_GAME,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
@@ -124,6 +135,24 @@ namespace Nitwork {
                     POSITION_ABSOLUTE,
                         [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             sendData<struct packetPositionAbsolute_s>(any, endpoint);
+                        }
+                },
+                {
+                    NEW_BULLET,
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetNewBullet_s>(any, endpoint);
+                        }
+                },
+                {
+                    LIFE_UPDATE,
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetLifeUpdate_s>(any, endpoint);
+                        }
+                },
+                {
+                    ENEMY_DEATH,
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetEnemyDeath_s>(any, endpoint);
                         }
                 }
             };
