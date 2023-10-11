@@ -61,15 +61,16 @@ namespace Nitwork {
             try {
                 while (_isRunning) {
                     std::this_thread::sleep_for(std::chrono::milliseconds(tick));
-                    std::unique_lock<std::mutex> lockTick(_tickMutex);
-                    _tickConvVar.notify_one();
+                    _tickMutex.lock();
+                    _tickConvVar.notify_all();
+                    _tickMutex.unlock();
                 }
             } catch (std::exception &e) {
-                std::cerr << "Error: " << e.what() << std::endl;
+                Logger::fatal("NITWORK: catch clock thread: " + std::string(e.what()));
             }
         });
         if (!_clockThread.joinable()) {
-            std::cerr << "Error: clock thread not joinable" << std::endl;
+            Logger::fatal("NITWORK: catch clock thread: not joinable");
             return false;
         }
         return true;
@@ -93,14 +94,22 @@ namespace Nitwork {
         _isRunning = false;
         _context.stop();
         for (auto &thread : _pool) {
-            thread.join();
+            _tickMutex.lock();
+            _tickConvVar.notify_all();
+            _tickMutex.unlock();
+            if (thread.joinable()) {
+                thread.join();
+            }
         }
-        _pool.clear();
         _clockThread.join();
+        _pool.clear();
     }
 
     void ANitwork::startReceiveHandler()
     {
+        if (!_isRunning) {
+            return;
+        }
         _receiveBuffer.fill(0);
         _socket.async_receive_from(
             boost::asio::buffer(_receiveBuffer),
@@ -112,14 +121,12 @@ namespace Nitwork {
 
     void ANitwork::callReceiveHandler(const std::string &message)
     {
-        std::cerr << message << std::endl;
+        Logger::error(message);
         startReceiveHandler();
     }
 
     void ANitwork::headerHandler(std::size_t bytes_received, const boost::system::error_code &error)
     {
-        std::unique_lock<std::mutex> lock(_receivedPacketsIdsMutex, std::defer_lock);
-
         if (error) {
             callReceiveHandler("Error: " + error.message());
             return;
@@ -140,9 +147,9 @@ namespace Nitwork {
             callReceiveHandler("Error: header nb action not valid or already received");
             return;
         }
-        lock.lock();
+        _receivedPacketsIdsMutex.lock();
         _receivedPacketsIds.push_back(header->id);
-        lock.unlock();
+        _receivedPacketsIdsMutex.unlock();
         handlePacketIdsReceived(*header);
         for (int i = 0; i < header->nb_action; i++) {
             handleBodyAction(*header, _senderEndpoint);
@@ -185,13 +192,12 @@ namespace Nitwork {
     void ANitwork::startInputHandler()
     {
         boost::asio::post(_context, [this]() {
-            std::unique_lock<std::mutex> lockTick(_tickMutex, std::defer_lock);
-            std::unique_lock<std::mutex> lockQueue(_inputQueueMutex, std::defer_lock);
+            std::unique_lock<std::mutex> lockTick(_tickMutex);
 
             try {
                 while (_isRunning) {
                     _tickConvVar.wait(lockTick);
-                    lockQueue.lock();
+                    _inputQueueMutex.lock();
                     _actions.sort([](auto &a, auto &b) {
                         return a.first.id < b.first.id;
                     });
@@ -199,7 +205,7 @@ namespace Nitwork {
                         action.second(action.first.data, action.first.endpoint);
                     }
                     _actions.clear();
-                    lockQueue.unlock();
+                    _inputQueueMutex.unlock();
                 }
             } catch (std::exception &e) {
                 std::cerr << e.what() << std::endl;
@@ -223,21 +229,20 @@ namespace Nitwork {
     void ANitwork::startOutputHandler()
     {
         boost::asio::post(_context, [this]() {
-            std::unique_lock<std::mutex> lockQueue(_outputQueueMutex, std::defer_lock);
-            std::unique_lock<std::mutex> lockTick(_tickMutex, std::defer_lock);
+            std::unique_lock<std::mutex> lockTick(_tickMutex);
             const std::map<enum n_actionType_t, actionHandler> &actionToSendHandlers =
                 getActionToSendHandlers();
 
             try {
                 while (_isRunning) {
                     _tickConvVar.wait(lockTick);
-                    lockQueue.lock();
+                    _outputQueueMutex.lock();
                     _outputQueue.sort([](auto &a, auto &b) {
                         return a.second.id < b.second.id;
                     });
                     sendPackages(actionToSendHandlers);
                     _outputQueue.clear();
-                    lockQueue.unlock();
+                    _outputQueueMutex.unlock();
                 }
             } catch (std::exception &e) {
                 std::cerr << e.what() << std::endl;

@@ -125,6 +125,24 @@ namespace Nitwork {
                         [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             sendData<struct packetPositionAbsolute_s>(any, endpoint);
                         }
+                },
+                {
+                    NEW_BULLET,
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetNewBullet_s>(any, endpoint);
+                        }
+                },
+                {
+                    LIFE_UPDATE,
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetLifeUpdate_s>(any, endpoint);
+                        }
+                },
+                {
+                    ENEMY_DEATH,
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetEnemyDeath_s>(any, endpoint);
+                        }
                 }
             };
             // clang-format on
