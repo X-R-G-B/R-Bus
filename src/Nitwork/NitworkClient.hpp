@@ -107,6 +107,17 @@ namespace Nitwork {
                         }
                     }
                 },
+                {
+                    NEW_ENEMY,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgNewEnemy_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveNewEnemy(any, endpoint);
+                        }
+                    }
+                }
             };
             std::map<
                 enum n_actionType_t,

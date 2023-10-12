@@ -37,19 +37,19 @@ namespace Systems {
     void handleClientEnemyDeath(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const struct msgEnemyDeath_s &msgClientEnemyDeath =
+        const struct msgEnemyDeath_s &msgEnemyDeath =
             std::any_cast<struct msgEnemyDeath_s>(msg);
         auto &registry = Registry::getInstance();
 
-        if (msgClientEnemyDeath.magick != MAGICK_ENEMY_DEATH) {
+        if (msgEnemyDeath.magick != MAGICK_ENEMY_DEATH) {
             Logger::error("Error: magick is not CLIENT_ENEMY_DEATH");
             return;
         }
         auto &arrEnemies = registry.getComponents<Types::Enemy>();
         auto arrHealth   = registry.getComponents<struct health_s>();
         auto arrPos      = registry.getComponents<Types::Position>();
-        auto it = std::find_if(arrEnemies.begin(), arrEnemies.end(), [&msgClientEnemyDeath](auto &enemy) {
-            return enemy.getConstId().id == msgClientEnemyDeath.enemyId.id;
+        auto it = std::find_if(arrEnemies.begin(), arrEnemies.end(), [&msgEnemyDeath](auto &enemy) {
+            return enemy.getConstId().id == msgEnemyDeath.enemyId.id;
         });
         if (it == arrEnemies.end()) {
             return;
