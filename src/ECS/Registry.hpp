@@ -10,13 +10,13 @@
 #include <any>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <typeindex>
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
-#include <mutex>
 #include "Clock.hpp"
 #include "Logger.hpp"
 #include "SparseArray.hpp"
