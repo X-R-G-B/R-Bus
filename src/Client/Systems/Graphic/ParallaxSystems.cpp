@@ -58,8 +58,6 @@ namespace Systems::ParallaxSystems {
         Registry::getInstance().setToBackLayers(id);
     }
 
-    const std::string parallaxFile = "assets/Json/parallaxData.json";
-
     void initParalax(std::size_t managerId, std::size_t systemId)
     {
         std::vector<nlohmann::basic_json<>> parallaxData =
