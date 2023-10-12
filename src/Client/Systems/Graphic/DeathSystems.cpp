@@ -6,7 +6,6 @@
 */
 
 #include "DeathSystems.hpp"
-#include <iostream>
 #include <optional>
 #include <unordered_map>
 #include "CustomTypes.hpp"
@@ -42,7 +41,6 @@ namespace Systems {
                 Registry::getInstance().getEntitiesByComponents({typeIndex});
             for (std::size_t id : entities) {
                 if (arrDead.exist(id) && arrDead[id].deathFunction == std::nullopt) {
-                    std::cout << "set fct " << std::endl;
                     arrDead[id].deathFunction = function;
                 }
             }

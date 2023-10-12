@@ -6,7 +6,6 @@
 */
 
 #include "Registry.hpp"
-#include <string>
 #include "Clock.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -54,7 +53,6 @@ void Registry::removeEntity(std::size_t id)
         removeEntityFromLayer(id, layer);
     }
     removeEntityFromLayer(id, _defaultLayer);
-    ;
     for (auto &layer : _frontLayers) {
         removeEntityFromLayer(id, layer);
     }
@@ -62,15 +60,20 @@ void Registry::removeEntity(std::size_t id)
 
 void Registry::clear()
 {
+    // Call unload functions for raylib components
 #ifdef CLIENT
     for (std::size_t i = 0; i < _entitiesNb; i++) {
         unloadRaylibComponents(i);
     }
 #endif
+
     _data.clear();
     _addComponentPlaceFunctions.clear();
     _removeComponentFunctions.clear();
     _getExistingsId.clear();
+    _entitiesNb = 0;
+
+    // Clear sprites layers
     for (auto &layer : _backLayers) {
         layer.clear();
     }
@@ -78,7 +81,6 @@ void Registry::clear()
     for (auto &layer : _frontLayers) {
         layer.clear();
     }
-    _entitiesNb = 0;
 }
 
 static std::vector<std::size_t> match(std::vector<std::size_t> fst, std::vector<std::size_t> scd)

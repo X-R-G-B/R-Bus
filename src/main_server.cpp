@@ -1,14 +1,32 @@
+#include <csignal>
+#include "Logger.hpp"
 #include "NitworkServer.hpp"
+#include "Registry.hpp"
+#include "SystemManagersDirector.hpp"
+#include "Systems.hpp"
+
+static bool isRunning = true;
+
+static void signalHandler(int signum)
+{
+    Logger::info("Interrupt signal (" + std::to_string(signum) + ") received.");
+    isRunning = false;
+    signal(SIGINT, SIG_DFL);
+}
 
 int main()
 {
-    const int port = 4242;
+#ifndef NDEBUG
+    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
+#endif
+    Logger::info("Starting Server...");
+    Nitwork::NitworkServer::getInstance().start(4242);
+    Systems::SystemManagersDirector::getInstance().addSystemManager(Systems::getECSSystems());
+    signal(SIGINT, signalHandler);
 
-    try {
-        Nitwork::NitworkServer::getInstance().start(port);
-        while (true) { }
-    } catch (std::exception& e) {
-        std::cerr << e.what() << std::endl;
+    while (isRunning) {
+        Systems::SystemManagersDirector::getInstance().getSystemManager(0).updateSystems();
     }
+    Nitwork::NitworkServer::getInstance().stop();
     return 0;
 }

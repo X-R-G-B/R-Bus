@@ -35,10 +35,20 @@ namespace Nitwork {
                 n_id_t playerId,
                 const struct health_s &life);
 
+            void addEnemyDeathMessage(n_id_t enemyId);
+
+            void addNewEnemyMessage(
+                boost::asio::ip::udp::endpoint &endpoint,
+                const struct enemy_infos_s &enemyInfos);
+
+            void addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
+
         private:
             NitworkServer() = default;
 
             bool startNitworkConfig(int port, const std::string &ip) final;
+
+            void sendToAllClients(const Packet &packet);
 
             void handleBodyAction(
                 const struct header_s &header,
@@ -49,9 +59,11 @@ namespace Nitwork {
 
             bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
 
+            /* BEGIN handle messages methods */
             void handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
             void handleReadyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
+            /* END handle messages methods */
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static NitworkServer _instance; // instance of the NitworkServer (singleton)
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
@@ -81,15 +93,38 @@ namespace Nitwork {
                   },
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::handleLifeUpdateMsg(msg, endpoint);
-                  }}}
+                  }}},
+                {ENEMY_DEATH,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgEnemyDeath_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::handleClientEnemyDeath(msg, endpoint);
+                  }}},
             };
             std::map<enum n_actionType_t, actionHandler> _actionToSendHandlers = {
+                {
+                 INIT, [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                        sendData<struct packetMsgInit_s>(any, endpoint);
+                    }, },
                 {LIFE_UPDATE,
-                 [this](std::any &any,              boost::asio::ip::udp::endpoint &endpoint) {
+                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                      sendData<struct packetLifeUpdate_s>(any, endpoint);
-                 }             },
-                {START_GAME,  [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                 }},
+                {START_GAME,
+                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                      sendData<struct packetMsgStartGame_s>(any, endpoint);
+                 }},
+                {LIFE_UPDATE,
+                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                     sendData<struct packetLifeUpdate_s>(any, endpoint);
+                 }},
+                {ENEMY_DEATH,
+                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                     sendData<struct packetEnemyDeath_s>(any, endpoint);
+                 }},
+                {NEW_ENEMY, [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                     sendData<struct packetNewEnemy_s>(any, endpoint);
                  }}
             };
     };

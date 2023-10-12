@@ -6,6 +6,9 @@
 */
 
 #include "NitworkServer.hpp"
+#include "ECSCustomTypes.hpp"
+#include "Logger.hpp"
+#include "Registry.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -36,9 +39,16 @@ namespace Nitwork {
         return true;
     }
 
+    void NitworkServer::sendToAllClients(const Packet &packet)
+    {
+        for (auto &endpoint : _endpoints) {
+            addPacketToSend(endpoint, packet);
+        }
+    }
+
     void NitworkServer::handleBodyAction(
         const struct header_s &header,
-        const boost::asio::ip::udp::endpoint & /* unused */)
+        const boost::asio::ip::udp::endpoint &endpoint)
     {
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
@@ -51,6 +61,10 @@ namespace Nitwork {
             std::cerr << "Error: action not found" << std::endl;
             return;
         }
+        Logger::info(
+            "Received packet from " + endpoint.address().to_string() + ":" + std::to_string(endpoint.port())
+            + " with id " + std::to_string(header.id) + " and action of type "
+            + std::to_string(action->magick));
         it->second.first(it->second.second, header);
     }
 
@@ -88,6 +102,7 @@ namespace Nitwork {
             return;
         }
         _endpoints.emplace_back(endpoint);
+        addStarGameMessage(endpoint, _endpoints.size());
     }
 
     void NitworkServer::handleReadyMsg(
@@ -95,13 +110,36 @@ namespace Nitwork {
         boost::asio::ip::udp::endpoint &endpoint /* unused */)
     {
         if (!isClientAlreadyConnected(endpoint)) {
-            std::cerr << "Client not connected" << std::endl;
+            Logger::info("Client not connected");
             return;
         }
     }
     /* End Handle packet (msg) Section */
 
     /* Message Creation Section */
+    void NitworkServer::addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetMsgPlayerInit_s packetMsgPlayerInit = {
+            .header =
+                {.magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2},
+            .action = {.magick = INIT},
+            .msg    = {.magick = MAGICK_INIT, .playerId = playerId}
+        };
+        Packet packet(
+            packetMsgPlayerInit.header.id,
+            packetMsgPlayerInit.action.magick,
+            std::make_any<struct packetMsgPlayerInit_s>(packetMsgPlayerInit));
+        std::cout << "Send PLAYER_INIT to " << endpoint.address().to_string() << ":" << endpoint.port()
+                  << std::endl;
+        addPacketToSend(endpoint, packet);
+    }
+
     void NitworkServer::addStarGameMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
@@ -112,7 +150,7 @@ namespace Nitwork {
              getPacketID(),
              1, HEADER_CODE2},
             {START_GAME},
-            {MAGICK_START_GAME,             playerId               }
+            {MAGICK_START_GAME, playerId}
         };
         Packet packet(
             packetMsgStartGame.header.id,
@@ -137,13 +175,57 @@ namespace Nitwork {
                          .id               = getPacketID(),
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action = {.magick = LIFE_UPDATE           },
-            .msg    = {.magick = MAGICK_LIFE_UPDATE,                     .playerId = playerId,     .life = life                                                 }
+            .action        = {.magick = LIFE_UPDATE},
+            .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE, .playerId = playerId, .life = life}
         };
         Packet packet(
             packetLifeUpdate.header.id,
             packetLifeUpdate.action.magick,
             std::make_any<struct packetLifeUpdate_s>(packetLifeUpdate));
+        addPacketToSend(endpoint, packet);
+    }
+
+    void NitworkServer::addEnemyDeathMessage(n_id_t enemyId)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetEnemyDeath_s packetEnemyDeath = {
+            .header =
+                {.magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2},
+            .action        = {.magick = ENEMY_DEATH},
+            .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH, .enemyId = {.id = enemyId}}
+        };
+        Packet packet(
+            packetEnemyDeath.header.id,
+            packetEnemyDeath.action.magick,
+            std::make_any<struct packetEnemyDeath_s>(packetEnemyDeath));
+        sendToAllClients(packet);
+    }
+
+    void NitworkServer::addNewEnemyMessage(
+        boost::asio::ip::udp::endpoint &endpoint,
+        const struct enemy_infos_s &enemyInfos)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetNewEnemy_s packetNewEnemy = {
+            .header =
+                {.magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2},
+            .action = {.magick = NEW_ENEMY},
+            .msg    = {.magick = MAGICK_NEW_ENEMY, .enemyInfos = enemyInfos}
+        };
+        Packet packet(
+            packetNewEnemy.header.id,
+            packetNewEnemy.action.magick,
+            std::make_any<struct packetNewEnemy_s>(packetNewEnemy));
         addPacketToSend(endpoint, packet);
     }
 } // namespace Nitwork

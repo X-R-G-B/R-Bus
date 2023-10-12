@@ -7,6 +7,7 @@
 
 #include "EventsSystems.hpp"
 #include "CustomTypes.hpp"
+#include "NitworkClient.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
@@ -72,13 +73,13 @@ namespace Systems {
         constexpr float bulletHeight         = 5.0F;
         Types::CollisionRect collisionRect1  = {1, 1};
         Types::Velocity velocity             = {0.7F, 0.0F};
-        Types::Missiles missileType          = {Types::MissileTypes::CLASSIC};
-        Types::Dead deadComp                 = {std::nullopt};
+        Types::Missiles missileType          = {CLASSIC};
+        Types::Dead deadComp                 = {};
         Types::PlayerAllies playerAlliesComp = {};
         Types::Position position             = {pos.x, pos.y};
         Types::CollisionRect collisionRect2  = {bulletWidth, bulletHeight};
         Raylib::Sprite sprite                = {bulletPath, bulletWidth, bulletHeight, entityId};
-        health_s healthComp                  = {1};
+        struct health_s healthComp           = {1};
         Types::Damage damageComp             = {10};
 
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
@@ -89,10 +90,14 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
         Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
-        Registry::getInstance().getComponents<health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
         Registry::getInstance().setToFrontLayers(entityId);
+        // send bullet to server
+        Nitwork::NitworkClient::getInstance().addNewBulletMsg(
+            {static_cast<int>(position.x), static_cast<int>(position.y)},
+            missileType.type);
     }
 
     const std::size_t waitTimeBullet = 500;

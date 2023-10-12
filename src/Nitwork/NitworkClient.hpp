@@ -32,6 +32,10 @@ namespace Nitwork {
             void addInitMsg();
             void addReadyMsg();
             void addPositionRelativeMsg(struct position_relative_s pos);
+            void addPositionAbsoluteMsg(struct position_absolute_s pos);
+            void addNewBulletMsg(const struct position_absolute_s &pos, const missileTypes_e &missileType);
+            void addLifeUpdateMsg(n_id_t playerId, const struct health_s &life);
+            void addEnemyDeathMsg(n_id_t id);
 
         private:
             NitworkClient();
@@ -62,6 +66,17 @@ namespace Nitwork {
                 std::pair<handleBodyT, actionHandler>
             > _actionsHandlers = {
                 {
+                    INIT,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgInit_s>(handler, header);
+                        },
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receivePlayerInit(any, endpoint);
+                        }
+                    },
+                },
+                {
                     START_GAME,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
@@ -76,10 +91,21 @@ namespace Nitwork {
                     LIFE_UPDATE,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
-                            handleBody<struct msgStartGame_s>(handler, header);
+                            handleBody<struct msgLifeUpdate_s>(handler, header);
                         },
                         [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             Systems::receiveLifeUpdate(any, endpoint);
+                        }
+                    }
+                },
+                {
+                    ENEMY_DEATH,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgEnemyDeath_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveEnemyDeath(any, endpoint);
                         }
                     }
                 }
@@ -104,6 +130,30 @@ namespace Nitwork {
                     POSITION_RELATIVE,
                         [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             sendData<struct packetPositionRelative_s>(any, endpoint);
+                        }
+                },
+                {
+                    POSITION_ABSOLUTE,
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetPositionAbsolute_s>(any, endpoint);
+                        }
+                },
+                {
+                    NEW_BULLET,
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetNewBullet_s>(any, endpoint);
+                        }
+                },
+                {
+                    LIFE_UPDATE,
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetLifeUpdate_s>(any, endpoint);
+                        }
+                },
+                {
+                    ENEMY_DEATH,
+                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            sendData<struct packetEnemyDeath_s>(any, endpoint);
                         }
                 }
             };
