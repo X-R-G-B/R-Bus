@@ -22,7 +22,7 @@
 
     #define MAGICK_INIT '\x06'
     #define MAGICK_READY '\x17'
-    #define MAGICK_START_GAME '\a'
+    #define MAGICK_START_WAVE '\a'
     #define MAGICK_POSITION_RELATIVE '\b'
     #define MAGICK_LIFE_UPDATE '\x0b'
     #define MAGICK_ENEMY_DEATH '\x0c'
@@ -39,13 +39,14 @@ enum n_actionType_t {
     NO_ACTION = 0,
     INIT = 1,
     READY = 2,
-    START_GAME = 3,
-    LIFE_UPDATE = 4,
-    ENEMY_DEATH = 5,
-    POSITION_RELATIVE = 6,
-    POSITION_ABSOLUTE = 7,
-    NEW_BULLET = 8,
-    NEW_ENEMY = 9,
+    START_WAVE = 3,
+    ENEMY_NB = 4,
+    LIFE_UPDATE = 5,
+    ENEMY_DEATH = 6,
+    POSITION_RELATIVE = 7,
+    POSITION_ABSOLUTE = 8,
+    NEW_BULLET = 9,
+    NEW_ENEMY = 10,
     N_ACTION_TYPE_MAX,
 };
 
@@ -86,16 +87,40 @@ PACK(struct packetMsgReady_s {
         struct msgReady_s msgReady;
 });
 
-/* Message Start Game */
-PACK(struct msgStartGame_s {
+/* Message Position Relative */
+PACK(struct msgPlayerInit_s {
         n_magick_t magick;
         n_id_t playerId;
 });
 
-PACK(struct packetMsgStartGame_s {
+PACK(struct packetMsgPlayerInit_s {
         struct header_s header;
         struct action_s action;
-        struct msgStartGame_s msgStartGame;
+        struct msgPlayerInit_s msg;
+});
+
+/* Message Start Game */
+PACK(struct msgStartWave_s {
+        n_magick_t magick;
+        n_id_t playerId;
+});
+
+PACK(struct packetMsgStartWave_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgStartWave_s msgStartWave;
+});
+
+/* Message Enemy Nb */
+PACK(struct msgEnemyNb_s {
+        n_magick_t magick;
+        n_id_t enemyNb;
+});
+
+PACK(struct packetMsgEnemyNb_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgEnemyNb_s msgEnemyNb;
 });
 
 /* Message Life Update */
@@ -133,18 +158,6 @@ PACK(struct packetPositionRelative_s {
         struct header_s header;
         struct action_s action;
         struct msgPositionRelative_s msg;
-});
-
-/* Message Client Enemy Death */
-PACK(struct msgClientEnemyDeath_s {
-        n_magick_t magick;
-        struct enemy_id_s enemyId;
-});
-
-PACK(struct packetClientEnemyDeath_s {
-        struct header_s header;
-        struct action_s action;
-        struct msgClientEnemyDeath_s msg;
 });
 
 /* Message New Enemy */

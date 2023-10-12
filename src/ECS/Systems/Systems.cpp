@@ -11,13 +11,11 @@
 #include <sstream>
 #include "CustomTypes.hpp"
 #include "Maths.hpp"
-#ifdef CLIENT
-    #include "Raylib.hpp"
-#endif
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #ifdef CLIENT
     #include "NitworkClient.hpp"
+    #include "Raylib.hpp"
 #else
     #include "NitworkServer.hpp"
 #endif
@@ -54,17 +52,21 @@ namespace Systems {
     {
         Registry &registry                          = Registry::getInstance();
         Registry::components<Types::Player> players = registry.getComponents<Types::Player>();
-        Registry::components<Types::Enemy> enemys   = registry.getComponents<Types::Enemy>();
+        Registry::components<Types::Enemy> enemies  = registry.getComponents<Types::Enemy>();
         Registry::components<Types::PlayerAllies> playerAllies =
             registry.getComponents<Types::PlayerAllies>();
         Registry::components<Types::EnemyAllies> enemyAllies = registry.getComponents<Types::EnemyAllies>();
 
         if ((playerAllies.exist(fstId) && players.exist(scdId))
-            || (playerAllies.exist(scdId) && players.exist(fstId))) {
+            || (playerAllies.exist(scdId) && players.exist(fstId))
+            || (playerAllies.exist(fstId) && playerAllies.exist(scdId))
+            || (players.exist(scdId) && players.exist(fstId))) {
             return true;
         }
-        if ((enemyAllies.exist(fstId) && enemys.exist(scdId))
-            || (enemyAllies.exist(scdId) && enemys.exist(fstId))) {
+        if ((enemyAllies.exist(fstId) && enemies.exist(scdId))
+            || (enemyAllies.exist(scdId) && enemies.exist(fstId))
+            || (enemyAllies.exist(fstId) && enemyAllies.exist(scdId))
+            || (enemies.exist(scdId) && enemies.exist(fstId))) {
             return true;
         }
         return false;
@@ -89,10 +91,6 @@ namespace Systems {
         Registry::components<struct health_s> arrHealth =
             Registry::getInstance().getComponents<struct health_s>();
 
-        if (checkAllies(firstEntity, secondEntity)) {
-            return;
-        }
-
         if (arrDamage.exist(firstEntity) && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
                 arrHealth[secondEntity].hp -= arrDamage[firstEntity].damage;
@@ -101,6 +99,15 @@ namespace Systems {
 #endif
             }
         }
+    }
+
+    static void checkSide(std::size_t firstEntity, std::size_t secondEntity)
+    {
+        if (checkAllies(firstEntity, secondEntity)) {
+            return;
+        }
+        giveDamages(firstEntity, secondEntity);
+        giveDamages(secondEntity, firstEntity);
     }
 
     static void checkCollisionEntity(
@@ -122,8 +129,7 @@ namespace Systems {
                     && entityPos.x + entityColl.width > sndEntityPos.x
                     && entityPos.y < sndEntityPos.y + sndEntityRect.height
                     && entityPos.y + entityColl.height > sndEntityPos.y) {
-                    giveDamages(id, *itIds);
-                    giveDamages(*itIds, id);
+                    checkSide(id, *itIds);
                 }
             }
             itIds++;
@@ -161,15 +167,21 @@ namespace Systems {
         }
     }
 
+    const std::size_t moveTime = 20;
+
     void moveEntities(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Velocity> arrVelocity =
             Registry::getInstance().getComponents<Types::Velocity>();
-
+        Clock &clock                 = Registry::getInstance().getClock();
+        static std::size_t clockId   = clock.create();
         std::vector<std::size_t> ids = arrPosition.getExistingsId();
 
+        if (clock.elapsedMillisecondsSince(clockId) < moveTime) {
+            return;
+        }
         for (auto &id : ids) {
             if (arrVelocity.exist(id)) {
                 // arrPosition[id].x += arrVelocity[id].speedX;
@@ -183,34 +195,36 @@ namespace Systems {
                 arrPosition[id].y = posY + speedY;
             }
         }
+        clock.restart(clockId);
     }
 
-    static void initEnnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &ennemyData)
+    static void initEnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &enemyData)
     {
 #ifdef CLIENT
-        std::size_t id        = Registry::getInstance().addEntity();
-        Raylib::Sprite ennemy = {ennemyData["spritePath"], ennemyData["width"], ennemyData["height"], id};
+        std::size_t id       = Registry::getInstance().addEntity();
+        Raylib::Sprite enemy = {enemyData["spritePath"], enemyData["width"], enemyData["height"], id};
 #endif
-        Types::Position position           = {Types::Position(ennemyData["position"])};
-        Types::CollisionRect collisionRect = {Types::CollisionRect(ennemyData["collisionRect"])};
-        Types::Rect rect                   = {Types::Rect(ennemyData["rect"])};
-        struct health_s healthComp         = {ennemyData["health"]};
-        Types::Damage damageComp           = {ennemyData["damage"]};
-        Types::Velocity velocity           = {Types::Velocity(ennemyData["velocity"])};
+        Types::Position position           = {Types::Position(enemyData["position"])};
+        Types::CollisionRect collisionRect = {Types::CollisionRect(enemyData["collisionRect"])};
+        Types::Rect rect                   = {Types::Rect(enemyData["rect"])};
+        struct health_s healthComp         = {enemyData["health"]};
+        Types::Damage damageComp           = {enemyData["damage"]};
+        Types::Enemy enemyStruct           = {};
+        Types::Velocity velocity           = {Types::Velocity(enemyData["velocity"])};
 
-        nlohmann::json animRectData = ennemyData["animRect"];
+        nlohmann::json animRectData = enemyData["animRect"];
         nlohmann::json moveData     = animRectData["move"];
         nlohmann::json attackData   = animRectData["attack"];
         nlohmann::json deadData     = animRectData["dead"];
 
         Types::AnimRect animRect = {
-            Types::Rect(ennemyData["rect"]),
+            Types::Rect(enemyData["rect"]),
             moveData.get<std::vector<Types::Rect>>(),
             attackData.get<std::vector<Types::Rect>>(),
             deadData.get<std::vector<Types::Rect>>()};
 
 #ifdef CLIENT
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(ennemy);
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(enemy);
 #endif
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
@@ -219,35 +233,36 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
+        Registry::getInstance().getComponents<Types::Enemy>().insertBack(enemyStruct);
     }
 
-    static void initEnnemy(const std::string &path)
+    void initEnemy(const std::string &path)
     {
         nlohmann::json jsonData = openJsonData(path);
 
-        if (jsonData["ennemy"] == nullptr) {
+        if (jsonData["enemy"] == nullptr) {
             return;
         }
-        for (auto &ennemyData : jsonData["ennemy"]) {
-            initEnnemyEntity(ennemyData);
+        for (auto &enemyData : jsonData["enemy"]) {
+            initEnemyEntity(enemyData);
         }
     }
 
-    const std::string ennemyFile = "assets/Json/ennemyData.json";
+    const std::string enemyFile = "assets/Json/enemyData.json";
 
     void initWave(std::size_t managerId, std::size_t systemId)
     {
-        static std::size_t ennemyNumber = 5;
-        const std::size_t spawnDelay    = 2;
-        Clock &clock                    = Registry::getInstance().getClock();
-        static std::size_t clockId      = clock.create(true);
+        static std::size_t enemyNumber = 5;
+        const std::size_t spawnDelay   = 2;
+        Clock &clock                   = Registry::getInstance().getClock();
+        static std::size_t clockId     = clock.create(true);
 
         if (clock.elapsedSecondsSince(clockId) > spawnDelay) {
-            initEnnemy(ennemyFile);
-            ennemyNumber--;
+            initEnemy(enemyFile);
+            enemyNumber--;
             clock.restart(clockId);
         }
-        if (ennemyNumber <= 0) {
+        if (enemyNumber <= 0) {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
     }
@@ -294,10 +309,11 @@ namespace Systems {
         if (!arrEnemies.exist(id)) {
             return;
         }
+        n_id_t castedId = static_cast<n_id_t>(id);
 #ifdef CLIENT
-        //        Nitwork::NitworkClient::getInstance().addEnemyDeathMessage(id);
+        Nitwork::NitworkClient::getInstance().addEnemyDeathMsg(castedId);
 #else
-        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(id);
+        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(castedId);
 #endif
     }
 
@@ -419,7 +435,6 @@ namespace Systems {
             entitiesCollision,
             destroyOutsideWindow,
             deathChecker,
-            initWave,
             moveEntities};
     }
 } // namespace Systems

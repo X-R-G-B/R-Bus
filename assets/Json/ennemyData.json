@@ -1,5 +1,5 @@
 {
-    "ennemy" : [
+    "enemy" : [
         {
             "spritePath": "assets/R-TypeSheet/r-typesheet20.gif",
             "damage": 10.0,

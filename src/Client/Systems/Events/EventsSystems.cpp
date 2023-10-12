@@ -123,11 +123,11 @@ namespace Systems {
     void EventsSystems::changeScene(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
-            SceneManager &sceneManager = SceneManager::getInstance();
-            if (sceneManager.getCurrentScene() == MAIN_GAME) {
-                sceneManager.changeScene(MENU);
+            auto &sceneManager = Scene::SceneManager::getInstance();
+            if (sceneManager.getCurrentScene() == Scene::Scene::MAIN_GAME) {
+                sceneManager.changeScene(Scene::Scene::MENU);
             } else {
-                sceneManager.changeScene(MAIN_GAME);
+                sceneManager.changeScene(Scene::Scene::MAIN_GAME);
             }
         }
     }

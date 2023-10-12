@@ -124,7 +124,6 @@ namespace Nitwork {
 
                 data.header.ids_received = getIdsReceived();
                 auto updatedPacket       = Packet(packet.id, packet.action, std::make_any<T>(data));
-                std::cout << "updatedPacket.header.ids_received: " << data.header.ids_received << std::endl;
                 return updatedPacket;
             }
 
@@ -183,9 +182,9 @@ namespace Nitwork {
                  [this](const std::any &any) {
                      return updateHeaderPacket<struct packetMsgReady_s>(std::any_cast<Packet>(any));
                  }},
-                {START_GAME,
+                {START_WAVE,
                  [this](const std::any &any) {
-                     return updateHeaderPacket<struct packetMsgStartGame_s>(std::any_cast<Packet>(any));
+                     return updateHeaderPacket<struct packetMsgStartWave_s>(std::any_cast<Packet>(any));
                  }},
             }; // A map of actions which will be sent to the clients
     };         // class INitwork
