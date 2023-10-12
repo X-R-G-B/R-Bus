@@ -124,7 +124,6 @@ namespace Nitwork {
 
                 data.header.ids_received = getIdsReceived();
                 auto updatedPacket       = Packet(packet.id, packet.action, std::make_any<T>(data));
-                std::cout << "updatedPacket.header.ids_received: " << data.header.ids_received << std::endl;
                 return updatedPacket;
             }
 
