@@ -58,6 +58,14 @@ namespace Systems {
         arrPlayer[0].constId = playerInit.playerId;
     }
 
+    const std::string enemyFile = "assets/Json/enemyData.json";
+
+    void receiveNewEnemy(std::any &any, boost::asio::ip::udp::endpoint &)
+    {
+        const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
+        initEnemy(enemyFile);
+    }
+
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
     {
         constexpr std::size_t delay = 10;
