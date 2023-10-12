@@ -13,7 +13,7 @@
 #include <vector>
 
 namespace Systems {
-    void initEnemy(const std::string &path);
+    void reviveEnemy(struct enemy_id_s id);
     void windowCollision(std::size_t, std::size_t);
     void entitiesCollision(std::size_t, std::size_t);
     void deathChecker(std::size_t, std::size_t);

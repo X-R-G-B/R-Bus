@@ -65,6 +65,11 @@ class SparseArray {
             return _dense[_sparse[id]];
         }
 
+        Component &back()
+        {
+            return _dense.back();
+        }
+
         /*
          * A dense sparseArrays is not sort by entities id, the begin of two
          * sparseArrays could be different entities, only _sparse are
