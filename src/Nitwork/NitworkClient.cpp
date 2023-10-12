@@ -32,6 +32,7 @@ namespace Nitwork {
         _endpoint = *_resolver.resolve(boost::asio::ip::udp::v4(), ip, std::to_string(port)).begin();
         boost::asio::ip::udp::socket socket(_context);
         _socket.open(boost::asio::ip::udp::v4());
+        _socket.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 0));
         if (!_socket.is_open()) {
             Registry::getInstance().getLogger().error("Socket not open");
             return false;
@@ -49,15 +50,17 @@ namespace Nitwork {
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (endpoint.address().to_string() != _endpoint.address().to_string()) {
-            std::cerr << "Error: endpoint is not the server" << std::endl;
+            Logger::error(
+                "NITWORK: endpoint " + endpoint.address().to_string() + " is not the server"
+                + _endpoint.address().to_string());
             return;
         }
         auto it = _actionsHandlers.find(action->magick);
         if (it == _actionsHandlers.end()) {
-            std::cerr << "Error: action not found" << std::endl;
+            Logger::error("NITWORK: action not found");
             return;
         }
-        Logger::info(
+        Logger::debug(
             "Received packet from " + endpoint.address().to_string() + ":" + std::to_string(endpoint.port())
             + " with id " + std::to_string(header.id) + " and action of type "
             + std::to_string(action->magick));
@@ -71,16 +74,16 @@ namespace Nitwork {
 
     /* Handlers Section */
     // NOLINTBEGIN(readability-convert-member-functions-to-static)
-    void NitworkClient::handleStartGame(const std::any &msg, boost::asio::ip::udp::endpoint & /* unused */)
+    void NitworkClient::handleStartWave(const std::any &msg, boost::asio::ip::udp::endpoint & /* unused */)
     {
         // NOLINTEND(readability-convert-member-functions-to-static)
-        const struct msgStartGame_s &msgStartGame = std::any_cast<struct msgStartGame_s>(msg);
+        const struct msgStartWave_s &msgStartWave = std::any_cast<struct msgStartWave_s>(msg);
 
-        if (msgStartGame.magick != MAGICK_START_GAME) {
-            std::cerr << "Error: magick is not START_GAME" << std::endl;
+        if (msgStartWave.magick != MAGICK_START_WAVE) {
+            Logger::error("NITWORK: magick is not START_WAVE");
             return;
         }
-        std::cout << "Game started" << std::endl;
+        Logger::info("Game started");
     }
     /* End Handlers Section */
 
@@ -90,13 +93,13 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgInit_s packetMsgInit = {
             {
-             HEADER_CODE1,                                                    getIdsReceived(),
+             HEADER_CODE1, getIdsReceived(),
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2,
              },
             {INIT},
-            {MAGICK_INIT                                                              }
+            {MAGICK_INIT}
         };
         Packet packet(
             packetMsgInit.header.id,
@@ -110,13 +113,13 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgReady_s packetMsgReady = {
             {
-             HEADER_CODE1,                                                    getIdsReceived(),
+             HEADER_CODE1, getIdsReceived(),
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2,
              },
             {READY},
-            {MAGICK_READY                                                              }
+            {MAGICK_READY}
         };
         Packet packet(
             packetMsgReady.header.id,
@@ -248,6 +251,36 @@ namespace Nitwork {
             packetLifeUpdate.action.magick,
             std::make_any<struct packetLifeUpdate_s>(packetLifeUpdate));
 
+        addPacketToSend(_endpoint, packet);
+    }
+
+    void NitworkClient::addEnemyDeathMsg(n_id_t id)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetEnemyDeath_s packetEnemyDeath = {
+            .header =
+                {
+                         .magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2,
+                         },
+            .action =
+                {
+                         .magick = ENEMY_DEATH,
+                         },
+            .msgEnemyDeath =
+                {
+                         .magick  = MAGICK_ENEMY_DEATH,
+                         .enemyId = {.id = id},
+                         },
+        };
+        Packet packet(
+            packetEnemyDeath.header.id,
+            packetEnemyDeath.action.magick,
+            std::make_any<struct packetEnemyDeath_s>(packetEnemyDeath));
         addPacketToSend(_endpoint, packet);
     }
 } // namespace Nitwork

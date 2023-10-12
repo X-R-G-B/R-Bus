@@ -24,6 +24,7 @@
 #include <cstddef>
 #include "Logger.hpp"
 #include "NitworkClient.hpp"
+#include "Registry.hpp"
 #include "SceneManager.hpp"
 
 constexpr int EXIT_EPITECH = 84;
@@ -31,7 +32,7 @@ constexpr int EXIT_EPITECH = 84;
 static bool checkArgs(int ac, char **av)
 {
     if (ac != 3) {
-        Logger::error("Usage: ./rtype_client <ip>");
+        Logger::error("Usage: ./rtype_client <ip> <port>");
         return false;
     }
     if (std::stoi(av[2]) < 0 || std::stoi(av[2]) > 65535) {
@@ -47,6 +48,9 @@ static bool checkArgs(int ac, char **av)
 
 int main(int ac, char **av)
 {
+#ifndef NDEBUG
+    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
+#endif
     if (!checkArgs(ac, av)) {
         return EXIT_EPITECH;
     }
@@ -55,7 +59,7 @@ int main(int ac, char **av)
     }
     Nitwork::NitworkClient::getInstance().addInitMsg();
     Nitwork::NitworkClient::getInstance().addReadyMsg();
-    SceneManager &sceneManager = SceneManager::getInstance();
+    auto &sceneManager = Scene::SceneManager::getInstance();
 
     Logger::info("Starting Game...");
     int res = sceneManager.run();

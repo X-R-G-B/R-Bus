@@ -102,6 +102,7 @@ namespace Nitwork {
             return;
         }
         _endpoints.emplace_back(endpoint);
+        addStarGameMessage(endpoint, _endpoints.size());
     }
 
     void NitworkServer::handleReadyMsg(
@@ -136,24 +137,43 @@ namespace Nitwork {
     /* End Handle packet (msg) Section */
 
     /* Message Creation Section */
+    void NitworkServer::addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetMsgPlayerInit_s packetMsgPlayerInit = {
+            .header =
+                {.magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2},
+            .action = {.magick = INIT},
+            .msg    = {.magick = MAGICK_INIT, .playerId = playerId}
+        };
+        Packet packet(
+            packetMsgPlayerInit.header.id,
+            packetMsgPlayerInit.action.magick,
+            std::make_any<struct packetMsgPlayerInit_s>(packetMsgPlayerInit));
+        addPacketToSend(endpoint, packet);
+    }
+
     void NitworkServer::addStarGameMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
-        struct packetMsgStartGame_s packetMsgStartGame = {
+        struct packetMsgStartWave_s packetMsgStartWave = {
             {HEADER_CODE1,
              getIdsReceived(),
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2},
-            {START_GAME},
-            {MAGICK_START_GAME,             playerId               }
+            {START_WAVE},
+            {MAGICK_START_WAVE, playerId}
         };
         Packet packet(
-            packetMsgStartGame.header.id,
-            packetMsgStartGame.action.magick,
-            std::make_any<struct packetMsgStartGame_s>(packetMsgStartGame));
-        std::cout << "Send START_GAME to " << endpoint.address().to_string() << ":" << endpoint.port()
-                  << std::endl;
+            packetMsgStartWave.header.id,
+            packetMsgStartWave.action.magick,
+            std::make_any<struct packetMsgStartWave_s>(packetMsgStartWave));
         addPacketToSend(endpoint, packet);
     }
 
@@ -171,8 +191,8 @@ namespace Nitwork {
                          .id               = getPacketID(),
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action        = {.magick = LIFE_UPDATE           },
-            .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE,                     .playerId = playerId,     .life = life                                                 }
+            .action        = {.magick = LIFE_UPDATE},
+            .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE, .playerId = playerId, .life = life}
         };
         Packet packet(
             packetLifeUpdate.header.id,
@@ -193,7 +213,7 @@ namespace Nitwork {
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
             .action        = {.magick = ENEMY_DEATH},
-            .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH,                                 .enemyId = {.id = enemyId}               }
+            .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH, .enemyId = {.id = enemyId}}
         };
         Packet packet(
             packetEnemyDeath.header.id,
@@ -216,7 +236,7 @@ namespace Nitwork {
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
             .action = {.magick = NEW_ENEMY},
-            .msg    = {.magick = MAGICK_NEW_ENEMY,                                 .enemyInfos = enemyInfos               }
+            .msg    = {.magick = MAGICK_NEW_ENEMY, .enemyInfos = enemyInfos}
         };
         Packet packet(
             packetNewEnemy.header.id,
