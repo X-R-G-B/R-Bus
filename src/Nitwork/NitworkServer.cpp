@@ -124,13 +124,27 @@ namespace Nitwork {
             return;
         }
         auto pos = std::any_cast<struct position_relative_s>(msg);
-        struct position_relative_broadcast_s posBroadcast = {
-            .x = pos.x,
-            .y = pos.y,
-            .playerId = 0, // TODO: PLAYERID
+        struct packetPositionRelativeBroadcast_s msgPosBroadcast = {
+            .header = {
+                .magick1          = HEADER_CODE1,
+                .ids_received     = 0,
+                .last_id_received = 0,
+                .id               = 0,
+                .nb_action        = 1,
+                .magick2          = HEADER_CODE2},
+            .action = {
+                .magick = POSITION_RELATIVE_BROADCAST},
+            .msg = {
+                .x = pos.x,
+                .y = pos.y,
+                .playerId = 0 // TODO: PLAYERID
+            }
         };
         for (auto &endpoint : _endpoints) {
-            Packet packet = {};
+            msgPosBroadcast.header.id = getPacketID();
+            msgPosBroadcast.header.last_id_received = getIdsReceived();
+            msgPosBroadcast.header.last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0;
+            Packet packet(msgPosBroadcast.header.id, msgPosBroadcast.action.magick, std::make_any<struct packetPositionRelativeBroadcast_s>(msgPosBroadcast));
             addPacketToSend(endpoint, packet);
         }
     }

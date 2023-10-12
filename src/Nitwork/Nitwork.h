@@ -46,6 +46,7 @@ enum n_actionType_t {
     POSITION_ABSOLUTE = 8,
     NEW_BULLET = 9,
     NEW_ENEMY = 10,
+    POSITION_RELATIVE_BROADCAST = 11,
     N_ACTION_TYPE_MAX,
 };
 
@@ -206,6 +207,19 @@ PACK(struct packetPositionAbsolute_s {
         struct header_s header;
         struct action_s action;
         struct msgPositionAbsolute_s msg;
+});
+
+/* Message broadcast position relative */
+PACK(struct msgPositionRelativeBroadcast_s {
+    char x;
+    char y;
+    n_id_t playerId;
+});
+
+PACK(struct packetPositionRelativeBroadcast_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgPositionRelativeBroadcast_s msg;
 });
 
 #endif

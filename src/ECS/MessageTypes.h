@@ -30,12 +30,6 @@ PACK(struct position_relative_s {
     char y;
 });
 
-PACK(struct position_relative_broadcast_s {
-    char x;
-    char y;
-    n_id_t playerId;
-});
-
 PACK(struct position_absolute_s {
     int x;
     int y;
