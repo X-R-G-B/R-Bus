@@ -5,10 +5,10 @@
 ** Json
 */
 
+#include "Json.hpp"
 #include <fstream>
 #include <utility>
 #include "Logger.hpp"
-#include "Json.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 Json Json::_instance = Json();
@@ -17,17 +17,17 @@ Json Json::_instance = Json();
 nlohmann::json Json::loadJsonData(const std::string &path)
 {
     std::ifstream fileData(path);
-        std::ostringstream input;
-        nlohmann::json jsonData = {};
+    std::ostringstream input;
+    nlohmann::json jsonData = {};
 
-        if (fileData.is_open()) {
-            input << fileData.rdbuf();
-            if (nlohmann::json::accept(input.str())) {
-                jsonData = nlohmann::json::parse(input.str());
-                return jsonData;
-            }
+    if (fileData.is_open()) {
+        input << fileData.rdbuf();
+        if (nlohmann::json::accept(input.str())) {
+            jsonData = nlohmann::json::parse(input.str());
+            return jsonData;
         }
-        return jsonData;
+    }
+    return jsonData;
 }
 
 nlohmann::basic_json<> Json::getDataByVector(const std::vector<std::string> &indexes, JsonType dataType)
@@ -43,7 +43,7 @@ nlohmann::basic_json<> Json::getDataByVector(const std::vector<std::string> &ind
             return (finalData);
         }
     }
-    
+
     return (finalData);
 }
 
@@ -73,7 +73,8 @@ nlohmann::basic_json<> Json::getDataByJsonType(const std::string &index, JsonTyp
     return (finalData);
 }
 
-std::vector<nlohmann::basic_json<>> Json::getDatasFromList(const std::vector<nlohmann::basic_json<>> &list, const std::string &key)
+std::vector<nlohmann::basic_json<>>
+Json::getDatasFromList(const std::vector<nlohmann::basic_json<>> &list, const std::string &key)
 {
     std::vector<nlohmann::basic_json<>> datas;
     std::vector<nlohmann::basic_json<>> tmp;
@@ -89,7 +90,8 @@ std::vector<nlohmann::basic_json<>> Json::getDatasFromList(const std::vector<nlo
     return (datas);
 }
 
-std::vector<nlohmann::basic_json<>> Json::getDatasFromList(const nlohmann::basic_json<> &list, const std::string &key)
+std::vector<nlohmann::basic_json<>>
+Json::getDatasFromList(const nlohmann::basic_json<> &list, const std::string &key)
 {
     std::vector<nlohmann::basic_json<>> datas;
 
@@ -109,7 +111,10 @@ std::vector<nlohmann::basic_json<>> Json::getDatasFromList(const nlohmann::basic
     return (datas);
 }
 
-std::vector<nlohmann::basic_json<>> &Json::getDatasFromList(std::vector<nlohmann::basic_json<>> &datas, nlohmann::basic_json<> &listData, const std::string &key)
+std::vector<nlohmann::basic_json<>> &Json::getDatasFromList(
+    std::vector<nlohmann::basic_json<>> &datas,
+    nlohmann::basic_json<> &listData,
+    const std::string &key)
 {
     if (datas.empty()) {
         datas = getDatasFromList(listData);
@@ -120,7 +125,8 @@ std::vector<nlohmann::basic_json<>> &Json::getDatasFromList(std::vector<nlohmann
     return (datas);
 }
 
-std::vector<nlohmann::basic_json<>> Json::getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType)
+std::vector<nlohmann::basic_json<>>
+Json::getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType)
 {
     nlohmann::basic_json<> &finalData(_jsonDatas[dataType]);
     std::vector<nlohmann::basic_json<>> datas;
@@ -145,11 +151,8 @@ Json &Json::getInstance()
 
 Json::Json()
 {
-    for (auto &it :  pathToJson) {
-        _jsonDatas.insert({
-            it.first,
-            loadJsonData(it.second)
-        });
+    for (auto &it : pathToJson) {
+        _jsonDatas.insert({it.first, loadJsonData(it.second)});
     }
 }
 
