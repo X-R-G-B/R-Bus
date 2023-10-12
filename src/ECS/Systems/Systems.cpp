@@ -19,8 +19,6 @@
     #include "NitworkServer.hpp"
 #endif
 
-#include <iostream>
-
 namespace Systems {
 
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -70,13 +68,6 @@ namespace Systems {
             (enemies.exist(scdId) && enemies.exist(fstId))) {
             return true;
         }
-        std::vector<std::size_t> ids = enemies.getExistingsId();
-        std::cout << "[";
-        for (auto &id : ids) {
-            std::cout << id << ", " << std::endl;
-        }
-        std::cout << "]" << std::endl;
-        std::cout << "ret false in checkAllies " << fstId << " " << scdId << std::endl;
         return false;
     }
 
