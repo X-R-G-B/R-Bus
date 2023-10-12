@@ -26,7 +26,6 @@
     #define MAGICK_POSITION_RELATIVE '\b'
     #define MAGICK_LIFE_UPDATE '\x0b'
     #define MAGICK_ENEMY_DEATH '\x0c'
-    #define MAGICK_CLIENT_ENEMY_DEATH '\x0d'
     #define MAGICK_NEW_ENEMY '\x0e'
     #define MAGICK_NEW_BULLET '\x0c'
 
@@ -40,7 +39,6 @@ enum n_actionType_t {
     INIT = 1,
     READY = 2,
     START_WAVE = 3,
-    ENEMY_NB = 4,
     LIFE_UPDATE = 5,
     ENEMY_DEATH = 6,
     POSITION_RELATIVE = 7,
@@ -102,25 +100,13 @@ PACK(struct packetMsgPlayerInit_s {
 /* Message Start Game */
 PACK(struct msgStartWave_s {
         n_magick_t magick;
-        n_id_t playerId;
+        n_id_t enemyNb;
 });
 
 PACK(struct packetMsgStartWave_s {
         struct header_s header;
         struct action_s action;
         struct msgStartWave_s msgStartWave;
-});
-
-/* Message Enemy Nb */
-PACK(struct msgEnemyNb_s {
-        n_magick_t magick;
-        n_id_t enemyNb;
-});
-
-PACK(struct packetMsgEnemyNb_s {
-        struct header_s header;
-        struct action_s action;
-        struct msgEnemyNb_s msgEnemyNb;
 });
 
 /* Message Life Update */
@@ -158,18 +144,6 @@ PACK(struct packetPositionRelative_s {
         struct header_s header;
         struct action_s action;
         struct msgPositionRelative_s msg;
-});
-
-/* Message Client Enemy Death */
-PACK(struct msgClientEnemyDeath_s {
-        n_magick_t magick;
-        struct enemy_id_s enemyId;
-});
-
-PACK(struct packetClientEnemyDeath_s {
-        struct header_s header;
-        struct action_s action;
-        struct msgClientEnemyDeath_s msg;
 });
 
 /* Message New Enemy */

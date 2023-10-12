@@ -102,7 +102,7 @@ namespace Nitwork {
             return;
         }
         _endpoints.emplace_back(endpoint);
-        addStarGameMessage(endpoint, _endpoints.size());
+        addPlayerInitMessage(endpoint, _endpoints.size() - 1);
     }
 
     void NitworkServer::handleReadyMsg(
@@ -113,6 +113,7 @@ namespace Nitwork {
             Logger::info("Client not connected");
             return;
         }
+        addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
     }
     /* End Handle packet (msg) Section */
 
@@ -139,7 +140,7 @@ namespace Nitwork {
         addPacketToSend(endpoint, packet);
     }
 
-    void NitworkServer::addStarGameMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
+    void NitworkServer::addStarWaveMessage(boost::asio::ip::udp::endpoint & /* unused */, n_id_t enemyId)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgStartWave_s packetMsgStartWave = {
@@ -151,14 +152,14 @@ namespace Nitwork {
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
             .action = {.magick = START_WAVE},
-            .msgStartWave = {.magick = MAGICK_START_WAVE, .playerId = playerId}
+            .msgStartWave = {.magick = MAGICK_START_WAVE, .enemyNb = enemyId}
         };
         Packet packet(
             packetMsgStartWave.header.id,
             packetMsgStartWave.action.magick,
             std::make_any<struct packetMsgStartWave_s>(packetMsgStartWave),
             getEndpointSender());
-        addPacketToSend(endpoint, packet);
+        sendToAllClients(packet);
     }
 
     void NitworkServer::addLifeUpdateMessage(

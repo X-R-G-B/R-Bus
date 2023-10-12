@@ -29,8 +29,9 @@ namespace Nitwork {
 
     bool NitworkClient::startNitworkConfig(int port, const std::string &ip)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         _endpoint = *_resolver.resolve(boost::asio::ip::udp::v4(), ip, std::to_string(port)).begin();
-        boost::asio::ip::udp::socket socket(_context);
+        _socket   = boost::asio::ip::udp::socket(_context);
         _socket.open(boost::asio::ip::udp::v4());
         _socket.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 0));
         if (!_socket.is_open()) {
@@ -71,21 +72,6 @@ namespace Nitwork {
     {
         return _actionToSendHandlers;
     }
-
-    /* Handlers Section */
-    // NOLINTBEGIN(readability-convert-member-functions-to-static)
-    void NitworkClient::handleStartWave(const std::any &msg, boost::asio::ip::udp::endpoint & /* unused */)
-    {
-        // NOLINTEND(readability-convert-member-functions-to-static)
-        const struct msgStartWave_s &msgStartWave = std::any_cast<struct msgStartWave_s>(msg);
-
-        if (msgStartWave.magick != MAGICK_START_WAVE) {
-            Logger::error("NITWORK: magick is not START_WAVE");
-            return;
-        }
-        Logger::info("Game started");
-    }
-    /* End Handlers Section */
 
     /* Message Creation Section */
     void NitworkClient::addInitMsg()

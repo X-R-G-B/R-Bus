@@ -14,6 +14,7 @@
 namespace Systems {
 
     const std::function<void(std::size_t)> setPlayerAnimRectDeath = [](std::size_t id) {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::AnimRect> arrAnimRect =
             Registry::getInstance().getComponents<Types::AnimRect>();
 
