@@ -135,8 +135,6 @@ namespace Nitwork {
             packetMsgPlayerInit.header.id,
             packetMsgPlayerInit.action.magick,
             std::make_any<struct packetMsgPlayerInit_s>(packetMsgPlayerInit));
-        std::cout << "Send PLAYER_INIT to " << endpoint.address().to_string() << ":" << endpoint.port()
-                  << std::endl;
         addPacketToSend(endpoint, packet);
     }
 
@@ -149,15 +147,13 @@ namespace Nitwork {
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2},
-            {START_GAME},
-            {MAGICK_START_GAME, playerId}
+            {START_WAVE},
+            {MAGICK_START_WAVE, playerId}
         };
         Packet packet(
             packetMsgStartWave.header.id,
             packetMsgStartWave.action.magick,
             std::make_any<struct packetMsgStartWave_s>(packetMsgStartWave));
-        std::cout << "Send START_GAME to " << endpoint.address().to_string() << ":" << endpoint.port()
-                  << std::endl;
         addPacketToSend(endpoint, packet);
     }
 

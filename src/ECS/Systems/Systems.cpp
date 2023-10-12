@@ -10,13 +10,11 @@
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include "CustomTypes.hpp"
-#ifdef CLIENT
-    #include "Raylib.hpp"
-#endif
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #ifdef CLIENT
     #include "NitworkClient.hpp"
+    #include "Raylib.hpp"
 #else
     #include "NitworkServer.hpp"
 #endif
@@ -286,10 +284,11 @@ namespace Systems {
         if (!arrEnemies.exist(id)) {
             return;
         }
+        n_id_t castedId = static_cast<n_id_t>(id);
 #ifdef CLIENT
-        //        Nitwork::NitworkClient::getInstance().addEnemyDeathMessage(id);
+        Nitwork::NitworkClient::getInstance().addEnemyDeathMsg(castedId);
 #else
-        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(id);
+        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(castedId);
 #endif
     }
 

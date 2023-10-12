@@ -22,7 +22,7 @@
 
     #define MAGICK_INIT '\x06'
     #define MAGICK_READY '\x17'
-    #define MAGICK_START_GAME '\a'
+    #define MAGICK_START_WAVE '\a'
     #define MAGICK_POSITION_RELATIVE '\b'
     #define MAGICK_LIFE_UPDATE '\x0b'
     #define MAGICK_ENEMY_DEATH '\x0c'
@@ -39,7 +39,7 @@ enum n_actionType_t {
     NO_ACTION = 0,
     INIT = 1,
     READY = 2,
-    START_GAME = 3,
+    START_WAVE = 3,
     ENEMY_NB = 4,
     LIFE_UPDATE = 5,
     ENEMY_DEATH = 6,

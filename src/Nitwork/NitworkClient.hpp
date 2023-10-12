@@ -35,6 +35,7 @@ namespace Nitwork {
             void addPositionAbsoluteMsg(struct position_absolute_s pos);
             void addNewBulletMsg(const struct position_absolute_s &pos, const missileTypes_e &missileType);
             void addLifeUpdateMsg(n_id_t playerId, const struct health_s &life);
+            void addEnemyDeathMsg(n_id_t id);
 
         private:
             NitworkClient();
@@ -76,7 +77,7 @@ namespace Nitwork {
                     },
                 },
                 {
-                    START_GAME,
+                    START_WAVE,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgStartWave_s>(handler, header);
