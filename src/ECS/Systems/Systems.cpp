@@ -375,7 +375,7 @@ namespace Systems {
     void initPlayer()
     {
 #ifdef CLIENT
-        std::size_t id          = Registry::getInstance().addEntity();
+        std::size_t id = Registry::getInstance().addEntity();
 #else
         Registry::getInstance().addEntity();
 #endif
@@ -392,7 +392,13 @@ namespace Systems {
         struct health_s healthComp = {jsonData["health"]};
         Types::Damage damageComp   = {jsonData["damage"]};
 #ifdef CLIENT
-        Types::PlayerDatas playerDatas(jsonData["spritePath"], jsonData["width"], jsonData["height"], id, FRONTLAYER, static_cast<std::size_t>(FRONT));
+        Types::PlayerDatas playerDatas(
+            jsonData["spritePath"],
+            jsonData["width"],
+            jsonData["height"],
+            id,
+            FRONTLAYER,
+            static_cast<std::size_t>(FRONT));
 #endif
         Types::Position position           = {Types::Position(jsonData["position"])};
         Types::Rect rect                   = {Types::Rect(jsonData["rect"])};

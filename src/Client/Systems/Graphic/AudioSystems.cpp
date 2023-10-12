@@ -8,8 +8,8 @@
 #include "AudioSystems.hpp"
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
-#include "SystemManagersDirector.hpp"
 #include "Registry.hpp"
+#include "SystemManagersDirector.hpp"
 
 namespace Systems {
     void GraphicSystems::soundEffectPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
