@@ -191,7 +191,7 @@ namespace Systems {
         clock.restart(clockId);
     }
 
-    static void initEnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &enemyData, bool setId = false, struct enemy_id_s enemyId = {0})
+    static void initEnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &enemyData, bool setId = false, struct ::enemy_id_s enemyId = {0})
     {
 #ifdef CLIENT
         std::size_t id       = Registry::getInstance().addEntity();
@@ -213,7 +213,7 @@ namespace Systems {
         Types::CollisionRect collisionRect = {Types::CollisionRect(enemyData["collisionRect"])};
         struct health_s healthComp         = {enemyData["health"]};
         Types::Damage damageComp           = {enemyData["damage"]};
-        Types::Enemy enemyStruct           = (setId ? enemyId : struct enemy_id_s {0});
+        Types::Enemy enemyStruct           = (setId ? enemyId : ::enemy_id_s {0});
         Types::Velocity velocity           = {Types::Velocity(enemyData["velocity"])};
 
 #ifdef CLIENT
@@ -243,7 +243,7 @@ namespace Systems {
 
     const std::string enemyFile = "assets/Json/enemyData.json";
 
-    void reviveEnemy(struct enemy_id_s id)
+    void reviveEnemy(struct ::enemy_id_s id)
     {
         nlohmann::json jsonData = openJsonData(enemyFile);
         if (jsonData["enemy"] == nullptr) {
@@ -395,9 +395,6 @@ namespace Systems {
 #ifdef CLIENT
         Raylib::Sprite sprite = {jsonData["spritePath"], jsonData["width"], jsonData["height"], id};
         Types::Rect rect                   = {Types::Rect(jsonData["rect"])};
-#endif
-        Types::Position position           = {Types::Position(jsonData["position"])};
-        Types::CollisionRect collisionRect = {Types::CollisionRect(jsonData["collisionRect"])};
 
         // AnimRect
         nlohmann::json animRectData = jsonData["animRect"];
@@ -411,15 +408,19 @@ namespace Systems {
             attackData.get<std::vector<Types::Rect>>(),
             deadData.get<std::vector<Types::Rect>>()};
 
+#endif
+        Types::Position position           = {Types::Position(jsonData["position"])};
+        Types::CollisionRect collisionRect = {Types::CollisionRect(jsonData["collisionRect"])};
+
         // Add components to registry
 
 #ifdef CLIENT
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
         Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
 #endif
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
-        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
         Registry::getInstance().getComponents<Types::Player>().insertBack(playerComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
