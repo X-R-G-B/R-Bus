@@ -160,18 +160,6 @@ PACK(struct packetPositionRelative_s {
         struct msgPositionRelative_s msg;
 });
 
-/* Message Client Enemy Death */
-PACK(struct msgClientEnemyDeath_s {
-        n_magick_t magick;
-        struct enemy_id_s enemyId;
-});
-
-PACK(struct packetClientEnemyDeath_s {
-        struct header_s header;
-        struct action_s action;
-        struct msgClientEnemyDeath_s msg;
-});
-
 /* Message New Enemy */
 PACK(struct msgNewEnemy_s {
         n_magick_t magick;
