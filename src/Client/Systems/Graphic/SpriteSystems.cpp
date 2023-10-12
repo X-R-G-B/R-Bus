@@ -7,10 +7,10 @@
 
 #include "SpriteSystems.hpp"
 #include "CustomTypes.hpp"
+#include "ECSCustomTypes.hpp"
 #include "Logger.hpp"
 #include "Raylib.hpp"
 #include "SharedValues.hpp"
-#include "ECSCustomTypes.hpp"
 
 namespace Systems {
 
@@ -215,12 +215,24 @@ namespace Systems {
         auto ids = arrSpriteDatas.getExistingsId();
         for (auto id : ids) {
             auto &spriteDatas = arrSpriteDatas[id];
-            Raylib::Sprite sprite(spriteDatas.fileName, spriteDatas.width, spriteDatas.height, spriteDatas.id);
+            Raylib::Sprite sprite(
+                spriteDatas.fileName,
+                spriteDatas.width,
+                spriteDatas.height,
+                spriteDatas.id);
             arrSprite.insert(id, sprite);
             switch (spriteDatas.layer) {
-                case BACKLAYER: Registry::getInstance().setToBackLayers(id, static_cast<enum BackLayers>(spriteDatas.layerSide)); break;
+                case BACKLAYER:
+                    Registry::getInstance().setToBackLayers(
+                        id,
+                        static_cast<enum BackLayers>(spriteDatas.layerSide));
+                    break;
                 case FRONTLAYER: Registry::getInstance().setToDefaultLayer(id); break;
-                case DEFAULTLAYER: Registry::getInstance().setToFrontLayers(id, static_cast<enum FrontLayers>(spriteDatas.layerSide)); break;
+                case DEFAULTLAYER:
+                    Registry::getInstance().setToFrontLayers(
+                        id,
+                        static_cast<enum FrontLayers>(spriteDatas.layerSide));
+                    break;
             }
         }
         arrSpriteDatas.clear();

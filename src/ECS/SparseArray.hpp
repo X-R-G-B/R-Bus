@@ -129,7 +129,8 @@ class SparseArray {
         void throwIfDontExist(std::size_t id)
         {
             if (!exist(id)) {
-                throw std::runtime_error("SparseArrays: ID out of bounds! (id: " + std::to_string(id) + ")");
+                throw std::runtime_error(
+                    "SparseArrays: ID out of bounds! (id: " + std::to_string(id) + ")");
             }
         }
 

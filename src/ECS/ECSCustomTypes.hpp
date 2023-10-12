@@ -52,8 +52,19 @@ namespace Types {
     };
 
     struct PlayerDatas {
-            PlayerDatas(const std::string &fileName, float width, float height, std::size_t id, enum LayerType layer, std::size_t layerSide)
-                : fileName(fileName), width(width), height(height), id(id), layer(layer), layerSide(layerSide)
+            PlayerDatas(
+                const std::string &fileName,
+                float width,
+                float height,
+                std::size_t id,
+                enum LayerType layer,
+                std::size_t layerSide)
+                : fileName(fileName),
+                  width(width),
+                  height(height),
+                  id(id),
+                  layer(layer),
+                  layerSide(layerSide)
             {
             }
             std::string fileName;

@@ -5,9 +5,9 @@
 ** SystemManager implementation
 */
 
-#include "Logger.hpp"
 #include "SystemManager.hpp"
 #include <algorithm>
+#include "Logger.hpp"
 
 namespace Systems {
 
