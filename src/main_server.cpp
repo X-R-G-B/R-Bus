@@ -6,9 +6,9 @@
 #include "Systems.hpp"
 
 constexpr int EXIT_EPITECH = 84;
-constexpr int PORT_MIN = 0;
-constexpr int PORT_MAX = 65535;
-static bool isRunning = true;
+constexpr int PORT_MIN     = 0;
+constexpr int PORT_MAX     = 65535;
+static bool isRunning      = true;
 
 static void signalHandler(int signum)
 {
