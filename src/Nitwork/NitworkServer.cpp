@@ -139,7 +139,7 @@ namespace Nitwork {
         addPacketToSend(endpoint, packet);
     }
 
-    void NitworkServer::addStarWaveMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t enemyId)
+    void NitworkServer::addStarWaveMessage(boost::asio::ip::udp::endpoint & /* unused */, n_id_t enemyId)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgStartWave_s packetMsgStartWave = {

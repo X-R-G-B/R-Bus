@@ -105,7 +105,7 @@ namespace Nitwork {
             std::map<enum n_actionType_t, actionHandler> _actionToSendHandlers = {
                 {
                  INIT, [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                        sendData<struct packetMsgInit_s>(any, endpoint);
+                        sendData<struct packetMsgPlayerInit_s>(any, endpoint);
                     }, },
                 {LIFE_UPDATE,
                  [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {

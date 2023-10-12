@@ -57,13 +57,10 @@ int main(int ac, char **av)
     if (!Nitwork::NitworkClient::getInstance().start(std::stoi(av[2]), 4, 60, av[1])) {
         return EXIT_EPITECH;
     }
+    auto &sceneManager = Scene::SceneManager::getInstance();
     Nitwork::NitworkClient::getInstance().addInitMsg();
     Nitwork::NitworkClient::getInstance().addReadyMsg();
-    auto &sceneManager = Scene::SceneManager::getInstance();
-
-    Logger::info("Starting Game...");
     int res = sceneManager.run();
-
     Nitwork::NitworkClient::getInstance().stop();
     return res;
 }

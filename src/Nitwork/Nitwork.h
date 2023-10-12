@@ -40,7 +40,6 @@ enum n_actionType_t {
     INIT = 1,
     READY = 2,
     START_WAVE = 3,
-    ENEMY_NB = 4,
     LIFE_UPDATE = 5,
     ENEMY_DEATH = 6,
     POSITION_RELATIVE = 7,

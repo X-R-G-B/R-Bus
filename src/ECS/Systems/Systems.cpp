@@ -349,24 +349,24 @@ namespace Systems {
 
     const std::string playerFile = "assets/Json/playerData.json";
 
-    void initPlayer(std::size_t managerId, std::size_t systemId)
+    void initPlayer()
     {
         nlohmann::json jsonData = openJsonData(playerFile);
         std::size_t id          = Registry::getInstance().addEntity();
         if (jsonData["player"] == nullptr) {
-            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
             return;
         }
         jsonData = jsonData["player"];
 
         // Components
 
-        Types::Player playerComp   = {};
+        Types::Player playerComp   = {0};
         Types::Dead deadComp       = {jsonData["deadTime"]};
         struct health_s healthComp = {jsonData["health"]};
         Types::Damage damageComp   = {jsonData["damage"]};
 #ifdef CLIENT
-        Raylib::Sprite sprite = {jsonData["spritePath"], jsonData["width"], jsonData["height"], id};
+        Raylib::Sprite sprite(jsonData["spritePath"], jsonData["width"], jsonData["height"], id);
+//        Raylib::Sprite sprite = {jsonData["spritePath"], jsonData["width"], jsonData["height"], id};
 #endif
         Types::Position position           = {Types::Position(jsonData["position"])};
         Types::Rect rect                   = {Types::Rect(jsonData["rect"])};
@@ -398,7 +398,6 @@ namespace Systems {
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
         Registry::getInstance().setToFrontLayers(id);
-        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
@@ -406,7 +405,6 @@ namespace Systems {
         return {
             windowCollision,
             checkDestroyAfterDeathCallBack,
-            initPlayer,
             entitiesCollision,
             destroyOutsideWindow,
             deathChecker,

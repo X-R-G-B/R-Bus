@@ -46,16 +46,17 @@ namespace Systems {
         SystemManagersDirector::getInstance()
             .getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::GAME))
             .addSystem(initWave);
+        Logger::info("Wave started");
     }
 
     void receivePlayerInit(std::any &any, boost::asio::ip::udp::endpoint &)
     {
         const auto playerInit = std::any_cast<struct msgPlayerInit_s>(any);
-        Registry &registry    = Registry::getInstance();
-        auto &arrPlayer       = registry.getComponents<Types::Player>();
+        auto &arrPlayer       = Registry::getInstance().getComponents<Types::Player>();
 
         Logger::info("Player id: " + std::to_string(playerInit.playerId));
-        arrPlayer[0].constId = playerInit.playerId;
+        initPlayer();
+        arrPlayer[arrPlayer.getExistingsId().at(0)].constId = playerInit.playerId;
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
