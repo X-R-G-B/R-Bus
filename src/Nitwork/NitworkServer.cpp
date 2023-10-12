@@ -141,19 +141,19 @@ namespace Nitwork {
     void NitworkServer::addStarGameMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
-        struct packetMsgStartGame_s packetMsgStartGame = {
+        struct packetMsgStartWave_s packetMsgStartWave = {
             {HEADER_CODE1,
              getIdsReceived(),
              (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
              getPacketID(),
              1, HEADER_CODE2},
-            {START_GAME},
-            {MAGICK_START_GAME, playerId}
+            {START_WAVE},
+            {MAGICK_START_WAVE, playerId}
         };
         Packet packet(
-            packetMsgStartGame.header.id,
-            packetMsgStartGame.action.magick,
-            std::make_any<struct packetMsgStartGame_s>(packetMsgStartGame));
+            packetMsgStartWave.header.id,
+            packetMsgStartWave.action.magick,
+            std::make_any<struct packetMsgStartWave_s>(packetMsgStartWave));
         addPacketToSend(endpoint, packet);
     }
 

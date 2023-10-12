@@ -48,7 +48,7 @@ namespace Nitwork {
             [[nodiscard]] const std::map<enum n_actionType_t, actionHandler> &
             getActionToSendHandlers() const final;
 
-            void handleStartGame(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
+            void handleStartWave(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
         protected:
 
@@ -77,13 +77,13 @@ namespace Nitwork {
                     },
                 },
                 {
-                    START_GAME,
+                    START_WAVE,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
-                            handleBody<struct msgStartGame_s>(handler, header);
+                            handleBody<struct msgStartWave_s>(handler, header);
                         },
                         [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                            handleStartGame(any, endpoint);
+                            handleStartWave(any, endpoint);
                         }
                     },
                 },
@@ -106,6 +106,17 @@ namespace Nitwork {
                         },
                         [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             Systems::receiveEnemyDeath(any, endpoint);
+                        }
+                    }
+                },
+                {
+                    ENEMY_NB,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgEnemyNb_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveEnemyNb(any, endpoint);
                         }
                     }
                 }
