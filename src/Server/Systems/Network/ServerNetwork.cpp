@@ -35,9 +35,8 @@ namespace Systems {
 
     void handleClientEnemyDeath(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
     {
-        const struct msgEnemyDeath_s &msgEnemyDeath =
-            std::any_cast<struct msgEnemyDeath_s>(msg);
-        auto &registry = Registry::getInstance();
+        const struct msgEnemyDeath_s &msgEnemyDeath = std::any_cast<struct msgEnemyDeath_s>(msg);
+        auto &registry                              = Registry::getInstance();
 
         if (msgEnemyDeath.magick != MAGICK_CLIENT_ENEMY_DEATH) {
             Logger::error("Error: magick is not CLIENT_ENEMY_DEATH");

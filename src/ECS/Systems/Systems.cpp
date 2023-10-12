@@ -178,7 +178,7 @@ namespace Systems {
     static void initEnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &enemyData)
     {
 #ifdef CLIENT
-        std::size_t id        = Registry::getInstance().addEntity();
+        std::size_t id       = Registry::getInstance().addEntity();
         Raylib::Sprite enemy = {enemyData["spritePath"], enemyData["width"], enemyData["height"], id};
 #endif
         Types::Position position           = {Types::Position(enemyData["position"])};
@@ -228,9 +228,9 @@ namespace Systems {
     void initWave(std::size_t managerId, std::size_t systemId)
     {
         static std::size_t enemyNumber = 5;
-        const std::size_t spawnDelay    = 2;
-        Clock &clock                    = Registry::getInstance().getClock();
-        static std::size_t clockId      = clock.create(true);
+        const std::size_t spawnDelay   = 2;
+        Clock &clock                   = Registry::getInstance().getClock();
+        static std::size_t clockId     = clock.create(true);
 
         if (clock.elapsedSecondsSince(clockId) > spawnDelay) {
             initEnemy(enemyFile);
