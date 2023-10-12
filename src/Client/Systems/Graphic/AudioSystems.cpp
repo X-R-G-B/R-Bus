@@ -9,10 +9,12 @@
 #include "CustomTypes.hpp"
 #include "Raylib.hpp"
 #include "SystemManagersDirector.hpp"
+#include "Registry.hpp"
 
 namespace Systems {
     void GraphicSystems::soundEffectPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Raylib::Sound> arrSoundEffect =
             Registry::getInstance().getComponents<Raylib::Sound>();
 
@@ -26,6 +28,7 @@ namespace Systems {
 
     void GraphicSystems::musicPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Raylib::Music> arrMusics =
             Registry::getInstance().getComponents<Raylib::Music>();
 
@@ -45,6 +48,7 @@ namespace Systems {
 
     void GraphicSystems::playSoundWithKey(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                            = Registry::getInstance();
         Registry::components<Raylib::Music> arrMusics = registry.getComponents<Raylib::Music>();
         Registry::components<Raylib::Sound> arrSounds = registry.getComponents<Raylib::Sound>();

@@ -29,6 +29,7 @@ namespace Nitwork {
 
     bool NitworkClient::startNitworkConfig(int port, const std::string &ip)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         _endpoint = *_resolver.resolve(boost::asio::ip::udp::v4(), ip, std::to_string(port)).begin();
         _socket = boost::asio::ip::udp::socket(_context);
         _socket.open(boost::asio::ip::udp::v4());

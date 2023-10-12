@@ -5,6 +5,7 @@
 ** SystemManager implementation
 */
 
+#include "Logger.hpp"
 #include "SystemManager.hpp"
 #include <algorithm>
 

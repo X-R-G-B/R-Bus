@@ -16,6 +16,7 @@ extern "C"
 {
 #include "MessageTypes.h"
 }
+#include "Registry.hpp"
 
 // all values are in percentage of the screen
 namespace Types {
@@ -48,6 +49,19 @@ namespace Types {
             float speedY;
 
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Velocity, speedX, speedY);
+    };
+
+    struct PlayerDatas {
+            PlayerDatas(const std::string &fileName, float width, float height, std::size_t id, enum LayerType layer, std::size_t layerSide)
+                : fileName(fileName), width(width), height(height), id(id), layer(layer), layerSide(layerSide)
+            {
+            }
+            std::string fileName;
+            float width;
+            float height;
+            std::size_t id;
+            enum LayerType layer;
+            size_t layerSide;
     };
 
     struct Player {

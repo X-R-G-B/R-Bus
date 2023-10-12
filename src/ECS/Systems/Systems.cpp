@@ -23,6 +23,7 @@ namespace Systems {
 
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
@@ -154,6 +155,7 @@ namespace Systems {
 
     void entitiesCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
@@ -170,6 +172,7 @@ namespace Systems {
 
     void moveEntities(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Velocity> arrVelocity =
@@ -232,35 +235,36 @@ namespace Systems {
     {
         nlohmann::json jsonData = openJsonData(path);
 
-        if (jsonData["ennemy"] == nullptr) {
+        if (jsonData["enemy"] == nullptr) {
             return;
         }
-        for (auto &ennemyData : jsonData["ennemy"]) {
+        for (auto &ennemyData : jsonData["enemy"]) {
             initEnnemyEntity(ennemyData);
         }
     }
 
-    const std::string ennemyFile = "assets/Json/ennemyData.json";
+    const std::string enemyFile = "assets/Json/enemyData.json";
 
     void initWave(std::size_t managerId, std::size_t systemId)
     {
-        static std::size_t ennemyNumber = 5;
+        static std::size_t enemyNumber = 5;
         const std::size_t spawnDelay    = 2;
         Clock &clock                    = Registry::getInstance().getClock();
         static std::size_t clockId      = clock.create(true);
 
         if (clock.elapsedSecondsSince(clockId) > spawnDelay) {
-            initEnnemy(ennemyFile);
-            ennemyNumber--;
+            initEnnemy(enemyFile);
+            enemyNumber--;
             clock.restart(clockId);
         }
-        if (ennemyNumber <= 0) {
+        if (enemyNumber <= 0) {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
     }
 
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry   = Registry::getInstance();
         auto deadList        = registry.getComponents<Types::Dead>();
         auto deadIdList      = deadList.getExistingsId();
@@ -311,6 +315,7 @@ namespace Systems {
 
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<struct health_s> arrHealth =
             Registry::getInstance().getComponents<struct health_s>();
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
@@ -340,6 +345,7 @@ namespace Systems {
 
     void destroyOutsideWindow(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
 #ifdef CLIENT
@@ -382,8 +388,7 @@ namespace Systems {
         struct health_s healthComp = {jsonData["health"]};
         Types::Damage damageComp   = {jsonData["damage"]};
 #ifdef CLIENT
-        Raylib::Sprite sprite(jsonData["spritePath"], jsonData["width"], jsonData["height"], id);
-//        Raylib::Sprite sprite = {jsonData["spritePath"], jsonData["width"], jsonData["height"], id};
+        Types::PlayerDatas playerDatas(jsonData["spritePath"], jsonData["width"], jsonData["height"], id, FRONTLAYER, static_cast<std::size_t>(FRONT));
 #endif
         Types::Position position           = {Types::Position(jsonData["position"])};
         Types::Rect rect                   = {Types::Rect(jsonData["rect"])};
@@ -404,7 +409,7 @@ namespace Systems {
         // Add components to registry
 
 #ifdef CLIENT
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
+        Registry::getInstance().getComponents<Types::PlayerDatas>().insertBack(playerDatas);
 #endif
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
@@ -414,7 +419,6 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
-        Registry::getInstance().setToFrontLayers(id);
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()

@@ -78,6 +78,7 @@ class Registry {
 
         Logger::Logger &getLogger();
 
+        std::mutex mutex;
     private:
         Registry();
 

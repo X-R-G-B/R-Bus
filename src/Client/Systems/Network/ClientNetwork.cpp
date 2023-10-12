@@ -10,6 +10,7 @@
 namespace Systems {
     void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         auto msg                                        = std::any_cast<struct msgLifeUpdate_s>(any);
         Registry &registry                              = Registry::getInstance();
         Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
@@ -27,6 +28,7 @@ namespace Systems {
 
     void receiveEnemyDeath(std::any &any, boost::asio::ip::udp::endpoint &)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto enemyDeath                      = std::any_cast<struct msgEnemyDeath_s>(any);
         Registry::components<Types::Enemy> enemies = Registry::getInstance().getComponents<Types::Enemy>();
         std::vector<std::size_t> ids               = enemies.getExistingsId();
@@ -41,6 +43,7 @@ namespace Systems {
 
     void handleStartWave(std::any &any, boost::asio::ip::udp::endpoint &)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
         Types::Enemy::setEnemyNb(wave.enemyNb);
         SystemManagersDirector::getInstance()
@@ -51,16 +54,18 @@ namespace Systems {
 
     void receivePlayerInit(std::any &any, boost::asio::ip::udp::endpoint &)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto playerInit = std::any_cast<struct msgPlayerInit_s>(any);
         auto &arrPlayer       = Registry::getInstance().getComponents<Types::Player>();
 
-        Logger::info("Player id: " + std::to_string(playerInit.playerId));
+        Logger::info("Your player id is: " + std::to_string(playerInit.playerId));
         initPlayer();
         arrPlayer[arrPlayer.getExistingsId().at(0)].constId = playerInit.playerId;
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         constexpr std::size_t delay = 10;
         static auto clockId         = Registry::getInstance().getClock().create();
         static std::pair<std::size_t, Types::Position> positionPlayerCached;
@@ -93,6 +98,7 @@ namespace Systems {
 
     void sendPositionAbsolute(std::size_t /* unused */, std::size_t /* unused */)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         constexpr std::size_t delay = 1;
         static auto clockId         = Registry::getInstance().getClock().create();
         Registry &registry          = Registry::getInstance();

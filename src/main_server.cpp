@@ -20,7 +20,9 @@ int main()
     Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
 #endif
     Logger::info("Starting Server...");
-    Nitwork::NitworkServer::getInstance().start(4242);
+    if (!Nitwork::NitworkServer::getInstance().start(4242)) {
+        return 84;
+    }
     Systems::SystemManagersDirector::getInstance().addSystemManager(Systems::getECSSystems());
     signal(SIGINT, signalHandler);
 
