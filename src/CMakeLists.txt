@@ -20,3 +20,5 @@ target_sources(
 
 add_subdirectory(Client)
 add_subdirectory(ECS)
+add_subdirectory(Nitwork)
+add_subdirectory(Server)

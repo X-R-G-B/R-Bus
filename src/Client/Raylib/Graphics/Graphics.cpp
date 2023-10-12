@@ -376,19 +376,17 @@ namespace Raylib {
         DrawRectangle(posX, posY, width, height, c);
     }
 
-    Image::Image(const std::string &fileName)
-        : _image(LoadImage(fileName.c_str()))
+    Image::Image(const std::string &fileName) : _image(LoadImage(fileName.c_str()))
     {
         if (!isImageReady()) {
             const ::Color badTexture          = {255, 16, 240, 255};
             static constexpr int badImageSize = 50;
-            _image = GenImageColor(badImageSize, badImageSize, badTexture);
+            _image                            = GenImageColor(badImageSize, badImageSize, badTexture);
         }
     }
 
     Image::Image(int width, int height, Color color)
-        : _image(
-            GenImageColor(width, height, {color.r, color.g, color.b, color.a}))
+        : _image(GenImageColor(width, height, {color.r, color.g, color.b, color.a}))
     {
     }
 
@@ -438,7 +436,7 @@ namespace Raylib {
 
     // Texture functions
 
-    Sprite::Sprite(const std::string &fileName, float width, float height)
+    Sprite::Sprite(const std::string &fileName, float width, float height, std::size_t id)
         : _texture(LoadTexture(fileName.c_str())),
           _width(width),
           _height(height)
@@ -446,15 +444,12 @@ namespace Raylib {
         if (!IsTextureReady(_texture)) {
             static const ::Color badTexture   = {255, 16, 240, 255};
             static constexpr int badImageSize = 50;
-            _texture                          = LoadTextureFromImage(
-                GenImageColor(badImageSize, badImageSize, badTexture));
+            _texture = LoadTextureFromImage(GenImageColor(badImageSize, badImageSize, badTexture));
         }
+        Registry::getInstance().setToDefaultLayer(id);
     }
 
-    Sprite::Sprite(Image image, float width, float height)
-        : _texture({0, 0, 0, 0}),
-          _width(width),
-          _height(height)
+    Sprite::Sprite(Image image, float width, float height) : _texture(), _width(width), _height(height)
     {
         loadTextureFromImage(image);
     }
@@ -527,8 +522,7 @@ namespace Raylib {
         DrawTextureV(_texture, pos, tnt);
     }
 
-    void
-    Sprite::drawEx(Vector2 position, float rotation, float scale, Color tint)
+    void Sprite::drawEx(Vector2 position, float rotation, float scale, Color tint)
     {
         ::Vector2 pos = {position.x, position.y};
         ::Color tnt   = {tint.r, tint.g, tint.b, tint.a};
@@ -545,12 +539,7 @@ namespace Raylib {
         DrawTextureRec(_texture, src, pos, tnt);
     }
 
-    void Sprite::drawPro(
-        Rectangle source,
-        Rectangle dest,
-        Vector2 origin,
-        float rotation,
-        Color tint)
+    void Sprite::drawPro(Rectangle source, Rectangle dest, Vector2 origin, float rotation, Color tint)
     {
         ::Rectangle src = {source.x, source.y, source.width, source.height};
         ::Rectangle dst = {dest.x, dest.y, dest.width, dest.height};
@@ -595,8 +584,7 @@ namespace Raylib {
     }
 
     // Text functions
-    void
-    drawText(std::string text, int posX, int posY, int fontSize, Color color)
+    void drawText(std::string text, int posX, int posY, int fontSize, Color color)
     {
         ::Color textColor = {color.r, color.g, color.b, color.a};
 
@@ -615,11 +603,11 @@ namespace Raylib {
 
     Text::Text(std::string text, Vector2 position, float fontSize, Color color)
         : _text(std::move(text)),
-          _position(position),
           _fontSize(fontSize),
+          _currentFontSize(fontSize),
           _color(color),
-          _pixelPosition(position),
-          _currentFontSize(fontSize)
+          _position(position),
+          _pixelPosition(position)
     {
     }
 
@@ -640,13 +628,7 @@ namespace Raylib {
         ::Color textColor = {_color.r, _color.g, _color.b, _color.a};
         ::Vector2 pos     = {_pixelPosition.x, _pixelPosition.y};
 
-        DrawTextEx(
-            GetFontDefault(),
-            _text.c_str(),
-            pos,
-            _currentFontSize,
-            spacing,
-            textColor);
+        DrawTextEx(GetFontDefault(), _text.c_str(), pos, _currentFontSize, spacing, textColor);
     }
 
     void Text::drawPro(Vector2 origin, float rotation, float spacing)
@@ -694,6 +676,16 @@ namespace Raylib {
     void Text::setPixelPosition(Vector2 position)
     {
         _pixelPosition = position;
+    }
+
+    void Text::setColor(Color color)
+    {
+        _color = color;
+    }
+
+    Color Text::getColor() const
+    {
+        return _color;
     }
 
     void Text::setCurrentFontSize(float fontSize)

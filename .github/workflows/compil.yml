@@ -46,7 +46,7 @@ jobs:
         run: ./scripts/install-deps-windows.ps1
 
       - name: Compil
-        run: ./scripts/compil.ps1 --dry-run
+        run: ./scripts/compil.ps1 --no-tidy
 
   linux-compil:
     runs-on: ubuntu-latest

@@ -16,8 +16,20 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
-#include "SceneManager.hpp"
+#include "Clock.hpp"
+#include "Logger.hpp"
 #include "SparseArray.hpp"
+
+enum LayerType { BACKLAYER, FRONTLAYER, DEFAULTLAYER };
+
+enum BackLayers { BACK = 0, BACKMAX };
+
+/*
+ * FRONT is the frontest layer, so when adding a new one increment the FRONT
+ * value and add the new one above
+ */
+
+enum FrontLayers { FRONT = 0, FRONTMAX };
 
 class Registry {
     public:
@@ -33,61 +45,59 @@ class Registry {
             return castReturn<Component>();
         }
 
-        void addEntity();
+        std::size_t addEntity();
 
         void removeEntity(std::size_t /*id*/);
 
-        void clear(std::vector<CustomIndex>);
+        void clear();
 
-        template <class Component>
-        components<Component> getCustomSparseArray(std::size_t id)
-        {
-            if (_customSparseArrays.find(id) == _customSparseArrays.end()) {
-                throw std::runtime_error(
-                    "getCustomSparseArray ID not in :" + std::to_string(id));
-            }
-            try {
-                components<Component> castedComponent =
-                    std::any_cast<components<Component>>(
-                        _customSparseArrays[id]);
+        std::vector<std::size_t> getEntitiesByComponents(std::vector<std::type_index>);
 
-                return castedComponent;
-            } catch (const std::bad_any_cast &e) {
-                throw std::runtime_error("Bad cast: " + std::string(e.what()));
-            }
-        }
+        void setToBackLayers(std::size_t id, BackLayers layer = BackLayers::BACK);
 
-        template <class Component>
-        std::size_t addCustomSparseArray()
-        {
-            _maxCustomId++;
-            std::size_t id = _maxCustomId;
+        void setToDefaultLayer(std::size_t id);
 
-            _customSparseArrays[id] = SparseArray<Component>();
-            return (id);
-        }
+        void setToFrontLayers(std::size_t id, FrontLayers layer = FrontLayers::FRONT);
 
-        std::size_t getEntitiesNb() const;
+        std::vector<std::vector<std::size_t>> getBackLayers();
 
-        void initCustomSparseArrays(std::vector<CustomIndex> indexes);
+        std::vector<std::size_t> getDefaultLayer();
+
+        std::vector<std::vector<std::size_t>> getFrontLayers();
 
         Registry &operator=(const Registry &) = delete;
         Registry(const Registry &)            = delete;
         void operator=(const Registry &&)     = delete;
         Registry(Registry &&)                 = delete;
 
+        Clock &getClock();
+
+#ifdef CLIENT
+        void unloadRaylibComponents(std::size_t id);
+#endif
+
+        Logger::Logger &getLogger();
+
     private:
         Registry();
+
+        Clock _clock;
+        Logger::Logger _logger;
+
+        void initLayers(bool back);
+
+        void removeFromDefaultLayer(std::size_t id);
+
+        std::vector<std::size_t> getExistings(std::type_index type);
 
         template <typename Component>
         void checkAddSparseArray()
         {
             if (_data.find(typeid(Component)) == _data.end()) {
                 _data[typeid(Component)] = SparseArray<Component>();
-                _addComponentPlaceFunctions.push_back(
-                    &Registry::addComponentPlace<Component>);
-                _removeComponentFunctions.push_back(
-                    &Registry::removeComponent<Component>);
+                _addComponentPlaceFunctions.push_back(&Registry::addComponentPlace<Component>);
+                _removeComponentFunctions.push_back(&Registry::removeComponent<Component>);
+                _getExistingsId[typeid(Component)]   = &Registry::getExistingsId<Component>;
                 components<Component> componentArray = castReturn<Component>();
                 for (std::size_t i = 0; i < _entitiesNb; i++) {
                     componentArray.add();
@@ -107,27 +117,31 @@ class Registry {
             castReturn<Component>().erase(id);
         }
 
+        template <typename Component>
+        std::vector<std::size_t> getExistingsId()
+        {
+            return castReturn<Component>().getExistingsId();
+        }
+
         template <class Component>
         components<Component> castReturn()
         {
-            return std::any_cast<components<Component>>(
-                _data[typeid(Component)]);
+            return std::any_cast<components<Component>>(_data[typeid(Component)]);
         }
-
-        void addCustomSparseIndex(std::size_t id);
 
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
         static Registry _instance;
         // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
-        std::vector<std::function<void(Registry &)>>
-            _addComponentPlaceFunctions;
-        std::vector<std::function<void(Registry &, std::size_t)>>
-            _removeComponentFunctions;
+        std::vector<std::function<void(Registry &)>> _addComponentPlaceFunctions;
+        std::vector<std::function<void(Registry &, std::size_t)>> _removeComponentFunctions;
+        std::unordered_map<std::type_index, std::function<std::vector<std::size_t>(Registry &)>>
+            _getExistingsId;
         std::unordered_map<std::type_index, std::any> _data;
 
-        std::unordered_map<std::size_t, std::any> _customSparseArrays;
-        std::size_t _maxCustomId;
-
         std::size_t _entitiesNb;
+
+        std::vector<std::vector<std::size_t>> _backLayers;
+        std::vector<std::size_t> _defaultLayer;
+        std::vector<std::vector<std::size_t>> _frontLayers;
 };

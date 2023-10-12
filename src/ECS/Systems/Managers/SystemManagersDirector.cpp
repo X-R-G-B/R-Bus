@@ -11,8 +11,7 @@
 namespace Systems {
 
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
-    SystemManagersDirector SystemManagersDirector::_instance =
-        SystemManagersDirector();
+    SystemManagersDirector SystemManagersDirector::_instance = SystemManagersDirector();
     // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
     SystemManagersDirector &SystemManagersDirector::getInstance()
@@ -23,12 +22,6 @@ namespace Systems {
     SystemManager &SystemManagersDirector::getSystemManager(std::size_t id)
     {
         return _systemManagers[id];
-    }
-
-    std::size_t SystemManagersDirector::addSystemManager()
-    {
-        _systemManagers.emplace_back();
-        return _systemManagers.size() - 1;
     }
 
     std::size_t SystemManagersDirector::addSystemManager(

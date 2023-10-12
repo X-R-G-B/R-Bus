@@ -14,4 +14,3 @@ target_sources(
 
 add_subdirectory(Systems)
 add_subdirectory(Raylib)
-add_subdirectory(EventManager)

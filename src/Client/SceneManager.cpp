@@ -6,13 +6,12 @@
 */
 
 #include "SceneManager.hpp"
-#include <iostream>
 #include "ClientSystems.hpp"
+#include "CustomTypes.hpp"
+#include "Logger.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
-
-#include "CustomTypes.hpp"
 
 constexpr int screenWidth  = 1920;
 constexpr int screenHeight = 1080;
@@ -26,8 +25,7 @@ static void initRaylib()
 {
     Raylib::initWindow(screenWidth, screenHeight, "R-Bus");
     Raylib::setWindowState(Raylib::ConfigFlags::WINDOW_RESIZABLE);
-    Raylib::setTargetFPS(
-        Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
+    Raylib::setTargetFPS(Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
     Raylib::initAudioDevice();
 }
 
@@ -65,8 +63,6 @@ int SceneManager::run()
     auto &director = Systems::SystemManagersDirector::getInstance();
 
     try {
-        Registry::getInstance().initCustomSparseArrays(
-            _scenesCustomIndexes.at(_currentScene));
         while (!_stop && !Raylib::windowShouldClose()) {
             Raylib::beginDrawing();
             Raylib::clearBackground(Raylib::DarkGray);
@@ -78,7 +74,7 @@ int SceneManager::run()
         }
         destroyRaylib();
     } catch (std::exception &e) {
-        std::cout << e.what() << std::endl;
+        Logger::fatal(e.what());
         return ReturnValue::ERROR;
     }
     return ReturnValue::OK;
@@ -87,7 +83,7 @@ int SceneManager::run()
 void SceneManager::changeScene(Scene scene)
 {
     _currentScene = scene;
-    Registry::getInstance().clear(_scenesCustomIndexes.at(_currentScene));
+    Registry::getInstance().clear();
     Systems::SystemManagersDirector::getInstance().resetChanges();
 }
 
