@@ -72,21 +72,6 @@ namespace Nitwork {
         return _actionToSendHandlers;
     }
 
-    /* Handlers Section */
-    // NOLINTBEGIN(readability-convert-member-functions-to-static)
-    void NitworkClient::handleStartWave(const std::any &msg, boost::asio::ip::udp::endpoint & /* unused */)
-    {
-        // NOLINTEND(readability-convert-member-functions-to-static)
-        const struct msgStartWave_s &msgStartWave = std::any_cast<struct msgStartWave_s>(msg);
-
-        if (msgStartWave.magick != MAGICK_START_WAVE) {
-            Logger::error("NITWORK: magick is not START_WAVE");
-            return;
-        }
-        Logger::info("Game started");
-    }
-    /* End Handlers Section */
-
     /* Message Creation Section */
     void NitworkClient::addInitMsg()
     {

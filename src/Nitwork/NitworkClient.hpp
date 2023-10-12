@@ -48,8 +48,6 @@ namespace Nitwork {
             [[nodiscard]] const std::map<enum n_actionType_t, actionHandler> &
             getActionToSendHandlers() const final;
 
-            void handleStartWave(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
-
         protected:
 
         private:
@@ -83,7 +81,7 @@ namespace Nitwork {
                             handleBody<struct msgStartWave_s>(handler, header);
                         },
                         [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                            handleStartWave(any, endpoint);
+                            Systems::handleStartWave(any, endpoint);
                         }
                     },
                 },

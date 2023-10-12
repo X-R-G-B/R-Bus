@@ -102,25 +102,13 @@ PACK(struct packetMsgPlayerInit_s {
 /* Message Start Game */
 PACK(struct msgStartWave_s {
         n_magick_t magick;
-        n_id_t playerId;
+        n_id_t enemyNb;
 });
 
 PACK(struct packetMsgStartWave_s {
         struct header_s header;
         struct action_s action;
         struct msgStartWave_s msgStartWave;
-});
-
-/* Message Enemy Nb */
-PACK(struct msgEnemyNb_s {
-        n_magick_t magick;
-        n_id_t enemyNb;
-});
-
-PACK(struct packetMsgEnemyNb_s {
-        struct header_s header;
-        struct action_s action;
-        struct msgEnemyNb_s msgEnemyNb;
 });
 
 /* Message Life Update */

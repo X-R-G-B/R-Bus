@@ -39,10 +39,10 @@ namespace Systems {
         }
     }
 
-    void receiveEnemyNb(std::any &any, boost::asio::ip::udp::endpoint &)
+    void handleStartWave(std::any &any, boost::asio::ip::udp::endpoint &)
     {
-        const auto enemyNb = std::any_cast<struct msgEnemyNb_s>(any);
-        Types::Enemy::setEnemyNb(enemyNb.enemyNb);
+        const auto wave = std::any_cast<struct msgStartWave_s>(any);
+        Types::Enemy::setEnemyNb(wave.enemyNb);
         SystemManagersDirector::getInstance()
             .getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::GAME))
             .addSystem(initWave);

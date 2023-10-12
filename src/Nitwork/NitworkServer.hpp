@@ -28,7 +28,7 @@ namespace Nitwork {
                 const std::string &ip = "") final;
 
             /* Messages creation methods */
-            void addStarGameMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
+            void addStarWaveMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
 
             void addLifeUpdateMessage(
                 boost::asio::ip::udp::endpoint &endpoint,

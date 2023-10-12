@@ -99,6 +99,13 @@ namespace Types {
                 _enemyNb = nb;
             }
 
+            static unsigned int getEnemyNb()
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+
+                return _enemyNb;
+            }
+
         private:
             enemy_id_s _constId;
             static unsigned int _enemyNb;
