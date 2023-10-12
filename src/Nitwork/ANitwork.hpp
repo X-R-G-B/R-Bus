@@ -11,6 +11,7 @@
 #include <iostream>
 #include <list>
 #include <mutex>
+#include <unordered_map>
 #include "INitwork.hpp"
 #include "Logger.hpp"
 
