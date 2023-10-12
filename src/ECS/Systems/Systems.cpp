@@ -51,21 +51,21 @@ namespace Systems {
     {
         Registry &registry                          = Registry::getInstance();
         Registry::components<Types::Player> players = registry.getComponents<Types::Player>();
-        Registry::components<Types::Enemy> enemies   = registry.getComponents<Types::Enemy>();
+        Registry::components<Types::Enemy> enemies  = registry.getComponents<Types::Enemy>();
         Registry::components<Types::PlayerAllies> playerAllies =
             registry.getComponents<Types::PlayerAllies>();
         Registry::components<Types::EnemyAllies> enemyAllies = registry.getComponents<Types::EnemyAllies>();
 
         if ((playerAllies.exist(fstId) && players.exist(scdId))
-            || (playerAllies.exist(scdId) && players.exist(fstId)) ||
-            (playerAllies.exist(fstId) && playerAllies.exist(scdId)) ||
-            (players.exist(scdId) && players.exist(fstId))) {
+            || (playerAllies.exist(scdId) && players.exist(fstId))
+            || (playerAllies.exist(fstId) && playerAllies.exist(scdId))
+            || (players.exist(scdId) && players.exist(fstId))) {
             return true;
         }
         if ((enemyAllies.exist(fstId) && enemies.exist(scdId))
-            || (enemyAllies.exist(scdId) && enemies.exist(fstId)) ||
-            (enemyAllies.exist(fstId) && enemyAllies.exist(scdId)) ||
-            (enemies.exist(scdId) && enemies.exist(fstId))) {
+            || (enemyAllies.exist(scdId) && enemies.exist(fstId))
+            || (enemyAllies.exist(fstId) && enemyAllies.exist(scdId))
+            || (enemies.exist(scdId) && enemies.exist(fstId))) {
             return true;
         }
         return false;
@@ -174,8 +174,8 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Velocity> arrVelocity =
             Registry::getInstance().getComponents<Types::Velocity>();
-        Clock &clock = Registry::getInstance().getClock();
-        static std::size_t clockId = clock.create();
+        Clock &clock                 = Registry::getInstance().getClock();
+        static std::size_t clockId   = clock.create();
         std::vector<std::size_t> ids = arrPosition.getExistingsId();
 
         if (clock.elapsedMillisecondsSince(clockId) < moveTime) {
