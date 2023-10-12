@@ -3,6 +3,9 @@
 #include "ECSCustomTypes.hpp"
 #include "NitworkClient.hpp"
 #include "Registry.hpp"
+#include "SceneManager.hpp"
+#include "SystemManagersDirector.hpp"
+#include "Systems.hpp"
 
 namespace Systems {
     void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
@@ -34,6 +37,15 @@ namespace Systems {
                 return;
             }
         }
+    }
+
+    void receiveEnemyNb(std::any &any, boost::asio::ip::udp::endpoint &)
+    {
+        const auto enemyNb = std::any_cast<struct msgEnemyNb_s>(any);
+        Types::Enemy::setEnemyNb(enemyNb.enemyNb);
+        SystemManagersDirector::getInstance()
+            .getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::GAME))
+            .addSystem(initWave);
     }
 
     void receivePlayerInit(std::any &any, boost::asio::ip::udp::endpoint &)

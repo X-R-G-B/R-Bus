@@ -72,14 +72,7 @@ namespace Types {
 
     struct Enemy {
         public:
-            Enemy(enum enemy_type_e type) : _type(type)
-            {
-                std::lock_guard<std::mutex> lock(_mutex);
-
-                _constId = enemy_id_s {_enemyNb};
-                _enemyNb++;
-            }
-            Enemy() : _type(CLASSIC_ENEMY)
+            Enemy(enum enemy_type_e type = enemy_type_e::CLASSIC_ENEMY) : _type(type)
             {
                 std::lock_guard<std::mutex> lock(_mutex);
 
@@ -89,11 +82,21 @@ namespace Types {
 
             [[nodiscard]] const enemy_id_s &getConstId() const
             {
+                std::lock_guard<std::mutex> lock(_mutex);
+
                 return _constId;
             }
+
             [[nodiscard]] enum enemy_type_e getType() const
             {
                 return _type;
+            }
+
+            static void setEnemyNb(unsigned int nb)
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+
+                _enemyNb = nb;
             }
 
         private:

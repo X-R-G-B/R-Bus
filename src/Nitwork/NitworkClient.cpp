@@ -74,13 +74,13 @@ namespace Nitwork {
 
     /* Handlers Section */
     // NOLINTBEGIN(readability-convert-member-functions-to-static)
-    void NitworkClient::handleStartGame(const std::any &msg, boost::asio::ip::udp::endpoint & /* unused */)
+    void NitworkClient::handleStartWave(const std::any &msg, boost::asio::ip::udp::endpoint & /* unused */)
     {
         // NOLINTEND(readability-convert-member-functions-to-static)
-        const struct msgStartGame_s &msgStartGame = std::any_cast<struct msgStartGame_s>(msg);
+        const struct msgStartWave_s &msgStartWave = std::any_cast<struct msgStartWave_s>(msg);
 
-        if (msgStartGame.magick != MAGICK_START_GAME) {
-            Logger::error("NITWORK: magick is not START_GAME");
+        if (msgStartWave.magick != MAGICK_START_WAVE) {
+            Logger::error("NITWORK: magick is not START_WAVE");
             return;
         }
         Logger::info("Game started");
