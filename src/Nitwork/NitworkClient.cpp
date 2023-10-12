@@ -87,12 +87,11 @@ namespace Nitwork {
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2,
                          },
-            .action = {
-                .magick = INIT,
-            },
-            .msgInit = {
-                .magick = MAGICK_INIT
-            }
+            .action =
+                {
+                         .magick = INIT,
+                         },
+            .msgInit = {.magick = MAGICK_INIT}
         };
         Packet packet(
             packetMsgInit.header.id,
@@ -115,12 +114,8 @@ namespace Nitwork {
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2,
                          },
-            .action = {
-                .magick = READY
-            },
-            .msgReady = {
-                .magick = MAGICK_READY
-            }
+            .action   = {.magick = READY},
+            .msgReady = {.magick = MAGICK_READY}
         };
         Packet packet(
             packetMsgReady.header.id,

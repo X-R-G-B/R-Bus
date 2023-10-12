@@ -125,7 +125,8 @@ namespace Nitwork {
                 T data = std::any_cast<T>(packet.body);
 
                 data.header.ids_received = getIdsReceived();
-                auto updatedPacket       = Packet(packet.id, packet.action, std::make_any<T>(data), packet.endpoint);
+                auto updatedPacket =
+                    Packet(packet.id, packet.action, std::make_any<T>(data), packet.endpoint);
                 return updatedPacket;
             }
 
