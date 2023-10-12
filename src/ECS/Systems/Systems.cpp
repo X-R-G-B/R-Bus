@@ -201,6 +201,7 @@ namespace Systems {
         Types::Rect rect                   = {Types::Rect(enemyData["rect"])};
         struct health_s healthComp         = {enemyData["health"]};
         Types::Damage damageComp           = {enemyData["damage"]};
+        Types::Enemy enemyStruct           = {};
         Types::Velocity velocity           = {Types::Velocity(enemyData["velocity"])};
 
         nlohmann::json animRectData = enemyData["animRect"];
