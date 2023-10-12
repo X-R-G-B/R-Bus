@@ -51,17 +51,21 @@ namespace Systems {
     {
         Registry &registry                          = Registry::getInstance();
         Registry::components<Types::Player> players = registry.getComponents<Types::Player>();
-        Registry::components<Types::Enemy> enemys   = registry.getComponents<Types::Enemy>();
+        Registry::components<Types::Enemy> enemies  = registry.getComponents<Types::Enemy>();
         Registry::components<Types::PlayerAllies> playerAllies =
             registry.getComponents<Types::PlayerAllies>();
         Registry::components<Types::EnemyAllies> enemyAllies = registry.getComponents<Types::EnemyAllies>();
 
         if ((playerAllies.exist(fstId) && players.exist(scdId))
-            || (playerAllies.exist(scdId) && players.exist(fstId))) {
+            || (playerAllies.exist(scdId) && players.exist(fstId))
+            || (playerAllies.exist(fstId) && playerAllies.exist(scdId))
+            || (players.exist(scdId) && players.exist(fstId))) {
             return true;
         }
-        if ((enemyAllies.exist(fstId) && enemys.exist(scdId))
-            || (enemyAllies.exist(scdId) && enemys.exist(fstId))) {
+        if ((enemyAllies.exist(fstId) && enemies.exist(scdId))
+            || (enemyAllies.exist(scdId) && enemies.exist(fstId))
+            || (enemyAllies.exist(fstId) && enemyAllies.exist(scdId))
+            || (enemies.exist(scdId) && enemies.exist(fstId))) {
             return true;
         }
         return false;
@@ -86,10 +90,6 @@ namespace Systems {
         Registry::components<struct health_s> arrHealth =
             Registry::getInstance().getComponents<struct health_s>();
 
-        if (checkAllies(firstEntity, secondEntity)) {
-            return;
-        }
-
         if (arrDamage.exist(firstEntity) && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
                 arrHealth[secondEntity].hp -= arrDamage[firstEntity].damage;
@@ -98,6 +98,15 @@ namespace Systems {
 #endif
             }
         }
+    }
+
+    static void checkSide(std::size_t firstEntity, std::size_t secondEntity)
+    {
+        if (checkAllies(firstEntity, secondEntity)) {
+            return;
+        }
+        giveDamages(firstEntity, secondEntity);
+        giveDamages(secondEntity, firstEntity);
     }
 
     static void checkCollisionEntity(
@@ -119,8 +128,7 @@ namespace Systems {
                     && entityPos.x + entityColl.width > sndEntityPos.x
                     && entityPos.y < sndEntityPos.y + sndEntityRect.height
                     && entityPos.y + entityColl.height > sndEntityPos.y) {
-                    giveDamages(id, *itIds);
-                    giveDamages(*itIds, id);
+                    checkSide(id, *itIds);
                 }
             }
             itIds++;
@@ -158,21 +166,28 @@ namespace Systems {
         }
     }
 
+    const std::size_t moveTime = 20;
+
     void moveEntities(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Velocity> arrVelocity =
             Registry::getInstance().getComponents<Types::Velocity>();
-
+        Clock &clock                 = Registry::getInstance().getClock();
+        static std::size_t clockId   = clock.create();
         std::vector<std::size_t> ids = arrPosition.getExistingsId();
 
+        if (clock.elapsedMillisecondsSince(clockId) < moveTime) {
+            return;
+        }
         for (auto &id : ids) {
             if (arrVelocity.exist(id)) {
                 arrPosition[id].x += arrVelocity[id].speedX;
                 arrPosition[id].y += arrVelocity[id].speedY;
             }
         }
+        clock.restart(clockId);
     }
 
     static void initEnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &enemyData)
@@ -209,6 +224,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
+        Registry::getInstance().getComponents<Types::Enemy>().insertBack(enemyStruct);
     }
 
     void initEnemy(const std::string &path)
