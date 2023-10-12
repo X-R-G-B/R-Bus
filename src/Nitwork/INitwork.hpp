@@ -38,7 +38,11 @@ namespace Nitwork {
     };
     class Packet {
         public:
-            Packet(n_id_t id, n_actionType_t action, std::any body, const boost::asio::ip::udp::endpoint &endpoint)
+            Packet(
+                n_id_t id,
+                n_actionType_t action,
+                std::any body,
+                const boost::asio::ip::udp::endpoint &endpoint)
                 : id(id),
                   action(action),
                   body(std::move(body)),
