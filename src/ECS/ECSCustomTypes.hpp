@@ -16,6 +16,7 @@ extern "C"
 {
 #include "MessageTypes.h"
 }
+#include "Registry.hpp"
 
 // all values are in percentage of the screen
 namespace Types {
@@ -50,6 +51,30 @@ namespace Types {
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Velocity, speedX, speedY);
     };
 
+    struct PlayerDatas {
+            PlayerDatas(
+                const std::string &fileName,
+                float width,
+                float height,
+                std::size_t id,
+                enum LayerType layer,
+                std::size_t layerSide)
+                : fileName(fileName),
+                  width(width),
+                  height(height),
+                  id(id),
+                  layer(layer),
+                  layerSide(layerSide)
+            {
+            }
+            std::string fileName;
+            float width;
+            float height;
+            std::size_t id;
+            enum LayerType layer;
+            size_t layerSide;
+    };
+
     struct Player {
             unsigned int constId;
     };
@@ -72,14 +97,7 @@ namespace Types {
 
     struct Enemy {
         public:
-            Enemy(enum enemy_type_e type) : _type(type)
-            {
-                std::lock_guard<std::mutex> lock(_mutex);
-
-                _constId = enemy_id_s {_enemyNb};
-                _enemyNb++;
-            }
-            Enemy() : _type(CLASSIC_ENEMY)
+            Enemy(enum enemy_type_e type = enemy_type_e::CLASSIC_ENEMY) : _type(type)
             {
                 std::lock_guard<std::mutex> lock(_mutex);
 
@@ -89,11 +107,28 @@ namespace Types {
 
             [[nodiscard]] const enemy_id_s &getConstId() const
             {
+                std::lock_guard<std::mutex> lock(_mutex);
+
                 return _constId;
             }
+
             [[nodiscard]] enum enemy_type_e getType() const
             {
                 return _type;
+            }
+
+            static void setEnemyNb(unsigned int nb)
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+
+                _enemyNb = nb;
+            }
+
+            static unsigned int getEnemyNb()
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+
+                return _enemyNb;
             }
 
         private:

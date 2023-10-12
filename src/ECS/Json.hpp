@@ -11,13 +11,13 @@
 #include <nlohmann/json.hpp>
 
 enum class JsonType {
-    DEFAULT_ENNEMY,
+    DEFAULT_ENEMY,
     DEFAULT_PLAYER,
     DEFAULT_PARALLAX,
 };
 
 const std::unordered_map<JsonType, std::string> pathToJson = {
-    {JsonType::DEFAULT_ENNEMY, "assets/Json/ennemyData.json"},
+    {JsonType::DEFAULT_ENEMY, "assets/Json/enemyData.json"},
     {JsonType::DEFAULT_PLAYER, "assets/Json/playerData.json"},
     {JsonType::DEFAULT_PARALLAX, "assets/Json/parallaxData.json"}
 };
@@ -35,7 +35,7 @@ class Json {
     
         std::vector<nlohmann::basic_json<>> getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType);
         
-        nlohmann::json &getDataFromJson(nlohmann::basic_json<> &jsonData, const std::string &index);
+        nlohmann::json &getDataFromJson(nlohmann::basic_json<> jsonData, const std::string &index);
 
         std::vector<nlohmann::basic_json<>> getDatasFromList(const std::vector<nlohmann::basic_json<>> &list, const std::string &key);
 

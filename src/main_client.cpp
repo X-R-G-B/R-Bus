@@ -32,8 +32,14 @@ constexpr int EXIT_EPITECH = 84;
 static bool checkArgs(int ac, char **av)
 {
     if (ac != 3) {
-        Logger::error("Usage: ./rtype_client <ip>");
+        Logger::error("Usage: ./r-type_client <ip> <port>");
         return false;
+    }
+    for (int i = 0; av[2][i] != '\0'; i++) {
+        if (av[2][i] < '0' || av[2][i] > '9') {
+            Logger::error("Invalid port");
+            return false;
+        }
     }
     if (std::stoi(av[2]) < 0 || std::stoi(av[2]) > 65535) {
         Logger::error("Invalid port");
@@ -54,16 +60,13 @@ int main(int ac, char **av)
     if (!checkArgs(ac, av)) {
         return EXIT_EPITECH;
     }
+    auto &sceneManager = Scene::SceneManager::getInstance();
     if (!Nitwork::NitworkClient::getInstance().start(std::stoi(av[2]), 4, 60, av[1])) {
         return EXIT_EPITECH;
     }
     Nitwork::NitworkClient::getInstance().addInitMsg();
     Nitwork::NitworkClient::getInstance().addReadyMsg();
-    SceneManager &sceneManager = SceneManager::getInstance();
-
-    Logger::info("Starting Game...");
     int res = sceneManager.run();
-
     Nitwork::NitworkClient::getInstance().stop();
     return res;
 }

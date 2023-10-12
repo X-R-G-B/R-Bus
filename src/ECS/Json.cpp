@@ -7,6 +7,7 @@
 
 #include <fstream>
 #include <utility>
+#include "Logger.hpp"
 #include "Json.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -35,10 +36,14 @@ nlohmann::basic_json<> Json::getDataByVector(const std::vector<std::string> &ind
 
     for (auto &key : indexes) {
         finalData = finalData[key];
+        if (finalData == nullptr) {
+            Logger::error(std::string("Key : " + key + " is not valid"));
+        }
         if (finalData.is_array() == true) {
             return (finalData);
         }
     }
+    
     return (finalData);
 }
 
@@ -49,8 +54,11 @@ nlohmann::basic_json<> Json::getDataByJsonType(JsonType dataType)
     return (data);
 }
 
-nlohmann::basic_json<> &Json::getDataFromJson(nlohmann::basic_json<> &jsonData, const std::string &index)
+nlohmann::basic_json<> &Json::getDataFromJson(nlohmann::basic_json<> jsonData, const std::string &index)
 {
+    if (jsonData[index] == nullptr) {
+        Logger::error(std::string("Key : " + index + " is not valid"));
+    }
     return jsonData[index];
 }
 
@@ -59,6 +67,9 @@ nlohmann::basic_json<> Json::getDataByJsonType(const std::string &index, JsonTyp
     nlohmann::basic_json<> finalData(_jsonDatas[dataType]);
 
     finalData = finalData[index];
+    if (finalData == nullptr) {
+        Logger::error(std::string("Key : " + index + " is not valid"));
+    }
     return (finalData);
 }
 
