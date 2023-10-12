@@ -49,8 +49,8 @@ int main(int ac, const char **av)
         return EXIT_EPITECH;
     }
     Logger::info("Starting Server...");
-    if (!Nitwork::NitworkServer::getInstance().start(4242)) {
-        return 84;
+    if (!Nitwork::NitworkServer::getInstance().start(std::stoi(av[1]))) {
+        return EXIT_EPITECH;
     }
     Systems::SystemManagersDirector::getInstance().addSystemManager(Systems::getECSSystems());
     signal(SIGINT, signalHandler);
