@@ -29,9 +29,9 @@ nlohmann::json Json::loadJsonData(const std::string &path)
         return jsonData;
 }
 
-nlohmann::json_abi_v3_11_2::basic_json<> Json::getDataByJsonType(const std::vector<std::string> &indexes, JsonType dataType)
+nlohmann::basic_json<> Json::getDataByVector(const std::vector<std::string> &indexes, JsonType dataType)
 {
-    nlohmann::json_abi_v3_11_2::basic_json<> finalData(_jsonDatas[dataType]);
+    nlohmann::basic_json<> finalData(_jsonDatas[dataType]);
 
     for (auto &key : indexes) {
         finalData = finalData[key];
@@ -42,18 +42,30 @@ nlohmann::json_abi_v3_11_2::basic_json<> Json::getDataByJsonType(const std::vect
     return (finalData);
 }
 
-nlohmann::json_abi_v3_11_2::basic_json<> Json::getDataByJsonType(const std::string &index, JsonType dataType)
+nlohmann::basic_json<> Json::getDataByJsonType(JsonType dataType)
 {
-    nlohmann::json_abi_v3_11_2::basic_json<> finalData(_jsonDatas[dataType]);
+    nlohmann::basic_json<> data(_jsonDatas[dataType]);
+
+    return (data);
+}
+
+nlohmann::basic_json<> &Json::getDataFromJson(nlohmann::basic_json<> &jsonData, const std::string &index)
+{
+    return jsonData[index];
+}
+
+nlohmann::basic_json<> Json::getDataByJsonType(const std::string &index, JsonType dataType)
+{
+    nlohmann::basic_json<> finalData(_jsonDatas[dataType]);
 
     finalData = finalData[index];
     return (finalData);
 }
 
-std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> Json::getDatasFromList(const std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> &list, const std::string &key)
+std::vector<nlohmann::basic_json<>> Json::getDatasFromList(const std::vector<nlohmann::basic_json<>> &list, const std::string &key)
 {
-    std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> datas;
-    std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> tmp;
+    std::vector<nlohmann::basic_json<>> datas;
+    std::vector<nlohmann::basic_json<>> tmp;
 
     for (auto &elem : list) {
         if (elem[key].is_array() == true) {
@@ -66,9 +78,9 @@ std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> Json::getDatasFromList(con
     return (datas);
 }
 
-std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> Json::getDatasFromList(const nlohmann::json_abi_v3_11_2::basic_json<> &list, const std::string &key)
+std::vector<nlohmann::basic_json<>> Json::getDatasFromList(const nlohmann::basic_json<> &list, const std::string &key)
 {
-    std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> datas;
+    std::vector<nlohmann::basic_json<>> datas;
 
     for (auto &elem : list) {
         datas.push_back(elem[key]);
@@ -76,9 +88,9 @@ std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> Json::getDatasFromList(con
     return (datas);
 }
 
-std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> Json::getDatasFromList(const nlohmann::json_abi_v3_11_2::basic_json<> &list)
+std::vector<nlohmann::basic_json<>> Json::getDatasFromList(const nlohmann::basic_json<> &list)
 {
-    std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> datas;
+    std::vector<nlohmann::basic_json<>> datas;
 
     for (auto &elem : list) {
         datas.push_back(elem);
@@ -86,7 +98,7 @@ std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> Json::getDatasFromList(con
     return (datas);
 }
 
-std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> &Json::getDatasFromList(std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> &datas, nlohmann::json_abi_v3_11_2::basic_json<> &listData, const std::string &key)
+std::vector<nlohmann::basic_json<>> &Json::getDatasFromList(std::vector<nlohmann::basic_json<>> &datas, nlohmann::basic_json<> &listData, const std::string &key)
 {
     if (datas.empty()) {
         datas = getDatasFromList(listData);
@@ -97,10 +109,10 @@ std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> &Json::getDatasFromList(st
     return (datas);
 }
 
-std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> Json::getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType)
+std::vector<nlohmann::basic_json<>> Json::getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType)
 {
-    nlohmann::json_abi_v3_11_2::basic_json<> &finalData(_jsonDatas[dataType]);
-    std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> datas;
+    nlohmann::basic_json<> &finalData(_jsonDatas[dataType]);
+    std::vector<nlohmann::basic_json<>> datas;
 
     for (auto &key : indexes) {
         if (finalData.is_array() == true || datas.empty() == false) {

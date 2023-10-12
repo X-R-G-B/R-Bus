@@ -27,25 +27,30 @@ class Json {
         static Json &getInstance();
         ~Json();
 
-        nlohmann::json_abi_v3_11_2::basic_json<> getDataByJsonType(const std::string &index, JsonType dataType);
+        nlohmann::basic_json<> getDataByJsonType(JsonType dataType);
+    
+        nlohmann::basic_json<> getDataByJsonType(const std::string &index, JsonType dataType);
 
-        std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType);
+        nlohmann::basic_json<> getDataByVector(const std::vector<std::string> &indexes, JsonType dataType);
+    
+        std::vector<nlohmann::basic_json<>> getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType);
+        
+        nlohmann::json &getDataFromJson(nlohmann::basic_json<> &jsonData, const std::string &index);
 
-        nlohmann::json_abi_v3_11_2::basic_json<> getDataByJsonType(const std::vector<std::string> &indexes, JsonType dataType);
+        std::vector<nlohmann::basic_json<>> getDatasFromList(const std::vector<nlohmann::basic_json<>> &list, const std::string &key);
 
-        std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> getDatasFromList(const std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> &list, const std::string &key);
+        std::vector<nlohmann::basic_json<>> getDatasFromList(const nlohmann::basic_json<> &list, const std::string &key);
 
-        std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> getDatasFromList(const nlohmann::json_abi_v3_11_2::basic_json<> &list, const std::string &key);
+        std::vector<nlohmann::basic_json<>> getDatasFromList(const nlohmann::basic_json<> &list);
 
-        std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> getDatasFromList(const nlohmann::json_abi_v3_11_2::basic_json<> &list);
 
     protected:
     private:
         Json();
 
-        std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> &getDatasFromList(std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> &datas, nlohmann::json_abi_v3_11_2::basic_json<> &listData, const std::string &key);
+        std::vector<nlohmann::basic_json<>> &getDatasFromList(std::vector<nlohmann::basic_json<>> &datas, nlohmann::basic_json<> &listData, const std::string &key);
 
-        bool isListData(const std::vector<nlohmann::json_abi_v3_11_2::basic_json<>> &datas, const std::string &key);
+        bool isListData(const std::vector<nlohmann::basic_json<>> &datas, const std::string &key);
 
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
         static Json _instance;
