@@ -16,6 +16,7 @@
 #include <typeinfo>
 #include <unordered_map>
 #include <vector>
+#include <mutex>
 #include "Clock.hpp"
 #include "Logger.hpp"
 #include "SparseArray.hpp"

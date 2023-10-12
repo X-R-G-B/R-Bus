@@ -69,7 +69,7 @@ namespace Nitwork {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgPlayerInit_s>(handler, header);
                         },
-                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             Systems::receivePlayerInit(any, endpoint);
                         }
                     },
@@ -80,7 +80,7 @@ namespace Nitwork {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgStartWave_s>(handler, header);
                         },
-                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             Systems::handleStartWave(any, endpoint);
                         }
                     },
