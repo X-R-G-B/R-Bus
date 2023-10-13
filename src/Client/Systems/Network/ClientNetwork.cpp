@@ -109,10 +109,12 @@ namespace Systems {
         constexpr std::size_t delay = 1;
         static auto clockId         = Registry::getInstance().getClock().create();
         Registry &registry          = Registry::getInstance();
+        static struct position_absolute_s position = {0, 0};
 
         if (registry.getClock().elapsedSecondsSince(clockId) < delay) {
             return;
         }
+        registry.getClock().restart(clockId);
         auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::Player)});
         auto arrPosition = registry.getComponents<Types::Position>();
 
@@ -123,6 +125,10 @@ namespace Systems {
             .x = static_cast<int>(arrPosition[ids[0]].x),
             .y = static_cast<int>(arrPosition[ids[0]].y),
         };
+        if (position.x == msg.x && position.y == msg.y) {
+            return;
+        }
+        position = msg;
         Nitwork::NitworkClient::getInstance().addPositionAbsoluteMsg(msg);
     }
 
