@@ -9,6 +9,7 @@
 #include "ECSCustomTypes.hpp"
 #include "NitworkServer.hpp"
 #include "Registry.hpp"
+#include "Maths.hpp"
 
 namespace Systems {
     void handleLifeUpdateMsg(const std::any &any, boost::asio::ip::udp::endpoint &endpoint)
@@ -61,8 +62,8 @@ namespace Systems {
                 .id   = arrEnemies[index].getConstId(),
                 .life = arrHealth[index],
                 .pos =
-                    {static_cast<char>(static_cast<int>(arrPos[index].x)),
-                          static_cast<char>(static_cast<int>(arrPos[index].y))},
+                    {static_cast<char>(Maths::removeIntegerDecimals(arrPos[index].x)),
+                          static_cast<char>(Maths::removeIntegerDecimals(arrPos[index].y))},
                 .type = arrEnemies[index].getType(),
         });
     }

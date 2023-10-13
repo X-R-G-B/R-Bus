@@ -28,8 +28,8 @@ namespace Types {
     };
 
     struct Position {
-            float x;
-            float y;
+            int x;
+            int y;
 
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Position, x, y);
     };

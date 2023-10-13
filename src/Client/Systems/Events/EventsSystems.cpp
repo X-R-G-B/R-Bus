@@ -11,6 +11,7 @@
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
+#include "Maths.hpp"
 
 namespace Systems {
     static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId)
@@ -39,6 +40,7 @@ namespace Systems {
             {typeid(Types::Player), typeid(Types::Position), typeid(struct health_s)});
         Clock &clock_              = registry.getClock();
         static std::size_t clockId = clock_.create(true);
+        static constexpr int speed = 1;
 
         for (auto id : ids) {
             if (clock_.elapsedMillisecondsSince(clockId) < elapsedBetweenMove || arrHealth[id].hp <= 0) {
@@ -46,19 +48,19 @@ namespace Systems {
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
                 checkAnimRect(id, clock_, clockId);
-                arrPos[id].x += 1;
+                arrPos[id].x += Maths::addIntegerDecimals(speed);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
                 checkAnimRect(id, clock_, clockId);
-                arrPos[id].x -= 1;
+                arrPos[id].x -= Maths::addIntegerDecimals(speed);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
                 checkAnimRect(id, clock_, clockId);
-                arrPos[id].y -= 1;
+                arrPos[id].y -= Maths::addIntegerDecimals(speed);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
                 checkAnimRect(id, clock_, clockId);
-                arrPos[id].y += 1;
+                arrPos[id].y += Maths::addIntegerDecimals(speed);
             }
         }
     }
@@ -96,7 +98,10 @@ namespace Systems {
         Registry::getInstance().setToFrontLayers(entityId);
         // send bullet to server
         Nitwork::NitworkClient::getInstance().addNewBulletMsg(
-            {static_cast<int>(position.x), static_cast<int>(position.y)},
+            {
+                Maths::removeIntegerDecimals(position.x),
+                Maths::removeIntegerDecimals(position.y)
+            },
             missileType.type);
     }
 

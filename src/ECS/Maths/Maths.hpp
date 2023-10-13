@@ -27,4 +27,60 @@ namespace Maths {
      */
     float integrerToDecimalWithTwoDecimals(int num);
 
+    /*
+     * @brief remove the decimals of an int
+     * @param num the int to return
+     * @return the int
+     * @example 9999 -> 99
+     *
+     */
+    int removeIntegerDecimals(int num);
+
+    /*
+     * @brief add the decimals of an int
+     * @param num the int to return
+     * @return the int
+     * @example 99 -> 9900
+     *
+     */
+    int addIntegerDecimals(int num);
+
+    /*
+     * @brief addition of two int with two decimals
+     * @param a the first int
+     * @param b the second int
+     * @return the result of the addition
+     * @example 9999 + 9999 -> 199.98
+     *
+     */
+    int additionWithDecimal(int a, int b);
+
+    /*
+     * @brief soustraction of two int with two decimals
+     * @param a the first int
+     * @param b the second int
+     * @return the result of the soustraction
+     * @example 9999 - 9999 -> 0
+     *
+     */
+    int subtractionWithDecimal(int a, int b);
+
+    /*
+     * @brief multiplication of two int with two decimals
+     * @param a the first int
+     * @param b the second int
+     * @return the result of the multiplication
+     *
+     */
+    int multiplicationWithDecimal(int a, int b);
+
+    /*
+     * @brief division of two int with two decimals
+     * @param a the first int
+     * @param b the second int
+     * @return the result of the division
+     *
+     */
+    int divisionWithDecimal(int a, int b);
+
 } // namespace Maths

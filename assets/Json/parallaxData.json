@@ -5,8 +5,8 @@
             "width": 100.0,
             "height": 100.0,
             "position": {
-                "x": 0.0,
-                "y": 0.0
+                "x": 0,
+                "y": 0
             },
             "velocity" : {
                 "speedX" : -50,
@@ -19,8 +19,8 @@
             "width": 7.0,
             "height": 10.0,
             "position": {
-                "x": 100.0,
-                "y": 20.0
+                "x": 10000,
+                "y": 2000
             },
             "velocity" : {
                 "speedX" : -80,

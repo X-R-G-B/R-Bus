@@ -39,11 +39,11 @@ namespace Systems {
             if (arrPosition[id].y < 0) {
                 arrPosition[id].y = 0;
             }
-            if (arrPosition[id].x + arrCollisionRect[id].width > maxScreenSize) {
-                arrPosition[id].x = static_cast<float>(maxScreenSize - arrCollisionRect[id].width);
+            if ((Maths::removeIntegerDecimals(arrPosition[id].x) + arrCollisionRect[id].width) > maxScreenSize) {
+                arrPosition[id].x = Maths::addIntegerDecimals(maxScreenSize - arrCollisionRect[id].width);
             }
-            if (arrPosition[id].y + arrCollisionRect[id].height > maxScreenSize) {
-                arrPosition[id].y = static_cast<float>(maxScreenSize - arrCollisionRect[id].height);
+            if ((Maths::removeIntegerDecimals(arrPosition[id].y) + arrCollisionRect[id].height) > maxScreenSize) {
+                arrPosition[id].y = Maths::addIntegerDecimals(maxScreenSize - arrCollisionRect[id].height);
             }
         }
     }
@@ -184,15 +184,8 @@ namespace Systems {
         }
         for (auto &id : ids) {
             if (arrVelocity.exist(id)) {
-                // arrPosition[id].x += arrVelocity[id].speedX;
-                // arrPosition[id].y += arrVelocity[id].speedY;
-                // REPLACE WHEN POSITION WILL BE AN INT
-                double posX = arrPosition[id].x;
-                double posY = arrPosition[id].y;
-                double speedX = Maths::integrerToDecimalWithTwoDecimals(arrVelocity[id].speedX);
-                double speedY = Maths::integrerToDecimalWithTwoDecimals(arrVelocity[id].speedY);
-                arrPosition[id].x = posX + speedX;
-                arrPosition[id].y = posY + speedY;
+                arrPosition[id].x = Maths::additionWithDecimal(arrPosition[id].x, arrVelocity[id].speedX);
+                arrPosition[id].y = Maths::additionWithDecimal(arrPosition[id].y, arrVelocity[id].speedY);
             }
         }
         clock.restart(clockId);
@@ -339,8 +332,13 @@ namespace Systems {
 
     static bool isOutsideWindow(const Types::Position &pos)
     {
-        if (pos.x < outsideWindowTopLeft || pos.x > outsideWindowBotRigth || pos.y < outsideWindowTopLeft
-            || pos.y > outsideWindowBotRigth) {
+        float posx = Maths::integrerToDecimalWithTwoDecimals(pos.x);
+        float posy = Maths::integrerToDecimalWithTwoDecimals(pos.y);
+
+        if (posx < outsideWindowTopLeft ||
+            posx > outsideWindowBotRigth ||
+            posy < outsideWindowTopLeft ||
+            posy > outsideWindowBotRigth) {
             return (true);
         }
         return (false);

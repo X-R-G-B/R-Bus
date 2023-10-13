@@ -6,6 +6,7 @@
 #include "SceneManager.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
+#include "Maths.hpp"
 
 namespace Systems {
     void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
@@ -91,8 +92,8 @@ namespace Systems {
         if (pos.x != posCached.x || pos.y != posCached.y) {
             registry.getClock().restart(clockId);
             struct position_relative_s msg = {
-                .x = static_cast<char>(static_cast<int>(pos.x - posCached.x)),
-                .y = static_cast<char>(static_cast<int>(pos.y - posCached.y)),
+                .x = static_cast<char>(Maths::subtractionWithDecimal(pos.x, posCached.x)),
+                .y = static_cast<char>(Maths::subtractionWithDecimal(pos.y, posCached.y)),
             };
             Nitwork::NitworkClient::getInstance().addPositionRelativeMsg(msg);
         }
@@ -114,8 +115,8 @@ namespace Systems {
             return;
         }
         struct position_absolute_s msg = {
-            .x = static_cast<int>(arrPosition[ids[0]].x),
-            .y = static_cast<int>(arrPosition[ids[0]].y),
+            .x = Maths::removeIntegerDecimals(arrPosition[ids[0]].x),
+            .y = Maths::removeIntegerDecimals(arrPosition[ids[0]].y),
         };
         Nitwork::NitworkClient::getInstance().addPositionAbsoluteMsg(msg);
     }

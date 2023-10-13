@@ -8,6 +8,7 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #include "nlohmann/json.hpp"
+#include "Maths.hpp"
 
 namespace Systems::ParallaxSystems {
     static nlohmann::json openJsonData(const std::string &path)
@@ -32,7 +33,7 @@ namespace Systems::ParallaxSystems {
 
     static void initParallaxEntity(
         nlohmann::json_abi_v3_11_2::basic_json<> &parallaxData,
-        const float maxOffsideParallax = 0)
+        const int maxOffsideParallax = 0)
     {
         std::size_t id = Registry::getInstance().addEntity();
 
@@ -42,7 +43,7 @@ namespace Systems::ParallaxSystems {
 
         Types::Position position = {Types::Position(parallaxData["position"])};
         if (maxOffsideParallax > 0) {
-            position.x += maxOffsideParallax;
+            position.x = Maths::additionWithDecimal(position.x, Maths::addIntegerDecimals(maxOffsideParallax));
         }
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
 
@@ -54,7 +55,10 @@ namespace Systems::ParallaxSystems {
             Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
         }
         Registry::getInstance().setToBackLayers(id);
-        Types::Parallax paralax = {position.x, position.y};
+        Types::Parallax paralax = {
+            Maths::integrerToDecimalWithTwoDecimals(position.x),
+            Maths::integrerToDecimalWithTwoDecimals(position.y)
+        };
         Registry::getInstance().getComponents<Types::Parallax>().insertBack(paralax);
     }
 
@@ -78,13 +82,13 @@ namespace Systems::ParallaxSystems {
         Registry::components<Types::Parallax> &arrParallax,
         Registry::components<Types::Position> &arrPosition)
     {
-        if (arrPosition[id].x <= maxOutParallaxLeft) {
+        if (Maths::removeIntegerDecimals(arrPosition[id].x) <= maxOutParallaxLeft) {
             if (arrParallax[id].x >= maxOutParallaxRight) {
-                arrPosition[id].x = arrParallax[id].x;
+                arrPosition[id].x = Maths::decimalToIntegrerWithTwoDecimals(arrParallax[id].x);
             } else {
-                arrPosition[id].x = arrParallax[id].x + maxOutParallaxRight;
+                arrPosition[id].x = Maths::decimalToIntegrerWithTwoDecimals(arrParallax[id].x) + Maths::addIntegerDecimals(maxOutParallaxRight);
             }
-            arrPosition[id].y = arrParallax[id].y;
+            arrPosition[id].y = Maths::decimalToIntegrerWithTwoDecimals(arrParallax[id].y);
         }
     }
 
