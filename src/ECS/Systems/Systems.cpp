@@ -183,13 +183,17 @@ namespace Systems {
             Json::getInstance().getDataByJsonType("enemy", enemyType);
 
         for (auto &elem : enemyData) {
-            std::size_t id = Registry::getInstance().addEntity();
 #ifdef CLIENT
+            std::size_t id = Registry::getInstance().addEntity();
+
             Raylib::Sprite enemy = {
                 Json::getInstance().getDataFromJson(elem, "spritePath"),
                 Json::getInstance().getDataFromJson(elem, "width"),
                 Json::getInstance().getDataFromJson(elem, "height"),
                 id};
+#else
+            Registry::getInstance().addEntity();
+                
 #endif
             Types::Position position = {
                 Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
@@ -210,6 +214,7 @@ namespace Systems {
 
 #ifdef CLIENT
             Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(enemy);
+            Registry::getInstance().setToFrontLayers(id);
 #endif
 
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
@@ -219,7 +224,6 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
             Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
             Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
-            Registry::getInstance().setToFrontLayers(id);
         }
     }
 
@@ -276,18 +280,17 @@ namespace Systems {
         }
     }
 
-    static void sendEnemyDeath(std::size_t id)
+    static void sendEnemyDeath(std::size_t arrId)
     {
         auto &arrEnemies = Registry::getInstance().getComponents<Types::Enemy>();
 
-        if (!arrEnemies.exist(id)) {
+        if (!arrEnemies.exist(arrId)) {
             return;
         }
-        n_id_t castedId = static_cast<n_id_t>(id);
 #ifdef CLIENT
-        Nitwork::NitworkClient::getInstance().addEnemyDeathMsg(castedId);
+        Nitwork::NitworkClient::getInstance().addEnemyDeathMsg(arrEnemies[arrId].getConstId().id);
 #else
-        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(castedId);
+        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(arrEnemies[arrId].getConstId().id);
 #endif
     }
 
@@ -350,7 +353,11 @@ namespace Systems {
 
     void initPlayer(JsonType playerType)
     {
+#ifdef CLIENT
         std::size_t id = Registry::getInstance().addEntity();
+#else
+        Registry::getInstance().addEntity();
+#endif
 
         Types::Player playerComp = {};
         Types::Dead deadComp = {Json::getInstance().getDataByVector({"player", "deadTime"}, playerType)};
@@ -392,7 +399,6 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
-        Registry::getInstance().setToFrontLayers(id);
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
