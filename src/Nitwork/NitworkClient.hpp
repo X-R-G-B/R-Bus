@@ -117,6 +117,17 @@ namespace Nitwork {
                             Systems::receiveNewEnemy(any, endpoint);
                         }
                     }
+                },
+                {
+                    NEW_BULLET,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgNewBullet_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveNewBullet(any, endpoint);
+                        }
+                    }
                 }
             };
             std::map<

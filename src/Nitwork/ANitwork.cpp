@@ -152,7 +152,7 @@ namespace Nitwork {
         _receivedPacketsIdsMap[_senderEndpoint].push_back(header->id);
         // _receivedPacketsIds.push_back(header->id);
         _receivedPacketsIdsMutex.unlock();
-        handlePacketIdsReceived(*header);
+        //        handlePacketIdsReceived(*header);
         for (int i = 0; i < header->nb_action; i++) {
             handleBodyAction(*header, _senderEndpoint);
         }

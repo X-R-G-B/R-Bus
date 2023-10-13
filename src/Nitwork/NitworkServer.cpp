@@ -48,6 +48,18 @@ namespace Nitwork {
         }
     }
 
+    void
+    NitworkServer::sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        for (auto &e : _endpoints) {
+            if (e != endpoint) {
+                Logger::fatal(
+                    "Package sent to: " + e.address().to_string() + ":" + std::to_string(e.port()));
+                addPacketToSend(e, packet);
+            }
+        }
+    }
+
     void NitworkServer::handleBodyAction(
         const struct header_s &header,
         const boost::asio::ip::udp::endpoint &endpoint)
@@ -234,5 +246,29 @@ namespace Nitwork {
             std::make_any<struct packetNewEnemy_s>(packetNewEnemy),
             getEndpointSender());
         addPacketToSend(endpoint, packet);
+    }
+
+    void NitworkServer::broadcastNewBulletMsg(
+        const struct msgNewBullet_s &msg,
+        boost::asio::ip::udp::endpoint &senderEndpoint)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetNewBullet_s packetNewBullet = {
+            .header =
+                {.magick1          = HEADER_CODE1,
+                         .ids_received     = getIdsReceived(),
+                         .last_id_received = getLastIdsReceived(),
+                         .id               = getPacketID(),
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2},
+            .action = {.magick = NEW_BULLET},
+            .msg    = msg
+        };
+        Packet packet(
+            packetNewBullet.header.id,
+            packetNewBullet.action.magick,
+            std::make_any<struct packetNewBullet_s>(packetNewBullet),
+            getEndpointSender());
+        sendToAllClientsButNotOne(packet, senderEndpoint);
     }
 } // namespace Nitwork

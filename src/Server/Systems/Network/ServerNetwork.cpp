@@ -9,6 +9,7 @@
 #include "ECSCustomTypes.hpp"
 #include "NitworkServer.hpp"
 #include "Registry.hpp"
+#include "Systems.hpp"
 
 namespace Systems {
     void handleLifeUpdateMsg(const std::any &any, boost::asio::ip::udp::endpoint &endpoint)
@@ -67,5 +68,21 @@ namespace Systems {
                           static_cast<char>(static_cast<int>(arrPos[index].y))},
                 .type = arrEnemies[index].getType(),
         });
+    }
+
+    void receiveNewBulletMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+
+        const struct msgNewBullet_s &msgNewBullet = std::any_cast<struct msgNewBullet_s>(msg);
+
+        struct Types::Position position = {
+            static_cast<float>(msgNewBullet.pos.x),
+            static_cast<float>(msgNewBullet.pos.y),
+        };
+        struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
+        Systems::createMissile(position, missileType);
+        //         send bullet to clients but not the sender
+        Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg(msgNewBullet, endpoint);
     }
 } // namespace Systems
