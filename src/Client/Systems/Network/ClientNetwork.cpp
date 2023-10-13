@@ -76,7 +76,6 @@ namespace Systems {
         struct health_s hp = newEnemy.enemyInfos.life;
         Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
         Registry::getInstance().getComponents<struct health_s>().insertBack(hp);
-        Registry::getInstance().getComponents<Types::Enemy>().back().constId = newEnemy.enemyInfos.id;
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
