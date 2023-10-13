@@ -30,9 +30,10 @@ namespace Nitwork {
     bool NitworkClient::startNitworkConfig(int port, const std::string &ip)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        _endpoints.emplace_back(*_resolver.resolve(boost::asio::ip::udp::v4(), ip, std::to_string(port)).begin());
+        _endpoints.emplace_back(
+            *_resolver.resolve(boost::asio::ip::udp::v4(), ip, std::to_string(port)).begin());
         _serverEndpoint = _endpoints.back();
-        _socket   = boost::asio::ip::udp::socket(_context);
+        _socket         = boost::asio::ip::udp::socket(_context);
         _socket.open(boost::asio::ip::udp::v4());
         _socket.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 0));
         if (!_socket.is_open()) {
@@ -82,8 +83,8 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                         .magick = INIT,
-                         },
+                       .magick = INIT,
+                       },
             .msgInit = {.magick = MAGICK_INIT}
         };
         Packet packet(
@@ -98,7 +99,7 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgReady_s packetMsgReady = {
-            .header = {0, 0, 0, 0, 1, 0},
+            .header   = {0, 0, 0, 0, 1, 0},
             .action   = {.magick = READY},
             .msgReady = {.magick = MAGICK_READY}
         };
@@ -117,13 +118,13 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                         .magick = POSITION_RELATIVE,
-                         },
+                       .magick = POSITION_RELATIVE,
+                       },
             .msg =
                 {
-                         .magick = MAGICK_POSITION_RELATIVE,
-                         .pos    = pos,
-                         },
+                       .magick = MAGICK_POSITION_RELATIVE,
+                       .pos    = pos,
+                       },
         };
         Packet packet(
             packetMsgPositionRelative.header.id,
@@ -142,14 +143,14 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                         .magick = NEW_BULLET,
-                         },
+                       .magick = NEW_BULLET,
+                       },
             .msg =
                 {
-                         .magick      = MAGICK_NEW_BULLET,
-                         .pos         = pos,
-                         .missileType = missileType,
-                         },
+                       .magick      = MAGICK_NEW_BULLET,
+                       .pos         = pos,
+                       .missileType = missileType,
+                       },
         };
         Packet packet(
             packetNewBullet.header.id,
@@ -166,13 +167,13 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                         .magick = POSITION_RELATIVE,
-                         },
+                       .magick = POSITION_RELATIVE,
+                       },
             .msg =
                 {
-                         .magick = MAGICK_POSITION_RELATIVE,
-                         .pos    = pos,
-                         },
+                       .magick = MAGICK_POSITION_RELATIVE,
+                       .pos    = pos,
+                       },
         };
         Packet packet(
             packetMsgPositionRelative.header.id,
@@ -190,14 +191,14 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                         .magick = LIFE_UPDATE,
-                         },
+                       .magick = LIFE_UPDATE,
+                       },
             .msgLifeUpdate =
                 {
-                         .magick   = MAGICK_LIFE_UPDATE,
-                         .playerId = playerId,
-                         .life     = life,
-                         },
+                       .magick   = MAGICK_LIFE_UPDATE,
+                       .playerId = playerId,
+                       .life     = life,
+                       },
         };
         Packet packet(
             packetLifeUpdate.header.id,
@@ -215,13 +216,13 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                         .magick = ENEMY_DEATH,
-                         },
+                       .magick = ENEMY_DEATH,
+                       },
             .msgEnemyDeath =
                 {
-                         .magick  = MAGICK_ENEMY_DEATH,
-                         .enemyId = {.id = id},
-                         },
+                       .magick  = MAGICK_ENEMY_DEATH,
+                       .enemyId = {.id = id},
+                       },
         };
         Packet packet(
             packetEnemyDeath.header.id,

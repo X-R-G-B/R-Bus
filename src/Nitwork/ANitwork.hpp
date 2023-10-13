@@ -42,9 +42,15 @@ namespace Nitwork {
                     Logger::error("NITWORK: Package too big");
                     return;
                 }
-                T data = std::any_cast<T>(rawData);
+                T data      = std::any_cast<T>(rawData);
                 auto header = static_cast<struct header_s>(data.header);
-                header = {HEADER_CODE1, getIdsReceived(endpoint), getLastIdsReceived(endpoint), getPacketId(endpoint), header.nb_action, HEADER_CODE2};
+                header      = {
+                    HEADER_CODE1,
+                    getIdsReceived(endpoint),
+                    getLastIdsReceived(endpoint),
+                    getPacketId(endpoint),
+                    header.nb_action,
+                    HEADER_CODE2};
                 data.header = header;
 
                 _socket.async_send_to(

@@ -141,7 +141,7 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgStartWave_s packetMsgStartWave = {
-            .header = {0, 0, 0, 0, 1, 0},
+            .header       = {0, 0, 0, 0, 1, 0},
             .action       = {.magick = START_WAVE},
             .msgStartWave = {.magick = MAGICK_START_WAVE, .enemyNb = enemyId}
         };
@@ -160,7 +160,7 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetLifeUpdate_s packetLifeUpdate = {
-            .header = {0, 0, 0, 0, 1, 0},
+            .header        = {0, 0, 0, 0, 1, 0},
             .action        = {.magick = LIFE_UPDATE},
             .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE, .playerId = playerId, .life = life}
         };
@@ -176,7 +176,7 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetEnemyDeath_s packetEnemyDeath = {
-            .header = {0, 0, 0, 0, 1, 0},
+            .header        = {0, 0, 0, 0, 1, 0},
             .action        = {.magick = ENEMY_DEATH},
             .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH, .enemyId = {.id = enemyId}}
         };
