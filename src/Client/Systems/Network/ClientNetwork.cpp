@@ -73,7 +73,9 @@ namespace Systems {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newAllie = std::any_cast<struct msgNewAllie_s>(any);
-        Types::Position pos = {static_cast<float>(newAllie.data.pos.x), static_cast<float>(newAllie.data.pos.y)};
+        Types::Position pos = {
+            static_cast<float>(newAllie.data.pos.x),
+            static_cast<float>(newAllie.data.pos.y)};
 
         initPlayer(newAllie.data.id, true);
         Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
