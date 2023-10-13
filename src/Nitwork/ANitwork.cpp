@@ -143,49 +143,54 @@ namespace Nitwork {
             callReceiveHandler("header magick not valid");
             return;
         }
-        if (header->nb_action > MAX_NB_ACTION || header->nb_action < 0 || isAlreadyReceived(header->id)) {
+        if (header->nb_action > MAX_NB_ACTION || header->nb_action < 0
+            || isAlreadyReceived(header->id, _senderEndpoint)) {
             callReceiveHandler("header nb action not valid or already received");
             return;
         }
         _receivedPacketsIdsMutex.lock();
-        _receivedPacketsIds.push_back(header->id);
+        _receivedPacketsIdsMap[_senderEndpoint].push_back(header->id);
+        // _receivedPacketsIds.push_back(header->id);
         _receivedPacketsIdsMutex.unlock();
-        handlePacketIdsReceived(*header);
+        //        handlePacketIdsReceived(*header);
         for (int i = 0; i < header->nb_action; i++) {
             handleBodyAction(*header, _senderEndpoint);
         }
         startReceiveHandler();
     }
 
-    bool ANitwork::isAlreadyReceived(n_id_t id)
+    bool ANitwork::isAlreadyReceived(n_id_t id, const boost::asio::ip::udp::endpoint &endpoint)
     {
-        return std::any_of(_receivedPacketsIds.begin(), _receivedPacketsIds.end(), [id](auto &receivedId) {
-            return receivedId == id;
-        });
+        return std::any_of(
+            _receivedPacketsIdsMap[endpoint].begin(),
+            _receivedPacketsIdsMap[endpoint].end(),
+            [id](auto &receivedId) {
+                return receivedId == id;
+            });
     }
 
     void ANitwork::handlePacketIdsReceived(const struct header_s &header)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         std::vector<int> ids;
+        std::list<Packet> &packetSent = _packetsSent[_senderEndpoint];
 
         for (int i = 0; i < MAX_NB_ACTION; i++) {
             ids.push_back((header.ids_received >> i) & 1);
         }
         std::reverse(ids.begin(), ids.end());
-        for (std::size_t index = 0; index < _packetsSent.size(); index++) {
+        for (std::size_t index = 0; index < packetSent.size(); index++) {
             if (ids[index] == 0) {
                 auto packet =
-                    std::find_if(_packetsSent.begin(), _packetsSent.end(), [header, index](auto &packet) {
-                        return std::size_t(packet.second.id) == header.last_id_received - index;
+                    std::find_if(packetSent.begin(), packetSent.end(), [header, index](auto &packet) {
+                        return packet.id == header.last_id_received - index;
                     });
-                if (packet == _packetsSent.end()) {
+                if (packet == packetSent.end()) {
                     Logger::error(
                         "NITWORK: packet not found: " + std::to_string(header.last_id_received - index));
                     continue;
                 }
-                auto newPacket = _updatePacketHandlers[packet->second.action](packet->second);
-                addPacketToSend(packet->first, newPacket);
+                addPacketToSend(packet->endpoint, *packet);
             }
         }
     }
@@ -255,49 +260,65 @@ namespace Nitwork {
         const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, Packet> &data)
     {
         std::lock_guard<std::mutex> lock(_packetsSentMutex);
+        auto &endpointPacketsList = _packetsSent[data.first];
 
-        if (std::any_of(_packetsSent.begin(), _packetsSent.end(), [data](auto &packet) {
-                return packet.second.id == data.second.id;
+        if (std::any_of(endpointPacketsList.begin(), endpointPacketsList.end(), [data](auto &packet) {
+                return packet.id == data.second.id;
             })) {
             return;
         }
-        _packetsSent.emplace_back(data);
-        if (_packetsSent.size() > MAX_NB_ACTION) {
-            _packetsSent.pop_front();
+        endpointPacketsList.emplace_back(data.second);
+        if (endpointPacketsList.size() > MAX_NB_ACTION) {
+            endpointPacketsList.pop_front();
         }
     }
 
     /* Getters / Setters Section */
-    n_id_t ANitwork::getPacketID()
+    n_id_t ANitwork::getPacketId(const boost::asio::ip::udp::endpoint &endpoint)
     {
-        n_id_t packetId = _packetId;
-        _packetId++;
+        n_id_t packetId = _packetsIds[endpoint];
+        _packetsIds[endpoint]++;
         return packetId;
     }
 
     /* Getters Section */
-    n_idsReceived_t ANitwork::getIdsReceived()
+    n_idsReceived_t ANitwork::getIdsReceived(const boost::asio::ip::udp::endpoint &endpoint)
     {
         n_idsReceived_t idsReceived = 0;
-        n_id_t lastId               = 0;
+        n_id_t lastId               = getLastIdsReceived(endpoint);
         bool isPresent              = false;
 
-        if (_receivedPacketsIds.empty()) {
+        if (_receivedPacketsIdsMap[endpoint].empty()) {
             return 0;
         }
-        std::sort(_receivedPacketsIds.begin(), _receivedPacketsIds.end(), [](auto &a, auto &b) {
-            return a < b;
-        });
-        lastId = _receivedPacketsIds.back();
         for (int i = 0; i < MAX_NB_ACTION; i++) {
-            isPresent =
-                std::any_of(_receivedPacketsIds.begin(), _receivedPacketsIds.end(), [lastId, i](auto &id) {
-                    return id == lastId - i;
-                });
+            isPresent   = isAlreadyReceived(lastId - i, endpoint);
             idsReceived = idsReceived << 1;
             idsReceived += (isPresent ? 1 : 0);
         }
         return idsReceived;
+    }
+
+    n_id_t ANitwork::getLastIdsReceived(const boost::asio::ip::udp::endpoint &endpoint)
+    {
+        n_id_t lastId = 0;
+
+        if (_receivedPacketsIdsMap[endpoint].empty()) {
+            return 0;
+        }
+        std::sort(
+            _receivedPacketsIdsMap[endpoint].begin(),
+            _receivedPacketsIdsMap[endpoint].end(),
+            [](auto &a, auto &b) {
+                return a < b;
+            });
+        lastId = _receivedPacketsIdsMap[endpoint].back();
+        return lastId;
+    }
+
+    const boost::asio::ip::udp::endpoint &ANitwork::getEndpointSender()
+    {
+        return _senderEndpoint;
     }
 
     void ANitwork::addPacketToSend(const boost::asio::ip::udp::endpoint &endpoint, const Packet &packet)

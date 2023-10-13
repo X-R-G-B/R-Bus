@@ -10,6 +10,7 @@
 #include <any>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
 #include <string>
 #include <typeindex>
@@ -77,6 +78,8 @@ class Registry {
 #endif
 
         Logger::Logger &getLogger();
+
+        std::mutex mutex;
 
     private:
         Registry();

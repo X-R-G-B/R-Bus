@@ -29,8 +29,11 @@ namespace Nitwork {
 
     bool NitworkClient::startNitworkConfig(int port, const std::string &ip)
     {
-        _endpoint = *_resolver.resolve(boost::asio::ip::udp::v4(), ip, std::to_string(port)).begin();
-        boost::asio::ip::udp::socket socket(_context);
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        _endpoints.emplace_back(
+            *_resolver.resolve(boost::asio::ip::udp::v4(), ip, std::to_string(port)).begin());
+        _serverEndpoint = _endpoints.back();
+        _socket         = boost::asio::ip::udp::socket(_context);
         _socket.open(boost::asio::ip::udp::v4());
         _socket.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 0));
         if (!_socket.is_open()) {
@@ -49,10 +52,10 @@ namespace Nitwork {
         auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        if (endpoint.address().to_string() != _endpoint.address().to_string()) {
+        if (endpoint.address().to_string() != _serverEndpoint.address().to_string()) {
             Logger::error(
                 "NITWORK: endpoint " + endpoint.address().to_string() + " is not the server"
-                + _endpoint.address().to_string());
+                + _serverEndpoint.address().to_string());
             return;
         }
         auto it = _actionsHandlers.find(action->magick);
@@ -72,91 +75,64 @@ namespace Nitwork {
         return _actionToSendHandlers;
     }
 
-    /* Handlers Section */
-    // NOLINTBEGIN(readability-convert-member-functions-to-static)
-    void NitworkClient::handleStartWave(const std::any &msg, boost::asio::ip::udp::endpoint & /* unused */)
-    {
-        // NOLINTEND(readability-convert-member-functions-to-static)
-        const struct msgStartWave_s &msgStartWave = std::any_cast<struct msgStartWave_s>(msg);
-
-        if (msgStartWave.magick != MAGICK_START_WAVE) {
-            Logger::error("NITWORK: magick is not START_WAVE");
-            return;
-        }
-        Logger::info("Game started");
-    }
-    /* End Handlers Section */
-
     /* Message Creation Section */
     void NitworkClient::addInitMsg()
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgInit_s packetMsgInit = {
-            {
-             HEADER_CODE1, getIdsReceived(),
-             (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-             getPacketID(),
-             1, HEADER_CODE2,
-             },
-            {INIT},
-            {MAGICK_INIT}
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                       .magick = INIT,
+                       },
+            .msgInit = {.magick = MAGICK_INIT}
         };
         Packet packet(
             packetMsgInit.header.id,
             packetMsgInit.action.magick,
-            std::make_any<struct packetMsgInit_s>(packetMsgInit));
-        addPacketToSend(_endpoint, packet);
+            std::make_any<struct packetMsgInit_s>(packetMsgInit),
+            getEndpointSender());
+        addPacketToSend(_serverEndpoint, packet);
     }
 
     void NitworkClient::addReadyMsg()
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgReady_s packetMsgReady = {
-            {
-             HEADER_CODE1, getIdsReceived(),
-             (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-             getPacketID(),
-             1, HEADER_CODE2,
-             },
-            {READY},
-            {MAGICK_READY}
+            .header   = {0, 0, 0, 0, 1, 0},
+            .action   = {.magick = READY},
+            .msgReady = {.magick = MAGICK_READY}
         };
         Packet packet(
             packetMsgReady.header.id,
             packetMsgReady.action.magick,
-            std::make_any<struct packetMsgReady_s>(packetMsgReady));
-        addPacketToSend(_endpoint, packet);
+            std::make_any<struct packetMsgReady_s>(packetMsgReady),
+            getEndpointSender());
+        addPacketToSend(_serverEndpoint, packet);
     }
 
     void NitworkClient::addPositionRelativeMsg(struct position_relative_s pos)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetPositionRelative_s packetMsgPositionRelative = {
-            .header =
-                {
-                         .magick1          = HEADER_CODE1,
-                         .ids_received     = getIdsReceived(),
-                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                         .id               = getPacketID(),
-                         .nb_action        = 1,
-                         .magick2          = HEADER_CODE2,
-                         },
+            .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                         .magick = POSITION_RELATIVE,
-                         },
+                       .magick = POSITION_RELATIVE,
+                       },
             .msg =
                 {
-                         .magick = MAGICK_POSITION_RELATIVE,
-                         .pos    = pos,
-                         },
+                       .magick = MAGICK_POSITION_RELATIVE,
+                       .pos    = pos,
+                       },
         };
         Packet packet(
             packetMsgPositionRelative.header.id,
             packetMsgPositionRelative.action.magick,
-            std::make_any<struct packetPositionRelative_s>(packetMsgPositionRelative));
+            std::make_any<struct packetPositionRelative_s>(packetMsgPositionRelative),
+            getEndpointSender());
 
-        addPacketToSend(_endpoint, packet);
+        addPacketToSend(_serverEndpoint, packet);
     }
 
     void
@@ -164,123 +140,95 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetNewBullet_s packetNewBullet = {
-            .header =
-                {
-                         .magick1          = HEADER_CODE1,
-                         .ids_received     = getIdsReceived(),
-                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                         .id               = getPacketID(),
-                         .nb_action        = 1,
-                         .magick2          = HEADER_CODE2,
-                         },
+            .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                         .magick = NEW_BULLET,
-                         },
+                       .magick = NEW_BULLET,
+                       },
             .msg =
                 {
-                         .magick      = MAGICK_NEW_BULLET,
-                         .pos         = pos,
-                         .missileType = missileType,
-                         },
+                       .magick      = MAGICK_NEW_BULLET,
+                       .pos         = pos,
+                       .missileType = missileType,
+                       },
         };
         Packet packet(
             packetNewBullet.header.id,
             packetNewBullet.action.magick,
-            std::make_any<struct packetNewBullet_s>(packetNewBullet));
-        addPacketToSend(_endpoint, packet);
+            std::make_any<struct packetNewBullet_s>(packetNewBullet),
+            getEndpointSender());
+        addPacketToSend(_serverEndpoint, packet);
     };
 
     void NitworkClient::addPositionAbsoluteMsg(struct position_absolute_s pos)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetPositionAbsolute_s packetMsgPositionRelative = {
-            .header =
-                {
-                         .magick1          = HEADER_CODE1,
-                         .ids_received     = getIdsReceived(),
-                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                         .id               = getPacketID(),
-                         .nb_action        = 1,
-                         .magick2          = HEADER_CODE2,
-                         },
+            .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                         .magick = POSITION_RELATIVE,
-                         },
+                       .magick = POSITION_RELATIVE,
+                       },
             .msg =
                 {
-                         .magick = MAGICK_POSITION_RELATIVE,
-                         .pos    = pos,
-                         },
+                       .magick = MAGICK_POSITION_RELATIVE,
+                       .pos    = pos,
+                       },
         };
         Packet packet(
             packetMsgPositionRelative.header.id,
             packetMsgPositionRelative.action.magick,
-            std::make_any<struct packetPositionAbsolute_s>(packetMsgPositionRelative));
+            std::make_any<struct packetPositionAbsolute_s>(packetMsgPositionRelative),
+            getEndpointSender());
 
-        addPacketToSend(_endpoint, packet);
+        addPacketToSend(_serverEndpoint, packet);
     }
 
     void NitworkClient::addLifeUpdateMsg(n_id_t playerId, const struct health_s &life)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetLifeUpdate_s packetLifeUpdate = {
-            .header =
-                {
-                         .magick1          = HEADER_CODE1,
-                         .ids_received     = getIdsReceived(),
-                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                         .id               = getPacketID(),
-                         .nb_action        = 1,
-                         .magick2          = HEADER_CODE2,
-                         },
+            .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                         .magick = LIFE_UPDATE,
-                         },
+                       .magick = LIFE_UPDATE,
+                       },
             .msgLifeUpdate =
                 {
-                         .magick   = MAGICK_LIFE_UPDATE,
-                         .playerId = playerId,
-                         .life     = life,
-                         },
+                       .magick   = MAGICK_LIFE_UPDATE,
+                       .playerId = playerId,
+                       .life     = life,
+                       },
         };
         Packet packet(
             packetLifeUpdate.header.id,
             packetLifeUpdate.action.magick,
-            std::make_any<struct packetLifeUpdate_s>(packetLifeUpdate));
+            std::make_any<struct packetLifeUpdate_s>(packetLifeUpdate),
+            getEndpointSender());
 
-        addPacketToSend(_endpoint, packet);
+        addPacketToSend(_serverEndpoint, packet);
     }
 
     void NitworkClient::addEnemyDeathMsg(n_id_t id)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetEnemyDeath_s packetEnemyDeath = {
-            .header =
-                {
-                         .magick1          = HEADER_CODE1,
-                         .ids_received     = getIdsReceived(),
-                         .last_id_received = (!_receivedPacketsIds.empty()) ? _receivedPacketsIds.back() : 0,
-                         .id               = getPacketID(),
-                         .nb_action        = 1,
-                         .magick2          = HEADER_CODE2,
-                         },
+            .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                         .magick = ENEMY_DEATH,
-                         },
+                       .magick = ENEMY_DEATH,
+                       },
             .msgEnemyDeath =
                 {
-                         .magick  = MAGICK_ENEMY_DEATH,
-                         .enemyId = {.id = id},
-                         },
+                       .magick  = MAGICK_ENEMY_DEATH,
+                       .enemyId = {.id = id},
+                       },
         };
         Packet packet(
             packetEnemyDeath.header.id,
             packetEnemyDeath.action.magick,
-            std::make_any<struct packetEnemyDeath_s>(packetEnemyDeath));
-        addPacketToSend(_endpoint, packet);
+            std::make_any<struct packetEnemyDeath_s>(packetEnemyDeath),
+            getEndpointSender());
+        addPacketToSend(_serverEndpoint, packet);
     }
 } // namespace Nitwork
