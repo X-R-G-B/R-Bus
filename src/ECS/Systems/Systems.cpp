@@ -195,7 +195,7 @@ namespace Systems {
             Registry::getInstance().addEntity();
 
 #endif
-            Types::Enemy enemyComp = {};
+            Types::Enemy enemyComp   = {};
             Types::Position position = {
                 Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
             Types::CollisionRect collisionRect = {
