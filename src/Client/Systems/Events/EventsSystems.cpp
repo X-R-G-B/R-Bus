@@ -116,7 +116,7 @@ namespace Systems {
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
-        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE)
+        if (Raylib::isKeyPressed(Raylib::KeyboardKey::KB_SPACE)
             && clock_.elapsedMillisecondsSince(clockId) > waitTimeBullet) {
             clock_.restart(clockId);
             for (auto &id : ids) {
