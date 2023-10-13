@@ -64,11 +64,13 @@ namespace Scene {
     {
         auto &director = Systems::SystemManagersDirector::getInstance();
 
+        Logger::fatal("scene pute");
         try {
             while (!_stop && !Raylib::windowShouldClose()) {
                 Raylib::beginDrawing();
                 Raylib::clearBackground(Raylib::DarkGray);
                 auto scene = _scenes.at(static_cast<std::size_t>(_currentScene));
+                Logger::fatal("scene loop pute");
                 for (auto &systemManager : scene) {
                     director.getSystemManager(static_cast<std::size_t>(systemManager)).updateSystems();
                 }

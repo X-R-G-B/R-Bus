@@ -32,6 +32,7 @@ namespace Systems {
 
     void EventsSystems::playerMovement(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        Logger::fatal("playerMovement");
         Registry &registry                              = Registry::getInstance();
         Registry::components<Types::Position> arrPos    = registry.getComponents<Types::Position>();
         Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();

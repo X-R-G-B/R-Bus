@@ -35,7 +35,10 @@ namespace Systems {
         std::size_t decrease = 0;
 
         _toRemove.clear();
+        Logger::fatal("system pute");
+        Logger::fatal("system puteeeeeeeeeeeee");
         for (auto &system : getSystems()) {
+            Logger::fatal("system call pute");
             system(_id, i);
             i++;
         }

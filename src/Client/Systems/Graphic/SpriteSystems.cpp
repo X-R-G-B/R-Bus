@@ -83,6 +83,7 @@ namespace Systems {
 
     void GraphicSystems::rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        Logger::fatal("rectIncrementation");
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::AnimRect> arrAnimRect = registry.getComponents<Types::AnimRect>();
         Registry::components<Types::Rect> arrRect         = registry.getComponents<Types::Rect>();

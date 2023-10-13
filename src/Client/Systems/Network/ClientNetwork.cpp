@@ -1,6 +1,7 @@
 #include "ClientNetwork.hpp"
 #include <algorithm>
 #include "ECSCustomTypes.hpp"
+#include "Json.hpp"
 #include "NitworkClient.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
@@ -59,17 +60,16 @@ namespace Systems {
         auto &arrPlayer       = Registry::getInstance().getComponents<Types::Player>();
 
         Logger::info("Your player id is: " + std::to_string(playerInit.playerId));
-        initPlayer();
+        initPlayer(JsonType::DEFAULT_PLAYER);
         arrPlayer[arrPlayer.getExistingsId().at(0)].constId = playerInit.playerId;
     }
-
-    const std::string enemyFile = "assets/Json/enemyData.json";
 
     void receiveNewEnemy(std::any &any, boost::asio::ip::udp::endpoint &)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
-        reviveEnemy(newEnemy.enemyInfos.id);
+
+        initEnemy(JsonType::DEFAULT_ENEMY, true, newEnemy.enemyInfos.id);
         Types::Position pos = {
             static_cast<float>(newEnemy.enemyInfos.pos.x),
             static_cast<float>(newEnemy.enemyInfos.pos.y)};

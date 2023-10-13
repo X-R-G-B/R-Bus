@@ -14,6 +14,7 @@
 namespace Systems {
     void GraphicSystems::soundEffectPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        Logger::fatal("soundEffectPlayer");
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Raylib::Sound> arrSoundEffect =
             Registry::getInstance().getComponents<Raylib::Sound>();

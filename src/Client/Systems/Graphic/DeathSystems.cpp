@@ -33,6 +33,7 @@ namespace Systems {
 
     void DeathSystems::setEntityDeathFunction(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        Logger::fatal("setEntityDeathFunction");
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
 
         std::vector<std::size_t> ids = arrDead.getExistingsId();
