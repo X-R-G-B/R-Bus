@@ -190,8 +190,7 @@ namespace Nitwork {
                         "NITWORK: packet not found: " + std::to_string(header.last_id_received - index));
                     continue;
                 }
-                auto newPacket = _updatePacketHandlers[packet->action](packet->body);
-                addPacketToSend(packet->endpoint, newPacket);
+                addPacketToSend(packet->endpoint, *packet);
             }
         }
     }
