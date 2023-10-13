@@ -33,32 +33,32 @@ int Maths::addIntegerDecimals(int num)
 
 int Maths::additionWithDecimal(int a, int b)
 {
-    float tempA = integrerToDecimalWithTwoDecimals(a);
-    float tempB = integrerToDecimalWithTwoDecimals(b);
+    float tempA  = integrerToDecimalWithTwoDecimals(a);
+    float tempB  = integrerToDecimalWithTwoDecimals(b);
     float result = tempA + tempB;
     return decimalToIntegrerWithTwoDecimals(result);
 }
 
 int Maths::subtractionWithDecimal(int a, int b)
 {
-    float tempA = integrerToDecimalWithTwoDecimals(a);
-    float tempB = integrerToDecimalWithTwoDecimals(b);
+    float tempA  = integrerToDecimalWithTwoDecimals(a);
+    float tempB  = integrerToDecimalWithTwoDecimals(b);
     float result = tempA - tempB;
     return decimalToIntegrerWithTwoDecimals(result);
 }
 
 int Maths::multiplicationWithDecimal(int a, int b)
 {
-    float tempA = integrerToDecimalWithTwoDecimals(a);
-    float tempB = integrerToDecimalWithTwoDecimals(b);
+    float tempA  = integrerToDecimalWithTwoDecimals(a);
+    float tempB  = integrerToDecimalWithTwoDecimals(b);
     float result = tempA * tempB;
     return decimalToIntegrerWithTwoDecimals(result);
 }
 
 int Maths::divisionWithDecimal(int a, int b)
 {
-    float tempA = integrerToDecimalWithTwoDecimals(a);
-    float tempB = integrerToDecimalWithTwoDecimals(b);
+    float tempA  = integrerToDecimalWithTwoDecimals(a);
+    float tempB  = integrerToDecimalWithTwoDecimals(b);
     float result = tempA / tempB;
     return decimalToIntegrerWithTwoDecimals(result);
 }

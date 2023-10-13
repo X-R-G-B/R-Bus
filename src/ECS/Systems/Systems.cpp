@@ -40,10 +40,12 @@ namespace Systems {
             if (arrPosition[id].y < 0) {
                 arrPosition[id].y = 0;
             }
-            if ((Maths::removeIntegerDecimals(arrPosition[id].x) + arrCollisionRect[id].width) > maxScreenSize) {
+            if ((Maths::removeIntegerDecimals(arrPosition[id].x) + arrCollisionRect[id].width)
+                > maxScreenSize) {
                 arrPosition[id].x = Maths::addIntegerDecimals(maxScreenSize - arrCollisionRect[id].width);
             }
-            if ((Maths::removeIntegerDecimals(arrPosition[id].y) + arrCollisionRect[id].height) > maxScreenSize) {
+            if ((Maths::removeIntegerDecimals(arrPosition[id].y) + arrCollisionRect[id].height)
+                > maxScreenSize) {
                 arrPosition[id].y = Maths::addIntegerDecimals(maxScreenSize - arrCollisionRect[id].height);
             }
         }
@@ -131,12 +133,10 @@ namespace Systems {
                 Types::Position sndEntityPos       = arrPosition[*itIds];
                 float sndEntityPosx = Maths::integrerToDecimalWithTwoDecimals(sndEntityPos.x);
                 float sndEntityPosy = Maths::integrerToDecimalWithTwoDecimals(sndEntityPos.y);
-                if (
-                    entityPosx < sndEntityPosx + sndEntityRect.width
+                if (entityPosx < sndEntityPosx + sndEntityRect.width
                     && entityPosx + entityColl.width > sndEntityPosx
                     && entityPosy < sndEntityPosy + sndEntityRect.height
-                    && entityPosy + entityColl.height > sndEntityPosy
-                ) {
+                    && entityPosy + entityColl.height > sndEntityPosy) {
                     checkSide(id, *itIds);
                 }
             }
@@ -348,10 +348,8 @@ namespace Systems {
         float posx = Maths::integrerToDecimalWithTwoDecimals(pos.x);
         float posy = Maths::integrerToDecimalWithTwoDecimals(pos.y);
 
-        if (posx < outsideWindowTopLeft ||
-            posx > outsideWindowBotRigth ||
-            posy < outsideWindowTopLeft ||
-            posy > outsideWindowBotRigth) {
+        if (posx < outsideWindowTopLeft || posx > outsideWindowBotRigth || posy < outsideWindowTopLeft
+            || posy > outsideWindowBotRigth) {
             return (true);
         }
         return (false);

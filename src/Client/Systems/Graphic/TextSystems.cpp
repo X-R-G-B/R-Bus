@@ -7,9 +7,9 @@
 
 #include "TextSystems.hpp"
 #include "CustomTypes.hpp"
+#include "Maths.hpp"
 #include "Raylib.hpp"
 #include "SharedValues.hpp"
-#include "Maths.hpp"
 
 namespace Systems {
 
@@ -22,8 +22,10 @@ namespace Systems {
 
     static void setPositionResponsive(Raylib::Text &text, Types::Position &pos)
     {
-        float x = (Maths::integrerToDecimalWithTwoDecimals(pos.x) * static_cast<float>(GetScreenWidth())) / denominator;
-        float y = (Maths::integrerToDecimalWithTwoDecimals(pos.y) * static_cast<float>(GetScreenHeight())) / denominator;
+        float x = (Maths::integrerToDecimalWithTwoDecimals(pos.x) * static_cast<float>(GetScreenWidth()))
+            / denominator;
+        float y = (Maths::integrerToDecimalWithTwoDecimals(pos.y) * static_cast<float>(GetScreenHeight()))
+            / denominator;
 
         text.setPixelPosition({x, y});
     }
@@ -45,8 +47,7 @@ namespace Systems {
 
         Types::Position defaultPosition = {
             Maths::decimalToIntegrerWithTwoDecimals(text.getPosition().x),
-            Maths::decimalToIntegrerWithTwoDecimals(text.getPosition().y)
-        };
+            Maths::decimalToIntegrerWithTwoDecimals(text.getPosition().y)};
         setPositionResponsive(text, defaultPosition);
         if (arrPosition.exist(id)) {
             setPositionResponsive(text, arrPosition[id]);

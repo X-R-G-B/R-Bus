@@ -5,10 +5,10 @@
 #include "ECSCustomTypes.hpp"
 #include "Graphics.hpp"
 #include "Logger.hpp"
+#include "Maths.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #include "nlohmann/json.hpp"
-#include "Maths.hpp"
 
 namespace Systems::ParallaxSystems {
     static nlohmann::json openJsonData(const std::string &path)
@@ -43,7 +43,8 @@ namespace Systems::ParallaxSystems {
 
         Types::Position position = {Types::Position(parallaxData["position"])};
         if (maxOffsideParallax > 0) {
-            position.x = Maths::additionWithDecimal(position.x, Maths::addIntegerDecimals(maxOffsideParallax));
+            position.x =
+                Maths::additionWithDecimal(position.x, Maths::addIntegerDecimals(maxOffsideParallax));
         }
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
 
@@ -57,8 +58,7 @@ namespace Systems::ParallaxSystems {
         Registry::getInstance().setToBackLayers(id);
         Types::Parallax paralax = {
             Maths::integrerToDecimalWithTwoDecimals(position.x),
-            Maths::integrerToDecimalWithTwoDecimals(position.y)
-        };
+            Maths::integrerToDecimalWithTwoDecimals(position.y)};
         Registry::getInstance().getComponents<Types::Parallax>().insertBack(paralax);
     }
 
@@ -86,7 +86,8 @@ namespace Systems::ParallaxSystems {
             if (arrParallax[id].x >= maxOutParallaxRight) {
                 arrPosition[id].x = Maths::decimalToIntegrerWithTwoDecimals(arrParallax[id].x);
             } else {
-                arrPosition[id].x = Maths::decimalToIntegrerWithTwoDecimals(arrParallax[id].x) + Maths::addIntegerDecimals(maxOutParallaxRight);
+                arrPosition[id].x = Maths::decimalToIntegrerWithTwoDecimals(arrParallax[id].x)
+                    + Maths::addIntegerDecimals(maxOutParallaxRight);
             }
             arrPosition[id].y = Maths::decimalToIntegrerWithTwoDecimals(arrParallax[id].y);
         }
