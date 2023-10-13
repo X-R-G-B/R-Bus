@@ -224,13 +224,7 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetNewBullet_s packetNewBullet = {
-            .header =
-                {.magick1          = HEADER_CODE1,
-                         .ids_received     = getIdsReceived(),
-                         .last_id_received = getLastIdsReceived(),
-                         .id               = getPacketID(),
-                         .nb_action        = 1,
-                         .magick2          = HEADER_CODE2},
+            .header = {0, 0, 0, 0, 1, 0},
             .action = {.magick = NEW_BULLET},
             .msg    = msg
         };
