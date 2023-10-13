@@ -56,11 +56,9 @@ namespace Systems {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto playerInit = std::any_cast<struct msgPlayerInit_s>(any);
-        auto &arrPlayer       = Registry::getInstance().getComponents<Types::Player>();
 
         Logger::info("Your player id is: " + std::to_string(playerInit.playerId));
-        initPlayer();
-        arrPlayer[arrPlayer.getExistingsId().at(0)].constId = playerInit.playerId;
+        initPlayer(playerInit.playerId);
     }
 
     const std::string enemyFile = "assets/Json/enemyData.json";
@@ -69,6 +67,16 @@ namespace Systems {
     {
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
         initEnemy(enemyFile);
+    }
+
+    void receiveNewAllie(std::any &any, boost::asio::ip::udp::endpoint &)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const auto newAllie = std::any_cast<struct msgNewAllie_s>(any);
+        Types::Position pos = {static_cast<float>(newAllie.data.pos.x), static_cast<float>(newAllie.data.pos.y)};
+
+        initPlayer(newAllie.data.id, true);
+        Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)

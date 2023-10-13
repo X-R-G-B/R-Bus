@@ -373,7 +373,7 @@ namespace Systems {
 
     const std::string playerFile = "assets/Json/playerData.json";
 
-    void initPlayer()
+    void initPlayer(unsigned int constId, bool otherPlayer)
     {
 #ifdef CLIENT
         std::size_t id = Registry::getInstance().addEntity();
@@ -388,7 +388,6 @@ namespace Systems {
 
         // Components
 
-        Types::Player playerComp   = {0};
         Types::Dead deadComp       = {jsonData["deadTime"]};
         struct health_s healthComp = {jsonData["health"]};
         Types::Damage damageComp   = {jsonData["damage"]};
@@ -418,6 +417,13 @@ namespace Systems {
             deadData.get<std::vector<Types::Rect>>()};
 
         // Add components to registry
+        if (otherPlayer) {
+            Types::OtherPlayer otherPlayerComp(constId);
+            Registry::getInstance().getComponents<Types::OtherPlayer>().insertBack(otherPlayerComp);
+        } else {
+            Types::Player playerComp = {constId};
+            Registry::getInstance().getComponents<Types::Player>().insertBack(playerComp);
+        }
 
 #ifdef CLIENT
         Registry::getInstance().getComponents<Types::PlayerDatas>().insertBack(playerDatas);
@@ -426,7 +432,6 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
-        Registry::getInstance().getComponents<Types::Player>().insertBack(playerComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);

@@ -117,6 +117,17 @@ namespace Nitwork {
                             Systems::receiveNewEnemy(any, endpoint);
                         }
                     }
+                },
+                {
+                    NEW_ALLIE,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgNewAllie_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveNewAllie(any, endpoint);
+                        }
+                    }
                 }
             };
             std::map<
