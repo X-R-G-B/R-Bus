@@ -11,13 +11,14 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include "Json.hpp"
 
 namespace Systems {
-    void initEnemy(const std::string &path);
+    void initEnemy(JsonType enemyType);
     void windowCollision(std::size_t, std::size_t);
     void entitiesCollision(std::size_t, std::size_t);
     void deathChecker(std::size_t, std::size_t);
     void initWave(std::size_t managerId, std::size_t systemId);
-    void initPlayer();
+    void initPlayer(JsonType playerType);
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems();
 } // namespace Systems
