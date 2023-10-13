@@ -43,6 +43,9 @@ namespace Nitwork {
                     return;
                 }
                 T data = std::any_cast<T>(rawData);
+                auto header = static_cast<struct header_s>(data.header);
+                header = {HEADER_CODE1, getIdsReceived(endpoint), getLastIdsReceived(endpoint), getPacketId(endpoint), header.nb_action, HEADER_CODE2};
+                data.header = header;
 
                 _socket.async_send_to(
                     boost::asio::buffer(&data, sizeof(T)),
@@ -64,9 +67,9 @@ namespace Nitwork {
             ANitwork();
 
             /* Getters / Setters */
-            n_idsReceived_t getIdsReceived();
-            n_id_t getLastIdsReceived();
-            n_id_t getPacketID();
+            n_idsReceived_t getIdsReceived(const boost::asio::ip::udp::endpoint &endpoint);
+            n_id_t getLastIdsReceived(const boost::asio::ip::udp::endpoint &endpoint);
+            n_id_t getPacketId(const boost::asio::ip::udp::endpoint &endpoint);
             const boost::asio::ip::udp::endpoint &getEndpointSender();
             void addPacketToSend(const boost::asio::ip::udp::endpoint &, const Packet &);
             void handlePacketIdsReceived(const struct header_s &header);
@@ -125,7 +128,7 @@ namespace Nitwork {
             {
                 T data = std::any_cast<T>(packet.body);
 
-                data.header.ids_received = getIdsReceived();
+                data.header.ids_received = getIdsReceived(packet.endpoint);
                 auto updatedPacket =
                     Packet(packet.id, packet.action, std::make_any<T>(data), packet.endpoint);
                 return updatedPacket;
@@ -138,7 +141,7 @@ namespace Nitwork {
             boost::asio::io_context _context; // The main context
             boost::asio::ip::udp::socket
                 _socket; // The socket which will be used to send and receive the actions
-            boost::asio::ip::udp::endpoint _endpoint; // endpoint of the Server
+            std::list<boost::asio::ip::udp::endpoint> _endpoints;
 
             // The buffer used to receive the actions
             std::array<char, MAX_PACKET_SIZE> _receiveBuffer = {
@@ -148,7 +151,8 @@ namespace Nitwork {
             // list of packets' ids receives
             // std::vector<n_id_t> _receivedPacketsIds; // A list of packets' ids receives
             std::unordered_map<boost::asio::ip::udp::endpoint, std::vector<n_id_t>> _receivedPacketsIdsMap;
-            std::list<std::pair<boost::asio::ip::udp::endpoint, Packet>>
+            std::unordered_map<boost::asio::ip::udp::endpoint, n_id_t> _packetsIds;
+            std::unordered_map<boost::asio::ip::udp::endpoint, std::list<Packet>>
                 _packetsSent;                    // A list of packets' ids receives
                                                  // Mutexes shared
             std::mutex _receivedPacketsIdsMutex; // Mutex for the received packets ids
