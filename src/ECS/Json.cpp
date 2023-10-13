@@ -6,6 +6,7 @@
 */
 
 #include "Json.hpp"
+#include <sstream>
 #include <fstream>
 #include <utility>
 #include "Logger.hpp"
