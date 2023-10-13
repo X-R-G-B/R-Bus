@@ -48,11 +48,13 @@ namespace Nitwork {
         }
     }
 
-    void NitworkServer::sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint)
+    void
+    NitworkServer::sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint)
     {
         for (auto &e : _endpoints) {
             if (e != endpoint) {
-                Logger::fatal("Package sent to: " + e.address().to_string() + ":" + std::to_string(e.port()));
+                Logger::fatal(
+                    "Package sent to: " + e.address().to_string() + ":" + std::to_string(e.port()));
                 addPacketToSend(e, packet);
             }
         }
@@ -246,7 +248,9 @@ namespace Nitwork {
         addPacketToSend(endpoint, packet);
     }
 
-    void NitworkServer::broadcastNewBulletMsg(const struct msgNewBullet_s &msg, boost::asio::ip::udp::endpoint &senderEndpoint)
+    void NitworkServer::broadcastNewBulletMsg(
+        const struct msgNewBullet_s &msg,
+        boost::asio::ip::udp::endpoint &senderEndpoint)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetNewBullet_s packetNewBullet = {

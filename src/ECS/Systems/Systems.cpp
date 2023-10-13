@@ -446,8 +446,8 @@ namespace Systems {
         Types::PlayerAllies playerAlliesComp = {};
         Types::Position position             = {pos.x, pos.y};
 #ifdef CLIENT
-        const std::string bulletPath         = "assets/R-TypeSheet/r-typesheet1.gif";
-        Types::Rect spriteRect               = {200, 121, 32, 10};
+        const std::string bulletPath = "assets/R-TypeSheet/r-typesheet1.gif";
+        Types::Rect spriteRect       = {200, 121, 32, 10};
         Types::SpriteDatas bulletDatas(
             bulletPath,
             bulletWidth,
@@ -456,8 +456,8 @@ namespace Systems {
             FRONTLAYER,
             static_cast<std::size_t>(FRONT));
 #endif
-        struct health_s healthComp           = {1};
-        Types::Damage damageComp             = {10};
+        struct health_s healthComp = {1};
+        Types::Damage damageComp   = {10};
 
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
 #ifdef CLIENT

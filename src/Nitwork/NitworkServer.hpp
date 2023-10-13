@@ -136,13 +136,14 @@ namespace Nitwork {
                  [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                      sendData<struct packetEnemyDeath_s>(any, endpoint);
                  }},
-                {NEW_ENEMY, [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                {NEW_ENEMY,
+                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                      sendData<struct packetNewEnemy_s>(any, endpoint);
                  }},
                 {NEW_BULLET,
-                    [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                        sendData<struct packetNewBullet_s>(any, endpoint);
-                    }},
+                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                     sendData<struct packetNewBullet_s>(any, endpoint);
+                 }},
             };
     };
 } // namespace Nitwork
