@@ -43,8 +43,8 @@ namespace Systems {
         }
     }
 
-    const std::string musicPath = "assets/Audio/Musics/Title.mp3";
-    const std::string soundPathFire = "assets/Audio/Sounds/fire.ogg";
+    const std::string musicPath      = "assets/Audio/Musics/Title.mp3";
+    const std::string soundPathFire  = "assets/Audio/Sounds/fire.ogg";
     const std::string soundPathShoot = "assets/Audio/Sounds/laser.ogg";
 
     void GraphicSystems::playSoundWithKey(std::size_t /*unused*/, std::size_t /*unused*/)

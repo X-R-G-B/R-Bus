@@ -7,11 +7,11 @@
 
 #include "EventsSystems.hpp"
 #include "CustomTypes.hpp"
+#include "Maths.hpp"
 #include "NitworkClient.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
-#include "Maths.hpp"
 
 namespace Systems {
     static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId)
@@ -71,8 +71,8 @@ namespace Systems {
 
         Types::Rect spriteRect               = {200, 121, 32, 10};
         const std::string bulletPath         = "assets/R-TypeSheet/r-typesheet1.gif";
-        constexpr int bulletWidth          = 5;
-        constexpr int bulletHeight         = 5;
+        constexpr int bulletWidth            = 5;
+        constexpr int bulletHeight           = 5;
         Types::CollisionRect collisionRect1  = {1, 1};
         Types::Velocity velocity             = {70, 0};
         Types::Missiles missileType          = {CLASSIC};
@@ -98,10 +98,7 @@ namespace Systems {
         Registry::getInstance().setToFrontLayers(entityId);
         // send bullet to server
         Nitwork::NitworkClient::getInstance().addNewBulletMsg(
-            {
-                Maths::removeIntegerDecimals(position.x),
-                Maths::removeIntegerDecimals(position.y)
-            },
+            {Maths::removeIntegerDecimals(position.x), Maths::removeIntegerDecimals(position.y)},
             missileType.type);
     }
 

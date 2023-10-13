@@ -1,12 +1,12 @@
 #include "ClientNetwork.hpp"
 #include <algorithm>
 #include "ECSCustomTypes.hpp"
+#include "Maths.hpp"
 #include "NitworkClient.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
-#include "Maths.hpp"
 
 namespace Systems {
     void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)

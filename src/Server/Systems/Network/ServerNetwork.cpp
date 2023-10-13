@@ -7,9 +7,9 @@
 
 #include "ServerNetwork.hpp"
 #include "ECSCustomTypes.hpp"
+#include "Maths.hpp"
 #include "NitworkServer.hpp"
 #include "Registry.hpp"
-#include "Maths.hpp"
 
 namespace Systems {
     void handleLifeUpdateMsg(const std::any &any, boost::asio::ip::udp::endpoint &endpoint)
