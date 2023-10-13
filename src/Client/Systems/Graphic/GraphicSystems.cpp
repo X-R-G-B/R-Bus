@@ -19,6 +19,7 @@ namespace Systems {
 #ifndef NDEBUG
     void debugCollisionRect(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::CollisionRect> arrCollisionRect =
             Registry::getInstance().getComponents<Types::CollisionRect>();
         Registry::components<Types::Position> arrPosition =

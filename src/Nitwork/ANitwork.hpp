@@ -11,6 +11,7 @@
 #include <iostream>
 #include <list>
 #include <mutex>
+#include <unordered_map>
 #include "INitwork.hpp"
 #include "Logger.hpp"
 
@@ -64,7 +65,9 @@ namespace Nitwork {
 
             /* Getters / Setters */
             n_idsReceived_t getIdsReceived();
+            n_id_t getLastIdsReceived();
             n_id_t getPacketID();
+            const boost::asio::ip::udp::endpoint &getEndpointSender();
             void addPacketToSend(const boost::asio::ip::udp::endpoint &, const Packet &);
             void handlePacketIdsReceived(const struct header_s &header);
 
@@ -95,7 +98,7 @@ namespace Nitwork {
             // start receive handler
             void headerHandler(std::size_t bytes_received, const boost::system::error_code &error) final;
             // check if the packet has already been received
-            bool isAlreadyReceived(n_id_t id);
+            bool isAlreadyReceived(n_id_t id, const boost::asio::ip::udp::endpoint &endpoint);
             // call startReceiveHandler method by displaying a message
             void callReceiveHandler(const std::string &message);
 
@@ -123,7 +126,8 @@ namespace Nitwork {
                 T data = std::any_cast<T>(packet.body);
 
                 data.header.ids_received = getIdsReceived();
-                auto updatedPacket       = Packet(packet.id, packet.action, std::make_any<T>(data));
+                auto updatedPacket =
+                    Packet(packet.id, packet.action, std::make_any<T>(data), packet.endpoint);
                 return updatedPacket;
             }
 
@@ -142,7 +146,8 @@ namespace Nitwork {
             //            std::vector<char> _receiveBuffer; // The buffer used to receive the actions
 
             // list of packets' ids receives
-            std::vector<n_id_t> _receivedPacketsIds; // A list of packets' ids receives
+            // std::vector<n_id_t> _receivedPacketsIds; // A list of packets' ids receives
+            std::unordered_map<boost::asio::ip::udp::endpoint, std::vector<n_id_t>> _receivedPacketsIdsMap;
             std::list<std::pair<boost::asio::ip::udp::endpoint, Packet>>
                 _packetsSent;                    // A list of packets' ids receives
                                                  // Mutexes shared

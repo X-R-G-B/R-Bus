@@ -7,6 +7,7 @@
 
 #include "SpriteSystems.hpp"
 #include "CustomTypes.hpp"
+#include "ECSCustomTypes.hpp"
 #include "Logger.hpp"
 #include "Raylib.hpp"
 #include "SharedValues.hpp"
@@ -213,8 +214,39 @@ namespace Systems {
         }
     }
 
+    void GraphicSystems::createSprite(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        auto &arrSpriteDatas = Registry::getInstance().getComponents<Types::PlayerDatas>();
+        auto &arrSprite      = Registry::getInstance().getComponents<Raylib::Sprite>();
+
+        auto ids = arrSpriteDatas.getExistingsId();
+        for (auto id : ids) {
+            auto &spriteDatas = arrSpriteDatas[id];
+            Raylib::Sprite sprite(
+                spriteDatas.fileName,
+                spriteDatas.width,
+                spriteDatas.height,
+                spriteDatas.id);
+            arrSprite.insert(id, sprite);
+            switch (spriteDatas.layer) {
+                case BACKLAYER:
+                    Registry::getInstance().setToBackLayers(
+                        id,
+                        static_cast<enum BackLayers>(spriteDatas.layerSide));
+                    break;
+                case FRONTLAYER: Registry::getInstance().setToDefaultLayer(id); break;
+                case DEFAULTLAYER:
+                    Registry::getInstance().setToFrontLayers(
+                        id,
+                        static_cast<enum FrontLayers>(spriteDatas.layerSide));
+                    break;
+            }
+        }
+        arrSpriteDatas.clear();
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> GraphicSystems::getSpriteSystems()
     {
-        return {rectIncrementation, rectRenderer, spriteRenderer};
+        return {rectIncrementation, rectRenderer, spriteRenderer, createSprite};
     }
 } // namespace Systems
