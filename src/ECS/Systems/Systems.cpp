@@ -195,6 +195,7 @@ namespace Systems {
             Registry::getInstance().addEntity();
 
 #endif
+            Types::Enemy enemyComp = {};
             Types::Position position = {
                 Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
             Types::CollisionRect collisionRect = {
@@ -224,6 +225,7 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
             Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
             Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
+            Registry::getInstance().getComponents<Types::Enemy>().insertBack(enemyComp);
         }
     }
 
