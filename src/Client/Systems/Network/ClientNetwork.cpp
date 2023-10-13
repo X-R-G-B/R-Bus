@@ -70,7 +70,9 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
         reviveEnemy(newEnemy.enemyInfos.id);
-        Types::Position pos = {static_cast<float>(newEnemy.enemyInfos.pos.x), static_cast<float>(newEnemy.enemyInfos.pos.y)};
+        Types::Position pos = {
+            static_cast<float>(newEnemy.enemyInfos.pos.x),
+            static_cast<float>(newEnemy.enemyInfos.pos.y)};
         struct health_s hp = newEnemy.enemyInfos.life;
         Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
         Registry::getInstance().getComponents<struct health_s>().insertBack(hp);

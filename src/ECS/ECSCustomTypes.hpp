@@ -105,8 +105,11 @@ namespace Types {
                 _enemyNb++;
             }
 
-            Enemy(struct enemy_id_s _constId,  enum enemy_type_e _type = enemy_type_e::CLASSIC_ENEMY) : constId(_constId), type(_type)
-            {}
+            Enemy(struct enemy_id_s _constId, enum enemy_type_e _type = enemy_type_e::CLASSIC_ENEMY)
+                : constId(_constId),
+                  type(_type)
+            {
+            }
 
             [[nodiscard]] enemy_id_s getConstId() const
             {
@@ -129,8 +132,8 @@ namespace Types {
                 return _enemyNb;
             }
 
-        enemy_id_s constId;
-        enum enemy_type_e type;
+            enemy_id_s constId;
+            enum enemy_type_e type;
 
         private:
             static unsigned int _enemyNb;

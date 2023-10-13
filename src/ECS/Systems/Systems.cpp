@@ -194,17 +194,20 @@ namespace Systems {
         clock.restart(clockId);
     }
 
-    static void initEnemyEntity(nlohmann::json_abi_v3_11_2::basic_json<> &enemyData, bool setId = false, struct ::enemy_id_s enemyId = {0})
+    static void initEnemyEntity(
+        nlohmann::json_abi_v3_11_2::basic_json<> &enemyData,
+        bool setId                  = false,
+        struct ::enemy_id_s enemyId = {0})
     {
 #ifdef CLIENT
         std::size_t id       = Registry::getInstance().addEntity();
         Raylib::Sprite enemy = {enemyData["spritePath"], enemyData["width"], enemyData["height"], id};
-        Types::Rect rect                   = {Types::Rect(enemyData["rect"])};
+        Types::Rect rect     = {Types::Rect(enemyData["rect"])};
         nlohmann::json animRectData = enemyData["animRect"];
         nlohmann::json moveData     = animRectData["move"];
         nlohmann::json attackData   = animRectData["attack"];
         nlohmann::json deadData     = animRectData["dead"];
-        Types::AnimRect animRect = {
+        Types::AnimRect animRect    = {
             Types::Rect(enemyData["rect"]),
             moveData.get<std::vector<Types::Rect>>(),
             attackData.get<std::vector<Types::Rect>>(),
@@ -408,7 +411,7 @@ namespace Systems {
             id,
             FRONTLAYER,
             static_cast<std::size_t>(FRONT));
-        Types::Rect rect                   = {Types::Rect(jsonData["rect"])};
+        Types::Rect rect = {Types::Rect(jsonData["rect"])};
 
         // AnimRect
         nlohmann::json animRectData = jsonData["animRect"];
