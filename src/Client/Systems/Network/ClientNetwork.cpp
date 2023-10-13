@@ -127,6 +127,20 @@ namespace Systems {
         Nitwork::NitworkClient::getInstance().addPositionAbsoluteMsg(msg);
     }
 
+    void receiveNewBullet(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+
+        const struct msgNewBullet_s &msgNewBullet = std::any_cast<struct msgNewBullet_s>(any);
+
+        struct Types::Position position = {
+            static_cast<float>(msgNewBullet.pos.x),
+            static_cast<float>(msgNewBullet.pos.y),
+        };
+        struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
+        Systems::createMissile(position, missileType);
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()
     {
         return {sendPositionRelative, sendPositionAbsolute};

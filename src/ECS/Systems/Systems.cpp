@@ -393,7 +393,7 @@ namespace Systems {
         struct health_s healthComp = {jsonData["health"]};
         Types::Damage damageComp   = {jsonData["damage"]};
 #ifdef CLIENT
-        Types::PlayerDatas playerDatas(
+        Types::SpriteDatas playerDatas(
             jsonData["spritePath"],
             jsonData["width"],
             jsonData["height"],
@@ -420,7 +420,7 @@ namespace Systems {
         // Add components to registry
 
 #ifdef CLIENT
-        Registry::getInstance().getComponents<Types::PlayerDatas>().insertBack(playerDatas);
+        Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(playerDatas);
 #endif
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
@@ -429,6 +429,48 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Player>().insertBack(playerComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
+    }
+
+    void createMissile(Types::Position &pos, Types::Missiles &typeOfMissile)
+    {
+        std::size_t entityId = Registry::getInstance().addEntity();
+
+        Types::CollisionRect collisionRect1  = {1, 1};
+        constexpr float bulletWidth          = 5.0F;
+        constexpr float bulletHeight         = 5.0F;
+        Types::CollisionRect collisionRect2  = {bulletWidth, bulletHeight};
+        Types::Velocity velocity             = {0.7F, 0.0F};
+        Types::Missiles missileType          = typeOfMissile;
+        Types::Dead deadComp                 = {};
+        Types::PlayerAllies playerAlliesComp = {};
+        Types::Position position             = {pos.x, pos.y};
+#ifdef CLIENT
+        const std::string bulletPath         = "assets/R-TypeSheet/r-typesheet1.gif";
+        Types::Rect spriteRect               = {200, 121, 32, 10};
+        Types::SpriteDatas bulletDatas(
+            bulletPath,
+            bulletWidth,
+            bulletHeight,
+            entityId,
+            FRONTLAYER,
+            static_cast<std::size_t>(FRONT));
+#endif
+        struct health_s healthComp           = {1};
+        Types::Damage damageComp             = {10};
+
+        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+#ifdef CLIENT
+        Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(bulletDatas);
+        Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
+#endif
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect1);
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect2);
+        Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
+        Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
+        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
     }
 
