@@ -156,7 +156,3 @@ Json::Json()
         _jsonDatas.insert({it.first, loadJsonData(it.second)});
     }
 }
-
-Json::~Json()
-{
-}

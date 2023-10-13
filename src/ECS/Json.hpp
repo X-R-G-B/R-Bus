@@ -25,7 +25,6 @@ const std::unordered_map<JsonType, std::string> pathToJson = {
 class Json {
     public:
         static Json &getInstance();
-        ~Json();
 
         nlohmann::basic_json<> getDataByJsonType(JsonType dataType);
 
@@ -50,6 +49,7 @@ class Json {
 
     private:
         Json();
+        ~Json() = default;
 
         std::vector<nlohmann::basic_json<>> &getDatasFromList(
             std::vector<nlohmann::basic_json<>> &datas,
