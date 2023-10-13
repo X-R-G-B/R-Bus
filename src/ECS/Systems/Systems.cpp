@@ -308,18 +308,17 @@ namespace Systems {
         }
     }
 
-    static void sendEnemyDeath(std::size_t id)
+    static void sendEnemyDeath(std::size_t arrId)
     {
         auto &arrEnemies = Registry::getInstance().getComponents<Types::Enemy>();
 
-        if (!arrEnemies.exist(id)) {
+        if (!arrEnemies.exist(arrId)) {
             return;
         }
-        n_id_t castedId = static_cast<n_id_t>(id);
 #ifdef CLIENT
-        Nitwork::NitworkClient::getInstance().addEnemyDeathMsg(castedId);
+        Nitwork::NitworkClient::getInstance().addEnemyDeathMsg(arrEnemies[arrId].getConstId().id);
 #else
-        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(castedId);
+        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(arrEnemies[arrId].getConstId().id);
 #endif
     }
 

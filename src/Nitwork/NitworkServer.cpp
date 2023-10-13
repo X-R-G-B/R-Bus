@@ -9,6 +9,8 @@
 #include "ECSCustomTypes.hpp"
 #include "Logger.hpp"
 #include "Registry.hpp"
+#include "SystemManagersDirector.hpp"
+#include "Systems.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -114,6 +116,7 @@ namespace Nitwork {
             return;
         }
         addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
+        Systems::SystemManagersDirector::getInstance().getSystemManager(0).addSystem(Systems::initWave);
     }
     /* End Handle packet (msg) Section */
 
