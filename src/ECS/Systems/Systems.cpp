@@ -193,7 +193,7 @@ namespace Systems {
                 id};
 #else
             Registry::getInstance().addEntity();
-                
+
 #endif
             Types::Position position = {
                 Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
