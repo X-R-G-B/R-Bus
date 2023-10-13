@@ -24,25 +24,8 @@ namespace Systems::ParallaxSystems {
         Types::Position position = {Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
         Types::Velocity velocity = {Types::Velocity(Json::getInstance().getDataFromJson(elem, "velocity"))};
 
-        if (Json::getInstance().getDataFromJson(elem, "rect") != nullptr) {
+        if (Json::getInstance().isDataExist(elem, "rect")) {
             Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
-
-            if (Json::getInstance().getDataFromJson(elem, "animRect") != nullptr) {
-                nlohmann::basic_json<> animRectData = Json::getInstance().getDataFromJson(elem, "animRect");
-
-                Types::AnimRect animRect = {
-                    rect,
-                    Json::getInstance()
-                        .getDataFromJson(animRectData, "move")
-                        .get<std::vector<Types::Rect>>(),
-                    Json::getInstance()
-                        .getDataFromJson(animRectData, "attack")
-                        .get<std::vector<Types::Rect>>(),
-                    Json::getInstance()
-                        .getDataFromJson(animRectData, "dead")
-                        .get<std::vector<Types::Rect>>()};
-                Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
-            }
             Registry::getInstance().getComponents<Types::Rect>().insertBack((rect));
         }
 
@@ -65,7 +48,7 @@ namespace Systems::ParallaxSystems {
 
         for (auto &elem : parallaxData) {
             initParallaxEntity(elem);
-            if (Json::getInstance().getDataFromJson(elem, "copy") != nullptr
+            if (Json::getInstance().isDataExist(elem, "copy")
                 && Json::getInstance().getDataFromJson(elem, "copy") == true) {
                 initParallaxEntity(elem, maxOutParallaxRight);
             }

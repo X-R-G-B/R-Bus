@@ -74,6 +74,14 @@ nlohmann::basic_json<> Json::getDataByJsonType(const std::string &index, JsonTyp
     return (finalData);
 }
 
+bool Json::isDataExist(nlohmann::basic_json<> jsonData, const std::string &index)
+{
+    if (jsonData[index] == nullptr) {
+        return (false);
+    }
+    return (true);
+}
+
 std::vector<nlohmann::basic_json<>>
 Json::getDatasFromList(const std::vector<nlohmann::basic_json<>> &list, const std::string &key)
 {
