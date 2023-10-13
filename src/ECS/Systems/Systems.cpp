@@ -121,15 +121,22 @@ namespace Systems {
         Types::Position entityPos       = arrPosition[id];
         Types::CollisionRect entityColl = arrCollisionRect[id];
 
+        const float entityPosx = Maths::integrerToDecimalWithTwoDecimals(entityPos.x);
+        const float entityPosy = Maths::integrerToDecimalWithTwoDecimals(entityPos.y);
+
         itIds++;
         while (itIds != ids.end()) {
             if (arrCollisionRect.exist(*itIds)) {
                 Types::CollisionRect sndEntityRect = arrCollisionRect[*itIds];
                 Types::Position sndEntityPos       = arrPosition[*itIds];
-                if (entityPos.x < sndEntityPos.x + sndEntityRect.width
-                    && entityPos.x + entityColl.width > sndEntityPos.x
-                    && entityPos.y < sndEntityPos.y + sndEntityRect.height
-                    && entityPos.y + entityColl.height > sndEntityPos.y) {
+                float sndEntityPosx = Maths::integrerToDecimalWithTwoDecimals(sndEntityPos.x);
+                float sndEntityPosy = Maths::integrerToDecimalWithTwoDecimals(sndEntityPos.y);
+                if (
+                    entityPosx < sndEntityPosx + sndEntityRect.width
+                    && entityPosx + entityColl.width > sndEntityPosx
+                    && entityPosy < sndEntityPosy + sndEntityRect.height
+                    && entityPosy + entityColl.height > sndEntityPosy
+                ) {
                     checkSide(id, *itIds);
                 }
             }
