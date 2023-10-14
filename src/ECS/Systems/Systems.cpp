@@ -25,7 +25,6 @@ namespace Systems {
 
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Logger::fatal("Window collision");
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
@@ -181,7 +180,6 @@ namespace Systems {
 
     void initEnemy(JsonType enemyType, bool setId, struct ::enemy_id_s enemyId)
     {
-        Logger::fatal("pute");
         std::vector<nlohmann::basic_json<>> enemyData =
             Json::getInstance().getDataByJsonType("enemy", enemyType);
 
@@ -229,7 +227,6 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
             Registry::getInstance().getComponents<Types::Enemy>().insertBack(enemyComp);
         }
-        Logger::fatal("pute end");
     }
 
     void initWave(std::size_t managerId, std::size_t systemId)
@@ -358,7 +355,6 @@ namespace Systems {
 
     void initPlayer(JsonType playerType)
     {
-        Logger::fatal("player start");
 #ifdef CLIENT
         std::size_t id = Registry::getInstance().addEntity();
 #else
@@ -371,7 +367,7 @@ namespace Systems {
             Json::getInstance().getDataByVector({"player", "health"}, playerType)};
         Types::Damage damageComp = {Json::getInstance().getDataByVector({"player", "damage"}, playerType)};
 #ifdef CLIENT
-        Types::PlayerDatas playerDatas(
+        Types::SpriteDatas playerDatas(
             Json::getInstance().getDataByVector({"player", "spritePath"}, playerType),
             Json::getInstance().getDataByVector({"player", "width"}, playerType),
             Json::getInstance().getDataByVector({"player", "height"}, playerType),
@@ -397,7 +393,7 @@ namespace Systems {
 #ifdef CLIENT
         Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
         Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
-        Registry::getInstance().getComponents<Types::PlayerDatas>().insertBack(playerDatas);
+        Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(playerDatas);
 #endif
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
@@ -405,7 +401,50 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
-        Logger::fatal("player end");
+    }
+
+    void createMissile(Types::Position &pos, Types::Missiles &typeOfMissile)
+    {
+#ifdef CLIENT
+        std::size_t entityId = Registry::getInstance().addEntity();
+#else
+        Registry::getInstance().addEntity();
+#endif
+
+        constexpr float bulletWidth          = 5.0F;
+        constexpr float bulletHeight         = 5.0F;
+        Types::CollisionRect collisionRect  = {bulletWidth, bulletHeight};
+        Types::Velocity velocity             = {0.7F, 0.0F};
+        Types::Missiles missileType          = typeOfMissile;
+        Types::Dead deadComp                 = {};
+        Types::PlayerAllies playerAlliesComp = {};
+        Types::Position position             = {pos.x, pos.y};
+#ifdef CLIENT
+        const std::string bulletPath = "assets/R-TypeSheet/r-typesheet1.gif";
+        Types::Rect spriteRect       = {200, 121, 32, 10};
+        Types::SpriteDatas bulletDatas(
+            bulletPath,
+            bulletWidth,
+            bulletHeight,
+            entityId,
+            FRONTLAYER,
+            static_cast<std::size_t>(FRONT));
+#endif
+        struct health_s healthComp = {1};
+        Types::Damage damageComp   = {10};
+
+        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+#ifdef CLIENT
+        Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(bulletDatas);
+        Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
+#endif
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
+        Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
+        Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
+        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
+        Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()

@@ -37,6 +37,8 @@ class Json {
 
         nlohmann::json &getDataFromJson(nlohmann::basic_json<> jsonData, const std::string &index);
 
+        bool isDataExist(nlohmann::basic_json<> jsonData, const std::string &index);
+
         std::vector<nlohmann::basic_json<>>
         getDatasFromList(const std::vector<nlohmann::basic_json<>> &list, const std::string &key);
 

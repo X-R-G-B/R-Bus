@@ -24,25 +24,8 @@ namespace Systems::ParallaxSystems {
         Types::Position position = {Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
         Types::Velocity velocity = {Types::Velocity(Json::getInstance().getDataFromJson(elem, "velocity"))};
 
-        if (Json::getInstance().getDataFromJson(elem, "rect") != nullptr) {
+        if (Json::getInstance().isDataExist(elem, "rect")) {
             Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
-
-            if (Json::getInstance().getDataFromJson(elem, "animRect") != nullptr) {
-                nlohmann::basic_json<> animRectData = Json::getInstance().getDataFromJson(elem, "animRect");
-
-                Types::AnimRect animRect = {
-                    rect,
-                    Json::getInstance()
-                        .getDataFromJson(animRectData, "move")
-                        .get<std::vector<Types::Rect>>(),
-                    Json::getInstance()
-                        .getDataFromJson(animRectData, "attack")
-                        .get<std::vector<Types::Rect>>(),
-                    Json::getInstance()
-                        .getDataFromJson(animRectData, "dead")
-                        .get<std::vector<Types::Rect>>()};
-                Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
-            }
             Registry::getInstance().getComponents<Types::Rect>().insertBack((rect));
         }
 
@@ -60,18 +43,13 @@ namespace Systems::ParallaxSystems {
 
     void initParalax(std::size_t managerId, std::size_t systemId)
     {
-        Logger::fatal("init parallax");
         std::vector<nlohmann::basic_json<>> parallaxData =
             Json::getInstance().getDataByJsonType("parallax", JsonType::DEFAULT_PARALLAX);
-        Logger::fatal("init parallax");
 
         for (auto &elem : parallaxData) {
-            Logger::fatal("init parallax loop");
             initParallaxEntity(elem);
-            Logger::fatal("init parallax loop2");
-            if (Json::getInstance().getDataFromJson(elem, "copy") != nullptr
+            if (Json::getInstance().isDataExist(elem, "copy")
                 && Json::getInstance().getDataFromJson(elem, "copy") == true) {
-                Logger::fatal("init parallax loop3");
                 initParallaxEntity(elem, maxOutParallaxRight);
             }
         }
@@ -83,7 +61,6 @@ namespace Systems::ParallaxSystems {
         Registry::components<Types::Parallax> &arrParallax,
         Registry::components<Types::Position> &arrPosition)
     {
-        Logger::fatal("reset parallax");
         if (arrPosition[id].x <= maxOutParallaxLeft) {
             if (arrParallax[id].x >= maxOutParallaxRight) {
                 arrPosition[id].x = arrParallax[id].x;
@@ -96,7 +73,6 @@ namespace Systems::ParallaxSystems {
 
     void manageParallax(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Logger::fatal("manage parallax");
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();

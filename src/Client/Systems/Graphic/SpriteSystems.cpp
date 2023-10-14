@@ -83,7 +83,6 @@ namespace Systems {
 
     void GraphicSystems::rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Logger::fatal("rectIncrementation");
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::AnimRect> arrAnimRect = registry.getComponents<Types::AnimRect>();
         Registry::components<Types::Rect> arrRect         = registry.getComponents<Types::Rect>();
@@ -210,7 +209,7 @@ namespace Systems {
 
     void GraphicSystems::createSprite(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        auto &arrSpriteDatas = Registry::getInstance().getComponents<Types::PlayerDatas>();
+        auto &arrSpriteDatas = Registry::getInstance().getComponents<Types::SpriteDatas>();
         auto &arrSprite      = Registry::getInstance().getComponents<Raylib::Sprite>();
 
         auto ids = arrSpriteDatas.getExistingsId();

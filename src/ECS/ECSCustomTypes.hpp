@@ -51,8 +51,8 @@ namespace Types {
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Velocity, speedX, speedY);
     };
 
-    struct PlayerDatas {
-            PlayerDatas(
+    struct SpriteDatas {
+            SpriteDatas(
                 const std::string &fileName,
                 float width,
                 float height,

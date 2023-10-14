@@ -11,6 +11,7 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include "ECSCustomTypes.hpp"
 #include "Json.hpp"
 #include "MessageTypes.h"
 
@@ -20,6 +21,7 @@ namespace Systems {
     void entitiesCollision(std::size_t, std::size_t);
     void deathChecker(std::size_t, std::size_t);
     void initWave(std::size_t managerId, std::size_t systemId);
+    void createMissile(Types::Position &pos, Types::Missiles &typeOfMissile);
     void initPlayer(JsonType playerType);
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems();
 } // namespace Systems

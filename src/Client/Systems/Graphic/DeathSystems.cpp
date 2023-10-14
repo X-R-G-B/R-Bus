@@ -14,7 +14,6 @@
 namespace Systems {
 
     const std::function<void(std::size_t)> setPlayerAnimRectDeath = [](std::size_t id) {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::AnimRect> arrAnimRect =
             Registry::getInstance().getComponents<Types::AnimRect>();
 
@@ -33,7 +32,6 @@ namespace Systems {
 
     void DeathSystems::setEntityDeathFunction(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Logger::fatal("setEntityDeathFunction");
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
 
         std::vector<std::size_t> ids = arrDead.getExistingsId();
