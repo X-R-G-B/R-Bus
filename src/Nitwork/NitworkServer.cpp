@@ -119,9 +119,8 @@ namespace Nitwork {
         addPlayerInitMessage(endpoint, _endpoints.size() - 1);
     }
 
-    void NitworkServer::handleReadyMsg(
-        const std::any & /* unused */,
-        boost::asio::ip::udp::endpoint &endpoint)
+    void
+    NitworkServer::handleReadyMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
         if (!isClientAlreadyConnected(endpoint)) {
             Logger::info("Client not connected");
