@@ -28,7 +28,7 @@
     #define MAGICK_LIFE_UPDATE '\x0b'
     #define MAGICK_ENEMY_DEATH '\x0c'
     #define MAGICK_NEW_ENEMY '\x0e'
-    #define MAGICK_NEW_BULLET '\x0c'
+    #define MAGICK_NEW_BULLET '\x0d'
     #define MAGICK_POSITION_RELATIVE_BROADCAST '\x0f'
     #define MAGICK_POSITION_ABSOLUTE_BROADCAST '\xae'
     #define MAGICK_NEW_ALLIE '\x0a'
