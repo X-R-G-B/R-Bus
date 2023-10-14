@@ -10,8 +10,8 @@
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include "CustomTypes.hpp"
-#include "Maths.hpp"
 #include "ECSCustomTypes.hpp"
+#include "Maths.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
