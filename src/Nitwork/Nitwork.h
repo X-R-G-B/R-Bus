@@ -32,7 +32,7 @@
 
 typedef char n_magick_t;
 typedef int n_idsReceived_t;
-typedef int n_nbAction_t;
+typedef unsigned char n_nbAction_t;
 
 enum n_actionType_t {
     NO_ACTION = 0,
