@@ -80,9 +80,9 @@ namespace Systems {
         struct Types::Position position = {
             Maths::addIntegerDecimals(msgNewBullet.pos.x),
             Maths::addIntegerDecimals(msgNewBullet.pos.y),
-            //static_cast<float>(msgNewBullet.pos.x),
-            //static_cast<float>(msgNewBullet.pos.y),
-            //TODO VERIF
+            // static_cast<float>(msgNewBullet.pos.x),
+            // static_cast<float>(msgNewBullet.pos.y),
+            // TODO VERIF
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
         Systems::createMissile(position, missileType);
