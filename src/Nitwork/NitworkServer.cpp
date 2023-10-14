@@ -75,6 +75,10 @@ namespace Nitwork {
             std::cerr << "Error: action not found" << std::endl;
             return;
         }
+        if (it->second.first == nullptr) {
+            std::cerr << "Error: action handler is null" << std::endl;
+            return;
+        }
         Logger::info(
             "Received packet from " + endpoint.address().to_string() + ":" + std::to_string(endpoint.port())
             + " with id " + std::to_string(header.id) + " and action of type "

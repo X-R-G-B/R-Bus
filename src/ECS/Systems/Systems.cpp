@@ -216,7 +216,6 @@ namespace Systems {
                 Types::Velocity(Json::getInstance().getDataFromJson(elem, "velocity"))};
 
 #ifdef CLIENT
-            Registry::getInstance().setToFrontLayers(id);
             Registry::getInstance().getComponents<Types::Rect>().insertBack((rect));
             Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
             Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(enemy);
@@ -237,6 +236,7 @@ namespace Systems {
         const std::size_t spawnDelay   = 2;
         Clock &clock                   = Registry::getInstance().getClock();
         static std::size_t clockId     = clock.create(true);
+
 
         if (clock.elapsedSecondsSince(clockId) > spawnDelay) {
             initEnemy(JsonType::DEFAULT_ENEMY);

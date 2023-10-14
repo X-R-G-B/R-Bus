@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <vector>
+#include <mutex>
 
 namespace Systems {
     class SystemManager {
