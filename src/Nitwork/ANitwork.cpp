@@ -143,8 +143,7 @@ namespace Nitwork {
             callReceiveHandler("header magick not valid");
             return;
         }
-        if (header->nb_action > MAX_NB_ACTION ||
-            isAlreadyReceived(header->id, _senderEndpoint)) {
+        if (header->nb_action > MAX_NB_ACTION || isAlreadyReceived(header->id, _senderEndpoint)) {
             callReceiveHandler("header nb action not valid or already received");
             return;
         }
