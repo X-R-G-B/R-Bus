@@ -58,11 +58,9 @@ namespace Systems {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto playerInit = std::any_cast<struct msgPlayerInit_s>(any);
-        auto &arrPlayer       = Registry::getInstance().getComponents<Types::Player>();
 
         Logger::info("Your player id is: " + std::to_string(playerInit.playerId));
-        initPlayer(JsonType::DEFAULT_PLAYER);
-        arrPlayer[arrPlayer.getExistingsId().at(0)].constId = playerInit.playerId;
+        initPlayer(JsonType::DEFAULT_PLAYER, playerInit.playerId);
     }
 
     void receiveNewEnemy(std::any &any, boost::asio::ip::udp::endpoint &)
@@ -77,6 +75,18 @@ namespace Systems {
         struct health_s hp = newEnemy.enemyInfos.life;
         Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
         Registry::getInstance().getComponents<struct health_s>().insertBack(hp);
+    }
+
+    void receiveNewAllie(std::any &any, boost::asio::ip::udp::endpoint &)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const auto newAllie = std::any_cast<struct msgNewAllie_s>(any);
+        Types::Position pos = {
+            static_cast<float>(newAllie.data.pos.x),
+            static_cast<float>(newAllie.data.pos.y)};
+
+        initPlayer(JsonType::DEFAULT_PLAYER, newAllie.data.id, true);
+        Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
