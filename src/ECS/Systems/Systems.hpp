@@ -11,7 +11,9 @@
 #include <functional>
 #include <string>
 #include <vector>
-#include "nitwork.h"
+extern "C" {
+#include "Nitwork.h"
+}
 
 namespace Systems {
     void initEnemy(const std::string &path);
