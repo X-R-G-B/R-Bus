@@ -164,14 +164,12 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Velocity>();
         Clock &clock                 = Registry::getInstance().getClock();
         static std::size_t clockId   = clock.create();
-        std::vector<std::size_t> ids = arrPosition.getExistingsId();
+        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::Position), typeid(Types::Velocity)});
 
         while (clock.elapsedMillisecondsSince(clockId) >= moveTime) {
             for (auto &id : ids) {
-                if (arrVelocity.exist(id)) {
-                    arrPosition[id].x += arrVelocity[id].speedX;
-                    arrPosition[id].y += arrVelocity[id].speedY;
-                }
+                arrPosition[id].x += arrVelocity[id].speedX;
+                arrPosition[id].y += arrVelocity[id].speedY;
             }
             clock.decreaseMilliseconds(clockId, moveTime);
         }

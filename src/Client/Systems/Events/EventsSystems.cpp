@@ -14,7 +14,6 @@
 #include "Systems.hpp"
 
 namespace Systems {
-
     static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId)
     {
         Registry::components<Types::AnimRect> arrAnimRect =
