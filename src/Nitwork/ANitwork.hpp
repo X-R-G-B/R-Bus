@@ -43,7 +43,7 @@ namespace Nitwork {
                     Logger::error("NITWORK: Package too big");
                     return;
                 }
-                packet.id = id;
+                packet.id   = id;
                 T data      = std::any_cast<T>(packet.body);
                 auto header = static_cast<struct header_s>(data.header);
                 header      = {
@@ -179,7 +179,7 @@ namespace Nitwork {
             std::list<std::pair<
                 SenderData,
                 const actionHandler &>>
-                _actions; // A list of actions which will be handled by the second context
+                _actions;                   // A list of actions which will be handled by the second context
             std::list<Packet> _outputQueue; // A queue of actions which will be sent to the clients
-    };         // class INitwork
+    };                                      // class INitwork
 } // namespace Nitwork
