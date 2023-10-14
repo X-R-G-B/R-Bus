@@ -67,7 +67,7 @@ namespace Systems {
                 .pos =
                     {static_cast<char>(Maths::removeIntegerDecimals(arrPos[index].x)),
                           static_cast<char>(Maths::removeIntegerDecimals(arrPos[index].y))},
-                .type = arrEnemies[index].getType(),
+                .type = arrEnemies[index].type,
         });
     }
 

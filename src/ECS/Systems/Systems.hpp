@@ -13,9 +13,10 @@
 #include <vector>
 #include "ECSCustomTypes.hpp"
 #include "Json.hpp"
+#include "MessageTypes.h"
 
 namespace Systems {
-    void initEnemy(JsonType enemyType);
+    void initEnemy(JsonType enemyType, bool setId = false, struct ::enemy_id_s enemyId = {0});
     void windowCollision(std::size_t, std::size_t);
     void entitiesCollision(std::size_t, std::size_t);
     void deathChecker(std::size_t, std::size_t);

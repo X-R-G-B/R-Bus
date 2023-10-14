@@ -18,15 +18,16 @@ namespace Systems::ParallaxSystems {
     {
         std::size_t id          = Registry::getInstance().addEntity();
         Raylib::Sprite parralax = {
-            Json::getInstance().getDataFromJson(elem, "spritePath"),
-            Json::getInstance().getDataFromJson(elem, "width"),
-            Json::getInstance().getDataFromJson(elem, "height"),
+            Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
+            Json::getInstance().getDataFromJson<float>(elem, "width"),
+            Json::getInstance().getDataFromJson<float>(elem, "height"),
             id};
-        Types::Position position = {Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
-        Types::Velocity velocity = {Types::Velocity(Json::getInstance().getDataFromJson(elem, "velocity"))};
+
+        Types::Position position = Json::getInstance().getDataFromJson<Types::Position>(elem, "position");
+        Types::Velocity velocity = Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
 
         if (Json::getInstance().isDataExist(elem, "rect")) {
-            Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
+            Types::Rect rect = Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect");
             Registry::getInstance().getComponents<Types::Rect>().insertBack((rect));
         }
 
@@ -54,7 +55,7 @@ namespace Systems::ParallaxSystems {
         for (auto &elem : parallaxData) {
             initParallaxEntity(elem);
             if (Json::getInstance().isDataExist(elem, "copy")
-                && Json::getInstance().getDataFromJson(elem, "copy") == true) {
+                && Json::getInstance().getDataFromJson<bool>(elem, "copy") == true) {
                 initParallaxEntity(elem, maxOutParallaxRight);
             }
         }

@@ -11,10 +11,12 @@
 #include <sstream>
 #include "CustomTypes.hpp"
 #include "Maths.hpp"
+#include "ECSCustomTypes.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
 #ifdef CLIENT
+    #include "CustomTypes.hpp"
     #include "NitworkClient.hpp"
     #include "Raylib.hpp"
 #else
@@ -185,7 +187,7 @@ namespace Systems {
         clock.restart(clockId);
     }
 
-    void initEnemy(JsonType enemyType)
+    void initEnemy(JsonType enemyType, bool setId, struct ::enemy_id_s enemyId)
     {
         std::vector<nlohmann::basic_json<>> enemyData =
             Json::getInstance().getDataByJsonType("enemy", enemyType);
@@ -193,43 +195,48 @@ namespace Systems {
         for (auto &elem : enemyData) {
 #ifdef CLIENT
             std::size_t id = Registry::getInstance().addEntity();
-
-            Raylib::Sprite enemy = {
-                Json::getInstance().getDataFromJson(elem, "spritePath"),
-                Json::getInstance().getDataFromJson(elem, "width"),
-                Json::getInstance().getDataFromJson(elem, "height"),
-                id};
 #else
             Registry::getInstance().addEntity();
-
 #endif
-            Types::Enemy enemyComp   = {};
-            Types::Position position = {
-                Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
-            Types::CollisionRect collisionRect = {
-                Types::CollisionRect(Json::getInstance().getDataFromJson(elem, "collisionRect"))};
-            Types::Rect rect           = {Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
-            struct health_s healthComp = {Json::getInstance().getDataFromJson(elem, "health")};
-            Types::Damage damageComp   = {Json::getInstance().getDataFromJson(elem, "damage")};
-            Types::Velocity velocity   = {
-                Types::Velocity(Json::getInstance().getDataFromJson(elem, "velocity"))};
-
-            nlohmann::basic_json<> animRectData = Json::getInstance().getDataFromJson(elem, "animRect");
-            Types::AnimRect animRect            = {
-                rect,
-                Json::getInstance().getDataFromJson(animRectData, "move").get<std::vector<Types::Rect>>(),
-                Json::getInstance().getDataFromJson(animRectData, "attack").get<std::vector<Types::Rect>>(),
-                Json::getInstance().getDataFromJson(animRectData, "dead").get<std::vector<Types::Rect>>()};
 
 #ifdef CLIENT
-            Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(enemy);
-            Registry::getInstance().setToFrontLayers(id);
-#endif
 
+            Types::SpriteDatas enemy = {
+                Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
+                Json::getInstance().getDataFromJson<float>(elem, "width"),
+                Json::getInstance().getDataFromJson<float>(elem, "height"),
+                id,
+                LayerType::DEFAULTLAYER,
+                0};
+
+            Types::Rect rect = Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect");
+
+            nlohmann::basic_json<> animRectData =
+                Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(elem, "animRect");
+            Types::AnimRect animRect = {
+                rect,
+                Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
+                Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "attack"),
+                Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")};
+
+#endif
+            Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
+            Types::Velocity velocity =
+                Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
+            Types::Position position =
+                Json::getInstance().getDataFromJson<Types::Position>(elem, "position");
+            Types::CollisionRect collisionRect =
+                Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect");
+            Types::Damage damageComp   = {Json::getInstance().getDataFromJson<int>(elem, "damage")};
+            struct health_s healthComp = {Json::getInstance().getDataFromJson<int>(elem, "health")};
+
+#ifdef CLIENT
+            Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
+            Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
+            Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(enemy);
+#endif
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
             Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
-            Registry::getInstance().getComponents<Types::Rect>().insertBack((rect));
-            Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
             Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
             Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
             Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
@@ -385,29 +392,30 @@ namespace Systems {
             id,
             FRONTLAYER,
             static_cast<std::size_t>(FRONT));
-#endif
-        Types::Position position = {
-            Types::Position(Json::getInstance().getDataByVector({"player", "position"}, playerType))};
+
         Types::Rect rect = {
             Types::Rect(Json::getInstance().getDataByVector({"player", "rect"}, playerType))};
-        Types::CollisionRect collisionRect = {Types::CollisionRect(
-            Json::getInstance().getDataByVector({"player", "collisionRect"}, playerType))};
-
         nlohmann::basic_json<> animRectData =
             Json::getInstance().getDataByVector({"player", "animRect"}, playerType);
         Types::AnimRect animRect = {
             rect,
-            Json::getInstance().getDataFromJson(animRectData, "move").get<std::vector<Types::Rect>>(),
-            Json::getInstance().getDataFromJson(animRectData, "attack").get<std::vector<Types::Rect>>(),
-            Json::getInstance().getDataFromJson(animRectData, "dead").get<std::vector<Types::Rect>>()};
+            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
+            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "attack"),
+            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")};
+
+#endif
+        Types::Position position = {
+            Types::Position(Json::getInstance().getDataByVector({"player", "position"}, playerType))};
+        Types::CollisionRect collisionRect = {Types::CollisionRect(
+            Json::getInstance().getDataByVector({"player", "collisionRect"}, playerType))};
 
 #ifdef CLIENT
+        Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
+        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
         Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(playerDatas);
 #endif
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
-        Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
-        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
         Registry::getInstance().getComponents<Types::Player>().insertBack(playerComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
@@ -416,12 +424,15 @@ namespace Systems {
 
     void createMissile(Types::Position &pos, Types::Missiles &typeOfMissile)
     {
+#ifdef CLIENT
         std::size_t entityId = Registry::getInstance().addEntity();
+#else
+        Registry::getInstance().addEntity();
+#endif
 
-        Types::CollisionRect collisionRect1  = {1, 1};
-        constexpr int bulletWidth            = 5;
-        constexpr int bulletHeight           = 5;
-        Types::CollisionRect collisionRect2  = {bulletWidth, bulletHeight};
+        constexpr float bulletWidth          = 5;
+        constexpr float bulletHeight         = 5;
+        Types::CollisionRect collisionRect   = {bulletWidth, bulletHeight};
         Types::Velocity velocity             = {70, 0};
         Types::Missiles missileType          = typeOfMissile;
         Types::Dead deadComp                 = {};
@@ -446,8 +457,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(bulletDatas);
         Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
 #endif
-        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect1);
-        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect2);
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
         Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
