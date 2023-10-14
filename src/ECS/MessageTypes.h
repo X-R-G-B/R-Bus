@@ -42,4 +42,9 @@ PACK(struct enemy_infos_s {
     enemy_type_e type;
 });
 
+PACK(struct player_infos_s {
+    unsigned int id;
+    struct position_absolute_s pos;
+});
+
 #endif

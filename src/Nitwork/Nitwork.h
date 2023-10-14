@@ -45,7 +45,8 @@ enum n_actionType_t {
     POSITION_ABSOLUTE = 8,
     NEW_BULLET = 9,
     NEW_ENEMY = 10,
-    POSITION_RELATIVE_BROADCAST = 11,
+    NEW_ALLIE = 11,
+    POSITION_RELATIVE_BROADCAST = 12,
     N_ACTION_TYPE_MAX,
 };
 
@@ -182,6 +183,17 @@ PACK(struct packetPositionAbsolute_s {
         struct header_s header;
         struct action_s action;
         struct msgPositionAbsolute_s msg;
+});
+
+PACK(struct msgNewAllie_s {
+        n_magick_t magick;
+        player_infos_s data;
+});
+
+PACK(struct packetNewAllie_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgNewAllie_s msg;
 });
 
 /* Message broadcast position relative */
