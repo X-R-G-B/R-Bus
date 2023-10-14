@@ -359,7 +359,7 @@ namespace Systems {
         }
     }
 
-    void initPlayer(JsonType playerType)
+    void initPlayer(JsonType playerType, unsigned int constId, bool otherPlayer)
     {
 #ifdef CLIENT
         std::size_t id = Registry::getInstance().addEntity();
@@ -367,7 +367,6 @@ namespace Systems {
         Registry::getInstance().addEntity();
 #endif
 
-        Types::Player playerComp = {};
         Types::Dead deadComp = {Json::getInstance().getDataByVector({"player", "deadTime"}, playerType)};
         struct health_s healthComp = {
             Json::getInstance().getDataByVector({"player", "health"}, playerType)};
@@ -392,6 +391,16 @@ namespace Systems {
             Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")};
 
 #endif
+
+        // Add components to registry
+        if (otherPlayer) {
+            Types::OtherPlayer otherPlayerComp(constId);
+            Registry::getInstance().getComponents<Types::OtherPlayer>().insertBack(otherPlayerComp);
+        } else {
+            Types::Player playerComp = {constId};
+            Registry::getInstance().getComponents<Types::Player>().insertBack(playerComp);
+        }
+
         Types::Position position = {
             Types::Position(Json::getInstance().getDataByVector({"player", "position"}, playerType))};
         Types::CollisionRect collisionRect = {Types::CollisionRect(
@@ -404,7 +413,6 @@ namespace Systems {
 #endif
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
-        Registry::getInstance().getComponents<Types::Player>().insertBack(playerComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
