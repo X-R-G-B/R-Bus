@@ -55,7 +55,7 @@ namespace Nitwork {
             if (e != endpoint) {
                 Logger::debug(
                     "Package sent to: " + e.address().to_string() + ":" + std::to_string(e.port()));
-                addPacketToSend(Packet(packet, endpoint));
+                addPacketToSend(Packet(packet, e));
             }
         }
     }

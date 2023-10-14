@@ -159,7 +159,7 @@ namespace Nitwork {
     void NitworkClient::addPositionAbsoluteMsg(struct position_absolute_s pos)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
-        struct packetPositionAbsolute_s packetMsgPositionRelative = {
+        struct packetPositionAbsolute_s packetMsgPositionAbsolute = {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
@@ -172,8 +172,8 @@ namespace Nitwork {
                        },
         };
         Packet packet(
-            packetMsgPositionRelative.action.magick,
-            std::make_any<struct packetPositionAbsolute_s>(packetMsgPositionRelative),
+            packetMsgPositionAbsolute.action.magick,
+            std::make_any<struct packetPositionAbsolute_s>(packetMsgPositionAbsolute),
             _serverEndpoint);
 
         addPacketToSend(packet);
