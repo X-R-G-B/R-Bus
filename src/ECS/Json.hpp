@@ -47,7 +47,7 @@ class Json {
         std::vector<nlohmann::basic_json<>> getDatasFromList(const nlohmann::basic_json<> &list);
 
         template <typename T>
-        T getDataFromJsonFix(nlohmann::basic_json<> jsonData, const std::string &index)
+        T getDataFromJson(nlohmann::basic_json<> jsonData, const std::string &index)
         {
             if (jsonData[index] == nullptr) {
                 Logger::error(std::string("Key : " + index + " is not valid"));
