@@ -152,10 +152,8 @@ namespace Nitwork {
                          .magick2          = HEADER_CODE2},
             .action = {.magick = POSITION_RELATIVE_BROADCAST},
             .msg    = {
-                        .magick = MAGICK_POSITION_RELATIVE_BROADCAST,
-                        .pos = {
-                            .x = pos.x,
-                            .y = pos.y},
+                         .magick   = MAGICK_POSITION_RELATIVE_BROADCAST,
+                         .pos      = {.x = pos.x, .y = pos.y},
                          .playerId = getPlayerId(endpoint)}
         };
         Packet packet(
