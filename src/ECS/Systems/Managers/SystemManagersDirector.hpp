@@ -19,7 +19,7 @@ namespace Systems {
             void removeSystemManager(std::size_t);
             void resetChanges();
 
-            std::mutex _mutex;
+            std::mutex mutex;
 
         private:
             std::vector<SystemManager> _systemManagers;
