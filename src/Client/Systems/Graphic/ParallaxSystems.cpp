@@ -36,8 +36,7 @@ namespace Systems::ParallaxSystems {
         }
         Types::Parallax paralax = {
             Maths::integrerToDecimalWithTwoDecimals(position.x),
-            Maths::integrerToDecimalWithTwoDecimals(position.y)
-        };
+            Maths::integrerToDecimalWithTwoDecimals(position.y)};
 
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(parralax);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);

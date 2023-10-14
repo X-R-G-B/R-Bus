@@ -1,8 +1,8 @@
 #include "ClientNetwork.hpp"
 #include <algorithm>
 #include "ECSCustomTypes.hpp"
-#include "Maths.hpp"
 #include "Json.hpp"
+#include "Maths.hpp"
 #include "NitworkClient.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
@@ -144,7 +144,7 @@ namespace Systems {
             Maths::addIntegerDecimals(msgNewBullet.pos.y),
             // static_cast<float>(msgNewBullet.pos.x),
             // static_cast<float>(msgNewBullet.pos.y),
-            //VERIF
+            // VERIF
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
         Systems::createMissile(position, missileType);
