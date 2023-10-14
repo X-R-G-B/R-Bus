@@ -66,8 +66,16 @@ namespace Systems {
 
     void receiveNewEnemy(std::any &any, boost::asio::ip::udp::endpoint &)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
-        initEnemy(JsonType::DEFAULT_ENEMY);
+
+        initEnemy(JsonType::DEFAULT_ENEMY, true, newEnemy.enemyInfos.id);
+        Types::Position pos = {
+            static_cast<float>(newEnemy.enemyInfos.pos.x),
+            static_cast<float>(newEnemy.enemyInfos.pos.y)};
+        struct health_s hp = newEnemy.enemyInfos.life;
+        Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
+        Registry::getInstance().getComponents<struct health_s>().insertBack(hp);
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)

@@ -66,7 +66,7 @@ namespace Systems {
                 .pos =
                     {static_cast<char>(static_cast<int>(arrPos[index].x)),
                           static_cast<char>(static_cast<int>(arrPos[index].y))},
-                .type = arrEnemies[index].getType(),
+                .type = arrEnemies[index].type,
         });
     }
 

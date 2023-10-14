@@ -116,7 +116,7 @@ namespace Nitwork {
             return;
         }
         _endpoints.emplace_back(endpoint);
-        addPlayerInitMessage(endpoint, _endpoints.size() - 1);
+        addPlayerInitMessage(endpoint, static_cast<n_id_t>(_endpoints.size() - 1));
     }
 
     void NitworkServer::handleReadyMsg(
