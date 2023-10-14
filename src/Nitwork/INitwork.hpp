@@ -38,24 +38,24 @@ namespace Nitwork {
     };
     class Packet {
         public:
-            Packet(
-                n_actionType_t action,
-                std::any body,
-                const boost::asio::ip::udp::endpoint &endpoint)
+            Packet(n_actionType_t action, std::any body, const boost::asio::ip::udp::endpoint &endpoint)
                 : action(action),
                   body(std::move(body)),
                   endpoint(endpoint)
             {
             }
 
-            Packet(n_actionType_t action, std::any body): action(action), body(std::move(body)) {}
+            Packet(n_actionType_t action, std::any body) : action(action), body(std::move(body))
+            {
+            }
 
-            Packet(const Packet &packet, const boost::asio::ip::udp::endpoint &endpoint):
-                id(packet.id),
-                action(packet.action),
-                body(packet.body),
-                endpoint(endpoint)
-            {}
+            Packet(const Packet &packet, const boost::asio::ip::udp::endpoint &endpoint)
+                : id(packet.id),
+                  action(packet.action),
+                  body(packet.body),
+                  endpoint(endpoint)
+            {
+            }
 
             n_id_t id = 0;
             n_actionType_t action;

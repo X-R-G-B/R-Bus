@@ -131,9 +131,8 @@ namespace Nitwork {
         Systems::SystemManagersDirector::getInstance().getSystemManager(0).addSystem(Systems::initWave);
     }
 
-    void NitworkServer::handleRelativePositionMsg(
-        const std::any &msg,
-        boost::asio::ip::udp::endpoint &endpoint)
+    void
+    NitworkServer::handleRelativePositionMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
     {
         if (!isClientAlreadyConnected(endpoint)) {
             Logger::info("Client not connected");
@@ -205,7 +204,8 @@ namespace Nitwork {
         };
         Packet packet(
             packetLifeUpdate.action.magick,
-            std::make_any<struct packetLifeUpdate_s>(packetLifeUpdate), endpoint);
+            std::make_any<struct packetLifeUpdate_s>(packetLifeUpdate),
+            endpoint);
         addPacketToSend(packet);
     }
 
@@ -235,7 +235,8 @@ namespace Nitwork {
         };
         Packet packet(
             packetNewEnemy.action.magick,
-            std::make_any<struct packetNewEnemy_s>(packetNewEnemy), endpoint);
+            std::make_any<struct packetNewEnemy_s>(packetNewEnemy),
+            endpoint);
         addPacketToSend(packet);
     }
 
