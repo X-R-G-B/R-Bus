@@ -186,7 +186,6 @@ namespace Systems {
         for (auto &elem : enemyData) {
 #ifdef CLIENT
             std::size_t id = Registry::getInstance().addEntity();
-            std::cout << "registing ennemy with id: " << id << std::endl;
 #else
             Registry::getInstance().addEntity();
 #endif
