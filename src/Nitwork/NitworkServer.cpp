@@ -171,7 +171,8 @@ namespace Nitwork {
         };
         Packet packet(
             packetMsgPlayerInit.action.magick,
-            std::make_any<struct packetMsgPlayerInit_s>(packetMsgPlayerInit));
+            std::make_any<struct packetMsgPlayerInit_s>(packetMsgPlayerInit),
+            endpoint);
         addPacketToSend(packet);
         _playersIds[endpoint] = playerId;
     }
