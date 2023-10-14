@@ -237,7 +237,6 @@ namespace Systems {
         Clock &clock                   = Registry::getInstance().getClock();
         static std::size_t clockId     = clock.create(true);
 
-
         if (clock.elapsedSecondsSince(clockId) > spawnDelay) {
             initEnemy(JsonType::DEFAULT_ENEMY);
             enemyNumber--;
