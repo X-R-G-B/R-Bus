@@ -153,7 +153,7 @@ namespace Nitwork {
             .msg = {
                 .x = pos.x,
                 .y = pos.y,
-                .playerId = 0 // TODO: PLAYERID
+                .playerId = getPlayerId(endpoint),
             }
         };
         Packet packet(
@@ -180,6 +180,7 @@ namespace Nitwork {
             std::make_any<struct packetMsgPlayerInit_s>(packetMsgPlayerInit),
             getEndpointSender());
         addPacketToSend(endpoint, packet);
+        _playersIds[endpoint] = playerId;
     }
 
     void NitworkServer::addStarWaveMessage(boost::asio::ip::udp::endpoint & /* unused */, n_id_t enemyId)
@@ -267,5 +268,10 @@ namespace Nitwork {
             std::make_any<struct packetNewBullet_s>(packetNewBullet),
             getEndpointSender());
         sendToAllClientsButNotOne(packet, senderEndpoint);
+    }
+
+    n_id_t NitworkServer::getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const
+    {
+        return _playersIds.at(endpoint);
     }
 } // namespace Nitwork

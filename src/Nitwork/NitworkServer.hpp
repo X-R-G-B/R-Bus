@@ -47,8 +47,12 @@ namespace Nitwork {
                 const struct msgNewBullet_s &msg,
                 boost::asio::ip::udp::endpoint &senderEndpoint);
 
+            n_id_t getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const;
+
         private:
             NitworkServer() = default;
+
+            std::unordered_map<boost::asio::ip::udp::endpoint, n_id_t> _playersIds;
 
             bool startNitworkConfig(int port, const std::string &ip) final;
 
