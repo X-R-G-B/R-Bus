@@ -14,6 +14,7 @@
 #include "Systems.hpp"
 
 namespace Systems {
+
     static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId)
     {
         Registry::components<Types::AnimRect> arrAnimRect =
@@ -76,7 +77,7 @@ namespace Systems {
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE)
-            && clock_.elapsedMillisecondsSince(clockId) > waitTimeBullet) {
+            && clock_.elapsedMillisecondsSince(clockId) >= waitTimeBullet) {
             clock_.restart(clockId);
             for (auto &id : ids) {
                 // send bullet to server
