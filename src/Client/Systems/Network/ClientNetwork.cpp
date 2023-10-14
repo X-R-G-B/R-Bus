@@ -99,6 +99,7 @@ namespace Systems {
         if (registry.getClock().elapsedMillisecondsSince(clockId) < delay) {
             return;
         }
+        registry.getClock().restart(clockId);
         auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::Player)});
         auto arrPosition = registry.getComponents<Types::Position>();
 
@@ -112,7 +113,6 @@ namespace Systems {
         auto &posCached = positionPlayerCached.second;
         const auto &pos = arrPosition[positionPlayerCached.first];
         if (pos.x != posCached.x || pos.y != posCached.y) {
-            registry.getClock().restart(clockId);
             struct position_relative_s msg = {
                 .x = static_cast<char>(static_cast<int>(pos.x - posCached.x)),
                 .y = static_cast<char>(static_cast<int>(pos.y - posCached.y)),

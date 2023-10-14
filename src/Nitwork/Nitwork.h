@@ -22,15 +22,18 @@
 
     #define MAGICK_INIT '\x06'
     #define MAGICK_READY '\x17'
-    #define MAGICK_START_WAVE '\a'
-    #define MAGICK_POSITION_RELATIVE '\b'
-    #define MAGICK_POSITION_ABSOLUTE '\f'
+    #define MAGICK_START_WAVE '\x07'
+    #define MAGICK_POSITION_RELATIVE '\x08'
+    #define MAGICK_POSITION_ABSOLUTE '\x09'
     #define MAGICK_LIFE_UPDATE '\x0b'
     #define MAGICK_ENEMY_DEATH '\x0c'
     #define MAGICK_NEW_ENEMY '\x0e'
     #define MAGICK_NEW_BULLET '\x0c'
+    #define MAGICK_POSITION_RELATIVE_BROADCAST '\x0f'
+    #define MAGICK_POSITION_ABSOLUTE_BROADCAST '\xae'
+    #define MAGICK_NEW_ALLIE '\x0a'
 
-typedef char n_magick_t;
+typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
 typedef unsigned char n_nbAction_t;
 
@@ -198,8 +201,8 @@ PACK(struct packetNewAllie_s {
 
 /* Message broadcast position relative */
 PACK(struct msgPositionRelativeBroadcast_s {
-    char x;
-    char y;
+    n_magick_t magick;
+    struct position_relative_s pos;
     n_id_t playerId;
 });
 

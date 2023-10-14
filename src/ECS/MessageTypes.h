@@ -15,14 +15,16 @@ enum enemy_type_e {
     CLASSIC_ENEMY = 0,
 };
 
-enum missileTypes_e { CLASSIC };
+enum missileTypes_e {
+    CLASSIC = 0,
+};
 
 PACK(struct health_s {
     int hp;
 });
 
 PACK(struct enemy_id_s {
-    unsigned int id;
+    n_id_t id;
 });
 
 PACK(struct position_relative_s {
@@ -43,7 +45,7 @@ PACK(struct enemy_infos_s {
 });
 
 PACK(struct player_infos_s {
-    unsigned int id;
+    n_id_t id;
     struct position_absolute_s pos;
 });
 
