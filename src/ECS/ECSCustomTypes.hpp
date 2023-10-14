@@ -42,8 +42,6 @@ namespace Types {
 
     struct Damage {
             int damage;
-
-            NLOHMANN_DEFINE_TYPE_INTRUSIVE(Damage, damage);
     };
 
     struct Velocity {
