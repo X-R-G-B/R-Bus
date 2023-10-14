@@ -135,10 +135,6 @@ namespace Nitwork {
                  [this](Packet &packet) {
                      sendData<struct packetMsgStartWave_s>(packet);
                  }},
-                {LIFE_UPDATE,
-                 [this](Packet &packet) {
-                     sendData<struct packetLifeUpdate_s>(packet);
-                 }},
                 {ENEMY_DEATH,
                  [this](Packet &packet) {
                      sendData<struct packetEnemyDeath_s>(packet);
