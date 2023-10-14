@@ -192,7 +192,7 @@ namespace Systems {
                 Json::getInstance().getDataFromJson(elem, "width"),
                 Json::getInstance().getDataFromJson(elem, "height"),
                 id};
-            Types::Rect rect           = {Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
+            Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
             nlohmann::basic_json<> animRectData = Json::getInstance().getDataFromJson(elem, "animRect");
             Types::AnimRect animRect            = {
                 rect,
@@ -211,7 +211,6 @@ namespace Systems {
             Types::Damage damageComp   = {Json::getInstance().getDataFromJson(elem, "damage")};
             Types::Velocity velocity   = {
                 Types::Velocity(Json::getInstance().getDataFromJson(elem, "velocity"))};
-
 
 #ifdef CLIENT
             Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(enemy);
@@ -377,9 +376,10 @@ namespace Systems {
 
         Types::Rect rect = {
             Types::Rect(Json::getInstance().getDataByVector({"player", "rect"}, playerType))};
-        nlohmann::basic_json<> animRectData = Json::getInstance().getDataByVector({"player", "animRect"}, playerType);
+        nlohmann::basic_json<> animRectData =
+            Json::getInstance().getDataByVector({"player", "animRect"}, playerType);
         Types::AnimRect animRect = {
-        rect,
+            rect,
             Json::getInstance().getDataFromJson(animRectData, "move").get<std::vector<Types::Rect>>(),
             Json::getInstance().getDataFromJson(animRectData, "attack").get<std::vector<Types::Rect>>(),
             Json::getInstance().getDataFromJson(animRectData, "dead").get<std::vector<Types::Rect>>()};
@@ -413,7 +413,7 @@ namespace Systems {
 
         constexpr float bulletWidth          = 5.0F;
         constexpr float bulletHeight         = 5.0F;
-        Types::CollisionRect collisionRect  = {bulletWidth, bulletHeight};
+        Types::CollisionRect collisionRect   = {bulletWidth, bulletHeight};
         Types::Velocity velocity             = {0.7F, 0.0F};
         Types::Missiles missileType          = typeOfMissile;
         Types::Dead deadComp                 = {};
