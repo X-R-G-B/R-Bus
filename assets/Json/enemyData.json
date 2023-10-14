@@ -2,7 +2,7 @@
     "enemy" : [
         {
             "spritePath": "assets/R-TypeSheet/r-typesheet20.gif",
-            "damage": 10.0,
+            "damage": 10,
             "health": 1.0,
             "width": 10.0,
             "height": 10.0,

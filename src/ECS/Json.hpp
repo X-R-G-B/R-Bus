@@ -9,6 +9,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 #include <unordered_map>
+#include "Logger.hpp"
 
 enum class JsonType {
     DEFAULT_ENEMY,
@@ -35,8 +36,6 @@ class Json {
         std::vector<nlohmann::basic_json<>>
         getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType);
 
-        nlohmann::json &getDataFromJson(nlohmann::basic_json<> jsonData, const std::string &index);
-
         bool isDataExist(nlohmann::basic_json<> jsonData, const std::string &index);
 
         std::vector<nlohmann::basic_json<>>
@@ -47,7 +46,14 @@ class Json {
 
         std::vector<nlohmann::basic_json<>> getDatasFromList(const nlohmann::basic_json<> &list);
 
-    protected:
+        template <typename T>
+        T getDataFromJson(nlohmann::basic_json<> jsonData, const std::string &index)
+        {
+            if (jsonData[index] == nullptr) {
+                Logger::error(std::string("Key : " + index + " is not valid"));
+            }
+            return jsonData[index].get<T>();
+        }
 
     private:
         Json();

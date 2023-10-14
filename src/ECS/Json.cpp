@@ -9,7 +9,6 @@
 #include <fstream>
 #include <sstream>
 #include <utility>
-#include "Logger.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 Json Json::_instance = Json();
@@ -53,14 +52,6 @@ nlohmann::basic_json<> Json::getDataByJsonType(JsonType dataType)
     nlohmann::basic_json<> data(_jsonDatas[dataType]);
 
     return (data);
-}
-
-nlohmann::basic_json<> &Json::getDataFromJson(nlohmann::basic_json<> jsonData, const std::string &index)
-{
-    if (jsonData[index] == nullptr) {
-        Logger::error(std::string("Key : " + index + " is not valid"));
-    }
-    return jsonData[index];
 }
 
 nlohmann::basic_json<> Json::getDataByJsonType(const std::string &index, JsonType dataType)
