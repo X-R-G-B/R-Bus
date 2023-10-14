@@ -24,6 +24,7 @@
     #define MAGICK_READY '\x17'
     #define MAGICK_START_WAVE '\a'
     #define MAGICK_POSITION_RELATIVE '\b'
+    #define MAGICK_POSITION_ABSOLUTE '\f'
     #define MAGICK_LIFE_UPDATE '\x0b'
     #define MAGICK_ENEMY_DEATH '\x0c'
     #define MAGICK_NEW_ENEMY '\x0e'
@@ -31,7 +32,6 @@
 
 typedef char n_magick_t;
 typedef int n_idsReceived_t;
-typedef unsigned int n_id_t;
 typedef int n_nbAction_t;
 
 enum n_actionType_t {
@@ -46,6 +46,7 @@ enum n_actionType_t {
     NEW_BULLET = 9,
     NEW_ENEMY = 10,
     NEW_ALLIE = 11,
+    POSITION_RELATIVE_BROADCAST = 12,
     N_ACTION_TYPE_MAX,
 };
 
@@ -193,6 +194,19 @@ PACK(struct packetNewAllie_s {
     struct header_s header;
     struct action_s action;
     struct msgNewAllie_s msg;
+});
+
+/* Message broadcast position relative */
+PACK(struct msgPositionRelativeBroadcast_s {
+    char x;
+    char y;
+    n_id_t playerId;
+});
+
+PACK(struct packetPositionRelativeBroadcast_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgPositionRelativeBroadcast_s msg;
 });
 
 #endif

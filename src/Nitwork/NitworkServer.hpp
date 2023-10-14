@@ -43,18 +43,28 @@ namespace Nitwork {
 
             void addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
 
+            void broadcastNewBulletMsg(
+                const struct msgNewBullet_s &msg,
+                boost::asio::ip::udp::endpoint &senderEndpoint);
+
+            n_id_t getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const;
+
         private:
             NitworkServer() = default;
+
+            std::unordered_map<boost::asio::ip::udp::endpoint, n_id_t> _playersIds;
 
             bool startNitworkConfig(int port, const std::string &ip) final;
 
             void sendToAllClients(const Packet &packet);
 
+            void sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint);
+
             void handleBodyAction(
                 const struct header_s &header,
                 const boost::asio::ip::udp::endpoint &endpoint) final;
 
-            [[nodiscard]] const std::map<enum n_actionType_t, actionHandler> &
+            [[nodiscard]] const std::map<enum n_actionType_t, actionSender> &
             getActionToSendHandlers() const final;
 
             bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
@@ -63,7 +73,10 @@ namespace Nitwork {
             void handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
             void handleReadyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
+
+            void handleRelativePositionMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
             /* END handle messages methods */
+
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static NitworkServer _instance; // instance of the NitworkServer (singleton)
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
@@ -101,31 +114,39 @@ namespace Nitwork {
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::handleClientEnemyDeath(msg, endpoint);
                   }}},
+                {NEW_BULLET,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgNewBullet_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::receiveNewBulletMsg(msg, endpoint);
+                  }}}
             };
-            std::map<enum n_actionType_t, actionHandler> _actionToSendHandlers = {
+            std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
                 {
-                 INIT, [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                        sendData<struct packetMsgPlayerInit_s>(any, endpoint);
+                 INIT, [this](Packet &packet) {
+                        sendData<struct packetMsgPlayerInit_s>(packet);
                     }, },
                 {LIFE_UPDATE,
-                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                     sendData<struct packetLifeUpdate_s>(any, endpoint);
+                 [this](Packet &packet) {
+                     sendData<struct packetLifeUpdate_s>(packet);
                  }},
                 {START_WAVE,
-                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                     sendData<struct packetMsgStartWave_s>(any, endpoint);
-                 }},
-                {LIFE_UPDATE,
-                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                     sendData<struct packetLifeUpdate_s>(any, endpoint);
+                 [this](Packet &packet) {
+                     sendData<struct packetMsgStartWave_s>(packet);
                  }},
                 {ENEMY_DEATH,
-                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                     sendData<struct packetEnemyDeath_s>(any, endpoint);
+                 [this](Packet &packet) {
+                     sendData<struct packetEnemyDeath_s>(packet);
                  }},
-                {NEW_ENEMY, [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                     sendData<struct packetNewEnemy_s>(any, endpoint);
-                 }}
+                {NEW_ENEMY,
+                 [this](Packet &packet) {
+                     sendData<struct packetNewEnemy_s>(packet);
+                 }},
+                {NEW_BULLET,
+                 [this](Packet &packet) {
+                     sendData<struct packetNewBullet_s>(packet);
+                 }},
             };
     };
 } // namespace Nitwork

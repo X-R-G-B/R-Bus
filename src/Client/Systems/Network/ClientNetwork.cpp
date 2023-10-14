@@ -1,6 +1,7 @@
 #include "ClientNetwork.hpp"
 #include <algorithm>
 #include "ECSCustomTypes.hpp"
+#include "Json.hpp"
 #include "NitworkClient.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
@@ -58,15 +59,21 @@ namespace Systems {
         const auto playerInit = std::any_cast<struct msgPlayerInit_s>(any);
 
         Logger::info("Your player id is: " + std::to_string(playerInit.playerId));
-        initPlayer(playerInit.playerId);
+        initPlayer(JsonType::DEFAULT_PLAYER, playerInit.playerId);
     }
-
-    const std::string enemyFile = "assets/Json/enemyData.json";
 
     void receiveNewEnemy(std::any &any, boost::asio::ip::udp::endpoint &)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
-        initEnemy(enemyFile);
+
+        initEnemy(JsonType::DEFAULT_ENEMY, true, newEnemy.enemyInfos.id);
+        Types::Position pos = {
+            static_cast<float>(newEnemy.enemyInfos.pos.x),
+            static_cast<float>(newEnemy.enemyInfos.pos.y)};
+        struct health_s hp = newEnemy.enemyInfos.life;
+        Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
+        Registry::getInstance().getComponents<struct health_s>().insertBack(hp);
     }
 
     void receiveNewAllie(std::any &any, boost::asio::ip::udp::endpoint &)
@@ -77,7 +84,7 @@ namespace Systems {
             static_cast<float>(newAllie.data.pos.x),
             static_cast<float>(newAllie.data.pos.y)};
 
-        initPlayer(newAllie.data.id, true);
+        initPlayer(JsonType::DEFAULT_PLAYER, newAllie.data.id, true);
         Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
     }
 
@@ -117,13 +124,15 @@ namespace Systems {
     void sendPositionAbsolute(std::size_t /* unused */, std::size_t /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        constexpr std::size_t delay = 1;
-        static auto clockId         = Registry::getInstance().getClock().create();
-        Registry &registry          = Registry::getInstance();
+        constexpr std::size_t delay                = 1;
+        static auto clockId                        = Registry::getInstance().getClock().create();
+        Registry &registry                         = Registry::getInstance();
+        static struct position_absolute_s position = {0, 0};
 
         if (registry.getClock().elapsedSecondsSince(clockId) < delay) {
             return;
         }
+        registry.getClock().restart(clockId);
         auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::Player)});
         auto arrPosition = registry.getComponents<Types::Position>();
 
@@ -134,7 +143,25 @@ namespace Systems {
             .x = static_cast<int>(arrPosition[ids[0]].x),
             .y = static_cast<int>(arrPosition[ids[0]].y),
         };
+        if (position.x == msg.x && position.y == msg.y) {
+            return;
+        }
+        position = msg;
         Nitwork::NitworkClient::getInstance().addPositionAbsoluteMsg(msg);
+    }
+
+    void receiveNewBullet(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+
+        const struct msgNewBullet_s &msgNewBullet = std::any_cast<struct msgNewBullet_s>(any);
+
+        struct Types::Position position = {
+            static_cast<float>(msgNewBullet.pos.x),
+            static_cast<float>(msgNewBullet.pos.y),
+        };
+        struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
+        Systems::createMissile(position, missileType);
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()
