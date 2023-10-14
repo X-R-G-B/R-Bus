@@ -222,7 +222,6 @@ namespace Systems {
             struct health_s healthComp = {Json::getInstance().getDataFromJson<int>(elem, "health")};
 
 #ifdef CLIENT
-            Registry::getInstance().setToFrontLayers(id);
             Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
             Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
             Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(enemy);

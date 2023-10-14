@@ -38,23 +38,32 @@ namespace Nitwork {
     };
     class Packet {
         public:
-            Packet(
-                n_id_t id,
-                n_actionType_t action,
-                std::any body,
-                const boost::asio::ip::udp::endpoint &endpoint)
-                : id(id),
-                  action(action),
+            Packet(n_actionType_t action, std::any body, const boost::asio::ip::udp::endpoint &endpoint)
+                : action(action),
                   body(std::move(body)),
                   endpoint(endpoint)
             {
             }
 
-            n_id_t id;
+            Packet(n_actionType_t action, std::any body) : action(action), body(std::move(body))
+            {
+            }
+
+            Packet(const Packet &packet, const boost::asio::ip::udp::endpoint &endpoint)
+                : id(packet.id),
+                  action(packet.action),
+                  body(packet.body),
+                  endpoint(endpoint)
+            {
+            }
+
+            n_id_t id = 0;
             n_actionType_t action;
             std::any body;
             boost::asio::ip::udp::endpoint endpoint;
     };
+
+    using actionSender = std::function<void(Packet &)>;
 
     class INitwork {
         public:
@@ -96,7 +105,7 @@ namespace Nitwork {
                 const boost::asio::ip::udp::endpoint &endpoint) = 0;
 
             // getters
-            [[nodiscard]] virtual const std::map<enum n_actionType_t, actionHandler> &
+            [[nodiscard]] virtual const std::map<enum n_actionType_t, actionSender> &
             getActionToSendHandlers() const = 0;
     }; // class INitwork
 } // namespace Nitwork
