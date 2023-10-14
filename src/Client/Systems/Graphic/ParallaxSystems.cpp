@@ -20,9 +20,8 @@ namespace Systems::ParallaxSystems {
             Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
             Json::getInstance().getDataFromJson<float>(elem, "width"),
             Json::getInstance().getDataFromJson<float>(elem, "height"),
-            id
-        };
-    
+            id};
+
         Types::Position position = Json::getInstance().getDataFromJson<Types::Position>(elem, "position");
         Types::Velocity velocity = Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
 

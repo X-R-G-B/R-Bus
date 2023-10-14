@@ -198,12 +198,12 @@ namespace Systems {
                 Json::getInstance().getDataFromJson<float>(elem, "height"),
                 id,
                 LayerType::DEFAULTLAYER,
-                0
-            };
+                0};
 
             Types::Rect rect = Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect");
-    
-            nlohmann::basic_json<> animRectData = Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(elem, "animRect");
+
+            nlohmann::basic_json<> animRectData =
+                Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(elem, "animRect");
             Types::AnimRect animRect = {
                 rect,
                 Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
@@ -216,7 +216,8 @@ namespace Systems {
                 Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
             Types::Position position =
                 Json::getInstance().getDataFromJson<Types::Position>(elem, "position");
-            Types::CollisionRect collisionRect = Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect");
+            Types::CollisionRect collisionRect =
+                Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect");
             Types::Damage damageComp   = {Json::getInstance().getDataFromJson<int>(elem, "damage")};
             struct health_s healthComp = {Json::getInstance().getDataFromJson<int>(elem, "health")};
 
@@ -388,8 +389,7 @@ namespace Systems {
             rect,
             Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
             Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "attack"),
-            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")
-        };
+            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")};
 
 #endif
         Types::Position position = {
