@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "ECSCustomTypes.hpp"
 #include "Maths.hpp"
+#include "Json.hpp"
 #include "NitworkClient.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
@@ -60,16 +61,14 @@ namespace Systems {
         auto &arrPlayer       = Registry::getInstance().getComponents<Types::Player>();
 
         Logger::info("Your player id is: " + std::to_string(playerInit.playerId));
-        initPlayer();
+        initPlayer(JsonType::DEFAULT_PLAYER);
         arrPlayer[arrPlayer.getExistingsId().at(0)].constId = playerInit.playerId;
     }
-
-    const std::string enemyFile = "assets/Json/enemyData.json";
 
     void receiveNewEnemy(std::any &any, boost::asio::ip::udp::endpoint &)
     {
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
-        initEnemy(enemyFile);
+        initEnemy(JsonType::DEFAULT_ENEMY);
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
@@ -108,13 +107,15 @@ namespace Systems {
     void sendPositionAbsolute(std::size_t /* unused */, std::size_t /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        constexpr std::size_t delay = 1;
-        static auto clockId         = Registry::getInstance().getClock().create();
-        Registry &registry          = Registry::getInstance();
+        constexpr std::size_t delay                = 1;
+        static auto clockId                        = Registry::getInstance().getClock().create();
+        Registry &registry                         = Registry::getInstance();
+        static struct position_absolute_s position = {0, 0};
 
         if (registry.getClock().elapsedSecondsSince(clockId) < delay) {
             return;
         }
+        registry.getClock().restart(clockId);
         auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::Player)});
         auto arrPosition = registry.getComponents<Types::Position>();
 
@@ -125,7 +126,28 @@ namespace Systems {
             .x = Maths::removeIntegerDecimals(arrPosition[ids[0]].x),
             .y = Maths::removeIntegerDecimals(arrPosition[ids[0]].y),
         };
+        if (position.x == msg.x && position.y == msg.y) {
+            return;
+        }
+        position = msg;
         Nitwork::NitworkClient::getInstance().addPositionAbsoluteMsg(msg);
+    }
+
+    void receiveNewBullet(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+
+        const struct msgNewBullet_s &msgNewBullet = std::any_cast<struct msgNewBullet_s>(any);
+
+        struct Types::Position position = {
+            Maths::addIntegerDecimals(msgNewBullet.pos.x),
+            Maths::addIntegerDecimals(msgNewBullet.pos.y),
+            // static_cast<float>(msgNewBullet.pos.x),
+            // static_cast<float>(msgNewBullet.pos.y),
+            //VERIF
+        };
+        struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
+        Systems::createMissile(position, missileType);
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()

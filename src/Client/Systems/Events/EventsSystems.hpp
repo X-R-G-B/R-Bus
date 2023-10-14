@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <functional>
 #include <vector>
+#include "ECSCustomTypes.hpp"
 
 namespace Systems {
     namespace EventsSystems {

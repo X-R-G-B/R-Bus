@@ -43,12 +43,18 @@ namespace Nitwork {
 
             void addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
 
+            void broadcastNewBulletMsg(
+                const struct msgNewBullet_s &msg,
+                boost::asio::ip::udp::endpoint &senderEndpoint);
+
         private:
             NitworkServer() = default;
 
             bool startNitworkConfig(int port, const std::string &ip) final;
 
             void sendToAllClients(const Packet &packet);
+
+            void sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint);
 
             void handleBodyAction(
                 const struct header_s &header,
@@ -101,6 +107,13 @@ namespace Nitwork {
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::handleClientEnemyDeath(msg, endpoint);
                   }}},
+                {NEW_BULLET,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgNewBullet_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::receiveNewBulletMsg(msg, endpoint);
+                  }}}
             };
             std::map<enum n_actionType_t, actionHandler> _actionToSendHandlers = {
                 {
@@ -123,9 +136,14 @@ namespace Nitwork {
                  [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                      sendData<struct packetEnemyDeath_s>(any, endpoint);
                  }},
-                {NEW_ENEMY, [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                {NEW_ENEMY,
+                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                      sendData<struct packetNewEnemy_s>(any, endpoint);
-                 }}
+                 }},
+                {NEW_BULLET,
+                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                     sendData<struct packetNewBullet_s>(any, endpoint);
+                 }},
             };
     };
 } // namespace Nitwork
