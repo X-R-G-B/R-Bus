@@ -121,7 +121,7 @@ namespace Nitwork {
 
     void NitworkServer::handleReadyMsg(
         const std::any & /* unused */,
-        boost::asio::ip::udp::endpoint &endpoint /* unused */)
+        boost::asio::ip::udp::endpoint &endpoint)
     {
         if (!isClientAlreadyConnected(endpoint)) {
             Logger::info("Client not connected");
