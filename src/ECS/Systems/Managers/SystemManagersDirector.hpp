@@ -20,6 +20,7 @@ namespace Systems {
             void resetChanges();
 
             std::mutex _mutex;
+
         private:
             std::vector<SystemManager> _systemManagers;
 

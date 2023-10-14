@@ -8,8 +8,8 @@
 #pragma once
 
 #include <functional>
-#include <vector>
 #include <mutex>
+#include <vector>
 
 namespace Systems {
     class SystemManager {
