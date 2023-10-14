@@ -187,15 +187,14 @@ namespace Systems {
 #ifdef CLIENT
             std::size_t id = Registry::getInstance().addEntity();
 
-            Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
+            Types::Rect rect         = {Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
             Types::SpriteDatas enemy = {
                 Json::getInstance().getDataFromJson(elem, "spritePath"),
                 Json::getInstance().getDataFromJson(elem, "width"),
                 Json::getInstance().getDataFromJson(elem, "height"),
                 id,
                 LayerType::DEFAULTLAYER,
-                0
-            };
+                0};
 
             nlohmann::basic_json<> animRectData = Json::getInstance().getDataFromJson(elem, "animRect");
             Types::AnimRect animRect            = {
