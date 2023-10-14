@@ -163,11 +163,11 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = POSITION_RELATIVE,
+                       .magick = POSITION_ABSOLUTE,
                        },
             .msg =
                 {
-                       .magick = MAGICK_POSITION_RELATIVE,
+                       .magick = MAGICK_POSITION_ABSOLUTE,
                        .pos    = pos,
                        },
         };
