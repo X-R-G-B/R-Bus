@@ -54,8 +54,9 @@ namespace Nitwork {
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static NitworkClient _instance; // instance of the NitworkClient (singleton)
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
-            boost::asio::ip::udp::resolver _resolver; // resolver used to find the server
-            n_id_t _clientPacketId = 0;               // packet id of the client
+            boost::asio::ip::udp::resolver _resolver;       // resolver used to find the server
+            n_id_t _clientPacketId = 0;                     // packet id of the client
+            boost::asio::ip::udp::endpoint _serverEndpoint; // endpoint of the server
 
             // clang-format off
             // maps that will be used to handle the actions, in order to send or receive them
@@ -115,6 +116,17 @@ namespace Nitwork {
                         },
                         [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             Systems::receiveNewEnemy(any, endpoint);
+                        }
+                    }
+                },
+                {
+                    NEW_BULLET,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgNewBullet_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveNewBullet(any, endpoint);
                         }
                     }
                 }

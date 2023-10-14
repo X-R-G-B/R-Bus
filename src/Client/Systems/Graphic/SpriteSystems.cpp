@@ -209,7 +209,7 @@ namespace Systems {
 
     void GraphicSystems::createSprite(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        auto &arrSpriteDatas = Registry::getInstance().getComponents<Types::PlayerDatas>();
+        auto &arrSpriteDatas = Registry::getInstance().getComponents<Types::SpriteDatas>();
         auto &arrSprite      = Registry::getInstance().getComponents<Raylib::Sprite>();
 
         auto ids = arrSpriteDatas.getExistingsId();

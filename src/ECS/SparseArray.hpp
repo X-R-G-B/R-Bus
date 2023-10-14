@@ -65,6 +65,14 @@ class SparseArray {
             return _dense[_sparse[id]];
         }
 
+        Component &back()
+        {
+            if (_dense.empty()) {
+                throw std::runtime_error("SparseArrays::back: empty!");
+            }
+            return _dense.back();
+        }
+
         /*
          * A dense sparseArrays is not sort by entities id, the begin of two
          * sparseArrays could be different entities, only _sparse are

@@ -18,7 +18,7 @@ namespace Scene {
 
     enum class Scene { MENU, MAIN_GAME, SCENE_MAX };
 
-    enum class SystemManagers { GAME, EVENTS, DISPLAY };
+    enum class SystemManagers { GAME, EVENTS, DISPLAY, NETWORK };
 
     class SceneManager {
         public:
@@ -34,8 +34,14 @@ namespace Scene {
             Scene _currentScene;
             bool _stop;
             const std::array<std::vector<SystemManagers>, 2> _scenes = {
-                {{SystemManagers::EVENTS, SystemManagers::GAME, SystemManagers::DISPLAY},
-                 {SystemManagers::EVENTS, SystemManagers::GAME, SystemManagers::DISPLAY}}
+                {{SystemManagers::EVENTS,
+                  SystemManagers::GAME,
+                  SystemManagers::DISPLAY,
+                  SystemManagers::NETWORK},
+                 {SystemManagers::EVENTS,
+                  SystemManagers::GAME,
+                  SystemManagers::DISPLAY,
+                  SystemManagers::NETWORK}}
             };
 
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
