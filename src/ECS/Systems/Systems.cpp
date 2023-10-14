@@ -216,7 +216,6 @@ namespace Systems {
                 Types::Velocity(Json::getInstance().getDataFromJson(elem, "velocity"))};
 
 #ifdef CLIENT
-            Registry::getInstance().setToFrontLayers(id);
             Registry::getInstance().getComponents<Types::Rect>().insertBack((rect));
             Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
             Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(enemy);
