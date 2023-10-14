@@ -67,6 +67,9 @@ class SparseArray {
 
         Component &back()
         {
+            if (_dense.empty()) {
+                throw std::runtime_error("SparseArrays::back: empty!");
+            }
             return _dense.back();
         }
 

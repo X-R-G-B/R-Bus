@@ -113,8 +113,6 @@ namespace Types {
 
             [[nodiscard]] enemy_id_s getConstId() const
             {
-                std::lock_guard<std::mutex> lock(_mutex);
-
                 return constId;
             }
 
