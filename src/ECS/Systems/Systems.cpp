@@ -164,7 +164,8 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Velocity>();
         Clock &clock                 = Registry::getInstance().getClock();
         static std::size_t clockId   = clock.create();
-        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::Position), typeid(Types::Velocity)});
+        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::Velocity)});
 
         while (clock.elapsedMillisecondsSince(clockId) >= moveTime) {
             for (auto &id : ids) {
