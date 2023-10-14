@@ -190,7 +190,7 @@ namespace Nitwork {
                         "NITWORK: packet not found: " + std::to_string(header.last_id_received - index));
                     continue;
                 }
-                addPacketToSend(packet->endpoint, *packet);
+                addPacketToSend(*packet);
             }
         }
     }
@@ -219,16 +219,16 @@ namespace Nitwork {
         });
     }
 
-    void ANitwork::sendPackages(const std::map<enum n_actionType_t, actionHandler> &actionToSendHandlers)
+    void ANitwork::sendPackages(const std::map<enum n_actionType_t, actionSender> &actionToSendHandlers)
     {
         for (auto &data : _outputQueue) {
-            auto it = actionToSendHandlers.find(data.second.action);
+            auto it = actionToSendHandlers.find(data.action);
             if (it == actionToSendHandlers.end()) {
                 Logger::error("NITWORK: action not found");
                 continue;
             }
             addPacketToSentPackages(data);
-            it->second(data.second.body, data.first);
+            it->second(data);
         }
     }
 
@@ -236,7 +236,7 @@ namespace Nitwork {
     {
         boost::asio::post(_context, [this]() {
             std::unique_lock<std::mutex> lockTick(_tickMutex);
-            const std::map<enum n_actionType_t, actionHandler> &actionToSendHandlers =
+            const std::map<enum n_actionType_t, actionSender> &actionToSendHandlers =
                 getActionToSendHandlers();
 
             try {
@@ -244,7 +244,7 @@ namespace Nitwork {
                     _tickConvVar.wait(lockTick);
                     _outputQueueMutex.lock();
                     _outputQueue.sort([](auto &a, auto &b) {
-                        return a.second.id < b.second.id;
+                        return a.id < b.id;
                     });
                     sendPackages(actionToSendHandlers);
                     _outputQueue.clear();
@@ -256,18 +256,17 @@ namespace Nitwork {
         });
     }
 
-    void ANitwork::addPacketToSentPackages(
-        const std::pair<boost::asio::ip::basic_endpoint<boost::asio::ip::udp>, Packet> &data)
+    void ANitwork::addPacketToSentPackages(Packet &data)
     {
         std::lock_guard<std::mutex> lock(_packetsSentMutex);
-        auto &endpointPacketsList = _packetsSent[data.first];
+        auto &endpointPacketsList = _packetsSent[data.endpoint];
 
         if (std::any_of(endpointPacketsList.begin(), endpointPacketsList.end(), [data](auto &packet) {
-                return packet.id == data.second.id;
+                return packet.id == data.id;
             })) {
             return;
         }
-        endpointPacketsList.emplace_back(data.second);
+        endpointPacketsList.emplace_back(data);
         if (endpointPacketsList.size() > MAX_NB_ACTION) {
             endpointPacketsList.pop_front();
         }
@@ -321,11 +320,11 @@ namespace Nitwork {
         return _senderEndpoint;
     }
 
-    void ANitwork::addPacketToSend(const boost::asio::ip::udp::endpoint &endpoint, const Packet &packet)
+    void ANitwork::addPacketToSend(const Packet &packet)
     {
         std::lock_guard<std::mutex> lock(_outputQueueMutex);
 
         Logger::info("NITWORK: Adding packet to send of type: " + std::to_string(packet.action));
-        _outputQueue.emplace_back(endpoint, packet);
+        _outputQueue.emplace_back(packet);
     }
 } // namespace Nitwork

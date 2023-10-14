@@ -9,6 +9,8 @@
         #define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop))
     #endif
 
+typedef unsigned int n_id_t;
+
 enum enemy_type_e {
     CLASSIC_ENEMY = 0,
 };

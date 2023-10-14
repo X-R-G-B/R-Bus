@@ -45,7 +45,7 @@ namespace Nitwork {
                 const struct header_s &header,
                 const boost::asio::ip::udp::endpoint &endpoint) final;
 
-            [[nodiscard]] const std::map<enum n_actionType_t, actionHandler> &
+            [[nodiscard]] const std::map<enum n_actionType_t, actionSender> &
             getActionToSendHandlers() const final;
 
         protected:
@@ -133,48 +133,48 @@ namespace Nitwork {
             };
             std::map<
                 enum n_actionType_t,
-                actionHandler
+                actionSender
                 > _actionToSendHandlers = {
                 {
                     INIT,
-                    [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                            sendData<struct packetMsgInit_s>(any, endpoint);
+                    [this](Packet &packet) {
+                            sendData<struct packetMsgInit_s>(packet);
                         }
                 },
                 {
                     READY,
-                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                            sendData<struct packetMsgReady_s>(any, endpoint);
+                        [this](Packet &packet) {
+                            sendData<struct packetMsgReady_s>(packet);
                         }
                 },
                 {
                     POSITION_RELATIVE,
-                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                            sendData<struct packetPositionRelative_s>(any, endpoint);
+                        [this](Packet &packet) {
+                            sendData<struct packetPositionRelative_s>(packet);
                         }
                 },
                 {
                     POSITION_ABSOLUTE,
-                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                            sendData<struct packetPositionAbsolute_s>(any, endpoint);
+                        [this](Packet &packet) {
+                            sendData<struct packetPositionAbsolute_s>(packet);
                         }
                 },
                 {
                     NEW_BULLET,
-                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                            sendData<struct packetNewBullet_s>(any, endpoint);
+                        [this](Packet &packet) {
+                            sendData<struct packetNewBullet_s>(packet);
                         }
                 },
                 {
                     LIFE_UPDATE,
-                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                            sendData<struct packetLifeUpdate_s>(any, endpoint);
+                        [this](Packet &packet) {
+                            sendData<struct packetLifeUpdate_s>(packet);
                         }
                 },
                 {
                     ENEMY_DEATH,
-                        [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                            sendData<struct packetEnemyDeath_s>(any, endpoint);
+                        [this](Packet &packet) {
+                            sendData<struct packetEnemyDeath_s>(packet);
                         }
                 }
             };
