@@ -187,12 +187,16 @@ namespace Systems {
 #ifdef CLIENT
             std::size_t id = Registry::getInstance().addEntity();
 
-            Raylib::Sprite enemy = {
+            Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
+            Types::SpriteDatas enemy = {
                 Json::getInstance().getDataFromJson(elem, "spritePath"),
                 Json::getInstance().getDataFromJson(elem, "width"),
                 Json::getInstance().getDataFromJson(elem, "height"),
-                id};
-            Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
+                id,
+                LayerType::DEFAULTLAYER,
+                0
+            };
+
             nlohmann::basic_json<> animRectData = Json::getInstance().getDataFromJson(elem, "animRect");
             Types::AnimRect animRect            = {
                 rect,
@@ -202,7 +206,7 @@ namespace Systems {
 #else
             Registry::getInstance().addEntity();
 #endif
-            Types::Enemy enemyComp   = {enemyId};
+            Types::Enemy enemyComp   = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
             Types::Position position = {
                 Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
             Types::CollisionRect collisionRect = {
@@ -213,10 +217,10 @@ namespace Systems {
                 Types::Velocity(Json::getInstance().getDataFromJson(elem, "velocity"))};
 
 #ifdef CLIENT
-            Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(enemy);
             Registry::getInstance().setToFrontLayers(id);
             Registry::getInstance().getComponents<Types::Rect>().insertBack((rect));
             Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
+            Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(enemy);
 #endif
 
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
