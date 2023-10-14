@@ -187,37 +187,36 @@ namespace Systems {
 #ifdef CLIENT
             std::size_t id = Registry::getInstance().addEntity();
 
-            Types::Rect rect          = Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect");
             Types::SpriteDatas enemy = {
-                Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
-                Json::getInstance().getDataFromJson<float>(elem, "width"),
-                Json::getInstance().getDataFromJson<float>(elem, "height"),
+                Json::getInstance().getDataByVector({"enemy", "spritePath"}, enemyType),
+                Json::getInstance().getDataByVector({"enemy", "spritePath"}, enemyType),
+                Json::getInstance().getDataByVector({"enemy", "spritePath"}, enemyType),
                 id,
                 LayerType::DEFAULTLAYER,
-                0
-            };
+                0};
 
+            Types::Rect rect = {
+                Types::Rect(Json::getInstance().getDataByVector({"enemy", "rect"}, enemyType))};
             nlohmann::basic_json<> animRectData =
                 Json::getInstance().getDataByVector({"enemy", "animRect"}, enemyType);
             Types::AnimRect animRect = {
-            rect,
-            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
-            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "attack"),
-            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")
-        };
+                rect,
+                Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
+                Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "attack"),
+                Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")};
+
 #else
             Registry::getInstance().addEntity();
 #endif
             Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
+            Types::Velocity velocity =
+                Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
             Types::Position position =
                 Json::getInstance().getDataFromJson<Types::Position>(elem, "position");
             Types::CollisionRect collisionRect =
                 Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect");
+            Types::Damage damageComp   = Json::getInstance().getDataFromJson<Types::Damage>(elem, "damage");
             struct health_s healthComp = {Json::getInstance().getDataFromJson<int>(elem, "health")};
-            Types::Damage damageComp =
-                Json::getInstance().getDataFromJson<Types::Damage>(elem, "damage");
-            Types::Velocity velocity =
-                Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
 
 #ifdef CLIENT
             Registry::getInstance().setToFrontLayers(id);
