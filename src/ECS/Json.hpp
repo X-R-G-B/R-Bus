@@ -43,8 +43,7 @@ class Json {
         std::vector<nlohmann::json>
         getDatasFromList(const std::vector<nlohmann::json> &list, const std::string &key);
 
-        std::vector<nlohmann::json>
-        getDatasFromList(const nlohmann::json &list, const std::string &key);
+        std::vector<nlohmann::json> getDatasFromList(const nlohmann::json &list, const std::string &key);
 
         std::vector<nlohmann::json> getDatasFromList(const nlohmann::json &list);
 

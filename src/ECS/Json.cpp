@@ -87,8 +87,7 @@ Json::getDatasFromList(const std::vector<nlohmann::json> &list, const std::strin
     return (datas);
 }
 
-std::vector<nlohmann::json>
-Json::getDatasFromList(const nlohmann::json &list, const std::string &index)
+std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list, const std::string &index)
 {
     std::vector<nlohmann::json> datas;
 
@@ -116,10 +115,8 @@ std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list)
     return (datas);
 }
 
-std::vector<nlohmann::json> &Json::getDatasFromList(
-    std::vector<nlohmann::json> &datas,
-    nlohmann::json &listData,
-    const std::string &key)
+std::vector<nlohmann::json> &
+Json::getDatasFromList(std::vector<nlohmann::json> &datas, nlohmann::json &listData, const std::string &key)
 {
     if (datas.empty()) {
         datas = getDatasFromList(listData);
