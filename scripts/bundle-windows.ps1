@@ -5,7 +5,7 @@ $ErrorActionPreference = "SilentlyContinue"
 
 rm -Recurse build
 
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release"
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_CONFIGURATION_TYPES="Release" -DNO_USE_CLANG_TIDY=true
 
 cmake --build build --config Release
 
