@@ -51,7 +51,8 @@ class Json {
         T getDataFromJson(nlohmann::json jsonData, const std::string &index)
         {
             if (jsonData[index] == nullptr) {
-                Logger::fatal(std::string("Key : " + index + " is not valid"));
+                Logger::fatal(std::string("(getDataByJson<template>) Key : " + index + " is not valid"));
+                throw std::runtime_error("Json error");
             }
             return jsonData[index].get<T>();
         }
