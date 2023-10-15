@@ -4,6 +4,7 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
+#include "ResourcesManager.hpp"
 
 constexpr int EXIT_EPITECH = 84;
 constexpr int PORT_MIN     = 0;
@@ -45,6 +46,7 @@ int main(int ac, const char **av)
 #ifndef NDEBUG
     Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
 #endif
+    ECS::ResourcesManager::init(av[0]);
     if (!checkArgs(ac, av)) {
         return EXIT_EPITECH;
     }

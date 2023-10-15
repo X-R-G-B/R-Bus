@@ -7,6 +7,7 @@
 
 #include "Graphics.hpp"
 #include "Inputs.hpp"
+#include "ResourcesManager.hpp"
 
 namespace Raylib {
 
@@ -376,7 +377,7 @@ namespace Raylib {
         DrawRectangle(posX, posY, width, height, c);
     }
 
-    Image::Image(const std::string &fileName) : _image(LoadImage(fileName.c_str()))
+    Image::Image(const std::string &fileName) : _image(LoadImage(ECS::ResourcesManager::convertPath(fileName).c_str()))
     {
         if (!isImageReady()) {
             const ::Color badTexture          = {255, 16, 240, 255};
@@ -437,7 +438,7 @@ namespace Raylib {
     // Texture functions
 
     Sprite::Sprite(const std::string &fileName, float width, float height, std::size_t id)
-        : _texture(LoadTexture(fileName.c_str())),
+        : _texture(LoadTexture(ECS::ResourcesManager::convertPath(fileName).c_str())),
           _width(width),
           _height(height)
     {

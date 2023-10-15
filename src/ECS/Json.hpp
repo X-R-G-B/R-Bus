@@ -36,7 +36,7 @@ class Json {
         std::vector<nlohmann::basic_json<>>
         getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType);
 
-        bool isDataExist(nlohmann::basic_json<> jsonData, const std::string &index);
+        static bool isDataExist(nlohmann::basic_json<> jsonData, const std::string &index);
 
         std::vector<nlohmann::basic_json<>>
         getDatasFromList(const std::vector<nlohmann::basic_json<>> &list, const std::string &key);
@@ -56,7 +56,7 @@ class Json {
         }
 
     private:
-        Json();
+        Json() = default;
         ~Json() = default;
 
         std::vector<nlohmann::basic_json<>> &getDatasFromList(
@@ -70,7 +70,7 @@ class Json {
         static Json _instance;
         // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
-        nlohmann::json loadJsonData(const std::string &path);
+        static nlohmann::json loadJsonData(const std::string &path);
 
         std::unordered_map<JsonType, nlohmann::json> _jsonDatas;
 };

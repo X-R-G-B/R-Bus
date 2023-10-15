@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <utility>
+#include "ResourcesManager.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 Json Json::_instance = Json();
@@ -16,7 +17,7 @@ Json Json::_instance = Json();
 
 nlohmann::json Json::loadJsonData(const std::string &path)
 {
-    std::ifstream fileData(path);
+    std::ifstream fileData(ECS::ResourcesManager::convertPath(path));
     std::ostringstream input;
     nlohmann::json jsonData = {};
 
@@ -34,12 +35,12 @@ nlohmann::basic_json<> Json::getDataByVector(const std::vector<std::string> &ind
 {
     nlohmann::basic_json<> finalData(_jsonDatas[dataType]);
 
-    for (auto &key : indexes) {
+    for (const auto &key : indexes) {
         finalData = finalData[key];
         if (finalData == nullptr) {
             Logger::error(std::string("Key : " + key + " is not valid"));
         }
-        if (finalData.is_array() == true) {
+        if (finalData.is_array()) {
             return (finalData);
         }
     }
@@ -79,8 +80,8 @@ Json::getDatasFromList(const std::vector<nlohmann::basic_json<>> &list, const st
     std::vector<nlohmann::basic_json<>> datas;
     std::vector<nlohmann::basic_json<>> tmp;
 
-    for (auto &elem : list) {
-        if (elem[key].is_array() == true) {
+    for (const auto &elem : list) {
+        if (elem[key].is_array()) {
             tmp = getDatasFromList(elem[key]);
             datas.insert(datas.end(), tmp.begin(), tmp.end());
         } else {
@@ -95,7 +96,7 @@ Json::getDatasFromList(const nlohmann::basic_json<> &list, const std::string &ke
 {
     std::vector<nlohmann::basic_json<>> datas;
 
-    for (auto &elem : list) {
+    for (const auto &elem : list) {
         datas.push_back(elem[key]);
     }
     return (datas);
@@ -105,7 +106,7 @@ std::vector<nlohmann::basic_json<>> Json::getDatasFromList(const nlohmann::basic
 {
     std::vector<nlohmann::basic_json<>> datas;
 
-    for (auto &elem : list) {
+    for (const auto &elem : list) {
         datas.push_back(elem);
     }
     return (datas);
@@ -131,8 +132,8 @@ Json::getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataT
     nlohmann::basic_json<> &finalData(_jsonDatas[dataType]);
     std::vector<nlohmann::basic_json<>> datas;
 
-    for (auto &key : indexes) {
-        if (finalData.is_array() == true || datas.empty() == false) {
+    for (const auto &key : indexes) {
+        if (finalData.is_array() || !datas.empty()) {
             datas = getDatasFromList(datas, finalData, key);
         } else {
             finalData = finalData[key];
@@ -146,12 +147,10 @@ Json::getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataT
 
 Json &Json::getInstance()
 {
-    return _instance;
-}
-
-Json::Json()
-{
-    for (auto &it : pathToJson) {
-        _jsonDatas.insert({it.first, loadJsonData(it.second)});
+    if (_instance._jsonDatas.empty()) {
+        for (const auto &it : pathToJson) {
+            _instance._jsonDatas.insert({it.first, _instance.loadJsonData(it.second)});
+        }
     }
+    return _instance;
 }

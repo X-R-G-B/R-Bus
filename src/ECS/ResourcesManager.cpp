@@ -43,7 +43,7 @@ namespace ECS {
     std::string ResourcesManager::convertPath(const std::string &path_const)
     {
         if (_resourcePath.empty()) {
-            Logger::fatal("RESOURCE_MANAGER: need to call init first");
+            Logger::fatal("RESOURCE_MANAGER: need to call init first (" + path_const + ")");
             return "";
         }
         std::string path(path_const, std::string("assets").length(), std::string::npos);
