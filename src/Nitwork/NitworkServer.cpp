@@ -22,9 +22,14 @@ namespace Nitwork {
         return _instance;
     }
 
-    bool NitworkServer::start(int port, int threadNb, int tick, const std::string &ip)
+    bool NitworkServer::startServer(
+        int port,
+        int nbPlayer,
+        int threadNb,
+        int tick)
     {
-        return ANitwork::start(port, threadNb, tick, ip);
+        _maxNbPlayer = nbPlayer;
+        return ANitwork::start(port, threadNb, tick, "");
     }
 
     bool NitworkServer::startNitworkConfig(int port, const std::string & /* unused */)
@@ -111,7 +116,7 @@ namespace Nitwork {
     void
     NitworkServer::handleInitMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
-        if (_endpoints.size() >= MAX_CLIENTS) {
+        if (_endpoints.size() >= _maxNbPlayer) {
             std::cerr << "Too many clients, can't add an other one" << std::endl;
             return;
         }
@@ -130,7 +135,7 @@ namespace Nitwork {
             Logger::info("Client not connected");
             return;
         }
-        if (_endpoints.size() < MAX_CLIENTS) {
+        if (_endpoints.size() < _maxNbPlayer) {
             Logger::info("A new client is ready, waiting for others");
             return;
         }

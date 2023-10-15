@@ -314,11 +314,6 @@ namespace Nitwork {
         return lastId;
     }
 
-    const boost::asio::ip::udp::endpoint &ANitwork::getEndpointSender()
-    {
-        return _senderEndpoint;
-    }
-
     void ANitwork::addPacketToSend(const Packet &packet)
     {
         std::lock_guard<std::mutex> lock(_outputQueueMutex);

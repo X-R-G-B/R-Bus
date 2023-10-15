@@ -22,11 +22,11 @@ namespace Nitwork {
             static NitworkClient &getInstance();
 
             using ANitwork::start;
-            bool start(
+            bool startClient(
                 int port,
+                const std::string &ip,
                 int threadNb          = DEFAULT_THREAD_NB,
-                int tick              = TICKS_PER_SECOND,
-                const std::string &ip = "") final;
+                int tick              = TICKS_PER_SECOND);
 
             // Messages creation methods
             void addInitMsg();

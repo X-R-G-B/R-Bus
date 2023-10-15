@@ -22,7 +22,7 @@ namespace Nitwork {
         return _instance;
     }
 
-    bool NitworkClient::start(int port, int threadNb, int tick, const std::string &ip)
+    bool NitworkClient::startClient(int port, const std::string &ip, int threadNb, int tick)
     {
         return ANitwork::start(port, threadNb, tick, ip);
     }

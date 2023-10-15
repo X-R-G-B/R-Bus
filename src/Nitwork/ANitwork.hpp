@@ -26,10 +26,12 @@ namespace Nitwork {
             void operator=(const ANitwork &)  = delete;
             void operator=(const ANitwork &&) = delete;
 
-            // start the NitworkServer
-            bool start(int port, int threadNb, int tick, const std::string &ip = "") override;
-
             void stop() override;
+        protected:
+            ANitwork();
+            // start the NitworkServer
+            bool start(int port, int threadNb, int tick, const std::string &ip = "") final;
+
             // send data to the endpoint with the given data
             template <typename T>
             void sendData(Packet &packet)
@@ -73,14 +75,10 @@ namespace Nitwork {
                     });
             }
 
-        protected:
-            ANitwork();
-
             /* Getters / Setters */
             n_idsReceived_t getIdsReceived(const boost::asio::ip::udp::endpoint &endpoint);
             n_id_t getLastIdsReceived(const boost::asio::ip::udp::endpoint &endpoint);
             n_id_t getPacketId(const boost::asio::ip::udp::endpoint &endpoint);
-            const boost::asio::ip::udp::endpoint &getEndpointSender();
             void addPacketToSend(const Packet &);
             void handlePacketIdsReceived(const struct header_s &header);
 
