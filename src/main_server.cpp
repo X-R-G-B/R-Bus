@@ -32,7 +32,7 @@ static bool checkArgs(int ac, const char **av)
     const std::vector<std::string> args(av + 1, av + ac);
     for (const auto &arg : args) {
         if (!isNumber(arg)) {
-            Logger::error("Invalid argument");
+            Logger::error("Invalid argument: " + arg);
             return false;
         }
     }
