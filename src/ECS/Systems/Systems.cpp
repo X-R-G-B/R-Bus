@@ -22,6 +22,7 @@
 #endif
 
 namespace Systems {
+    constexpr float maxPercent = 100.0F;
 
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
@@ -33,7 +34,6 @@ namespace Systems {
         std::vector<std::size_t> ids = registry.getEntitiesByComponents(
             {typeid(Types::Player), typeid(Types::Position), typeid(Types::CollisionRect)});
 
-        const float maxPercent = 100.0F;
         for (std::size_t id : ids) {
             if (arrPosition[id].x < 0) {
                 arrPosition[id].x = 0;
@@ -207,6 +207,7 @@ namespace Systems {
                 Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
                 Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "attack"),
                 Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")};
+            animRect.changeRectList(Types::RectListType::MOVE);
 
 #endif
             Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
@@ -224,12 +225,40 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
             Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(enemy);
 #endif
+            if (enemyType == JsonType::TERMINATOR) {
+                Types::Boss boss = {true};
+                Registry::getInstance().getComponents<Types::Boss>().insertBack(boss);
+            }
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
             Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
             Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
             Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
             Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
             Registry::getInstance().getComponents<Types::Enemy>().insertBack(enemyComp);
+        }
+    }
+
+    void manageBoss(std::size_t managerId, std::size_t systemId)
+    {
+        Registry::components<Types::Position> &arrPosition =
+            Registry::getInstance().getComponents<Types::Position>();
+        Registry::components<Types::Velocity> &arrVelocity =
+            Registry::getInstance().getComponents<Types::Velocity>();
+        Registry::components<Types::CollisionRect> &arrCollisonRect =
+            Registry::getInstance().getComponents<Types::CollisionRect>();
+        std::vector<std::size_t> ids =
+            Registry::getInstance().getEntitiesByComponents({typeid(Types::Boss)});
+
+        if (ids.empty()) {
+            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+        }
+        for (auto &id : ids) {
+            if (arrPosition[id].y < 0) {
+                arrVelocity[id].speedY = 0.2;
+            }
+            if (arrPosition[id].y + arrCollisonRect[id].height > maxPercent) {
+                arrVelocity[id].speedY = -0.2;
+            }
         }
     }
 
@@ -241,16 +270,22 @@ namespace Systems {
         static std::size_t clockId     = clock.create(true);
         static bool fstCall            = true;
 
+        Registry::components<Types::Boss> &bossArr = Registry::getInstance().getComponents<Types::Boss>();
+        Registry::components<Types::Enemy> &enemyArr =
+            Registry::getInstance().getComponents<Types::Enemy>();
+
         if (fstCall) {
             fstCall = false;
             clock.restart(clockId);
         }
-        if (clock.elapsedSecondsSince(clockId) >= spawnDelay) {
+        if (clock.elapsedSecondsSince(clockId) >= spawnDelay && enemyNumber > 0) {
             initEnemy(JsonType::DEFAULT_ENEMY);
             enemyNumber--;
             clock.decreaseSeconds(clockId, spawnDelay);
         }
-        if (enemyNumber <= 0) {
+        if (enemyArr.getExistingsId().empty() && enemyNumber <= 0 && bossArr.getExistingsId().empty()) {
+            initEnemy(JsonType::TERMINATOR);
+            SystemManagersDirector::getInstance().getSystemManager(managerId).addSystem(manageBoss);
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
     }
@@ -473,6 +508,7 @@ namespace Systems {
             entitiesCollision,
             destroyOutsideWindow,
             deathChecker,
-            moveEntities};
+            moveEntities,
+            manageBoss};
     }
 } // namespace Systems
