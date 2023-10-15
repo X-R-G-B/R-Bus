@@ -63,13 +63,11 @@ namespace Types {
                 const std::string &fileName,
                 float width,
                 float height,
-                std::size_t id,
                 enum LayerType layer,
                 std::size_t layerSide)
                 : fileName(fileName),
                   width(width),
                   height(height),
-                  id(id),
                   layer(layer),
                   layerSide(layerSide)
             {
