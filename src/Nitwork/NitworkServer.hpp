@@ -47,6 +47,10 @@ namespace Nitwork {
                 const struct msgNewBullet_s &msg,
                 boost::asio::ip::udp::endpoint &senderEndpoint);
 
+            void broadcastAbsolutePositionMsg(
+                const struct position_absolute_s &pos,
+                boost::asio::ip::udp::endpoint &senderEndpoint);
+
             n_id_t getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const;
 
         private:
@@ -129,7 +133,14 @@ namespace Nitwork {
                   },
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::receiveNewBulletMsg(msg, endpoint);
-                  }}}
+                  }}},
+                {POSITION_ABSOLUTE,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgPositionAbsolute_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::receiveAbsolutePositionMsg(msg, endpoint);
+                  }}},
             };
             std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
                 {
@@ -167,7 +178,11 @@ namespace Nitwork {
                     [this](Packet &packet) {
                         sendData<struct packetPositionRelativeBroadcast_s>(packet);
                     }
-                 }
+                },
+                {POSITION_ABSOLUTE_BROADCAST,
+                 [this](Packet &packet) {
+                     sendData<struct packetPositionAbsolute_s>(packet);
+                 }},
             };
     };
 } // namespace Nitwork

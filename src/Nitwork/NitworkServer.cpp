@@ -186,11 +186,10 @@ namespace Nitwork {
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
             .action = {.magick = POSITION_RELATIVE_BROADCAST},
-            .msg    = { .magick = MAGICK_POSITION_RELATIVE_BROADCAST,
-                         .x        = pos.x,
-                         .y        = pos.y,
-                         .playerId = getPlayerId(endpoint),
-                         }
+            .msg    = {
+                         .magick   = MAGICK_POSITION_RELATIVE_BROADCAST,
+                         .pos      = {.x = pos.x, .y = pos.y},
+                         .playerId = getPlayerId(endpoint)}
         };
         Packet packet(
             msgPosBroadcast.action.magick,
@@ -292,6 +291,25 @@ namespace Nitwork {
         Packet packet(
             packetNewBullet.action.magick,
             std::make_any<struct packetNewBullet_s>(packetNewBullet));
+        sendToAllClientsButNotOne(packet, senderEndpoint);
+    }
+
+    void NitworkServer::broadcastAbsolutePositionMsg(
+        const struct position_absolute_s &pos,
+        boost::asio::ip::udp::endpoint &senderEndpoint)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetPositionAbsoluteBroadcast_s packetPosAbsoluteBroadcast = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = POSITION_ABSOLUTE_BROADCAST},
+            .msg    = {
+                       .magick   = MAGICK_POSITION_ABSOLUTE_BROADCAST,
+                       .pos      = {.x = pos.x, .y = pos.y},
+                       .playerId = getPlayerId(senderEndpoint)}
+        };
+        Packet packet(
+            packetPosAbsoluteBroadcast.action.magick,
+            std::make_any<struct packetPositionAbsoluteBroadcast_s>(packetPosAbsoluteBroadcast));
         sendToAllClientsButNotOne(packet, senderEndpoint);
     }
 

@@ -36,6 +36,7 @@ namespace Systems {
 
         for (auto id : ids) {
             if (enemies[id].getConstId().id == enemyDeath.enemyId.id) {
+                Logger::debug("ROLLBACK REMOVE ENEMY !!!!!");
                 Registry::getInstance().removeEntity(id);
                 return;
             }
@@ -67,6 +68,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
 
+        Logger::debug("ROLLBACK RECREATE ENEMY !!!!!");
         initEnemy(JsonType::DEFAULT_ENEMY, true, newEnemy.enemyInfos.id);
         Types::Position pos = {
             static_cast<float>(newEnemy.enemyInfos.pos.x),
@@ -96,7 +98,7 @@ namespace Systems {
         for (auto id : ids) {
             if (arrOtherPlayer[id].constId == relativePosition.playerId) {
                 auto &pos = arrPosition[id];
-                Types::Position relativePos = {static_cast<float>(relativePosition.x), static_cast<float>(relativePosition.y)};
+                Types::Position relativePos = {static_cast<float>(relativePosition.pos.x), static_cast<float>(relativePosition.pos.y)};
                 if (pos.x != relativePos.x || pos.y != relativePos.y) {
                     pos.x = relativePos.x;
                     pos.y = relativePos.y;
@@ -116,6 +118,7 @@ namespace Systems {
         if (registry.getClock().elapsedMillisecondsSince(clockId) < delay) {
             return;
         }
+        registry.getClock().restart(clockId);
         auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::Player)});
         auto arrPosition = registry.getComponents<Types::Position>();
 
@@ -129,7 +132,6 @@ namespace Systems {
         auto &posCached = positionPlayerCached.second;
         const auto &pos = arrPosition[positionPlayerCached.first];
         if (pos.x != posCached.x || pos.y != posCached.y) {
-            registry.getClock().restart(clockId);
             struct position_relative_s msg = {
                 .x = static_cast<char>(static_cast<int>(pos.x - posCached.x)),
                 .y = static_cast<char>(static_cast<int>(pos.y - posCached.y)),

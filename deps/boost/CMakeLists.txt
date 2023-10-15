@@ -28,6 +28,7 @@ set(BOOST_INCLUDE_LIBRARIES
     exception
 
     function
+    filesystem
 
     move
 

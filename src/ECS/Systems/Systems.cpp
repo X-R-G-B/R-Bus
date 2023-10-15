@@ -164,18 +164,16 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Velocity>();
         Clock &clock                 = Registry::getInstance().getClock();
         static std::size_t clockId   = clock.create();
-        std::vector<std::size_t> ids = arrPosition.getExistingsId();
+        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::Velocity)});
 
-        if (clock.elapsedMillisecondsSince(clockId) < moveTime) {
-            return;
-        }
-        for (auto &id : ids) {
-            if (arrVelocity.exist(id)) {
+        while (clock.elapsedMillisecondsSince(clockId) >= moveTime) {
+            for (auto &id : ids) {
                 arrPosition[id].x += arrVelocity[id].speedX;
                 arrPosition[id].y += arrVelocity[id].speedY;
             }
+            clock.decreaseMilliseconds(clockId, moveTime);
         }
-        clock.restart(clockId);
     }
 
     void initEnemy(JsonType enemyType, bool setId, struct ::enemy_id_s enemyId)
@@ -241,11 +239,16 @@ namespace Systems {
         const std::size_t spawnDelay   = 2;
         Clock &clock                   = Registry::getInstance().getClock();
         static std::size_t clockId     = clock.create(true);
+        static bool fstCall            = true;
 
-        if (clock.elapsedSecondsSince(clockId) > spawnDelay) {
+        if (fstCall) {
+            fstCall = false;
+            clock.restart(clockId);
+        }
+        if (clock.elapsedSecondsSince(clockId) >= spawnDelay) {
             initEnemy(JsonType::DEFAULT_ENEMY);
             enemyNumber--;
-            clock.restart(clockId);
+            clock.decreaseSeconds(clockId, spawnDelay);
         }
         if (enemyNumber <= 0) {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
@@ -265,7 +268,7 @@ namespace Systems {
             auto tmpId        = id - decrease;
             Types::Dead &dead = deadList[tmpId];
             if (static_cast<int>(dead.clockId) > -1
-                && clock.elapsedMillisecondsSince(dead.clockId) > dead.timeToWait) {
+                && clock.elapsedMillisecondsSince(dead.clockId) >= dead.timeToWait) {
                 registry.removeEntity(tmpId);
                 decrease++;
             }

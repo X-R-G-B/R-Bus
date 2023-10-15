@@ -162,7 +162,7 @@ jobs:
 
     - name: Get Raylib
       run: |
-        git clone https://github.com/raysan5/raylib.git raylib-repo
+        git clone --recurse-submodules https://github.com/raysan5/raylib.git raylib-repo
         cd raylib-repo || exit 14
         git checkout ${{ env.RAYLIB_TAG }}
         cd ..
