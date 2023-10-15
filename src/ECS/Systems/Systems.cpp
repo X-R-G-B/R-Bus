@@ -434,6 +434,8 @@ namespace Systems {
         if (otherPlayer) {
             Types::OtherPlayer otherPlayerComp(constId);
             Registry::getInstance().getComponents<Types::OtherPlayer>().insertBack(otherPlayerComp);
+            Types::PlayerAllies allie;
+            Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(allie);
         } else {
             Types::Player playerComp = {constId};
             Registry::getInstance().getComponents<Types::Player>().insertBack(playerComp);

@@ -95,14 +95,14 @@ namespace Systems {
         auto arrPosition    = Registry::getInstance().getComponents<Types::Position>();
         std::vector<std::size_t> ids = arrOtherPlayer.getExistingsId();
 
+        Logger::info("receive pos relative\n\n");
         for (auto id : ids) {
             if (arrOtherPlayer[id].constId == relativePosition.playerId) {
                 auto &pos = arrPosition[id];
                 Types::Position relativePos = {static_cast<float>(relativePosition.pos.x), static_cast<float>(relativePosition.pos.y)};
-                if (pos.x != relativePos.x || pos.y != relativePos.y) {
-                    pos.x = relativePos.x;
-                    pos.y = relativePos.y;
-                }
+                Logger::info("Apply pos relative\n\n");
+                pos.x += relativePos.x;
+                pos.y += relativePos.y;
             }
         }
     }
@@ -136,6 +136,7 @@ namespace Systems {
                 .x = static_cast<char>(static_cast<int>(pos.x - posCached.x)),
                 .y = static_cast<char>(static_cast<int>(pos.y - posCached.y)),
             };
+            Logger::info("send pos relative\n\n");
             Nitwork::NitworkClient::getInstance().addPositionRelativeMsg(msg);
         }
     }
