@@ -16,6 +16,7 @@ extern "C"
 {
 #include "MessageTypes.h"
 }
+#include "Registry.hpp"
 
 // all values are in percentage of the screen
 namespace Types {
@@ -37,6 +38,13 @@ namespace Types {
             float y;
 
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Position, x, y);
+
+            Position &operator+=(const Position &pos)
+            {
+                x += pos.x;
+                y += pos.y;
+                return (*this);
+            }
     };
 
     struct Damage {
@@ -48,6 +56,30 @@ namespace Types {
             float speedY;
 
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Velocity, speedX, speedY);
+    };
+
+    struct SpriteDatas {
+            SpriteDatas(
+                const std::string &fileName,
+                float width,
+                float height,
+                std::size_t id,
+                enum LayerType layer,
+                std::size_t layerSide)
+                : fileName(fileName),
+                  width(width),
+                  height(height),
+                  id(id),
+                  layer(layer),
+                  layerSide(layerSide)
+            {
+            }
+            std::string fileName;
+            float width;
+            float height;
+            std::size_t id;
+            enum LayerType layer;
+            size_t layerSide;
     };
 
     struct Player {
@@ -72,34 +104,44 @@ namespace Types {
 
     struct Enemy {
         public:
-            Enemy(enum enemy_type_e type) : _type(type)
+            Enemy(enum enemy_type_e _type = enemy_type_e::CLASSIC_ENEMY) : type(_type)
             {
                 std::lock_guard<std::mutex> lock(_mutex);
 
-                _constId = enemy_id_s {_enemyNb};
+                constId = enemy_id_s {_enemyNb};
                 _enemyNb++;
             }
-            Enemy() : _type(CLASSIC_ENEMY)
+
+            Enemy(struct enemy_id_s _constId, enum enemy_type_e _type = enemy_type_e::CLASSIC_ENEMY)
+                : constId(_constId),
+                  type(_type)
+            {
+            }
+
+            [[nodiscard]] enemy_id_s getConstId() const
+            {
+                return constId;
+            }
+
+            static void setEnemyNb(unsigned int nb)
             {
                 std::lock_guard<std::mutex> lock(_mutex);
 
-                _constId = enemy_id_s {_enemyNb};
-                _enemyNb++;
+                _enemyNb = nb;
             }
 
-            [[nodiscard]] const enemy_id_s &getConstId() const
+            static unsigned int getEnemyNb()
             {
-                return _constId;
+                std::lock_guard<std::mutex> lock(_mutex);
+
+                return _enemyNb;
             }
-            [[nodiscard]] enum enemy_type_e getType() const
-            {
-                return _type;
-            }
+
+            enemy_id_s constId;
+            enum enemy_type_e type;
 
         private:
-            enemy_id_s _constId;
             static unsigned int _enemyNb;
-            enum enemy_type_e _type;
             static std::mutex _mutex;
     };
 
@@ -124,5 +166,7 @@ namespace Types {
             std::size_t clockId;
             bool launched;
     };
+
+    struct Boss { };
 
 } // namespace Types

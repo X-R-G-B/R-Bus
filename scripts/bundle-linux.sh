@@ -5,7 +5,7 @@ set -ex
 
 rm -rf build
 
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DPACKAGED=1 -DNO_USE_CLANG_TIDY=true
 
 cmake --build build
 

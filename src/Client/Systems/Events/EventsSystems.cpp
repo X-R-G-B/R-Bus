@@ -11,6 +11,7 @@
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
+#include "Systems.hpp"
 
 namespace Systems {
     static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId)
@@ -63,71 +64,47 @@ namespace Systems {
         }
     }
 
-    static void createMissile(Types::Position &pos)
-    {
-        std::size_t entityId = Registry::getInstance().addEntity();
-
-        Types::Rect spriteRect               = {200, 121, 32, 10};
-        const std::string bulletPath         = "assets/R-TypeSheet/r-typesheet1.gif";
-        constexpr float bulletWidth          = 5.0F;
-        constexpr float bulletHeight         = 5.0F;
-        Types::CollisionRect collisionRect1  = {1, 1};
-        Types::Velocity velocity             = {0.7F, 0.0F};
-        Types::Missiles missileType          = {CLASSIC};
-        Types::Dead deadComp                 = {};
-        Types::PlayerAllies playerAlliesComp = {};
-        Types::Position position             = {pos.x, pos.y};
-        Types::CollisionRect collisionRect2  = {bulletWidth, bulletHeight};
-        Raylib::Sprite sprite                = {bulletPath, bulletWidth, bulletHeight, entityId};
-        struct health_s healthComp           = {1};
-        Types::Damage damageComp             = {10};
-
-        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
-        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect1);
-        Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
-        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect2);
-        Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
-        Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
-        Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
-        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
-        Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
-        Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
-        Registry::getInstance().setToFrontLayers(entityId);
-        // send bullet to server
-        Nitwork::NitworkClient::getInstance().addNewBulletMsg(
-            {static_cast<int>(position.x), static_cast<int>(position.y)},
-            missileType.type);
-    }
-
     const std::size_t waitTimeBullet = 500;
 
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
+        Registry::components<struct health_s> arrHealth   = registry.getComponents<struct health_s>();
         Clock &clock_                                     = registry.getClock();
         static std::size_t clockId                        = clock_.create(true);
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
-        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE)
-            && clock_.elapsedMillisecondsSince(clockId) > waitTimeBullet) {
-            clock_.restart(clockId);
-            for (auto &id : ids) {
-                createMissile(arrPosition[id]);
+        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE) == false
+            || clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
+            return;
+        }
+
+        for (auto &id : ids) {
+            // send bullet to server
+            if (arrHealth.exist(id) && arrHealth[id].hp <= 0) {
+                continue;
             }
+            Nitwork::NitworkClient::getInstance().addNewBulletMsg(
+                {static_cast<int>(arrPosition[id].x), static_cast<int>(arrPosition[id].y)},
+                CLASSIC);
+            struct Types::Missiles missile = {
+                .type = CLASSIC,
+            };
+            createMissile(arrPosition[id], missile);
+            clock_.restart(clockId);
         }
     }
 
     void EventsSystems::changeScene(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
-            SceneManager &sceneManager = SceneManager::getInstance();
-            if (sceneManager.getCurrentScene() == MAIN_GAME) {
-                sceneManager.changeScene(MENU);
+            auto &sceneManager = Scene::SceneManager::getInstance();
+            if (sceneManager.getCurrentScene() == Scene::Scene::MAIN_GAME) {
+                sceneManager.changeScene(Scene::Scene::MENU);
             } else {
-                sceneManager.changeScene(MAIN_GAME);
+                sceneManager.changeScene(Scene::Scene::MAIN_GAME);
             }
         }
     }

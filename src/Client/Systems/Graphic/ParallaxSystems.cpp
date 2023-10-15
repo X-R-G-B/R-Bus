@@ -4,70 +4,54 @@
 #include "CustomTypes.hpp"
 #include "ECSCustomTypes.hpp"
 #include "Graphics.hpp"
+#include "Json.hpp"
 #include "Logger.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
-#include "nlohmann/json.hpp"
 
 namespace Systems::ParallaxSystems {
-    static nlohmann::json openJsonData(const std::string &path)
-    {
-        std::ifstream fileData(path);
-        std::ostringstream input;
-        nlohmann::json jsonData = {};
-
-        if (fileData.is_open()) {
-            input << fileData.rdbuf();
-            if (nlohmann::json::accept(input.str())) {
-                jsonData = nlohmann::json::parse(input.str());
-                return jsonData;
-            }
-        }
-        Registry::getInstance().getLogger().error("Could not load json file. An error occured");
-        return jsonData;
-    }
-
     constexpr int maxOutParallaxLeft  = -100;
     constexpr int maxOutParallaxRight = 100;
 
-    static void initParallaxEntity(
-        nlohmann::json_abi_v3_11_2::basic_json<> &parallaxData,
-        const float maxOffsideParallax = 0)
+    static void initParallaxEntity(nlohmann::basic_json<> &elem, const float maxOffsideParallax = 0)
     {
-        std::size_t id = Registry::getInstance().addEntity();
+        std::size_t id          = Registry::getInstance().addEntity();
+        Raylib::Sprite parralax = {
+            Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
+            Json::getInstance().getDataFromJson<float>(elem, "width"),
+            Json::getInstance().getDataFromJson<float>(elem, "height"),
+            id};
 
-        Raylib::Sprite sprite =
-            {parallaxData["spritePath"], parallaxData["width"], parallaxData["height"], id};
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(sprite);
+        Types::Position position = Json::getInstance().getDataFromJson<Types::Position>(elem, "position");
+        Types::Velocity velocity = Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
 
-        Types::Position position = {Types::Position(parallaxData["position"])};
+        if (Json::getInstance().isDataExist(elem, "rect")) {
+            Types::Rect rect = Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect");
+            Registry::getInstance().getComponents<Types::Rect>().insertBack((rect));
+        }
+
         if (maxOffsideParallax > 0) {
             position.x += maxOffsideParallax;
         }
+        Types::Parallax inst = {position.x, position.y};
+
+        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(parralax);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
-
-        Types::Velocity velocity = {Types::Velocity(parallaxData["velocity"])};
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
-
-        if (parallaxData["rect"] != nullptr) {
-            Types::Rect rect = {Types::Rect(parallaxData["rect"])};
-            Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
-        }
+        Registry::getInstance().getComponents<Types::Parallax>().insertBack(inst);
         Registry::getInstance().setToBackLayers(id);
-        Types::Parallax paralax = {position.x, position.y};
-        Registry::getInstance().getComponents<Types::Parallax>().insertBack(paralax);
     }
-
-    const std::string parallaxFile = "assets/Json/parallaxData.json";
 
     void initParalax(std::size_t managerId, std::size_t systemId)
     {
-        nlohmann::json jsonData = openJsonData(parallaxFile);
+        std::vector<nlohmann::basic_json<>> parallaxData =
+            Json::getInstance().getDataByJsonType("parallax", JsonType::DEFAULT_PARALLAX);
 
-        for (auto &e : jsonData["parallax"]) {
-            initParallaxEntity(e);
-            if (e["copy"] != nullptr && e["copy"]) {
-                initParallaxEntity(e, maxOutParallaxRight);
+        for (auto &elem : parallaxData) {
+            initParallaxEntity(elem);
+            if (Json::getInstance().isDataExist(elem, "copy")
+                && Json::getInstance().getDataFromJson<bool>(elem, "copy") == true) {
+                initParallaxEntity(elem, maxOutParallaxRight);
             }
         }
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
@@ -79,17 +63,14 @@ namespace Systems::ParallaxSystems {
         Registry::components<Types::Position> &arrPosition)
     {
         if (arrPosition[id].x <= maxOutParallaxLeft) {
-            if (arrParallax[id].x >= maxOutParallaxRight) {
-                arrPosition[id].x = arrParallax[id].x;
-            } else {
-                arrPosition[id].x = arrParallax[id].x + maxOutParallaxRight;
-            }
+            arrPosition[id].x += maxOutParallaxRight * 2;
             arrPosition[id].y = arrParallax[id].y;
         }
     }
 
     void manageParallax(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Parallax> arrParallax =

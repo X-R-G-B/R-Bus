@@ -38,17 +38,43 @@ namespace Nitwork {
     };
     class Packet {
         public:
-            Packet(n_id_t id, n_actionType_t action, std::any body)
-                : id(id),
-                  action(action),
-                  body(std::move(body))
+            Packet(n_actionType_t action, std::any body, const boost::asio::ip::udp::endpoint &endpoint)
+                : action(action),
+                  body(std::move(body)),
+                  endpoint(endpoint)
             {
             }
 
-            n_id_t id;
+            Packet(n_actionType_t action, std::any body) : action(action), body(std::move(body))
+            {
+            }
+
+            Packet(const Packet &packet, const boost::asio::ip::udp::endpoint &endpoint)
+                : id(packet.id),
+                  action(packet.action),
+                  body(packet.body),
+                  endpoint(endpoint)
+            {
+            }
+            [[nodiscard]] bool getIsResend() const
+            {
+                return _isResend;
+            }
+            void setIsResend(bool value)
+            {
+                _isResend = value;
+            }
+
+            n_id_t id = 0;
             n_actionType_t action;
             std::any body;
+            boost::asio::ip::udp::endpoint endpoint;
+
+        private:
+            bool _isResend = false;
     };
+
+    using actionSender = std::function<void(Packet &)>;
 
     class INitwork {
         public:
@@ -62,6 +88,8 @@ namespace Nitwork {
             virtual bool start(int port, int threadNb, int tick, const std::string &ip = "") = 0;
 
             virtual void stop() = 0;
+
+            virtual bool isRunning() const = 0;
 
         protected:
             INitwork() = default;
@@ -90,7 +118,7 @@ namespace Nitwork {
                 const boost::asio::ip::udp::endpoint &endpoint) = 0;
 
             // getters
-            [[nodiscard]] virtual const std::map<enum n_actionType_t, actionHandler> &
+            [[nodiscard]] virtual const std::map<enum n_actionType_t, actionSender> &
             getActionToSendHandlers() const = 0;
     }; // class INitwork
 } // namespace Nitwork

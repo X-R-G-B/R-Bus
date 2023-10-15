@@ -21,14 +21,14 @@ namespace Nitwork {
 
             static NitworkServer &getInstance();
 
-            bool start(
+            bool startServer(
                 int port,
-                int threadNb          = DEFAULT_THREAD_NB,
-                int tick              = TICKS_PER_SECOND,
-                const std::string &ip = "") final;
+                int nbPlayer,
+                int threadNb = DEFAULT_THREAD_NB,
+                int tick     = TICKS_PER_SECOND);
 
             /* Messages creation methods */
-            void addStarGameMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
+            void addStarWaveMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t enemyId);
 
             void addLifeUpdateMessage(
                 boost::asio::ip::udp::endpoint &endpoint,
@@ -43,30 +43,54 @@ namespace Nitwork {
 
             void addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
 
+            void broadcastNewBulletMsg(
+                const struct msgNewBullet_s &msg,
+                boost::asio::ip::udp::endpoint &senderEndpoint);
+
+            void broadcastAbsolutePositionMsg(
+                const struct position_absolute_s &pos,
+                boost::asio::ip::udp::endpoint &senderEndpoint);
+
+            n_id_t getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const;
+
         private:
             NitworkServer() = default;
+
+            std::unordered_map<boost::asio::ip::udp::endpoint, n_id_t> _playersIds;
 
             bool startNitworkConfig(int port, const std::string &ip) final;
 
             void sendToAllClients(const Packet &packet);
 
+            void sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint);
+
             void handleBodyAction(
                 const struct header_s &header,
                 const boost::asio::ip::udp::endpoint &endpoint) final;
 
-            [[nodiscard]] const std::map<enum n_actionType_t, actionHandler> &
+            [[nodiscard]] const std::map<enum n_actionType_t, actionSender> &
             getActionToSendHandlers() const final;
 
             bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
+
+            void sendNewAllie(
+                n_id_t playerId,
+                struct packetNewAllie_s packetMsgNewAllie,
+                boost::asio::ip::udp::endpoint &endpoint,
+                bool butNoOne = true);
 
             /* BEGIN handle messages methods */
             void handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
             void handleReadyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
+
+            void handleRelativePositionMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
             /* END handle messages methods */
+
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static NitworkServer _instance; // instance of the NitworkServer (singleton)
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
+            unsigned int _maxNbPlayer = 0; // max number of players
             std::list<boost::asio::ip::udp::endpoint>
                 _endpoints; // A vector of endpoints which will be used to send the actions to the clients
                             // and identify them
@@ -87,6 +111,13 @@ namespace Nitwork {
                   [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       handleReadyMsg(msg, endpoint);
                   }}},
+                {POSITION_RELATIVE,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgPositionRelative_s>(actionHandler, header);
+                  },
+                  [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      handleRelativePositionMsg(msg, endpoint);
+                  }}},
                 {LIFE_UPDATE,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgLifeUpdate_s>(actionHandler, header);
@@ -101,31 +132,58 @@ namespace Nitwork {
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::handleClientEnemyDeath(msg, endpoint);
                   }}},
+                {NEW_BULLET,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgNewBullet_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::receiveNewBulletMsg(msg, endpoint);
+                  }}},
+                {POSITION_ABSOLUTE,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgPositionAbsolute_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::receiveAbsolutePositionMsg(msg, endpoint);
+                  }}},
             };
-            std::map<enum n_actionType_t, actionHandler> _actionToSendHandlers = {
+            std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
                 {
-                 INIT, [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                        sendData<struct packetMsgInit_s>(any, endpoint);
+                 INIT, [this](Packet &packet) {
+                        sendData<struct packetMsgPlayerInit_s>(packet);
                     }, },
                 {LIFE_UPDATE,
-                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                     sendData<struct packetLifeUpdate_s>(any, endpoint);
+                 [this](Packet &packet) {
+                     sendData<struct packetLifeUpdate_s>(packet);
                  }},
-                {START_GAME,
-                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                     sendData<struct packetMsgStartGame_s>(any, endpoint);
-                 }},
-                {LIFE_UPDATE,
-                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                     sendData<struct packetLifeUpdate_s>(any, endpoint);
+                {START_WAVE,
+                 [this](Packet &packet) {
+                     sendData<struct packetMsgStartWave_s>(packet);
                  }},
                 {ENEMY_DEATH,
-                 [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                     sendData<struct packetEnemyDeath_s>(any, endpoint);
+                 [this](Packet &packet) {
+                     sendData<struct packetEnemyDeath_s>(packet);
                  }},
-                {NEW_ENEMY, [this](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-                     sendData<struct packetNewEnemy_s>(any, endpoint);
-                 }}
+                {NEW_ENEMY,
+                 [this](Packet &packet) {
+                     sendData<struct packetNewEnemy_s>(packet);
+                 }},
+                {NEW_BULLET,
+                 [this](Packet &packet) {
+                     sendData<struct packetNewBullet_s>(packet);
+                 }},
+                {NEW_ALLIE,
+                 [this](Packet &packet) {
+                     sendData<struct packetNewAllie_s>(packet);
+                 }},
+                {POSITION_RELATIVE_BROADCAST,
+                 [this](Packet &packet) {
+                     sendData<struct packetPositionRelativeBroadcast_s>(packet);
+                 }},
+                {POSITION_ABSOLUTE_BROADCAST,
+                 [this](Packet &packet) {
+                     sendData<struct packetPositionAbsoluteBroadcast_s>(packet);
+                 }},
             };
     };
 } // namespace Nitwork

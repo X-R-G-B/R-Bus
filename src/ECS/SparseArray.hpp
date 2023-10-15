@@ -65,6 +65,14 @@ class SparseArray {
             return _dense[_sparse[id]];
         }
 
+        Component &back()
+        {
+            if (_dense.empty()) {
+                throw std::runtime_error("SparseArrays::back: empty!");
+            }
+            return _dense.back();
+        }
+
         /*
          * A dense sparseArrays is not sort by entities id, the begin of two
          * sparseArrays could be different entities, only _sparse are
@@ -99,6 +107,17 @@ class SparseArray {
             return _revSparse;
         }
 
+        void clear()
+        {
+            _dense.clear();
+            for (auto it = _sparse.begin(); it != _sparse.end(); it++) {
+                if (static_cast<int>(*it) > -1) {
+                    (*it) = static_cast<std::size_t>(-1);
+                }
+            }
+            _revSparse.clear();
+        }
+
     private:
         void removeDenses(std::size_t sparseValue)
         {
@@ -118,7 +137,8 @@ class SparseArray {
         void throwIfDontExist(std::size_t id)
         {
             if (!exist(id)) {
-                throw std::runtime_error("SparseArrays: ID out of bounds!");
+                throw std::runtime_error(
+                    "SparseArrays: ID out of bounds! (id: " + std::to_string(id) + ")");
             }
         }
 

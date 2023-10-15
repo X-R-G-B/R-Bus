@@ -7,6 +7,7 @@
 
 #include "SystemManager.hpp"
 #include <algorithm>
+#include "SystemManagersDirector.hpp"
 
 namespace Systems {
 
@@ -49,6 +50,8 @@ namespace Systems {
 
     void SystemManager::addSystem(std::function<void(std::size_t, std::size_t)> sys)
     {
+        std::lock_guard<std::mutex> lock(SystemManagersDirector::getInstance().mutex);
+
         if (!_modified) {
             _modified = true;
         }
@@ -57,6 +60,8 @@ namespace Systems {
 
     void SystemManager::removeSystem(std::size_t id)
     {
+        std::lock_guard<std::mutex> lock(SystemManagersDirector::getInstance().mutex);
+
         if (!_modified) {
             _modified = true;
         }
@@ -65,12 +70,16 @@ namespace Systems {
 
     void SystemManager::resetChanges()
     {
+        std::lock_guard<std::mutex> lock(SystemManagersDirector::getInstance().mutex);
+
         _modified        = false;
         _modifiedSystems = _originalSystems;
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> &SystemManager::getSystems()
     {
+        std::lock_guard<std::mutex> lock(SystemManagersDirector::getInstance().mutex);
+
         if (_modified) {
             return _modifiedSystems;
         }
