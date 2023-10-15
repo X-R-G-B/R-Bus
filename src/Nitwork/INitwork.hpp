@@ -56,8 +56,14 @@ namespace Nitwork {
                   endpoint(endpoint)
             {
             }
-            [[nodiscard]] bool getIsResend() const { return _isResend; }
-            void setIsResend(bool value) { _isResend = value; }
+            [[nodiscard]] bool getIsResend() const
+            {
+                return _isResend;
+            }
+            void setIsResend(bool value)
+            {
+                _isResend = value;
+            }
 
             n_id_t id = 0;
             n_actionType_t action;
