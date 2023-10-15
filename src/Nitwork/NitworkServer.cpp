@@ -130,6 +130,10 @@ namespace Nitwork {
             Logger::info("Client not connected");
             return;
         }
+        if (_endpoints.size() < MAX_CLIENTS) {
+            Logger::info("Not enough clients");
+            return;
+        }
         addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
         Systems::SystemManagersDirector::getInstance().getSystemManager(0).addSystem(Systems::initWave);
     }

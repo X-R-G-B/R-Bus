@@ -188,7 +188,7 @@ namespace Nitwork {
                         "NITWORK: packet not found: " + std::to_string(header.last_id_received - index));
                     continue;
                 }
-                packet->isResend = true;
+                packet->setIsResend(true);
                 addPacketToSend(*packet);
             }
         }

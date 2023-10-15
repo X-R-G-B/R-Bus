@@ -16,7 +16,7 @@
     #define ONE_SECOND 1000
     #define DEFAULT_THREAD_NB 4
     #define MAX_NB_ACTION 16
-    #define MAX_CLIENTS 4
+    #define MAX_CLIENTS 2
     #define HEADER_CODE1 '\x01'
     #define HEADER_CODE2 '\x03'
 

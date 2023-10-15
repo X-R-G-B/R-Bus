@@ -44,17 +44,17 @@ namespace Nitwork {
                     return;
                 }
                 T data      = std::any_cast<T>(packet.body);
-                if (!packet.isResend) {
+                if (!packet.getIsResend()) {
                     packet.id   = id;
-                    auto header = static_cast<struct header_s>(data.header);
-                    header      = {
+                    auto newHeader = static_cast<struct header_s>(data.header);
+                    newHeader      = {
                         HEADER_CODE1,
                         getIdsReceived(packet.endpoint),
                         getLastIdsReceived(packet.endpoint),
                         id,
-                        header.nb_action,
+                        newHeader.nb_action,
                         HEADER_CODE2};
-                    data.header = header;
+                    data.header = newHeader;
                 }
 
                 _socket.async_send_to(
