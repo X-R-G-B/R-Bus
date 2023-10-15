@@ -181,7 +181,8 @@ namespace Systems {
         }
     }
 
-    void initEnemy(enemy_type_e enemyType, bool setId, struct ::enemy_id_s enemyId)
+    void
+    initEnemy(enemy_type_e enemyType, Types::Position position, bool setId, struct ::enemy_id_s enemyId)
     {
         JsonType jsonType = messageTypes.at(enemyType);
         std::vector<nlohmann::basic_json<>> enemyData =
@@ -200,7 +201,6 @@ namespace Systems {
                 Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
                 Json::getInstance().getDataFromJson<float>(elem, "width"),
                 Json::getInstance().getDataFromJson<float>(elem, "height"),
-                id,
                 LayerType::DEFAULTLAYER,
                 0};
 
@@ -219,13 +219,16 @@ namespace Systems {
             Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
             Types::Velocity velocity =
                 Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
-            Types::Position position =
-                Json::getInstance().getDataFromJson<Types::Position>(elem, "position");
             Types::CollisionRect collisionRect =
                 Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect");
             Types::Damage damageComp   = {Json::getInstance().getDataFromJson<int>(elem, "damage")};
             struct health_s healthComp = {Json::getInstance().getDataFromJson<int>(elem, "health")};
 
+            if (position.x == 0 && position.y == 0) {
+                Types::Position tmpPos(
+                    Json::getInstance().getDataFromJson<Types::Position>(elem, "position"));
+                position = tmpPos;
+            }
 #ifdef CLIENT
             Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
             Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
@@ -246,6 +249,7 @@ namespace Systems {
 
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
+        const float posToGo   = 65.0;
         const float bossSpeed = 0.2F;
         Registry::components<Types::Position> &arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
@@ -260,6 +264,10 @@ namespace Systems {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
         for (auto &id : ids) {
+            if (arrPosition[id].x <= posToGo && arrVelocity[id].speedY == 0) {
+                arrVelocity[id].speedX = 0;
+                arrVelocity[id].speedY = 0.2;
+            }
             if (arrPosition[id].y < 0) {
                 arrVelocity[id].speedY = bossSpeed;
             }
@@ -271,27 +279,38 @@ namespace Systems {
 
     void initWave(std::size_t managerId, std::size_t systemId)
     {
-        static std::size_t enemyNumber = 5;
-        const std::size_t spawnDelay   = 2;
-        Clock &clock                   = Registry::getInstance().getClock();
-        static std::size_t clockId     = clock.create(true);
-        static bool fstCall            = true;
-
+        static std::size_t enemyNumber =
+            Json::getInstance().getDataByVector({"wave", "nbrEnemy"}, JsonType::WAVE);
+        const std::size_t spawnDelay = 2;
+        Clock &clock                 = Registry::getInstance().getClock();
+        static std::size_t clockId   = clock.create(true);
+        static bool fstCall          = true;
+        std::vector<nlohmann::json> jsonVector =
+            Json::getInstance().getDataByVector({"wave", "positions"}, JsonType::WAVE);
+        nlohmann::json jsonPos;
         Registry::components<Types::Boss> &bossArr = Registry::getInstance().getComponents<Types::Boss>();
         Registry::components<Types::Enemy> &enemyArr =
             Registry::getInstance().getComponents<Types::Enemy>();
 
+        if (enemyNumber > 0) {
+            jsonPos = Json::getInstance().getDataFromJson<Types::Position>(
+                jsonVector[enemyNumber - 1],
+                "position");
+        } else {
+            jsonPos = Json::getInstance().getDataFromJson<Types::Position>(jsonVector[0], "position");
+        }
+        Types::Position pos(jsonPos);
         if (fstCall) {
             fstCall = false;
             clock.restart(clockId);
         }
         if (clock.elapsedSecondsSince(clockId) >= spawnDelay && enemyNumber > 0) {
-            initEnemy(CLASSIC_ENEMY);
+            initEnemy(CLASSIC_ENEMY, pos);
             enemyNumber--;
             clock.decreaseSeconds(clockId, spawnDelay);
         }
         if (enemyArr.getExistingsId().empty() && enemyNumber <= 0 && bossArr.getExistingsId().empty()) {
-            initEnemy(TERMINATOR);
+            initEnemy(TERMINATOR, pos);
             SystemManagersDirector::getInstance().getSystemManager(managerId).addSystem(manageBoss);
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
@@ -424,7 +443,6 @@ namespace Systems {
             Json::getInstance().getDataByVector({"player", "spritePath"}, playerType),
             Json::getInstance().getDataByVector({"player", "width"}, playerType),
             Json::getInstance().getDataByVector({"player", "height"}, playerType),
-            id,
             FRONTLAYER,
             static_cast<std::size_t>(FRONT));
 
@@ -487,13 +505,8 @@ namespace Systems {
 #ifdef CLIENT
         const std::string bulletPath = "assets/R-TypeSheet/r-typesheet1.gif";
         Types::Rect spriteRect       = {200, 121, 32, 10};
-        Types::SpriteDatas bulletDatas(
-            bulletPath,
-            bulletWidth,
-            bulletHeight,
-            entityId,
-            FRONTLAYER,
-            static_cast<std::size_t>(FRONT));
+        Types::SpriteDatas
+            bulletDatas(bulletPath, bulletWidth, bulletHeight, FRONTLAYER, static_cast<std::size_t>(FRONT));
 #endif
         struct health_s healthComp = {1};
         Types::Damage damageComp   = {10};

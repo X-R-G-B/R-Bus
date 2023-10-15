@@ -51,16 +51,10 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                            = Registry::getInstance();
         Registry::components<Raylib::Music> arrMusics = registry.getComponents<Raylib::Music>();
-        Registry::components<Raylib::Sound> arrSounds = registry.getComponents<Raylib::Sound>();
 
         for (auto &music : arrMusics) {
             if (music.getPath() == musicPath && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_M)) {
                 music.setNeedToPlay(true);
-            }
-        }
-        for (auto &sound : arrSounds) {
-            if (sound.getPath() == soundPathShoot && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_SPACE)) {
-                sound.setNeedToPlay(true);
             }
         }
     }

@@ -215,11 +215,7 @@ namespace Systems {
         auto ids = arrSpriteDatas.getExistingsId();
         for (auto id : ids) {
             auto &spriteDatas = arrSpriteDatas[id];
-            Raylib::Sprite sprite(
-                spriteDatas.fileName,
-                spriteDatas.width,
-                spriteDatas.height,
-                spriteDatas.id);
+            Raylib::Sprite sprite(spriteDatas.fileName, spriteDatas.width, spriteDatas.height, id);
             arrSprite.insert(id, sprite);
             switch (spriteDatas.layer) {
                 case BACKLAYER:
