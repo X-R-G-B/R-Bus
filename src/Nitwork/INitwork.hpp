@@ -78,6 +78,8 @@ namespace Nitwork {
 
             virtual void stop() = 0;
 
+            virtual bool isRunning() const = 0;
+
         protected:
             INitwork() = default;
             // start the NitworkServer config

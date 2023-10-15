@@ -105,6 +105,11 @@ namespace Nitwork {
         _pool.clear();
     }
 
+    bool ANitwork::isRunning() const
+    {
+        return _isRunning;
+    }
+
     void ANitwork::startReceiveHandler()
     {
         if (!_isRunning) {
@@ -207,12 +212,18 @@ namespace Nitwork {
                         return a.first.id < b.first.id;
                     });
                     for (auto &action : _actions) {
-                        action.second(action.first.data, action.first.endpoint);
+                        try {
+                           action.second(action.first.data, action.first.endpoint);
+                        } catch (std::exception &e) {
+                            Logger::error("NITWORK: catch action: " + std::string(e.what()));
+                        }
                     }
                     _actions.clear();
                     _inputQueueMutex.unlock();
                 }
             } catch (std::exception &e) {
+                _inputQueueMutex.unlock();
+                _isRunning = false;
                 Logger::fatal("NITWORK: catch input thread: " + std::string(e.what()));
             }
         });
@@ -227,7 +238,11 @@ namespace Nitwork {
                 continue;
             }
             addPacketToSentPackages(data);
-            it->second(data);
+            try {
+                it->second(data);
+            } catch (std::exception &e) {
+                Logger::error("NITWORK: catch action: " + std::string(e.what()));
+            }
         }
     }
 
@@ -250,6 +265,8 @@ namespace Nitwork {
                     _outputQueueMutex.unlock();
                 }
             } catch (std::exception &e) {
+                _outputQueueMutex.unlock();
+                _isRunning = false;
                 Logger::fatal("NITWORK: catch output thread: " + std::string(e.what()));
             }
         });

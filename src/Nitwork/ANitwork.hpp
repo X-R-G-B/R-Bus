@@ -30,6 +30,8 @@ namespace Nitwork {
             bool start(int port, int threadNb, int tick, const std::string &ip = "") override;
 
             void stop() override;
+
+            bool isRunning() const final;
             // send data to the endpoint with the given data
             template <typename T>
             void sendData(Packet &packet)
