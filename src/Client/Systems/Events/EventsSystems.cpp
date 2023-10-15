@@ -81,7 +81,6 @@ namespace Systems {
             return;
         }
 
-        clock_.restart(clockId);
         for (auto &id : ids) {
             // send bullet to server
             if (arrHealth.exist(id) && arrHealth[id].hp <= 0) {
@@ -94,6 +93,7 @@ namespace Systems {
                 .type = CLASSIC,
             };
             createMissile(arrPosition[id], missile);
+            clock_.restart(clockId);
         }
     }
 
