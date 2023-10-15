@@ -14,15 +14,15 @@
 
 - Change directory
 
-`cd R-Bus-main || "Failed to cd to R-Type-Linux, please open an issue: 'https://github.com/X-R-G-B/R-Bus/issues/new?assignees=&labels=bug&projects=&template=install-failed.yml&title=%5BFAIL+INSTALL%5D+-+Title'"`
+`cd R-Bus-main || "Failed to cd to R-Bus-main, please open an issue: 'https://github.com/X-R-G-B/R-Bus/issues/new?assignees=&labels=bug&projects=&template=install-failed.yml&title=%5BFAIL+INSTALL%5D+-+Title'"`
 
 - Install dependencies
 
-`./scripts/install-deps-windows.ps1`
+`./scripts/install-deps-windows.ps1 --interactive`
 
 - Build the project
 
-`./scripts/compil.ps1`
+`./scripts/compil.ps1 --no-tidy`
 
 Well Done you have your binaries!
 

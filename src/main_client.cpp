@@ -25,6 +25,7 @@
 #include "Logger.hpp"
 #include "NitworkClient.hpp"
 #include "Registry.hpp"
+#include "ResourcesManager.hpp"
 #include "SceneManager.hpp"
 
 constexpr int EXIT_EPITECH = 84;
@@ -57,6 +58,8 @@ int main(int ac, char **av)
 #ifndef NDEBUG
     Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
 #endif
+    ECS::ResourcesManager::init(av[0]);
+    ECS::ResourcesManager::convertPath("assets/Json/enemyData.json");
     if (!checkArgs(ac, av)) {
         return EXIT_EPITECH;
     }
