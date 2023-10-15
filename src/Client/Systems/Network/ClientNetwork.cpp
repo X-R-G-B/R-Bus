@@ -90,22 +90,22 @@ namespace Systems {
     void receiveRelativePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const auto relativePosition = std::any_cast<struct msgPositionRelativeBroadcast_s>(any);
-        auto arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
-        auto arrPosition    = Registry::getInstance().getComponents<Types::Position>();
-        std::vector<std::size_t> ids = arrOtherPlayer.getExistingsId();
+        const struct msgPositionRelativeBroadcast_s &msg = std::any_cast<struct msgPositionRelativeBroadcast_s>(any);
+        Types::Position position = {
+            static_cast<float>(msg.pos.x),
+            static_cast<float>(msg.pos.y)};
+        auto &arrPos          = Registry::getInstance().getComponents<Types::Position>();
+        auto &arrOtherPlayers = Registry::getInstance().getComponents<Types::OtherPlayer>();
+        auto ids              = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::OtherPlayer)});
+        auto otherPlayer = std::find_if(ids.begin(), ids.end(), [&arrOtherPlayers, &msg](std::size_t id) {
+            return arrOtherPlayers[id].constId == msg.playerId;
+        });
 
-        Logger::info("receive pos relative " + std::to_string(relativePosition.pos.x) + " " + std::to_string(relativePosition.pos.y) + "\n\n\n");
-        for (auto id : ids) {
-            if (arrOtherPlayer[id].constId == relativePosition.playerId) {
-                auto &pos = arrPosition[id];
-                Types::Position relativePos = {static_cast<float>(relativePosition.pos.x), static_cast<float>(relativePosition.pos.y)};
-                Logger::info("before Apply pos relative, pos: " + std::to_string(pos.x) + " " + std::to_string(pos.y) + "\n\n");
-                pos.x += relativePos.x;
-                pos.y += relativePos.y;
-                Logger::info("after Apply pos relative, pos: " + std::to_string(arrPosition[id].x) + " " + std::to_string(arrPosition[id].y) + "\n\n");
-            }
+        if (otherPlayer == ids.end()) {
+            return;
         }
+        arrPos[*otherPlayer] += position;
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
