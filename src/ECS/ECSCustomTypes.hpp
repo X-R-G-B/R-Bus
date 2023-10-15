@@ -160,4 +160,8 @@ namespace Types {
             bool launched;
     };
 
+    struct Boss {
+        bool dead;
+    };
+
 } // namespace Types
