@@ -126,12 +126,12 @@ namespace Nitwork {
                       Systems::receiveNewBulletMsg(msg, endpoint);
                   }}},
                 {POSITION_ABSOLUTE,
-                    {[this](actionHandler &actionHandler, const struct header_s &header) {
-                        handleBody<struct msgPositionAbsolute_s>(actionHandler, header);
-                    },
-                    [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
-                        Systems::receiveAbsolutePositionMsg(msg, endpoint);
-                    }}},
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgPositionAbsolute_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::receiveAbsolutePositionMsg(msg, endpoint);
+                  }}},
             };
             std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
                 {

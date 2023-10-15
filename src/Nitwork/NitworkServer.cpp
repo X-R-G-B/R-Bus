@@ -268,7 +268,10 @@ namespace Nitwork {
         struct packetPositionAbsoluteBroadcast_s packetPosAbsoluteBroadcast = {
             .header = {0, 0, 0, 0, 1, 0},
             .action = {.magick = POSITION_ABSOLUTE_BROADCAST},
-            .msg    = {.magick = MAGICK_POSITION_ABSOLUTE_BROADCAST, .pos = {.x = pos.x, .y = pos.y}, .playerId = getPlayerId(senderEndpoint)}
+            .msg    = {
+                       .magick   = MAGICK_POSITION_ABSOLUTE_BROADCAST,
+                       .pos      = {.x = pos.x, .y = pos.y},
+                       .playerId = getPlayerId(senderEndpoint)}
         };
         Packet packet(
             packetPosAbsoluteBroadcast.action.magick,

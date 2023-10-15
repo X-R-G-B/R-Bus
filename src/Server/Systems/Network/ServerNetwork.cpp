@@ -89,16 +89,18 @@ namespace Systems {
     void receiveAbsolutePositionMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const struct msgPositionAbsolute_s &msgAbsolutePosition = std::any_cast<struct msgPositionAbsolute_s>(msg);
+        const struct msgPositionAbsolute_s &msgAbsolutePosition =
+            std::any_cast<struct msgPositionAbsolute_s>(msg);
 
-        auto &registry = Registry::getInstance();
-        auto &arrPos = registry.getComponents<Types::Position>();
+        auto &registry        = Registry::getInstance();
+        auto &arrPos          = registry.getComponents<Types::Position>();
         auto &arrOtherPlayers = registry.getComponents<Types::OtherPlayer>();
-        std::vector<std::size_t> ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::OtherPlayer)});
+        std::vector<std::size_t> ids =
+            registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::OtherPlayer)});
         n_id_t playerId = Nitwork::NitworkServer::getInstance().getPlayerId(endpoint);
 
         for (auto &id : ids) {
-            auto &pos = arrPos[id];
+            auto &pos         = arrPos[id];
             auto &otherPlayer = arrOtherPlayers[id];
             if (otherPlayer.constId == playerId) {
                 pos.x = static_cast<float>(msgAbsolutePosition.pos.x);
