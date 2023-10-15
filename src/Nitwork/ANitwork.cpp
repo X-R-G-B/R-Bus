@@ -188,6 +188,7 @@ namespace Nitwork {
                         "NITWORK: packet not found: " + std::to_string(header.last_id_received - index));
                     continue;
                 }
+                packet->setIsResend(true);
                 addPacketToSend(*packet);
             }
         }
@@ -311,11 +312,6 @@ namespace Nitwork {
             });
         lastId = _receivedPacketsIdsMap[endpoint].back();
         return lastId;
-    }
-
-    const boost::asio::ip::udp::endpoint &ANitwork::getEndpointSender()
-    {
-        return _senderEndpoint;
     }
 
     void ANitwork::addPacketToSend(const Packet &packet)
