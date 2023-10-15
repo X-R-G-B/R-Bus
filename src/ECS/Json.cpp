@@ -30,14 +30,15 @@ nlohmann::json Json::loadJsonData(const std::string &path)
     return jsonData;
 }
 
-nlohmann::basic_json<> Json::getDataByVector(const std::vector<std::string> &indexes, JsonType dataType)
+nlohmann::json Json::getDataByVector(const std::vector<std::string> &indexes, JsonType dataType)
 {
-    nlohmann::basic_json<> finalData(_jsonDatas[dataType]);
+    nlohmann::json finalData(_jsonDatas[dataType]);
 
     for (auto &key : indexes) {
         finalData = finalData[key];
         if (finalData == nullptr) {
-            Logger::error(std::string("Key : " + key + " is not valid"));
+            Logger::fatal(std::string("(getDataByVector) Key : " + key + " is not valid"));
+            throw std::runtime_error("Json error");
         }
         if (finalData.is_array() == true) {
             return (finalData);
@@ -47,9 +48,9 @@ nlohmann::basic_json<> Json::getDataByVector(const std::vector<std::string> &ind
     return (finalData);
 }
 
-nlohmann::basic_json<> Json::getDataByJsonType(JsonType dataType)
+nlohmann::json Json::getDataByJsonType(JsonType dataType)
 {
-    nlohmann::basic_json<> data(_jsonDatas[dataType]);
+    nlohmann::json data(_jsonDatas[dataType]);
 
     return (data);
 }
@@ -60,61 +61,62 @@ nlohmann::basic_json<> Json::getDataByJsonType(const std::string &index, JsonTyp
 
     finalData = finalData[index];
     if (finalData == nullptr) {
-        Logger::error(std::string("Key : " + index + " is not valid"));
+        Logger::error(std::string("(getDataByJsonType) Key : " + index + " is not valid"));
     }
     return (finalData);
 }
 
-bool Json::isDataExist(nlohmann::basic_json<> jsonData, const std::string &index)
+std::vector<nlohmann::json>
+Json::getDatasFromList(const std::vector<nlohmann::json> &list, const std::string &index)
 {
-    if (jsonData[index] == nullptr) {
-        return (false);
-    }
-    return (true);
-}
-
-std::vector<nlohmann::basic_json<>>
-Json::getDatasFromList(const std::vector<nlohmann::basic_json<>> &list, const std::string &key)
-{
-    std::vector<nlohmann::basic_json<>> datas;
-    std::vector<nlohmann::basic_json<>> tmp;
+    std::vector<nlohmann::json> datas;
+    std::vector<nlohmann::json> tmp;
 
     for (auto &elem : list) {
-        if (elem[key].is_array() == true) {
-            tmp = getDatasFromList(elem[key]);
+        if (elem[index] == nullptr) {
+            Logger::fatal(std::string("(getDatasDromList : 2) Key : " + index + " is not valid"));
+            throw std::runtime_error("Json error");
+        }
+        if (elem[index].is_array() == true) {
+            tmp = getDatasFromList(elem[index]);
             datas.insert(datas.end(), tmp.begin(), tmp.end());
         } else {
-            datas.push_back(elem[key]);
+            datas.push_back(elem[index]);
         }
     }
     return (datas);
 }
 
-std::vector<nlohmann::basic_json<>>
-Json::getDatasFromList(const nlohmann::basic_json<> &list, const std::string &key)
+std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list, const std::string &index)
 {
-    std::vector<nlohmann::basic_json<>> datas;
+    std::vector<nlohmann::json> datas;
 
     for (auto &elem : list) {
-        datas.push_back(elem[key]);
+        if (elem[index] == nullptr) {
+            Logger::fatal(std::string("(getDatasFromList : 1) Key : " + index + " is not valid"));
+            throw std::runtime_error("Json error");
+        }
+        datas.push_back(elem[index]);
     }
     return (datas);
 }
 
-std::vector<nlohmann::basic_json<>> Json::getDatasFromList(const nlohmann::basic_json<> &list)
+std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list)
 {
-    std::vector<nlohmann::basic_json<>> datas;
+    std::vector<nlohmann::json> datas;
 
+    if (list.is_array() == false) {
+        Logger::fatal(std::string("(getDatasFromList : 3) Conversion to list is not possible"));
+        throw std::runtime_error("Json error");
+    }
     for (auto &elem : list) {
         datas.push_back(elem);
     }
     return (datas);
 }
 
-std::vector<nlohmann::basic_json<>> &Json::getDatasFromList(
-    std::vector<nlohmann::basic_json<>> &datas,
-    nlohmann::basic_json<> &listData,
-    const std::string &key)
+std::vector<nlohmann::json> &
+Json::getDatasFromList(std::vector<nlohmann::json> &datas, nlohmann::json &listData, const std::string &key)
 {
     if (datas.empty()) {
         datas = getDatasFromList(listData);
@@ -125,18 +127,30 @@ std::vector<nlohmann::basic_json<>> &Json::getDatasFromList(
     return (datas);
 }
 
-std::vector<nlohmann::basic_json<>>
+bool Json::isDataExist(nlohmann::basic_json<> jsonData, const std::string &index)
+{
+    if (jsonData[index] == nullptr) {
+        return (false);
+    }
+    return (true);
+}
+
+std::vector<nlohmann::json>
 Json::getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType)
 {
-    nlohmann::basic_json<> &finalData(_jsonDatas[dataType]);
-    std::vector<nlohmann::basic_json<>> datas;
+    nlohmann::json &finalData(_jsonDatas[dataType]);
+    std::vector<nlohmann::json> datas;
 
     for (auto &key : indexes) {
         if (finalData.is_array() == true || datas.empty() == false) {
             datas = getDatasFromList(datas, finalData, key);
-        } else {
-            finalData = finalData[key];
+            continue;
         }
+        if (finalData[key] == nullptr) {
+            Logger::fatal(std::string("(getDatasByJsonType) Key : " + key + " is not valid"));
+            throw std::runtime_error("Json error");
+        }
+        finalData = finalData[key];
     }
     if (datas.empty()) {
         datas.push_back(finalData);
