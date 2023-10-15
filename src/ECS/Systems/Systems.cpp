@@ -240,6 +240,7 @@ namespace Systems {
 
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
+        const float bossSpeed = 0.2F;
         Registry::components<Types::Position> &arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Velocity> &arrVelocity =
@@ -254,10 +255,10 @@ namespace Systems {
         }
         for (auto &id : ids) {
             if (arrPosition[id].y < 0) {
-                arrVelocity[id].speedY = 0.2;
+                arrVelocity[id].speedY = bossSpeed;
             }
             if (arrPosition[id].y + arrCollisonRect[id].height > maxPercent) {
-                arrVelocity[id].speedY = -0.2;
+                arrVelocity[id].speedY = -bossSpeed;
             }
         }
     }
