@@ -101,7 +101,6 @@ namespace Systems {
         if (registry.getClock().elapsedMillisecondsSince(clockId) < delay) {
             return;
         }
-        registry.getClock().restart(clockId);
         auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::Player)});
         auto arrPosition = registry.getComponents<Types::Position>();
 
@@ -115,10 +114,13 @@ namespace Systems {
         auto &posCached = positionPlayerCached.second;
         const auto &pos = arrPosition[positionPlayerCached.first];
         if (pos.x != posCached.x || pos.y != posCached.y) {
+            registry.getClock().decreaseMilliseconds(clockId, delay);
             struct position_relative_s msg = {
                 .x = static_cast<char>(static_cast<int>(pos.x - posCached.x)),
                 .y = static_cast<char>(static_cast<int>(pos.y - posCached.y)),
             };
+            posCached.x = pos.x;
+            posCached.y = pos.y;
             Nitwork::NitworkClient::getInstance().addPositionRelativeMsg(msg);
         }
     }
@@ -134,7 +136,6 @@ namespace Systems {
         if (registry.getClock().elapsedSecondsSince(clockId) < delay) {
             return;
         }
-        registry.getClock().restart(clockId);
         auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::Player)});
         auto arrPosition = registry.getComponents<Types::Position>();
 
@@ -148,6 +149,7 @@ namespace Systems {
         if (position.x == msg.x && position.y == msg.y) {
             return;
         }
+        registry.getClock().decreaseSeconds(clockId, delay);
         position = msg;
         Nitwork::NitworkClient::getInstance().addPositionAbsoluteMsg(msg);
     }
@@ -164,6 +166,30 @@ namespace Systems {
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
         Systems::createMissile(position, missileType);
+    }
+
+    void receiveBroadcastAbsolutePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+
+        const struct msgPositionAbsoluteBroadcast_s &msg =
+            std::any_cast<struct msgPositionAbsoluteBroadcast_s>(any);
+        struct Types::Position position = {
+            static_cast<float>(msg.pos.x),
+            static_cast<float>(msg.pos.y),
+        };
+        auto &arrPos          = Registry::getInstance().getComponents<Types::Position>();
+        auto &arrOtherPlayers = Registry::getInstance().getComponents<Types::OtherPlayer>();
+        auto ids              = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::OtherPlayer)});
+        auto otherPlayer = std::find_if(ids.begin(), ids.end(), [&arrOtherPlayers, &msg](std::size_t id) {
+            return arrOtherPlayers[id].constId == msg.playerId;
+        });
+
+        if (otherPlayer == ids.end()) {
+            return;
+        }
+        arrPos[*otherPlayer] = position;
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()
