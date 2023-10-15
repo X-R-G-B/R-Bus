@@ -255,19 +255,20 @@ namespace Systems {
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        Registry &registry   = Registry::getInstance();
-        auto deadList        = registry.getComponents<Types::Dead>();
-        auto deadIdList      = deadList.getExistingsId();
-        Clock &clock         = registry.getClock();
-        std::size_t decrease = 0;
+        Registry &registry = Registry::getInstance();
+        auto deadList      = registry.getComponents<Types::Dead>();
+        auto deadIdList    = deadList.getExistingsId();
+        Clock &clock       = registry.getClock();
+        auto it = deadIdList.begin();
 
-        for (auto id : deadIdList) {
-            auto tmpId        = id - decrease;
-            Types::Dead &dead = deadList[tmpId];
+        while (it != deadIdList.end()) {
+            Types::Dead &dead = deadList[*it];
             if (static_cast<int>(dead.clockId) > -1
                 && clock.elapsedMillisecondsSince(dead.clockId) > dead.timeToWait) {
-                registry.removeEntity(tmpId);
-                decrease++;
+                registry.removeEntity(*it);
+                it = deadIdList.erase(it);
+            } else {
+                ++it;
             }
         }
     }
