@@ -36,7 +36,7 @@ namespace Systems {
 
         for (auto id : ids) {
             if (enemies[id].getConstId().id == enemyDeath.enemyId.id) {
-                Logger::info("ROLLBACK REMOVE ENEMY !!!!!");
+                Logger::debug("ROLLBACK REMOVE ENEMY !!!!!");
                 Registry::getInstance().removeEntity(id);
                 return;
             }
