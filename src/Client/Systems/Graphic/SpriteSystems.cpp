@@ -78,7 +78,7 @@ namespace Systems {
             return;
         }
         incrementRect(animRect);
-        clock_.restart(clockIds[id]);
+        clock_.decreaseMilliseconds(clockIds[id], elapsedBetweenAnim);
     }
 
     void GraphicSystems::rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/)

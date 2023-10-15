@@ -12,7 +12,7 @@
     #include "MessageTypes.h"
 
     #define HEADER_SIZE sizeof(struct header_s)
-    #define TICKS_PER_SECOND 20
+    #define TICKS_PER_SECOND 60
     #define ONE_SECOND 1000
     #define DEFAULT_THREAD_NB 4
     #define MAX_NB_ACTION 16
@@ -22,17 +22,20 @@
 
     #define MAGICK_INIT '\x06'
     #define MAGICK_READY '\x17'
-    #define MAGICK_START_WAVE '\a'
-    #define MAGICK_POSITION_RELATIVE '\b'
-    #define MAGICK_POSITION_ABSOLUTE '\f'
+    #define MAGICK_START_WAVE '\x07'
+    #define MAGICK_POSITION_RELATIVE '\x08'
+    #define MAGICK_POSITION_ABSOLUTE '\x09'
     #define MAGICK_LIFE_UPDATE '\x0b'
     #define MAGICK_ENEMY_DEATH '\x0c'
     #define MAGICK_NEW_ENEMY '\x0e'
-    #define MAGICK_NEW_BULLET '\x0c'
+    #define MAGICK_NEW_BULLET '\x0d'
+    #define MAGICK_POSITION_RELATIVE_BROADCAST '\x0f'
+    #define MAGICK_POSITION_ABSOLUTE_BROADCAST '\x10'
+    #define MAGICK_NEW_ALLIE '\x0a'
 
-typedef char n_magick_t;
+typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
-typedef int n_nbAction_t;
+typedef unsigned char n_nbAction_t;
 
 enum n_actionType_t {
     NO_ACTION = 0,
@@ -47,6 +50,7 @@ enum n_actionType_t {
     NEW_ENEMY = 10,
     NEW_ALLIE = 11,
     POSITION_RELATIVE_BROADCAST = 12,
+    POSITION_ABSOLUTE_BROADCAST = 13,
     N_ACTION_TYPE_MAX,
 };
 
@@ -198,8 +202,8 @@ PACK(struct packetNewAllie_s {
 
 /* Message broadcast position relative */
 PACK(struct msgPositionRelativeBroadcast_s {
-    char x;
-    char y;
+    n_magick_t magick;
+    struct position_relative_s pos;
     n_id_t playerId;
 });
 
@@ -207,6 +211,19 @@ PACK(struct packetPositionRelativeBroadcast_s {
         struct header_s header;
         struct action_s action;
         struct msgPositionRelativeBroadcast_s msg;
+});
+
+/* Message broadcast position absolute */
+PACK(struct msgPositionAbsoluteBroadcast_s {
+    n_magick_t magick;
+    struct position_absolute_s pos;
+    n_id_t playerId;
+});
+
+PACK(struct packetPositionAbsoluteBroadcast_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgPositionAbsoluteBroadcast_s msg;
 });
 
 #endif
