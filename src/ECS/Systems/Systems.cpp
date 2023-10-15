@@ -346,6 +346,7 @@ namespace Systems {
             Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
         std::size_t decrease = 0;
 
+        std::sort(ids.begin(), ids.end());
         for (auto &id : ids) {
             auto tmpId = id - decrease;
 #ifdef CLIENT
