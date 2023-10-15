@@ -239,11 +239,16 @@ namespace Systems {
         const std::size_t spawnDelay   = 2;
         Clock &clock                   = Registry::getInstance().getClock();
         static std::size_t clockId     = clock.create(true);
+        static bool fstCall = true;
 
+        if (fstCall) {
+            fstCall = false;
+            clock.restart(clockId);
+        }
         if (clock.elapsedSecondsSince(clockId) >= spawnDelay) {
             initEnemy(JsonType::DEFAULT_ENEMY);
             enemyNumber--;
-            clock.restart(clockId);
+            clock.decreaseSeconds(clockId, spawnDelay);
         }
         if (enemyNumber <= 0) {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
