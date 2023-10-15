@@ -294,25 +294,26 @@ namespace Systems {
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        Registry &registry = Registry::getInstance();
-        auto deadList      = registry.getComponents<Types::Dead>();
-        auto deadIdList    = deadList.getExistingsId();
-        Clock &clock       = registry.getClock();
-        auto it            = deadIdList.begin();
+        Registry &registry   = Registry::getInstance();
+        auto deadList        = registry.getComponents<Types::Dead>();
+        auto deadIdList      = deadList.getExistingsId();
+        Clock &clock         = registry.getClock();
+        std::size_t decrease = 0;
 
-        while (it != deadIdList.end()) {
-            Types::Dead &dead = deadList[*it];
+        std::sort(deadIdList.begin(), deadIdList.end());
+        for (auto id : deadIdList) {
+            auto tmpId        = id - decrease;
+            Types::Dead &dead = deadList[tmpId];
             if (static_cast<int>(dead.clockId) > -1
                 && clock.elapsedMillisecondsSince(dead.clockId) >= dead.timeToWait) {
-                registry.removeEntity(*it);
-                it = deadIdList.erase(it);
-            } else {
-                ++it;
+                registry.removeEntity(tmpId);
+                decrease++;
             }
         }
     }
 
-    static void executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead)
+    static void
+    executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead, std::size_t &decrease)
     {
         if (arrDead.exist(id) && arrDead[id].deathFunction != std::nullopt) {
             Types::Dead &deadComp = arrDead[id];
@@ -323,6 +324,7 @@ namespace Systems {
             }
         } else {
             Registry::getInstance().removeEntity(id);
+            decrease++;
         }
     }
 
@@ -346,15 +348,15 @@ namespace Systems {
         Registry::components<struct health_s> arrHealth =
             Registry::getInstance().getComponents<struct health_s>();
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
+        std::size_t decrease                      = 0;
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
-        for (auto it = ids.begin(); it != ids.end();) {
-            if (arrHealth.exist(*it) && arrHealth[*it].hp <= 0) {
-                sendEnemyDeath(*it);
-                executeDeathFunction(*it, arrDead);
-                it = ids.erase(it);
-            } else {
-                ++it;
+        std::sort(ids.begin(), ids.end());
+        for (auto &id : ids) {
+            auto tmpId = id - decrease;
+            if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
+                sendEnemyDeath(tmpId);
+                executeDeathFunction(tmpId, arrDead, decrease);
             }
         }
     }
