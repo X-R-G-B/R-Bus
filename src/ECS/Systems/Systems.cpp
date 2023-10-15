@@ -201,7 +201,6 @@ namespace Systems {
                 Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
                 Json::getInstance().getDataFromJson<float>(elem, "width"),
                 Json::getInstance().getDataFromJson<float>(elem, "height"),
-                id,
                 LayerType::DEFAULTLAYER,
                 0};
 
@@ -444,7 +443,6 @@ namespace Systems {
             Json::getInstance().getDataByVector({"player", "spritePath"}, playerType),
             Json::getInstance().getDataByVector({"player", "width"}, playerType),
             Json::getInstance().getDataByVector({"player", "height"}, playerType),
-            id,
             FRONTLAYER,
             static_cast<std::size_t>(FRONT));
 
@@ -511,7 +509,6 @@ namespace Systems {
             bulletPath,
             bulletWidth,
             bulletHeight,
-            entityId,
             FRONTLAYER,
             static_cast<std::size_t>(FRONT));
 #endif
