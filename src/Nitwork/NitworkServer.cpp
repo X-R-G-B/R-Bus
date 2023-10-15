@@ -259,6 +259,25 @@ namespace Nitwork {
         sendToAllClientsButNotOne(packet, senderEndpoint);
     }
 
+    void NitworkServer::broadcastAbsolutePositionMsg(
+        const struct position_absolute_s &pos,
+        boost::asio::ip::udp::endpoint &senderEndpoint)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetPositionAbsoluteBroadcast_s packetPosAbsoluteBroadcast = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = POSITION_ABSOLUTE_BROADCAST},
+            .msg    = {
+                       .magick   = MAGICK_POSITION_ABSOLUTE_BROADCAST,
+                       .pos      = {.x = pos.x, .y = pos.y},
+                       .playerId = getPlayerId(senderEndpoint)}
+        };
+        Packet packet(
+            packetPosAbsoluteBroadcast.action.magick,
+            std::make_any<struct packetPositionAbsoluteBroadcast_s>(packetPosAbsoluteBroadcast));
+        sendToAllClientsButNotOne(packet, senderEndpoint);
+    }
+
     n_id_t NitworkServer::getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const
     {
         return _playersIds.at(endpoint);
