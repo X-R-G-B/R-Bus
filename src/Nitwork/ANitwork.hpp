@@ -43,17 +43,19 @@ namespace Nitwork {
                     Logger::error("NITWORK: Package too big");
                     return;
                 }
-                packet.id   = id;
                 T data      = std::any_cast<T>(packet.body);
-                auto header = static_cast<struct header_s>(data.header);
-                header      = {
-                    HEADER_CODE1,
-                    getIdsReceived(packet.endpoint),
-                    getLastIdsReceived(packet.endpoint),
-                    id,
-                    header.nb_action,
-                    HEADER_CODE2};
-                data.header = header;
+                if (!packet.isResend) {
+                    packet.id   = id;
+                    auto header = static_cast<struct header_s>(data.header);
+                    header      = {
+                        HEADER_CODE1,
+                        getIdsReceived(packet.endpoint),
+                        getLastIdsReceived(packet.endpoint),
+                        id,
+                        header.nb_action,
+                        HEADER_CODE2};
+                    data.header = header;
+                }
 
                 _socket.async_send_to(
                     boost::asio::buffer(&data, sizeof(T)),
