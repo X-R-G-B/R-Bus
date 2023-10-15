@@ -104,7 +104,9 @@ namespace Systems {
         if (otherPlayer == ids.end()) {
             return;
         }
-        Logger::trace("Other player id: " + std::to_string(msg.playerId) + " relative position: " + std::to_string(position.x) + " " + std::to_string(position.y));
+        Logger::trace(
+            "Other player id: " + std::to_string(msg.playerId)
+            + " relative position: " + std::to_string(position.x) + " " + std::to_string(position.y));
         arrPos[*otherPlayer] += position;
     }
 
@@ -137,7 +139,8 @@ namespace Systems {
                 .x = static_cast<char>(static_cast<int>(pos.x - posCached.x)),
                 .y = static_cast<char>(static_cast<int>(pos.y - posCached.y)),
             };
-            Logger::trace("send pos relative\n\n" + std::to_string(msg.x) + " " + std::to_string(msg.y) + "\n\n");
+            Logger::trace(
+                "send pos relative\n\n" + std::to_string(msg.x) + " " + std::to_string(msg.y) + "\n\n");
             posCached.x = pos.x;
             posCached.y = pos.y;
             Nitwork::NitworkClient::getInstance().addPositionRelativeMsg(msg);
