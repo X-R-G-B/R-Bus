@@ -16,7 +16,7 @@ namespace ECS {
         if (!boost::filesystem::exists(path_tmp)) {
             Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
         }
-        _resourcePath = path_tmp.string();
+        _resourcePath = path_tmp.make_preferred().string();
         Logger::info("RESOURCE_MANAGER: Path Assets: " + _resourcePath);
         return;
 #endif
@@ -36,7 +36,7 @@ namespace ECS {
             Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
         }
 #endif
-        _resourcePath = path_tmp.string();
+        _resourcePath = path_tmp.make_preferred().string();
         Logger::info("RESOURCE_MANAGER: Path Assets: " + _resourcePath);
     }
 
@@ -49,6 +49,7 @@ namespace ECS {
         std::string path(path_const, std::string("assets").length(), std::string::npos);
         boost::filesystem::path path_tmp = _resourcePath;
         path_tmp.append(path);
+	path_tmp = path_tmp.make_preferred();
         if (!boost::filesystem::exists(path_tmp)) {
             Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
         } else {
