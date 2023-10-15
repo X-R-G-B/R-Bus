@@ -21,11 +21,11 @@ namespace Nitwork {
 
             static NitworkServer &getInstance();
 
-            bool start(
+            bool startServer(
                 int port,
-                int threadNb          = DEFAULT_THREAD_NB,
-                int tick              = TICKS_PER_SECOND,
-                const std::string &ip = "") final;
+                int nbPlayer,
+                int threadNb = DEFAULT_THREAD_NB,
+                int tick     = TICKS_PER_SECOND);
 
             /* Messages creation methods */
             void addStarWaveMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t enemyId);
@@ -84,6 +84,7 @@ namespace Nitwork {
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static NitworkServer _instance; // instance of the NitworkServer (singleton)
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
+            unsigned int _maxNbPlayer = 0; // max number of players
             std::list<boost::asio::ip::udp::endpoint>
                 _endpoints; // A vector of endpoints which will be used to send the actions to the clients
                             // and identify them

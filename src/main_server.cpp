@@ -18,24 +18,26 @@ static void signalHandler(int signum)
     signal(SIGINT, SIG_DFL);
 }
 
+static bool isNumber(const std::string &str)
+{
+    return std::all_of(str.begin(), str.end(), ::isdigit);
+}
+
 static bool checkArgs(int ac, const char **av)
 {
-    if (ac != 2) {
-        Logger::error("Usage: ./r-type_server <port>");
+    if (ac != 3) {
+        Logger::error("Usage: ./r-type_server <port> <playerNb>");
         return false;
     }
-    if (av[1][0] == '\0') {
-        Logger::error("Invalid ip");
-        return false;
-    }
-    for (int i = 0; av[1][i] != '\0'; i++) {
-        if (av[1][i] < '0' || av[1][i] > '9') {
-            Logger::error("Invalid port");
+    const std::vector<std::string> args(av + 1, av + ac);
+    for (const auto &arg : args) {
+        if (!isNumber(arg)) {
+            Logger::error("Invalid argument: " + arg);
             return false;
         }
     }
-    if (std::stoi(av[1]) < PORT_MIN || std::stoi(av[1]) > PORT_MAX) {
-        Logger::error("Invalid port");
+    if (std::stoi(args[0]) < PORT_MIN || std::stoi(args[0]) > PORT_MAX || std::stoi(args[1]) < 1) {
+        Logger::error("Invalid port or playerNb");
         return false;
     }
     return true;
@@ -51,7 +53,7 @@ int main(int ac, const char **av)
         return EXIT_EPITECH;
     }
     Logger::info("Starting Server...");
-    if (!Nitwork::NitworkServer::getInstance().start(std::stoi(av[1]))) {
+    if (!Nitwork::NitworkServer::getInstance().startServer(std::stoi(av[1]), std::stoi(av[2]))) {
         return EXIT_EPITECH;
     }
     Systems::SystemManagersDirector::getInstance().addSystemManager(Systems::getECSSystems());
