@@ -175,7 +175,8 @@ namespace Nitwork {
             Logger::info("Client not connected");
             return;
         }
-        auto pos = std::any_cast<struct position_relative_s>(msg);
+        auto msgData = std::any_cast<struct msgPositionRelative_s>(msg);
+        auto pos = msgData.pos;
         struct packetPositionRelativeBroadcast_s msgPosBroadcast = {
             .header =
                 {.magick1          = HEADER_CODE1,

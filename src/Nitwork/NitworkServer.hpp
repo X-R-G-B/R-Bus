@@ -104,7 +104,7 @@ namespace Nitwork {
                   }}},
                 {POSITION_RELATIVE,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
-                      handleBody<struct msgPositionRelativeBroadcast_s>(actionHandler, header);
+                      handleBody<struct msgPositionRelative_s>(actionHandler, header);
                   },
                   [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       handleRelativePositionMsg(msg, endpoint);
@@ -161,7 +161,13 @@ namespace Nitwork {
                     [this](Packet &packet) {
                         sendData<struct packetNewAllie_s>(packet);
                     }
-                }
+                },
+                {
+                    POSITION_RELATIVE_BROADCAST,
+                    [this](Packet &packet) {
+                        sendData<struct packetPositionRelativeBroadcast_s>(packet);
+                    }
+                 }
             };
     };
 } // namespace Nitwork
