@@ -65,6 +65,7 @@ namespace Systems {
     }
 
     const std::size_t waitTimeBullet = 500;
+    const std::string soundPathShoot = "assets/Audio/Sounds/laser.ogg";
 
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
@@ -73,12 +74,19 @@ namespace Systems {
         Registry::components<struct health_s> arrHealth   = registry.getComponents<struct health_s>();
         Clock &clock_                                     = registry.getClock();
         static std::size_t clockId                        = clock_.create(true);
+        Registry::components<Raylib::Sound> arrSounds = registry.getComponents<Raylib::Sound>();
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE) == false
             || clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
             return;
+        }
+
+        for (auto &sound : arrSounds) {
+            if (sound.getPath() == soundPathShoot) {
+                sound.setNeedToPlay(true);
+            }
         }
 
         for (auto &id : ids) {
