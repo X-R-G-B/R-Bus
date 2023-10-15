@@ -44,7 +44,8 @@ namespace ECS {
             return "";
         }
         if (path_const.substr(0, std::string("assets").length()) != std::string("assets")) {
-            Logger::error("RESOURCE_MANAGER: Invalid path given (must start with 'assets': " + path_const + ")");
+            Logger::error(
+                "RESOURCE_MANAGER: Invalid path given (must start with 'assets': " + path_const + ")");
             return "";
         }
         std::string path(path_const, std::string("assets").length(), std::string::npos);
