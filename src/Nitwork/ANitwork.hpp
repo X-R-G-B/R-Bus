@@ -43,7 +43,7 @@ namespace Nitwork {
                     Logger::error("NITWORK: Package too big");
                     return;
                 }
-                T data      = std::any_cast<T>(packet.body);
+                T data = std::any_cast<T>(packet.body);
                 if (!packet.isResend) {
                     packet.id   = id;
                     auto header = static_cast<struct header_s>(data.header);
