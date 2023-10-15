@@ -15,43 +15,43 @@ Json &Json::getInstance();
 
 - Get a data with JsonType :
 ```cpp
-nlohmann::basic_json<> Json::getDataByJsonType(JsonType dataType);
+nlohmann::json Json::getDataByJsonType(JsonType dataType);
 ```
 
 - Get a data with a key :
 ```cpp
-nlohmann::basic_json<> Json::getDataByJsonType(const std::string &index, JsonType dataType);
+nlohmann::json Json::getDataByJsonType(const std::string &index, JsonType dataType);
 ```
 
 - Get a data with vector of key :
 ```cpp
-nlohmann::basic_json<> getDataByVector(const std::vector<std::string> &indexes, JsonType dataType);
+nlohmann::json getDataByVector(const std::vector<std::string> &indexes, JsonType dataType);
 ```
 
 - Get a data from a json list :  
 This function is useful when you want to take a json list inside your json because all of your items of the list are in the vector.
 ```cpp
-std::vector<nlohmann::basic_json<>> getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType);
+std::vector<nlohmann::json> getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType);
 ```
 
 - Get a data from an existing json data :
 ```cpp
-nlohmann::json &getDataFromJson(nlohmann::basic_json<> jsonData, const std::string &index);
+nlohmann::json &getDataFromJson(nlohmann::json jsonData, const std::string &index);
 ```
 
 - Get a data from a vector of json data :
 ```cpp
-std::vector<nlohmann::basic_json<>> getDatasFromList(const std::vector<nlohmann::basic_json<>> &list, const std::string &key);
+std::vector<nlohmann::json> getDatasFromList(const std::vector<nlohmann::json> &list, const std::string &key);
 ```
 
 - Get a json list from a json data :
 ```cpp
-std::vector<nlohmann::basic_json<>> getDatasFromList(const nlohmann::basic_json<> &list, const std::string &key);
+std::vector<nlohmann::json> getDatasFromList(const nlohmann::json &list, const std::string &key);
 ```
 
 - Get a json list from a json data :
 ```cpp
-std::vector<nlohmann::basic_json<>> getDatasFromList(const nlohmann::basic_json<> &list);
+std::vector<nlohmann::json> getDatasFromList(const nlohmann::json &list);
 ```
 
 ## Errors handling
@@ -91,7 +91,7 @@ Here's a new json but with a list inside :
 You can see that all spritePath are in a list.  
 Here's how to proceed :
 ```cpp
-std::vector<nlohmann::basic_json<>> enemyData =  
+std::vector<nlohmann::json> enemyData =  
     Json::getInstance().getDataByJsonType("enemy", enemyType);
 ```
 And now you can iterate on your datas :
