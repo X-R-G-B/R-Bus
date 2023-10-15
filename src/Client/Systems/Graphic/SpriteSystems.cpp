@@ -219,7 +219,7 @@ namespace Systems {
                 spriteDatas.fileName,
                 spriteDatas.width,
                 spriteDatas.height,
-                spriteDatas.id);
+                id);
             arrSprite.insert(id, sprite);
             switch (spriteDatas.layer) {
                 case BACKLAYER:
