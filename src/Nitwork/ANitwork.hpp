@@ -26,12 +26,14 @@ namespace Nitwork {
             void operator=(const ANitwork &)  = delete;
             void operator=(const ANitwork &&) = delete;
 
-            // start the NitworkServer
-            bool start(int port, int threadNb, int tick, const std::string &ip = "") override;
-
             void stop() override;
 
             bool isRunning() const final;
+        protected:
+            ANitwork();
+            // start the NitworkServer
+            bool start(int port, int threadNb, int tick, const std::string &ip = "") final;
+
             // send data to the endpoint with the given data
             template <typename T>
             void sendData(Packet &packet)
@@ -45,17 +47,19 @@ namespace Nitwork {
                     Logger::error("NITWORK: Package too big");
                     return;
                 }
-                packet.id   = id;
-                T data      = std::any_cast<T>(packet.body);
-                auto header = static_cast<struct header_s>(data.header);
-                header      = {
-                    HEADER_CODE1,
-                    getIdsReceived(packet.endpoint),
-                    getLastIdsReceived(packet.endpoint),
-                    id,
-                    header.nb_action,
-                    HEADER_CODE2};
-                data.header = header;
+                T data = std::any_cast<T>(packet.body);
+                if (!packet.getIsResend()) {
+                    packet.id                 = id;
+                    auto oldHeader            = static_cast<struct header_s>(data.header);
+                    struct header_s newHeader = {
+                        HEADER_CODE1,
+                        getIdsReceived(packet.endpoint),
+                        getLastIdsReceived(packet.endpoint),
+                        id,
+                        oldHeader.nb_action,
+                        HEADER_CODE2};
+                    data.header = newHeader;
+                }
 
                 _socket.async_send_to(
                     boost::asio::buffer(&data, sizeof(T)),
@@ -73,14 +77,10 @@ namespace Nitwork {
                     });
             }
 
-        protected:
-            ANitwork();
-
             /* Getters / Setters */
             n_idsReceived_t getIdsReceived(const boost::asio::ip::udp::endpoint &endpoint);
             n_id_t getLastIdsReceived(const boost::asio::ip::udp::endpoint &endpoint);
             n_id_t getPacketId(const boost::asio::ip::udp::endpoint &endpoint);
-            const boost::asio::ip::udp::endpoint &getEndpointSender();
             void addPacketToSend(const Packet &);
             void handlePacketIdsReceived(const struct header_s &header);
 

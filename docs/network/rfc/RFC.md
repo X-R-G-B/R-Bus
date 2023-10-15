@@ -295,7 +295,8 @@ Table of Contents
 2.2.2.2.    READY
 
     The Client must send a ready action to enter/start the game.
-    The Server respond to this action with a ready action.
+    The Server respond to this action by sending a start wave action, only if
+    all the clients are ready
 
 2.2.2.2.1.  Client
 

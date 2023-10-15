@@ -95,14 +95,15 @@ namespace Systems {
         auto arrPosition    = Registry::getInstance().getComponents<Types::Position>();
         std::vector<std::size_t> ids = arrOtherPlayer.getExistingsId();
 
-        Logger::info("receive pos relative\n\n");
+        Logger::info("receive pos relative " + std::to_string(relativePosition.pos.x) + " " + std::to_string(relativePosition.pos.y) + "\n\n\n");
         for (auto id : ids) {
             if (arrOtherPlayer[id].constId == relativePosition.playerId) {
                 auto &pos = arrPosition[id];
                 Types::Position relativePos = {static_cast<float>(relativePosition.pos.x), static_cast<float>(relativePosition.pos.y)};
-                Logger::info("Apply pos relative\n\n");
+                Logger::info("before Apply pos relative, pos: " + std::to_string(pos.x) + " " + std::to_string(pos.y) + "\n\n");
                 pos.x += relativePos.x;
                 pos.y += relativePos.y;
+                Logger::info("after Apply pos relative, pos: " + std::to_string(arrPosition[id].x) + " " + std::to_string(arrPosition[id].y) + "\n\n");
             }
         }
     }
@@ -118,7 +119,6 @@ namespace Systems {
         if (registry.getClock().elapsedMillisecondsSince(clockId) < delay) {
             return;
         }
-        registry.getClock().restart(clockId);
         auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::Player)});
         auto arrPosition = registry.getComponents<Types::Position>();
 
@@ -132,11 +132,14 @@ namespace Systems {
         auto &posCached = positionPlayerCached.second;
         const auto &pos = arrPosition[positionPlayerCached.first];
         if (pos.x != posCached.x || pos.y != posCached.y) {
+            registry.getClock().decreaseMilliseconds(clockId, delay);
             struct position_relative_s msg = {
                 .x = static_cast<char>(static_cast<int>(pos.x - posCached.x)),
                 .y = static_cast<char>(static_cast<int>(pos.y - posCached.y)),
             };
-            Logger::info("send pos relative\n\n");
+            Logger::info("send pos relative\n\n" + std::to_string(msg.x) + " " + std::to_string(msg.y) + "\n\n");
+            posCached.x = pos.x;
+            posCached.y = pos.y;
             Nitwork::NitworkClient::getInstance().addPositionRelativeMsg(msg);
         }
     }
@@ -152,7 +155,6 @@ namespace Systems {
         if (registry.getClock().elapsedSecondsSince(clockId) < delay) {
             return;
         }
-        registry.getClock().restart(clockId);
         auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::Player)});
         auto arrPosition = registry.getComponents<Types::Position>();
 
@@ -166,6 +168,7 @@ namespace Systems {
         if (position.x == msg.x && position.y == msg.y) {
             return;
         }
+        registry.getClock().decreaseSeconds(clockId, delay);
         position = msg;
         Nitwork::NitworkClient::getInstance().addPositionAbsoluteMsg(msg);
     }

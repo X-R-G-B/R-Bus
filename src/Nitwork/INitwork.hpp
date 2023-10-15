@@ -56,11 +56,22 @@ namespace Nitwork {
                   endpoint(endpoint)
             {
             }
+            [[nodiscard]] bool getIsResend() const
+            {
+                return _isResend;
+            }
+            void setIsResend(bool value)
+            {
+                _isResend = value;
+            }
 
             n_id_t id = 0;
             n_actionType_t action;
             std::any body;
             boost::asio::ip::udp::endpoint endpoint;
+
+        private:
+            bool _isResend = false;
     };
 
     using actionSender = std::function<void(Packet &)>;
