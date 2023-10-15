@@ -45,9 +45,9 @@ namespace Nitwork {
                 }
                 T data = std::any_cast<T>(packet.body);
                 if (!packet.getIsResend()) {
-                    packet.id      = id;
-                    auto oldHeader = static_cast<struct header_s>(data.header);
-                    struct header_s newHeader      = {
+                    packet.id                 = id;
+                    auto oldHeader            = static_cast<struct header_s>(data.header);
+                    struct header_s newHeader = {
                         HEADER_CODE1,
                         getIdsReceived(packet.endpoint),
                         getLastIdsReceived(packet.endpoint),
