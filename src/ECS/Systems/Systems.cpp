@@ -274,7 +274,7 @@ namespace Systems {
     }
 
     static void
-    executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead, std::size_t &decrease)
+    executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead)
     {
         if (arrDead.exist(id) && arrDead[id].deathFunction != std::nullopt) {
             Types::Dead &deadComp = arrDead[id];
@@ -285,7 +285,6 @@ namespace Systems {
             }
         } else {
             Registry::getInstance().removeEntity(id);
-            decrease++;
         }
     }
 
@@ -309,14 +308,15 @@ namespace Systems {
         Registry::components<struct health_s> arrHealth =
             Registry::getInstance().getComponents<struct health_s>();
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
-        std::size_t decrease                      = 0;
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
-        for (auto &id : ids) {
-            auto tmpId = id - decrease;
-            if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
-                sendEnemyDeath(tmpId);
-                executeDeathFunction(tmpId, arrDead, decrease);
+        for (auto it = ids.begin(); it != ids.end();) {
+            if (arrHealth.exist(*it) && arrHealth[*it].hp <= 0) {
+                sendEnemyDeath(*it);
+                executeDeathFunction(*it, arrDead);
+                it = ids.erase(it);
+            } else {
+                ++it;
             }
         }
     }
