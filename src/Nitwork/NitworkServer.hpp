@@ -182,7 +182,7 @@ namespace Nitwork {
                 },
                 {POSITION_ABSOLUTE_BROADCAST,
                  [this](Packet &packet) {
-                     sendData<struct packetPositionAbsolute_s>(packet);
+                     sendData<struct packetPositionAbsoluteBroadcast_s>(packet);
                  }},
             };
     };
