@@ -178,6 +178,7 @@ namespace Systems {
 
     void initEnemy(JsonType enemyType, bool setId, struct ::enemy_id_s enemyId)
     {
+        static std::vector<float> posToDecrement = {27.0, 20.0, 40.0, 80.0, 40.0};
         std::vector<nlohmann::basic_json<>> enemyData =
             Json::getInstance().getDataByJsonType("enemy", enemyType);
 
@@ -229,6 +230,8 @@ namespace Systems {
                 Types::Boss boss = {true};
                 Registry::getInstance().getComponents<Types::Boss>().insertBack(boss);
             }
+            position.y -= posToDecrement.back();
+            posToDecrement.pop_back();
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
             Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
             Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
@@ -240,6 +243,7 @@ namespace Systems {
 
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
+        const float posToGo = 65.0;
         Registry::components<Types::Position> &arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Velocity> &arrVelocity =
@@ -253,6 +257,10 @@ namespace Systems {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
         for (auto &id : ids) {
+            if (arrPosition[id].x <= posToGo) {
+                arrVelocity[id].speedX = 0;
+                arrVelocity[id].speedY = 0.2;
+            }
             if (arrPosition[id].y < 0) {
                 arrVelocity[id].speedY = 0.2;
             }

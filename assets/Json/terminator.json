@@ -7,7 +7,7 @@
             "width": 20.0,
             "height": 20.0,
             "position" : {
-                "x": 70.0,
+                "x": 110.0,
                 "y": 50.0
             },
             "rect": {
@@ -21,8 +21,8 @@
                 "height":20.0
             },
             "velocity": {
-                "speedX": 0.0,
-                "speedY": 0.2
+                "speedX": -0.2,
+                "speedY": 0.0
             },
             "animRect": {
                 "move": [
