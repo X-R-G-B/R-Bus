@@ -23,7 +23,7 @@
 
 extern "C"
 {
-    #include "MessageTypes.h"
+#include "MessageTypes.h"
 }
 
 namespace Systems {

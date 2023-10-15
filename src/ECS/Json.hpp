@@ -20,7 +20,7 @@ enum class JsonType { DEFAULT_ENEMY, DEFAULT_PLAYER, DEFAULT_PARALLAX, TERMINATO
 
 const std::unordered_map<enemy_type_e, JsonType> messageTypes = {
     {CLASSIC_ENEMY, JsonType::DEFAULT_ENEMY},
-    {TERMINATOR, JsonType::TERMINATOR}
+    {TERMINATOR,    JsonType::TERMINATOR   }
 };
 
 const std::unordered_map<JsonType, std::string> pathToJson = {
