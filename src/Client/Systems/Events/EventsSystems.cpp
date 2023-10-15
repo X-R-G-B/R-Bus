@@ -76,7 +76,7 @@ namespace Systems {
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE)
-            && clock_.elapsedMillisecondsSince(clockId) > waitTimeBullet) {
+            && clock_.elapsedMillisecondsSince(clockId) >= waitTimeBullet) {
             clock_.restart(clockId);
             for (auto &id : ids) {
                 // send bullet to server

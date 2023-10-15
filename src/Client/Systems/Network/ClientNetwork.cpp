@@ -36,6 +36,7 @@ namespace Systems {
 
         for (auto id : ids) {
             if (enemies[id].getConstId().id == enemyDeath.enemyId.id) {
+                Logger::debug("ROLLBACK REMOVE ENEMY !!!!!");
                 Registry::getInstance().removeEntity(id);
                 return;
             }
@@ -67,6 +68,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
 
+        Logger::debug("ROLLBACK RECREATE ENEMY !!!!!");
         initEnemy(JsonType::DEFAULT_ENEMY, true, newEnemy.enemyInfos.id);
         Types::Position pos = {
             static_cast<float>(newEnemy.enemyInfos.pos.x),

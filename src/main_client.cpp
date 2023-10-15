@@ -61,7 +61,8 @@ int main(int ac, char **av)
         return EXIT_EPITECH;
     }
     auto &sceneManager = Scene::SceneManager::getInstance();
-    if (!Nitwork::NitworkClient::getInstance().start(std::stoi(av[2]), 4, 60, av[1])) {
+    if (!Nitwork::NitworkClient::getInstance()
+             .start(std::stoi(av[2]), DEFAULT_THREAD_NB, TICKS_PER_SECOND, av[1])) {
         return EXIT_EPITECH;
     }
     Nitwork::NitworkClient::getInstance().addInitMsg();
