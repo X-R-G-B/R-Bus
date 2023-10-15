@@ -257,7 +257,7 @@ namespace Systems {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
         for (auto &id : ids) {
-            if (arrPosition[id].x <= posToGo) {
+            if (arrPosition[id].x <= posToGo && arrVelocity[id].speedY == 0) {
                 arrVelocity[id].speedX = 0;
                 arrVelocity[id].speedY = 0.2;
             }
