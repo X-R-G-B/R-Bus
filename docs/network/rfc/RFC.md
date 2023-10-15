@@ -114,13 +114,13 @@ Table of Contents
                             2.2.2.12.1.2.1. X
                             2.2.2.12.1.2.2. Y
                         2.2.2.12.1.3. Player ID
-                2.2.2.12. POSITION_ABSOLUTE_BROADCAST
-                    2.2.2.12.1. Server
-                        2.2.2.12.1.1. Magick
-                        2.2.2.12.1.2. Position
-                            2.2.2.12.1.2.1. X
-                            2.2.2.12.1.2.2. Y
-                        2.2.2.12.1.3. Player ID
+                2.2.2.13. POSITION_ABSOLUTE_BROADCAST
+                    2.2.2.13.1. Server
+                        2.2.2.13.1.1. Magick
+                        2.2.2.13.1.2. Position
+                            2.2.2.13.1.2.1. X
+                            2.2.2.13.1.2.2. Y
+                        2.2.2.13.1.3. Player ID
     3. References
         3.1. R-Bus
         3.2. RFC
@@ -249,6 +249,7 @@ Table of Contents
     - NEW_ENEMY = 10,
     - NEW_ALLIE = 11,
     - POSITION_RELATIVE_BROADCAST = 12,
+    - POSITION_ABSOLUTE_BROADCAST = 13,
 
 2.2.2.  Action Body
 
@@ -758,46 +759,46 @@ Table of Contents
     This field correspond to the ID of the player that has its position
     modified.
 
-2.2.2.12.   POSITION_ABSOLUTE_BROADCAST
+2.2.2.13.   POSITION_ABSOLUTE_BROADCAST
 
     The Server can send a position absolute broadcast to all the players when a
     player send a position absolute action.
     It is up to the server to decide if he broadcast or not.
 
-2.2.2.12.1.     Server
+2.2.2.13.1.     Server
 
     The Server action contains the following fields:
     - `magick`
     - `position`
     - `player_id`
 
-2.2.2.12.1.1.   Magick
+2.2.2.13.1.1.   Magick
 
     This field help to know the packet is realy a position absolute broadcast
     action.
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
-    This field must be equal to the ascii `\xae`
+    This field must be equal to the ascii `\x10`
 
-2.2.2.12.1.2.   Position
+2.2.2.13.1.2.   Position
 
     This field correspond to the absolute position of the player and contains
     the following fields:
     - `x`
     - `y`
 
-2.2.2.12.1.2.1.     X
+2.2.2.13.1.2.1.     X
 
     This field must be of size 4 byte.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-2.2.2.12.1.2.2.     Y
+2.2.2.13.1.2.2.     Y
 
     This field must be of size 4 byte.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-2.2.2.12.1.3.   Player ID
+2.2.2.13.1.3.   Player ID
 
     This field correspond to the ID of the player that has its position
     modified.
