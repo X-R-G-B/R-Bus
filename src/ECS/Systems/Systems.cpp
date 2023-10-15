@@ -240,6 +240,7 @@ namespace Systems {
 
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
+        const float bossSpeed = 0.2F;
         Registry::components<Types::Position> &arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Velocity> &arrVelocity =
@@ -254,10 +255,10 @@ namespace Systems {
         }
         for (auto &id : ids) {
             if (arrPosition[id].y < 0) {
-                arrVelocity[id].speedY = 0.2;
+                arrVelocity[id].speedY = bossSpeed;
             }
             if (arrPosition[id].y + arrCollisonRect[id].height > maxPercent) {
-                arrVelocity[id].speedY = -0.2;
+                arrVelocity[id].speedY = -bossSpeed;
             }
         }
     }
@@ -299,6 +300,7 @@ namespace Systems {
         Clock &clock         = registry.getClock();
         std::size_t decrease = 0;
 
+        std::sort(deadIdList.begin(), deadIdList.end());
         for (auto id : deadIdList) {
             auto tmpId        = id - decrease;
             Types::Dead &dead = deadList[tmpId];
@@ -349,6 +351,7 @@ namespace Systems {
         std::size_t decrease                      = 0;
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
+        std::sort(ids.begin(), ids.end());
         for (auto &id : ids) {
             auto tmpId = id - decrease;
             if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
@@ -383,6 +386,7 @@ namespace Systems {
             Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
         std::size_t decrease = 0;
 
+        std::sort(ids.begin(), ids.end());
         for (auto &id : ids) {
             auto tmpId = id - decrease;
 #ifdef CLIENT

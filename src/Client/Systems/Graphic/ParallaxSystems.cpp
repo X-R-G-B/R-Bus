@@ -63,11 +63,7 @@ namespace Systems::ParallaxSystems {
         Registry::components<Types::Position> &arrPosition)
     {
         if (arrPosition[id].x <= maxOutParallaxLeft) {
-            if (arrParallax[id].x >= maxOutParallaxRight) {
-                arrPosition[id].x = arrParallax[id].x;
-            } else {
-                arrPosition[id].x = arrParallax[id].x + maxOutParallaxRight;
-            }
+            arrPosition[id].x += maxOutParallaxRight * 2;
             arrPosition[id].y = arrParallax[id].y;
         }
     }
