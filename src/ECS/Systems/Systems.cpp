@@ -311,8 +311,7 @@ namespace Systems {
         }
     }
 
-    static void
-    executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead)
+    static void executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead)
     {
         if (arrDead.exist(id) && arrDead[id].deathFunction != std::nullopt) {
             Types::Dead &deadComp = arrDead[id];
