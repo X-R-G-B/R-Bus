@@ -142,10 +142,21 @@ namespace Nitwork {
                     }
                 },
                 {
+                    POSITION_RELATIVE_BROADCAST,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgPositionRelativeBroadcast_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveRelativePosition(any, endpoint);
+                        }
+                    },
+                },
+                {
                     POSITION_ABSOLUTE_BROADCAST,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
-                            handleBody<struct msgPositionAbsolute_s>(handler, header);
+                            handleBody<struct msgPositionAbsoluteBroadcast_s>(handler, header);
                         },
                         [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             Systems::receiveBroadcastAbsolutePosition(any, endpoint);
