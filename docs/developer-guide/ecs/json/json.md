@@ -1,3 +1,4 @@
+[logger]: ../logger.md
 # Usage
 
 ## JsonType available
@@ -52,6 +53,9 @@ std::vector<nlohmann::basic_json<>> getDatasFromList(const nlohmann::basic_json<
 ```cpp
 std::vector<nlohmann::basic_json<>> getDatasFromList(const nlohmann::basic_json<> &list);
 ```
+
+## Errors handling
+All the methods above Log an error with the class [Logger][logger] and throw an std::runtime_error if the arguments are incorect or the key in the json is not found because if the data is not get correctly the rest of rest programm might crash.
 
 ## Some examples
 
