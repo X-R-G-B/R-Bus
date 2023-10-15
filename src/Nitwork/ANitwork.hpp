@@ -27,6 +27,7 @@ namespace Nitwork {
             void operator=(const ANitwork &&) = delete;
 
             void stop() override;
+
         protected:
             ANitwork();
             // start the NitworkServer

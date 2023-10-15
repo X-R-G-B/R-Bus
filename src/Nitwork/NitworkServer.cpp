@@ -22,11 +22,7 @@ namespace Nitwork {
         return _instance;
     }
 
-    bool NitworkServer::startServer(
-        int port,
-        int nbPlayer,
-        int threadNb,
-        int tick)
+    bool NitworkServer::startServer(int port, int nbPlayer, int threadNb, int tick)
     {
         _maxNbPlayer = nbPlayer;
         return ANitwork::start(port, threadNb, tick, "");
