@@ -20,12 +20,7 @@ static void signalHandler(int signum)
 
 static bool isNumber(const std::string &str)
 {
-    for (auto c : str) {
-        if (c < '0' || c > '9') {
-            return false;
-        }
-    }
-    return true;
+    return std::all_of(str.begin(), str.end(), ::isdigit);
 }
 
 static bool checkArgs(int ac, const char **av)
