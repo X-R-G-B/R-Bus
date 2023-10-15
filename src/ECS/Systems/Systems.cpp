@@ -21,6 +21,11 @@
     #include "NitworkServer.hpp"
 #endif
 
+extern "C"
+{
+#include "MessageTypes.h"
+}
+
 namespace Systems {
     constexpr float maxPercent = 100.0F;
 
@@ -176,10 +181,11 @@ namespace Systems {
         }
     }
 
-    void initEnemy(JsonType enemyType, bool setId, struct ::enemy_id_s enemyId)
+    void initEnemy(enemy_type_e enemyType, bool setId, struct ::enemy_id_s enemyId)
     {
+        JsonType jsonType = messageTypes.at(enemyType);
         std::vector<nlohmann::basic_json<>> enemyData =
-            Json::getInstance().getDataByJsonType("enemy", enemyType);
+            Json::getInstance().getDataByJsonType("enemy", jsonType);
 
         for (auto &elem : enemyData) {
 #ifdef CLIENT
@@ -225,8 +231,8 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
             Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(enemy);
 #endif
-            if (enemyType == JsonType::TERMINATOR) {
-                Types::Boss boss = {true};
+            if (jsonType == JsonType::TERMINATOR) {
+                Types::Boss boss = {};
                 Registry::getInstance().getComponents<Types::Boss>().insertBack(boss);
             }
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
@@ -240,6 +246,7 @@ namespace Systems {
 
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
+        const float bossSpeed = 0.2F;
         Registry::components<Types::Position> &arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Velocity> &arrVelocity =
@@ -254,10 +261,10 @@ namespace Systems {
         }
         for (auto &id : ids) {
             if (arrPosition[id].y < 0) {
-                arrVelocity[id].speedY = 0.2;
+                arrVelocity[id].speedY = bossSpeed;
             }
             if (arrPosition[id].y + arrCollisonRect[id].height > maxPercent) {
-                arrVelocity[id].speedY = -0.2;
+                arrVelocity[id].speedY = -bossSpeed;
             }
         }
     }
@@ -279,12 +286,12 @@ namespace Systems {
             clock.restart(clockId);
         }
         if (clock.elapsedSecondsSince(clockId) >= spawnDelay && enemyNumber > 0) {
-            initEnemy(JsonType::DEFAULT_ENEMY);
+            initEnemy(CLASSIC_ENEMY);
             enemyNumber--;
             clock.decreaseSeconds(clockId, spawnDelay);
         }
         if (enemyArr.getExistingsId().empty() && enemyNumber <= 0 && bossArr.getExistingsId().empty()) {
-            initEnemy(JsonType::TERMINATOR);
+            initEnemy(TERMINATOR);
             SystemManagersDirector::getInstance().getSystemManager(managerId).addSystem(manageBoss);
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
@@ -299,6 +306,7 @@ namespace Systems {
         Clock &clock         = registry.getClock();
         std::size_t decrease = 0;
 
+        std::sort(deadIdList.begin(), deadIdList.end());
         for (auto id : deadIdList) {
             auto tmpId        = id - decrease;
             Types::Dead &dead = deadList[tmpId];
@@ -349,6 +357,7 @@ namespace Systems {
         std::size_t decrease                      = 0;
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
+        std::sort(ids.begin(), ids.end());
         for (auto &id : ids) {
             auto tmpId = id - decrease;
             if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
@@ -383,6 +392,7 @@ namespace Systems {
             Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
         std::size_t decrease = 0;
 
+        std::sort(ids.begin(), ids.end());
         for (auto &id : ids) {
             auto tmpId = id - decrease;
 #ifdef CLIENT
@@ -510,7 +520,6 @@ namespace Systems {
             entitiesCollision,
             destroyOutsideWindow,
             deathChecker,
-            moveEntities,
-            manageBoss};
+            moveEntities};
     }
 } // namespace Systems
