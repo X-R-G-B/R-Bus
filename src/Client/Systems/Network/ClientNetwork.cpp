@@ -69,7 +69,7 @@ namespace Systems {
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
 
         Logger::debug("ROLLBACK RECREATE ENEMY !!!!!");
-        initEnemy(JsonType::DEFAULT_ENEMY, true, newEnemy.enemyInfos.id);
+        initEnemy(JsonType::DEFAULT_ENEMY, {0.0, 0.0},true, newEnemy.enemyInfos.id);
         Types::Position pos = {
             static_cast<float>(newEnemy.enemyInfos.pos.x),
             static_cast<float>(newEnemy.enemyInfos.pos.y)};

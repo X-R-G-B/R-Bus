@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <utility>
+#include <iostream>
 #include "ResourcesManager.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -100,6 +101,14 @@ std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list, c
         datas.push_back(elem[index]);
     }
     return (datas);
+}
+
+nlohmann::json &Json::getDataFromJson(nlohmann::json jsonData, const std::string &index)
+{
+    if (jsonData[index] == nullptr) {
+        throw std::runtime_error("Json error");
+    }
+    return (jsonData[index]);
 }
 
 std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list)
