@@ -259,7 +259,7 @@ namespace Systems {
         auto deadList      = registry.getComponents<Types::Dead>();
         auto deadIdList    = deadList.getExistingsId();
         Clock &clock       = registry.getClock();
-        auto it = deadIdList.begin();
+        auto it            = deadIdList.begin();
 
         while (it != deadIdList.end()) {
             Types::Dead &dead = deadList[*it];

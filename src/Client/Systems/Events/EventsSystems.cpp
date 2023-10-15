@@ -70,14 +70,14 @@ namespace Systems {
     {
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
-        Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
+        Registry::components<struct health_s> arrHealth   = registry.getComponents<struct health_s>();
         Clock &clock_                                     = registry.getClock();
         static std::size_t clockId                        = clock_.create(true);
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
-        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE) == false ||
-            clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
+        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE) == false
+            || clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
             return;
         }
 
