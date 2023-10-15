@@ -161,7 +161,7 @@ namespace Types {
     };
 
     struct Boss {
-        bool dead;
+            bool dead;
     };
 
 } // namespace Types

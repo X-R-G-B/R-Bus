@@ -11,18 +11,13 @@
 #include <unordered_map>
 #include "Logger.hpp"
 
-enum class JsonType {
-    DEFAULT_ENEMY,
-    DEFAULT_PLAYER,
-    DEFAULT_PARALLAX,
-    TERMINATOR
-};
+enum class JsonType { DEFAULT_ENEMY, DEFAULT_PLAYER, DEFAULT_PARALLAX, TERMINATOR };
 
 const std::unordered_map<JsonType, std::string> pathToJson = {
     {JsonType::DEFAULT_ENEMY,    "assets/Json/enemyData.json"   },
     {JsonType::DEFAULT_PLAYER,   "assets/Json/playerData.json"  },
     {JsonType::DEFAULT_PARALLAX, "assets/Json/parallaxData.json"},
-    {JsonType::TERMINATOR, "assets/Json/terminator.json"}
+    {JsonType::TERMINATOR,       "assets/Json/terminator.json"  }
 };
 
 class Json {

@@ -24,7 +24,6 @@
 namespace Systems {
     constexpr float maxPercent = 100.0F;
 
-
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
@@ -247,8 +246,8 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Velocity>();
         Registry::components<Types::CollisionRect> &arrCollisonRect =
             Registry::getInstance().getComponents<Types::CollisionRect>();
-        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-            {typeid(Types::Boss)});
+        std::vector<std::size_t> ids =
+            Registry::getInstance().getEntitiesByComponents({typeid(Types::Boss)});
 
         if (ids.empty()) {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
@@ -271,8 +270,7 @@ namespace Systems {
         static std::size_t clockId     = clock.create(true);
         static bool fstCall            = true;
 
-        Registry::components<Types::Boss> &bossArr =
-            Registry::getInstance().getComponents<Types::Boss>();
+        Registry::components<Types::Boss> &bossArr = Registry::getInstance().getComponents<Types::Boss>();
         Registry::components<Types::Enemy> &enemyArr =
             Registry::getInstance().getComponents<Types::Enemy>();
 
