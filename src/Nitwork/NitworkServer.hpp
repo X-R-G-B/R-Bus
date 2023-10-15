@@ -73,7 +73,11 @@ namespace Nitwork {
 
             bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
 
-            void sendNewAllie(n_id_t playerId, struct packetNewAllie_s packetMsgNewAllie, boost::asio::ip::udp::endpoint &endpoint, bool butNoOne = true);
+            void sendNewAllie(
+                n_id_t playerId,
+                struct packetNewAllie_s packetMsgNewAllie,
+                boost::asio::ip::udp::endpoint &endpoint,
+                bool butNoOne = true);
 
             /* BEGIN handle messages methods */
             void handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
@@ -113,7 +117,7 @@ namespace Nitwork {
                   },
                   [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       handleRelativePositionMsg(msg, endpoint);
-                 }}},
+                  }}},
                 {LIFE_UPDATE,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgLifeUpdate_s>(actionHandler, header);
@@ -168,18 +172,14 @@ namespace Nitwork {
                  [this](Packet &packet) {
                      sendData<struct packetNewBullet_s>(packet);
                  }},
-                {
-                    NEW_ALLIE,
-                    [this](Packet &packet) {
-                        sendData<struct packetNewAllie_s>(packet);
-                    }
-                },
-                {
-                    POSITION_RELATIVE_BROADCAST,
-                    [this](Packet &packet) {
-                        sendData<struct packetPositionRelativeBroadcast_s>(packet);
-                    }
-                },
+                {NEW_ALLIE,
+                 [this](Packet &packet) {
+                     sendData<struct packetNewAllie_s>(packet);
+                 }},
+                {POSITION_RELATIVE_BROADCAST,
+                 [this](Packet &packet) {
+                     sendData<struct packetPositionRelativeBroadcast_s>(packet);
+                 }},
                 {POSITION_ABSOLUTE_BROADCAST,
                  [this](Packet &packet) {
                      sendData<struct packetPositionAbsoluteBroadcast_s>(packet);

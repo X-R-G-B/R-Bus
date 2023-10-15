@@ -108,7 +108,11 @@ namespace Nitwork {
     }
     /* End Check Methods Section */
 
-    void NitworkServer::sendNewAllie(n_id_t playerId, struct packetNewAllie_s packetMsgNewAllie, boost::asio::ip::udp::endpoint &endpoint, bool butNoOne)
+    void NitworkServer::sendNewAllie(
+        n_id_t playerId,
+        struct packetNewAllie_s packetMsgNewAllie,
+        boost::asio::ip::udp::endpoint &endpoint,
+        bool butNoOne)
     {
         packetMsgNewAllie.msg.playerId = playerId;
         if (butNoOne) {
@@ -182,7 +186,7 @@ namespace Nitwork {
             return;
         }
         auto msgData = std::any_cast<struct msgPositionRelative_s>(msg);
-        auto pos = msgData.pos;
+        auto pos     = msgData.pos;
         struct packetPositionRelativeBroadcast_s msgPosBroadcast = {
             .header =
                 {.magick1          = HEADER_CODE1,

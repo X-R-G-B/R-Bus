@@ -29,6 +29,7 @@ namespace Nitwork {
             void stop() override;
 
             bool isRunning() const final;
+
         protected:
             ANitwork();
             // start the NitworkServer

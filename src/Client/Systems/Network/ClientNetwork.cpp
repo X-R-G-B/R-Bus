@@ -83,20 +83,20 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newAllie = std::any_cast<struct msgNewAllie_s>(any);
 
-        Logger::fatal("NEW ALLIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n\n\n\n\n\n\n");
+        Logger::fatal(
+            "NEW ALLIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n\n\n\n\n\n\n");
         initPlayer(JsonType::DEFAULT_PLAYER, newAllie.playerId, true);
     }
 
     void receiveRelativePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const struct msgPositionRelativeBroadcast_s &msg = std::any_cast<struct msgPositionRelativeBroadcast_s>(any);
-        Types::Position position = {
-            static_cast<float>(msg.pos.x),
-            static_cast<float>(msg.pos.y)};
-        auto &arrPos          = Registry::getInstance().getComponents<Types::Position>();
-        auto &arrOtherPlayers = Registry::getInstance().getComponents<Types::OtherPlayer>();
-        auto ids              = Registry::getInstance().getEntitiesByComponents(
+        const struct msgPositionRelativeBroadcast_s &msg =
+            std::any_cast<struct msgPositionRelativeBroadcast_s>(any);
+        Types::Position position = {static_cast<float>(msg.pos.x), static_cast<float>(msg.pos.y)};
+        auto &arrPos             = Registry::getInstance().getComponents<Types::Position>();
+        auto &arrOtherPlayers    = Registry::getInstance().getComponents<Types::OtherPlayer>();
+        auto ids                 = Registry::getInstance().getEntitiesByComponents(
             {typeid(Types::Position), typeid(Types::OtherPlayer)});
         auto otherPlayer = std::find_if(ids.begin(), ids.end(), [&arrOtherPlayers, &msg](std::size_t id) {
             return arrOtherPlayers[id].constId == msg.playerId;
@@ -137,7 +137,8 @@ namespace Systems {
                 .x = static_cast<char>(static_cast<int>(pos.x - posCached.x)),
                 .y = static_cast<char>(static_cast<int>(pos.y - posCached.y)),
             };
-            Logger::info("send pos relative\n\n" + std::to_string(msg.x) + " " + std::to_string(msg.y) + "\n\n");
+            Logger::info(
+                "send pos relative\n\n" + std::to_string(msg.x) + " " + std::to_string(msg.y) + "\n\n");
             posCached.x = pos.x;
             posCached.y = pos.y;
             Nitwork::NitworkClient::getInstance().addPositionRelativeMsg(msg);

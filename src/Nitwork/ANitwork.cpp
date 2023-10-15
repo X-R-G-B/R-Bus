@@ -126,7 +126,7 @@ namespace Nitwork {
 
     void ANitwork::callReceiveHandler(const std::string &message)
     {
-        //Logger::error("NITWORK: " + message);
+        // Logger::error("NITWORK: " + message);
         startReceiveHandler();
     }
 
@@ -213,7 +213,7 @@ namespace Nitwork {
                     });
                     for (auto &action : _actions) {
                         try {
-                           action.second(action.first.data, action.first.endpoint);
+                            action.second(action.first.data, action.first.endpoint);
                         } catch (std::exception &e) {
                             Logger::error("NITWORK: catch action: " + std::string(e.what()));
                         }
