@@ -59,7 +59,7 @@ int main(int ac, const char **av)
     Systems::SystemManagersDirector::getInstance().addSystemManager(Systems::getECSSystems());
     signal(SIGINT, signalHandler);
 
-    while (isRunning) {
+    while (isRunning && Nitwork::NitworkServer::getInstance().isRunning()) {
         Systems::SystemManagersDirector::getInstance().getSystemManager(0).updateSystems();
     }
     Nitwork::NitworkServer::getInstance().stop();

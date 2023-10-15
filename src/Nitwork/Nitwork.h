@@ -190,7 +190,7 @@ PACK(struct packetPositionAbsolute_s {
 
 PACK(struct msgNewAllie_s {
         n_magick_t magick;
-        player_infos_s data;
+        n_id_t playerId;
 });
 
 PACK(struct packetNewAllie_s {

@@ -1,83 +1,30 @@
 {
     "player": {
-        "spritePath": "assets/R-TypeSheet/r-typesheet14.gif",
+        "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
         "damage": 10.0,
         "health": 1.0,
         "deadTime": 1000,
-        "width": 10.0,
-        "height" : 10.0,
+        "width": 5.0,
+        "height" : 5.0,
         "rect": {
-            "x": 250.0,
+            "x": 101.0,
             "y": 0.0,
-            "width": 46.0,
-            "height": 49.0
+            "width": 32.0,
+            "height": 19.0
         },
         "position" : {
             "x": 10,
             "y": 10
         },
         "collisionRect": {
-            "width": 6.0,
-            "height": 6.0
+            "width": 5.0,
+            "height": 5.0
         },
         "animRect": {
             "move" : [
-                {
-                    "x": 250.0,
-                    "y": 0.0,
-                    "width": 46.0,
-                    "height": 49.0
-                },
-                {
-                    "x": 299.0,
-                    "y": 0.0,
-                    "width": 46.0,
-                    "height": 49.0
-                },
-                {
-                    "x": 348.0,
-                    "y": 0.0,
-                    "width": 48.0,
-                    "height": 49.0
-                },
-                {
-                    "x": 399.0,
-                    "y": 0.0,
-                    "width": 47.0,
-                    "height": 49.0
-                },
-                {
-                    "x": 447.0,
-                    "y": 0.0,
-                    "width": 50.0,
-                    "height": 49.0
-                }
+
             ],
             "attack": [
-                {
-                    "x": 2.0,
-                    "y": 51.0,
-                    "width": 46.0,
-                    "height": 47.0
-                },
-                {
-                    "x": 101.0,
-                    "y": 2.0,
-                    "width": 48.0,
-                    "height": 47.0
-                },
-                {
-                    "x": 152.0,
-                    "y": 2.0,
-                    "width": 46.0,
-                    "height": 47.0
-                },
-                {
-                    "x": 202.0,
-                    "y": 2.0,
-                    "width": 46.0,
-                    "height": 47.0
-                }
             ],
             "dead": [
                 {

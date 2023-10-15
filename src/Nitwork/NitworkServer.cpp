@@ -108,6 +108,27 @@ namespace Nitwork {
     }
     /* End Check Methods Section */
 
+    void NitworkServer::sendNewAllie(
+        n_id_t playerId,
+        struct packetNewAllie_s packetMsgNewAllie,
+        boost::asio::ip::udp::endpoint &endpoint,
+        bool butNoOne)
+    {
+        packetMsgNewAllie.msg.playerId = playerId;
+        if (butNoOne) {
+            Packet packet(
+                packetMsgNewAllie.action.magick,
+                std::make_any<struct packetNewAllie_s>(packetMsgNewAllie));
+            sendToAllClientsButNotOne(packet, endpoint);
+        } else {
+            Packet packet(
+                packetMsgNewAllie.action.magick,
+                std::make_any<struct packetNewAllie_s>(packetMsgNewAllie),
+                endpoint);
+            addPacketToSend(packet);
+        }
+    }
+
     /* Handle packet (msg) Section */
     void
     NitworkServer::handleInitMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
@@ -121,7 +142,22 @@ namespace Nitwork {
             return;
         }
         _endpoints.emplace_back(endpoint);
-        addPlayerInitMessage(endpoint, static_cast<n_id_t>(_endpoints.size() - 1));
+        auto playerId = static_cast<n_id_t>(_endpoints.size() - 1);
+        // Send new Allie to others
+        addPlayerInitMessage(endpoint, playerId);
+        struct packetNewAllie_s packetMsgNewAllie = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = NEW_ALLIE},
+            .msg    = {.magick = MAGICK_NEW_ALLIE, .playerId = playerId}
+        };
+        Systems::initPlayer(JsonType::DEFAULT_PLAYER, playerId, true);
+        sendNewAllie(playerId, packetMsgNewAllie, endpoint);
+        for (const auto &[_, allieId] : _playersIds) {
+            if (allieId == playerId) {
+                continue;
+            }
+            sendNewAllie(allieId, packetMsgNewAllie, endpoint, false);
+        }
     }
 
     void
@@ -146,7 +182,8 @@ namespace Nitwork {
             Logger::info("Client not connected");
             return;
         }
-        auto pos = std::any_cast<struct position_relative_s>(msg);
+        auto msgData = std::any_cast<struct msgPositionRelative_s>(msg);
+        auto pos     = msgData.pos;
         struct packetPositionRelativeBroadcast_s msgPosBroadcast = {
             .header =
                 {.magick1          = HEADER_CODE1,

@@ -11,7 +11,17 @@
 #include <unordered_map>
 #include "Logger.hpp"
 
+extern "C"
+{
+#include "MessageTypes.h"
+}
+
 enum class JsonType { DEFAULT_ENEMY, DEFAULT_PLAYER, DEFAULT_PARALLAX, TERMINATOR, WAVE };
+
+const std::unordered_map<enemy_type_e, JsonType> messageTypes = {
+    {CLASSIC_ENEMY, JsonType::DEFAULT_ENEMY},
+    {TERMINATOR,    JsonType::TERMINATOR   }
+};
 
 const std::unordered_map<JsonType, std::string> pathToJson = {
     {JsonType::DEFAULT_ENEMY,    "assets/Json/enemyData.json"   },
