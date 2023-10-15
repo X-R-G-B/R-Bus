@@ -34,8 +34,7 @@ include(GNUInstallDirs)
 
 # ----------------------------------------------------------------------------
 
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/assets/" DESTINATION "share/${PROJECT_NAME_CLIENT}")
-install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/assets/" DESTINATION "share/${PROJECT_NAME_SERVER}")
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/assets/" DESTINATION "share/${PROJECT_NAME}")
 
 add_executable(
     ${PROJECT_NAME_CLIENT}

@@ -8,6 +8,10 @@ namespace ECS {
 
     void ResourcesManager::init(std::string execPath)
     {
+        if (!boost::filesystem::exists(execPath)) {
+            Logger::fatal("RESOURCE_MANAGER: Invalid execPath: " + execPath);
+            return;
+        }
         boost::filesystem::path path_tmp = execPath;
         path_tmp = path_tmp.remove_filename();
         path_tmp = boost::filesystem::absolute(path_tmp, boost::filesystem::initial_path());
@@ -25,17 +29,10 @@ namespace ECS {
         if (!boost::filesystem::exists(path_tmp)) {
             Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
         }
-#ifdef CLIENT
-        path_tmp.append("r-type_client");
+        path_tmp.append("r-type");
         if (!boost::filesystem::exists(path_tmp)) {
             Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
         }
-#else
-        path_tmp.append("r-type_server");
-        if (!boost::filesystem::exists(path_tmp)) {
-            Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
-        }
-#endif
         _resourcePath = path_tmp.make_preferred().string();
         Logger::info("RESOURCE_MANAGER: Path Assets: " + _resourcePath);
     }
@@ -44,6 +41,9 @@ namespace ECS {
     {
         if (_resourcePath.empty()) {
             Logger::fatal("RESOURCE_MANAGER: need to call init first (" + path_const + ")");
+            return "";
+        }
+        if (path_const.substr(0, std::string("assets").length()) != std::string("assets")) {
             return "";
         }
         std::string path(path_const, std::string("assets").length(), std::string::npos);
