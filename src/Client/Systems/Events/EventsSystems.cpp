@@ -85,6 +85,7 @@ namespace Systems {
         for (auto &sound : arrSounds) {
             if (sound.getPath() == soundPathShoot) {
                 sound.setNeedToPlay(true);
+                break;
             }
         }
 
