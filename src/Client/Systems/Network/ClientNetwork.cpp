@@ -27,7 +27,7 @@ namespace Systems {
         }
     }
 
-    void receiveEnemyDeath(std::any &any, boost::asio::ip::udp::endpoint &)
+    void receiveEnemyDeath(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto enemyDeath                      = std::any_cast<struct msgEnemyDeath_s>(any);
@@ -42,7 +42,7 @@ namespace Systems {
         }
     }
 
-    void handleStartWave(std::any &any, boost::asio::ip::udp::endpoint &)
+    void handleStartWave(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
@@ -53,7 +53,7 @@ namespace Systems {
         Logger::info("Wave started");
     }
 
-    void receivePlayerInit(std::any &any, boost::asio::ip::udp::endpoint &)
+    void receivePlayerInit(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto playerInit = std::any_cast<struct msgPlayerInit_s>(any);
@@ -62,7 +62,7 @@ namespace Systems {
         initPlayer(JsonType::DEFAULT_PLAYER, playerInit.playerId);
     }
 
-    void receiveNewEnemy(std::any &any, boost::asio::ip::udp::endpoint &)
+    void receiveNewEnemy(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
@@ -76,7 +76,7 @@ namespace Systems {
         Registry::getInstance().getComponents<struct health_s>().insertBack(hp);
     }
 
-    void receiveNewAllie(std::any &any, boost::asio::ip::udp::endpoint &)
+    void receiveNewAllie(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newAllie = std::any_cast<struct msgNewAllie_s>(any);
@@ -85,7 +85,7 @@ namespace Systems {
         initPlayer(JsonType::DEFAULT_PLAYER, newAllie.playerId, true);
     }
 
-    void receiveRelativePosition(std::any &any, boost::asio::ip::udp::endpoint &)
+    void receiveRelativePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto relativePosition = std::any_cast<struct msgPositionRelativeBroadcast_s>(any);

@@ -156,6 +156,12 @@ namespace Nitwork {
                  [this](Packet &packet) {
                      sendData<struct packetNewBullet_s>(packet);
                  }},
+                {
+                    NEW_ALLIE,
+                    [this](Packet &packet) {
+                        sendData<struct packetNewAllie_s>(packet);
+                    }
+                }
             };
     };
 } // namespace Nitwork

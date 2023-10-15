@@ -109,13 +109,13 @@ namespace Nitwork {
 
     void NitworkServer::sendNewAllie(n_id_t playerId, struct packetNewAllie_s packetMsgNewAllie, boost::asio::ip::udp::endpoint &endpoint, bool butNoOne)
     {
+        packetMsgNewAllie.msg.playerId = playerId;
         if (butNoOne) {
             Packet packet(
                 packetMsgNewAllie.action.magick,
                 std::make_any<struct packetNewAllie_s>(packetMsgNewAllie));
             sendToAllClientsButNotOne(packet, endpoint);
         } else {
-            packetMsgNewAllie.msg.playerId = playerId;
             Packet packet(
                 packetMsgNewAllie.action.magick,
                 std::make_any<struct packetNewAllie_s>(packetMsgNewAllie),
@@ -138,20 +138,22 @@ namespace Nitwork {
         }
         _endpoints.emplace_back(endpoint);
         auto playerId = static_cast<n_id_t>(_endpoints.size() - 1);
+        // Send new Allie to others
         addPlayerInitMessage(endpoint, playerId);
-        if (playerId != 0) {
-            struct packetNewAllie_s packetMsgNewAllie = {
-                .header = {0, 0, 0, 0, 1, 0},
-                .action = {.magick = NEW_ALLIE},
-                .msg    = {.magick = MAGICK_NEW_ALLIE, .playerId = playerId}
-            };
-            Logger::info("before sendNewAllie");
-            sendNewAllie(playerId, packetMsgNewAllie, endpoint);
-            Logger::info("after sendNewAllie");
-            for (n_id_t i = 0; i < playerId; i++) {
-                Logger::info("loop");
-                sendNewAllie(i, packetMsgNewAllie, endpoint, false);
+        struct packetNewAllie_s packetMsgNewAllie = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = NEW_ALLIE},
+            .msg    = {.magick = MAGICK_NEW_ALLIE, .playerId = playerId}
+        };
+        Logger::info("before sendNewAllie");
+        sendNewAllie(playerId, packetMsgNewAllie, endpoint);
+        Logger::info("after sendNewAllie");
+        for (const auto &[_, allieId] : _playersIds) {
+            if (allieId == playerId) {
+                continue;
             }
+            Logger::info("loop");
+            sendNewAllie(allieId, packetMsgNewAllie, endpoint, false);
         }
     }
 
