@@ -25,8 +25,8 @@ namespace Nitwork {
             bool startClient(
                 int port,
                 const std::string &ip,
-                int threadNb          = DEFAULT_THREAD_NB,
-                int tick              = TICKS_PER_SECOND);
+                int threadNb = DEFAULT_THREAD_NB,
+                int tick     = TICKS_PER_SECOND);
 
             // Messages creation methods
             void addInitMsg();
