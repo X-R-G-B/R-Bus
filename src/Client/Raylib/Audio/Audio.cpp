@@ -6,6 +6,7 @@
 */
 
 #include "Audio.hpp"
+#include "ResourcesManager.hpp"
 
 namespace Raylib {
 
@@ -33,8 +34,9 @@ namespace Raylib {
 
     // Sounds
     Sound::Sound(const std::string& fileName, float volume)
-        : _sound(LoadSound(fileName.c_str())),
-          _path(fileName)
+        : _path(fileName),
+          _realPath(ECS::ResourcesManager::convertPath(fileName)),
+          _sound(LoadSound(_realPath.c_str()))
     {
         SetSoundVolume(_sound, volume);
     }
@@ -104,11 +106,17 @@ namespace Raylib {
         return _path;
     }
 
+    std::string Sound::getRealPath() const
+    {
+        return _realPath;
+    }
+
     // Music
 
     Music::Music(const std::string& fileName, float volume)
-        : _music(LoadMusicStream(fileName.c_str())),
-          _path(fileName)
+        : _path(fileName),
+          _realPath(ECS::ResourcesManager::convertPath(fileName)),
+          _music(LoadMusicStream(_realPath.c_str()))
     {
         SetMusicVolume(_music, volume);
     }
@@ -191,5 +199,10 @@ namespace Raylib {
     std::string Music::getPath() const
     {
         return _path;
+    }
+
+    std::string Music::getRealPath() const
+    {
+        return _realPath;
     }
 } // namespace Raylib

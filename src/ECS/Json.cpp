@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <utility>
+#include "ResourcesManager.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
 Json Json::_instance = Json();
@@ -16,7 +17,7 @@ Json Json::_instance = Json();
 
 nlohmann::json Json::loadJsonData(const std::string &path)
 {
-    std::ifstream fileData(path);
+    std::ifstream fileData(ECS::ResourcesManager::convertPath(path));
     std::ostringstream input;
     nlohmann::json jsonData = {};
 
@@ -34,13 +35,13 @@ nlohmann::json Json::getDataByVector(const std::vector<std::string> &indexes, Js
 {
     nlohmann::json finalData(_jsonDatas[dataType]);
 
-    for (auto &key : indexes) {
+    for (const auto &key : indexes) {
         finalData = finalData[key];
         if (finalData == nullptr) {
             Logger::fatal(std::string("(getDataByVector) Key : " + key + " is not valid"));
             throw std::runtime_error("Json error");
         }
-        if (finalData.is_array() == true) {
+        if (finalData.is_array()) {
             return (finalData);
         }
     }
@@ -72,7 +73,7 @@ Json::getDatasFromList(const std::vector<nlohmann::json> &list, const std::strin
     std::vector<nlohmann::json> datas;
     std::vector<nlohmann::json> tmp;
 
-    for (auto &elem : list) {
+    for (const auto &elem : list) {
         if (elem[index] == nullptr) {
             Logger::fatal(std::string("(getDatasDromList : 2) Key : " + index + " is not valid"));
             throw std::runtime_error("Json error");
@@ -91,7 +92,7 @@ std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list, c
 {
     std::vector<nlohmann::json> datas;
 
-    for (auto &elem : list) {
+    for (const auto &elem : list) {
         if (elem[index] == nullptr) {
             Logger::fatal(std::string("(getDatasFromList : 1) Key : " + index + " is not valid"));
             throw std::runtime_error("Json error");
@@ -109,7 +110,7 @@ std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list)
         Logger::fatal(std::string("(getDatasFromList : 3) Conversion to list is not possible"));
         throw std::runtime_error("Json error");
     }
-    for (auto &elem : list) {
+    for (const auto &elem : list) {
         datas.push_back(elem);
     }
     return (datas);
@@ -141,8 +142,8 @@ Json::getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataT
     nlohmann::json &finalData(_jsonDatas[dataType]);
     std::vector<nlohmann::json> datas;
 
-    for (auto &key : indexes) {
-        if (finalData.is_array() == true || datas.empty() == false) {
+    for (const auto &key : indexes) {
+        if (finalData.is_array() || !datas.empty()) {
             datas = getDatasFromList(datas, finalData, key);
             continue;
         }
@@ -160,12 +161,10 @@ Json::getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataT
 
 Json &Json::getInstance()
 {
-    return _instance;
-}
-
-Json::Json()
-{
-    for (auto &it : pathToJson) {
-        _jsonDatas.insert({it.first, loadJsonData(it.second)});
+    if (_instance._jsonDatas.empty()) {
+        for (const auto &it : pathToJson) {
+            _instance._jsonDatas.insert({it.first, _instance.loadJsonData(it.second)});
+        }
     }
+    return _instance;
 }
