@@ -377,7 +377,8 @@ namespace Raylib {
         DrawRectangle(posX, posY, width, height, c);
     }
 
-    Image::Image(const std::string &fileName) : _image(LoadImage(ECS::ResourcesManager::convertPath(fileName).c_str()))
+    Image::Image(const std::string &fileName)
+        : _image(LoadImage(ECS::ResourcesManager::convertPath(fileName).c_str()))
     {
         if (!isImageReady()) {
             const ::Color badTexture          = {255, 16, 240, 255};
