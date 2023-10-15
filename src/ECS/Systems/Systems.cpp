@@ -302,7 +302,7 @@ namespace Systems {
         while (it != deadIdList.end()) {
             Types::Dead &dead = deadList[*it];
             if (static_cast<int>(dead.clockId) > -1
-                && clock.elapsedMillisecondsSince(dead.clockId) > dead.timeToWait) {
+                && clock.elapsedMillisecondsSince(dead.clockId) >= dead.timeToWait) {
                 registry.removeEntity(*it);
                 it = deadIdList.erase(it);
             } else {
