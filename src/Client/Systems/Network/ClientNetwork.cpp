@@ -68,7 +68,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
 
-        Logger::info("ROLLBACK RECREATE ENEMY !!!!!");
+        Logger::debug("ROLLBACK RECREATE ENEMY !!!!!");
         initEnemy(JsonType::DEFAULT_ENEMY, true, newEnemy.enemyInfos.id);
         Types::Position pos = {
             static_cast<float>(newEnemy.enemyInfos.pos.x),
