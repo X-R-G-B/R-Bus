@@ -21,6 +21,11 @@
     #include "NitworkServer.hpp"
 #endif
 
+extern "C"
+{
+#include "MessageTypes.h"
+}
+
 namespace Systems {
     constexpr float maxPercent = 100.0F;
 
@@ -176,10 +181,11 @@ namespace Systems {
         }
     }
 
-    void initEnemy(JsonType enemyType, bool setId, struct ::enemy_id_s enemyId)
+    void initEnemy(enemy_type_e enemyType, bool setId, struct ::enemy_id_s enemyId)
     {
+        JsonType jsonType = messageTypes.at(enemyType);
         std::vector<nlohmann::basic_json<>> enemyData =
-            Json::getInstance().getDataByJsonType("enemy", enemyType);
+            Json::getInstance().getDataByJsonType("enemy", jsonType);
 
         for (auto &elem : enemyData) {
 #ifdef CLIENT
@@ -225,8 +231,8 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
             Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(enemy);
 #endif
-            if (enemyType == JsonType::TERMINATOR) {
-                Types::Boss boss = {true};
+            if (jsonType == JsonType::TERMINATOR) {
+                Types::Boss boss = {};
                 Registry::getInstance().getComponents<Types::Boss>().insertBack(boss);
             }
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
@@ -280,12 +286,12 @@ namespace Systems {
             clock.restart(clockId);
         }
         if (clock.elapsedSecondsSince(clockId) >= spawnDelay && enemyNumber > 0) {
-            initEnemy(JsonType::DEFAULT_ENEMY);
+            initEnemy(CLASSIC_ENEMY);
             enemyNumber--;
             clock.decreaseSeconds(clockId, spawnDelay);
         }
         if (enemyArr.getExistingsId().empty() && enemyNumber <= 0 && bossArr.getExistingsId().empty()) {
-            initEnemy(JsonType::TERMINATOR);
+            initEnemy(TERMINATOR);
             SystemManagersDirector::getInstance().getSystemManager(managerId).addSystem(manageBoss);
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
@@ -512,7 +518,6 @@ namespace Systems {
             entitiesCollision,
             destroyOutsideWindow,
             deathChecker,
-            moveEntities,
-            manageBoss};
+            moveEntities};
     }
 } // namespace Systems
