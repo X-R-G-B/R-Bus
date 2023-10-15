@@ -39,7 +39,8 @@ namespace Types {
 
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Position, x, y);
 
-            Position &operator+=(const Position &pos) {
+            Position &operator+=(const Position &pos)
+            {
                 x += pos.x;
                 y += pos.y;
                 return (*this);

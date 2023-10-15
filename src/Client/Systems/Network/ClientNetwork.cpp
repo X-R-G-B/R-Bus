@@ -90,13 +90,12 @@ namespace Systems {
     void receiveRelativePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const struct msgPositionRelativeBroadcast_s &msg = std::any_cast<struct msgPositionRelativeBroadcast_s>(any);
-        Types::Position position = {
-            static_cast<float>(msg.pos.x),
-            static_cast<float>(msg.pos.y)};
-        auto &arrPos          = Registry::getInstance().getComponents<Types::Position>();
-        auto &arrOtherPlayers = Registry::getInstance().getComponents<Types::OtherPlayer>();
-        auto ids              = Registry::getInstance().getEntitiesByComponents(
+        const struct msgPositionRelativeBroadcast_s &msg =
+            std::any_cast<struct msgPositionRelativeBroadcast_s>(any);
+        Types::Position position = {static_cast<float>(msg.pos.x), static_cast<float>(msg.pos.y)};
+        auto &arrPos             = Registry::getInstance().getComponents<Types::Position>();
+        auto &arrOtherPlayers    = Registry::getInstance().getComponents<Types::OtherPlayer>();
+        auto ids                 = Registry::getInstance().getEntitiesByComponents(
             {typeid(Types::Position), typeid(Types::OtherPlayer)});
         auto otherPlayer = std::find_if(ids.begin(), ids.end(), [&arrOtherPlayers, &msg](std::size_t id) {
             return arrOtherPlayers[id].constId == msg.playerId;
