@@ -294,7 +294,9 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Enemy>();
 
         if (enemyNumber > 0) {
-            jsonPos = Json::getInstance().getDataFromJson<Types::Position>(jsonVector[enemyNumber - 1], "position");
+            jsonPos = Json::getInstance().getDataFromJson<Types::Position>(
+                jsonVector[enemyNumber - 1],
+                "position");
         } else {
             jsonPos = Json::getInstance().getDataFromJson<Types::Position>(jsonVector[0], "position");
         }
