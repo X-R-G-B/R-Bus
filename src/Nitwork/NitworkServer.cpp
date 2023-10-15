@@ -131,7 +131,7 @@ namespace Nitwork {
             return;
         }
         if (_endpoints.size() < MAX_CLIENTS) {
-            Logger::info("Not enough clients");
+            Logger::info("A new client is ready, waiting for others");
             return;
         }
         addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
