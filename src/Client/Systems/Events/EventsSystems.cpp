@@ -64,11 +64,10 @@ namespace Systems {
         }
     }
 
-    const std::size_t waitTimeBullet = 500;
-    const std::string soundPathShoot = "assets/Audio/Sounds/laser.ogg";
-
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        static const std::size_t waitTimeBullet = 500;
+        static const std::string soundPathShoot = "assets/Audio/Sounds/laser.ogg";
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<struct health_s> arrHealth   = registry.getComponents<struct health_s>();
