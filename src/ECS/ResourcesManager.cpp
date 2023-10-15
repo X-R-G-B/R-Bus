@@ -9,7 +9,7 @@ namespace ECS {
     void ResourcesManager::init(std::string execPath)
     {
         boost::filesystem::path path_tmp = execPath;
-        path_tmp = path_tmp.remove_filename();
+        path_tmp                         = path_tmp.remove_filename();
         path_tmp = boost::filesystem::absolute(path_tmp, boost::filesystem::initial_path());
 #ifndef PACKAGED
         path_tmp.append("assets");
@@ -49,7 +49,7 @@ namespace ECS {
         std::string path(path_const, std::string("assets").length(), std::string::npos);
         boost::filesystem::path path_tmp = _resourcePath;
         path_tmp.append(path);
-	path_tmp = path_tmp.make_preferred();
+        path_tmp = path_tmp.make_preferred();
         if (!boost::filesystem::exists(path_tmp)) {
             Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
         } else {
@@ -57,4 +57,4 @@ namespace ECS {
         }
         return path_tmp.string();
     }
-}
+} // namespace ECS

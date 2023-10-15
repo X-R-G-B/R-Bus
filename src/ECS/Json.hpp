@@ -56,7 +56,7 @@ class Json {
         }
 
     private:
-        Json() = default;
+        Json()  = default;
         ~Json() = default;
 
         std::vector<nlohmann::basic_json<>> &getDatasFromList(

@@ -2,9 +2,9 @@
 #include "Logger.hpp"
 #include "NitworkServer.hpp"
 #include "Registry.hpp"
+#include "ResourcesManager.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
-#include "ResourcesManager.hpp"
 
 constexpr int EXIT_EPITECH = 84;
 constexpr int PORT_MIN     = 0;
