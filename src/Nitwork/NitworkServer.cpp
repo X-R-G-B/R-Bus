@@ -147,14 +147,11 @@ namespace Nitwork {
             .msg    = {.magick = MAGICK_NEW_ALLIE, .playerId = playerId}
         };
         Systems::initPlayer(JsonType::DEFAULT_PLAYER, playerId, true);
-        Logger::info("before sendNewAllie");
         sendNewAllie(playerId, packetMsgNewAllie, endpoint);
-        Logger::info("after sendNewAllie");
         for (const auto &[_, allieId] : _playersIds) {
             if (allieId == playerId) {
                 continue;
             }
-            Logger::info("loop");
             sendNewAllie(allieId, packetMsgNewAllie, endpoint, false);
         }
     }

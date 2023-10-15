@@ -126,7 +126,6 @@ namespace Nitwork {
 
     void ANitwork::callReceiveHandler(const std::string &message)
     {
-        //Logger::error("NITWORK: " + message);
         startReceiveHandler();
     }
 
@@ -336,5 +335,6 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_outputQueueMutex);
 
         _outputQueue.emplace_back(packet);
+        Logger::trace("NITWORK: Adding packet to send of type: " + std::to_string(packet.action));
     }
 } // namespace Nitwork
