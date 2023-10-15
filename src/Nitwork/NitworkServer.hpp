@@ -69,6 +69,8 @@ namespace Nitwork {
 
             bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
 
+            void sendNewAllie(n_id_t playerId, struct packetNewAllie_s packetMsgNewAllie, boost::asio::ip::udp::endpoint &endpoint, bool butNoOne = true);
+
             /* BEGIN handle messages methods */
             void handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
@@ -100,6 +102,13 @@ namespace Nitwork {
                   [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       handleReadyMsg(msg, endpoint);
                   }}},
+                {POSITION_RELATIVE,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgPositionRelativeBroadcast_s>(actionHandler, header);
+                  },
+                  [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      handleRelativePositionMsg(msg, endpoint);
+                 }}},
                 {LIFE_UPDATE,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgLifeUpdate_s>(actionHandler, header);

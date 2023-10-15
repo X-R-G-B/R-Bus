@@ -29,6 +29,8 @@
     #define MAGICK_ENEMY_DEATH '\x0c'
     #define MAGICK_NEW_ENEMY '\x0e'
     #define MAGICK_NEW_BULLET '\x0c'
+    #define MAGICK_NEW_ALLIE '\x0d'
+    #define MAGICK_POSITION_RELATIVE_BROADCAST '\x0f'
 
 typedef char n_magick_t;
 typedef int n_idsReceived_t;
@@ -187,7 +189,7 @@ PACK(struct packetPositionAbsolute_s {
 
 PACK(struct msgNewAllie_s {
         n_magick_t magick;
-        player_infos_s data;
+        n_id_t playerId;
 });
 
 PACK(struct packetNewAllie_s {
@@ -198,6 +200,7 @@ PACK(struct packetNewAllie_s {
 
 /* Message broadcast position relative */
 PACK(struct msgPositionRelativeBroadcast_s {
+    n_magick_t magick;
     char x;
     char y;
     n_id_t playerId;

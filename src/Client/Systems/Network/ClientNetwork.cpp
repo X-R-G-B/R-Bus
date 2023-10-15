@@ -80,12 +80,29 @@ namespace Systems {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newAllie = std::any_cast<struct msgNewAllie_s>(any);
-        Types::Position pos = {
-            static_cast<float>(newAllie.data.pos.x),
-            static_cast<float>(newAllie.data.pos.y)};
 
-        initPlayer(JsonType::DEFAULT_PLAYER, newAllie.data.id, true);
-        Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
+        Logger::fatal("NEW ALLIE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n\n\n\n\n\n\n\n\n");
+        initPlayer(JsonType::DEFAULT_PLAYER, newAllie.playerId, true);
+    }
+
+    void receiveRelativePosition(std::any &any, boost::asio::ip::udp::endpoint &)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const auto relativePosition = std::any_cast<struct msgPositionRelativeBroadcast_s>(any);
+        auto arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
+        auto arrPosition    = Registry::getInstance().getComponents<Types::Position>();
+        std::vector<std::size_t> ids = arrOtherPlayer.getExistingsId();
+
+        for (auto id : ids) {
+            if (arrOtherPlayer[id].constId == relativePosition.playerId) {
+                auto &pos = arrPosition[id];
+                Types::Position relativePos = {static_cast<float>(relativePosition.x), static_cast<float>(relativePosition.y)};
+                if (pos.x != relativePos.x || pos.y != relativePos.y) {
+                    pos.x = relativePos.x;
+                    pos.y = relativePos.y;
+                }
+            }
+        }
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
