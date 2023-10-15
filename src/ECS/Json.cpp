@@ -7,9 +7,9 @@
 
 #include "Json.hpp"
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <utility>
-#include <iostream>
 #include "ResourcesManager.hpp"
 
 // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)

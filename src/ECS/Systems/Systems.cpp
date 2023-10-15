@@ -181,7 +181,8 @@ namespace Systems {
         }
     }
 
-    void initEnemy(enemy_type_e enemyType, Types::Position position, bool setId, struct ::enemy_id_s enemyId)
+    void
+    initEnemy(enemy_type_e enemyType, Types::Position position, bool setId, struct ::enemy_id_s enemyId)
     {
         JsonType jsonType = messageTypes.at(enemyType);
         std::vector<nlohmann::basic_json<>> enemyData =
@@ -217,7 +218,7 @@ namespace Systems {
 
 #endif
             Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
-            Types::Velocity velocity = 
+            Types::Velocity velocity =
                 Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
             Types::CollisionRect collisionRect =
                 Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect");
@@ -225,7 +226,8 @@ namespace Systems {
             struct health_s healthComp = {Json::getInstance().getDataFromJson<int>(elem, "health")};
 
             if (position.x == 0 && position.y == 0) {
-                Types::Position tmpPos(Json::getInstance().getDataFromJson<Types::Position>(elem, "position"));
+                Types::Position tmpPos(
+                    Json::getInstance().getDataFromJson<Types::Position>(elem, "position"));
                 position = tmpPos;
             }
 #ifdef CLIENT
@@ -248,7 +250,7 @@ namespace Systems {
 
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
-        const float posToGo = 65.0;
+        const float posToGo   = 65.0;
         const float bossSpeed = 0.2F;
         Registry::components<Types::Position> &arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
@@ -278,12 +280,14 @@ namespace Systems {
 
     void initWave(std::size_t managerId, std::size_t systemId)
     {
-        static std::size_t enemyNumber = Json::getInstance().getDataByVector({"wave", "nbrEnemy"}, JsonType::WAVE);
-        const std::size_t spawnDelay   = 2;
-        Clock &clock                   = Registry::getInstance().getClock();
-        static std::size_t clockId     = clock.create(true);
-        static bool fstCall            = true;
-        std::vector<nlohmann::json> jsonVector = Json::getInstance().getDataByVector({"wave", "positions"}, JsonType::WAVE);
+        static std::size_t enemyNumber =
+            Json::getInstance().getDataByVector({"wave", "nbrEnemy"}, JsonType::WAVE);
+        const std::size_t spawnDelay = 2;
+        Clock &clock                 = Registry::getInstance().getClock();
+        static std::size_t clockId   = clock.create(true);
+        static bool fstCall          = true;
+        std::vector<nlohmann::json> jsonVector =
+            Json::getInstance().getDataByVector({"wave", "positions"}, JsonType::WAVE);
         nlohmann::json jsonPos;
         Registry::components<Types::Boss> &bossArr = Registry::getInstance().getComponents<Types::Boss>();
         Registry::components<Types::Enemy> &enemyArr =

@@ -16,7 +16,11 @@
 #include "MessageTypes.h"
 
 namespace Systems {
-    void initEnemy(enemy_type_e enemyType, Types::Position position, bool setId = false, struct ::enemy_id_s enemyId = {0});
+    void initEnemy(
+        enemy_type_e enemyType,
+        Types::Position position,
+        bool setId                  = false,
+        struct ::enemy_id_s enemyId = {0});
     void windowCollision(std::size_t, std::size_t);
     void entitiesCollision(std::size_t, std::size_t);
     void deathChecker(std::size_t, std::size_t);

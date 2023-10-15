@@ -28,7 +28,7 @@ const std::unordered_map<JsonType, std::string> pathToJson = {
     {JsonType::DEFAULT_PLAYER,   "assets/Json/playerData.json"  },
     {JsonType::DEFAULT_PARALLAX, "assets/Json/parallaxData.json"},
     {JsonType::TERMINATOR,       "assets/Json/terminator.json"  },
-    {JsonType::WAVE,             "assets/Json/wave.json"  }
+    {JsonType::WAVE,             "assets/Json/wave.json"        }
 };
 
 class Json {
