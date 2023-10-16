@@ -79,7 +79,7 @@ namespace Systems {
             return;
         }
         incrementRect(animRect);
-        clock_.restart(clockIds[id]);
+        clock_.decreaseMilliseconds(clockIds[id], elapsedBetweenAnim);
     }
 
     void GraphicSystems::rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -190,7 +190,7 @@ namespace Systems {
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
 
         for (auto id : list) {
-            if (arrPosition.exist(id)) {
+            if (arrPosition.exist(id) && arrSprite.exist(id)) {
                 if (arrRect.exist(id)) {
                     drawSpriteWithRect(arrPosition[id], arrSprite[id], arrRect[id], id);
                 } else {
@@ -224,11 +224,7 @@ namespace Systems {
         auto ids = arrSpriteDatas.getExistingsId();
         for (auto id : ids) {
             auto &spriteDatas = arrSpriteDatas[id];
-            Raylib::Sprite sprite(
-                spriteDatas.fileName,
-                spriteDatas.width,
-                spriteDatas.height,
-                spriteDatas.id);
+            Raylib::Sprite sprite(spriteDatas.fileName, spriteDatas.width, spriteDatas.height, id);
             arrSprite.insert(id, sprite);
             switch (spriteDatas.layer) {
                 case BACKLAYER:

@@ -33,6 +33,13 @@ namespace Types {
             int y;
 
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Position, x, y);
+
+            Position &operator+=(const Position &pos)
+            {
+                x += pos.x;
+                y += pos.y;
+                return (*this);
+            }
     };
 
     struct Damage {
@@ -51,13 +58,11 @@ namespace Types {
                 const std::string &fileName,
                 float width,
                 float height,
-                std::size_t id,
                 enum LayerType layer,
                 std::size_t layerSide)
                 : fileName(fileName),
                   width(width),
                   height(height),
-                  id(id),
                   layer(layer),
                   layerSide(layerSide)
             {
@@ -154,5 +159,7 @@ namespace Types {
             std::size_t clockId;
             bool launched;
     };
+
+    struct Boss { };
 
 } // namespace Types

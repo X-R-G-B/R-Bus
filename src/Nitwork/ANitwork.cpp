@@ -105,6 +105,11 @@ namespace Nitwork {
         _pool.clear();
     }
 
+    bool ANitwork::isRunning() const
+    {
+        return _isRunning;
+    }
+
     void ANitwork::startReceiveHandler()
     {
         if (!_isRunning) {
@@ -121,7 +126,6 @@ namespace Nitwork {
 
     void ANitwork::callReceiveHandler(const std::string &message)
     {
-        Logger::error("NITWORK: " + message);
         startReceiveHandler();
     }
 
@@ -143,8 +147,7 @@ namespace Nitwork {
             callReceiveHandler("header magick not valid");
             return;
         }
-        if (header->nb_action > MAX_NB_ACTION || header->nb_action < 0
-            || isAlreadyReceived(header->id, _senderEndpoint)) {
+        if (header->nb_action > MAX_NB_ACTION || isAlreadyReceived(header->id, _senderEndpoint)) {
             callReceiveHandler("header nb action not valid or already received");
             return;
         }
@@ -189,6 +192,7 @@ namespace Nitwork {
                         "NITWORK: packet not found: " + std::to_string(header.last_id_received - index));
                     continue;
                 }
+                packet->setIsResend(true);
                 addPacketToSend(*packet);
             }
         }
@@ -207,12 +211,18 @@ namespace Nitwork {
                         return a.first.id < b.first.id;
                     });
                     for (auto &action : _actions) {
-                        action.second(action.first.data, action.first.endpoint);
+                        try {
+                            action.second(action.first.data, action.first.endpoint);
+                        } catch (std::exception &e) {
+                            Logger::error("NITWORK: catch action: " + std::string(e.what()));
+                        }
                     }
                     _actions.clear();
                     _inputQueueMutex.unlock();
                 }
             } catch (std::exception &e) {
+                _inputQueueMutex.unlock();
+                _isRunning = false;
                 Logger::fatal("NITWORK: catch input thread: " + std::string(e.what()));
             }
         });
@@ -227,7 +237,11 @@ namespace Nitwork {
                 continue;
             }
             addPacketToSentPackages(data);
-            it->second(data);
+            try {
+                it->second(data);
+            } catch (std::exception &e) {
+                Logger::error("NITWORK: catch action: " + std::string(e.what()));
+            }
         }
     }
 
@@ -250,6 +264,8 @@ namespace Nitwork {
                     _outputQueueMutex.unlock();
                 }
             } catch (std::exception &e) {
+                _outputQueueMutex.unlock();
+                _isRunning = false;
                 Logger::fatal("NITWORK: catch output thread: " + std::string(e.what()));
             }
         });
@@ -314,16 +330,11 @@ namespace Nitwork {
         return lastId;
     }
 
-    const boost::asio::ip::udp::endpoint &ANitwork::getEndpointSender()
-    {
-        return _senderEndpoint;
-    }
-
     void ANitwork::addPacketToSend(const Packet &packet)
     {
         std::lock_guard<std::mutex> lock(_outputQueueMutex);
 
-        Logger::info("NITWORK: Adding packet to send of type: " + std::to_string(packet.action));
         _outputQueue.emplace_back(packet);
+        Logger::trace("NITWORK: Adding packet to send of type: " + std::to_string(packet.action));
     }
 } // namespace Nitwork

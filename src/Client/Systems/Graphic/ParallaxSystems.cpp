@@ -65,14 +65,9 @@ namespace Systems::ParallaxSystems {
         std::size_t id,
         Registry::components<Types::Parallax> &arrParallax,
         Registry::components<Types::Position> &arrPosition)
-    {
+    {   
         if (Maths::removeIntegerDecimals(arrPosition[id].x) <= maxOutParallaxLeft) {
-            if (arrParallax[id].x >= maxOutParallaxRight) {
-                arrPosition[id].x = Maths::decimalToIntegrerWithTwoDecimals(arrParallax[id].x);
-            } else {
-                arrPosition[id].x = Maths::decimalToIntegrerWithTwoDecimals(arrParallax[id].x)
-                    + Maths::addIntegerDecimals(maxOutParallaxRight);
-            }
+            arrPosition[id].x += Maths::addIntegerDecimals(maxOutParallaxRight * 2); // TODO: Verif calculs
             arrPosition[id].y = Maths::decimalToIntegrerWithTwoDecimals(arrParallax[id].y);
         }
     }

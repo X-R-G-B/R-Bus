@@ -22,9 +22,10 @@ namespace Nitwork {
         return _instance;
     }
 
-    bool NitworkServer::start(int port, int threadNb, int tick, const std::string &ip)
+    bool NitworkServer::startServer(int port, int nbPlayer, int threadNb, int tick)
     {
-        return ANitwork::start(port, threadNb, tick, ip);
+        _maxNbPlayer = nbPlayer;
+        return ANitwork::start(port, threadNb, tick, "");
     }
 
     bool NitworkServer::startNitworkConfig(int port, const std::string & /* unused */)
@@ -107,11 +108,32 @@ namespace Nitwork {
     }
     /* End Check Methods Section */
 
+    void NitworkServer::sendNewAllie(
+        n_id_t playerId,
+        struct packetNewAllie_s packetMsgNewAllie,
+        boost::asio::ip::udp::endpoint &endpoint,
+        bool butNoOne)
+    {
+        packetMsgNewAllie.msg.playerId = playerId;
+        if (butNoOne) {
+            Packet packet(
+                packetMsgNewAllie.action.magick,
+                std::make_any<struct packetNewAllie_s>(packetMsgNewAllie));
+            sendToAllClientsButNotOne(packet, endpoint);
+        } else {
+            Packet packet(
+                packetMsgNewAllie.action.magick,
+                std::make_any<struct packetNewAllie_s>(packetMsgNewAllie),
+                endpoint);
+            addPacketToSend(packet);
+        }
+    }
+
     /* Handle packet (msg) Section */
     void
     NitworkServer::handleInitMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
-        if (_endpoints.size() >= MAX_CLIENTS) {
+        if (_endpoints.size() >= _maxNbPlayer) {
             std::cerr << "Too many clients, can't add an other one" << std::endl;
             return;
         }
@@ -120,7 +142,22 @@ namespace Nitwork {
             return;
         }
         _endpoints.emplace_back(endpoint);
-        addPlayerInitMessage(endpoint, static_cast<n_id_t>(_endpoints.size() - 1));
+        auto playerId = static_cast<n_id_t>(_endpoints.size() - 1);
+        // Send new Allie to others
+        addPlayerInitMessage(endpoint, playerId);
+        struct packetNewAllie_s packetMsgNewAllie = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = NEW_ALLIE},
+            .msg    = {.magick = MAGICK_NEW_ALLIE, .playerId = playerId}
+        };
+        Systems::initPlayer(JsonType::DEFAULT_PLAYER, playerId, true);
+        sendNewAllie(playerId, packetMsgNewAllie, endpoint);
+        for (const auto &[_, allieId] : _playersIds) {
+            if (allieId == playerId) {
+                continue;
+            }
+            sendNewAllie(allieId, packetMsgNewAllie, endpoint, false);
+        }
     }
 
     void
@@ -128,6 +165,10 @@ namespace Nitwork {
     {
         if (!isClientAlreadyConnected(endpoint)) {
             Logger::info("Client not connected");
+            return;
+        }
+        if (_endpoints.size() < _maxNbPlayer) {
+            Logger::info("A new client is ready, waiting for others");
             return;
         }
         addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
@@ -141,7 +182,8 @@ namespace Nitwork {
             Logger::info("Client not connected");
             return;
         }
-        auto pos = std::any_cast<struct position_relative_s>(msg);
+        auto msgData = std::any_cast<struct msgPositionRelative_s>(msg);
+        auto pos     = msgData.pos;
         struct packetPositionRelativeBroadcast_s msgPosBroadcast = {
             .header =
                 {.magick1          = HEADER_CODE1,
@@ -152,10 +194,9 @@ namespace Nitwork {
                          .magick2          = HEADER_CODE2},
             .action = {.magick = POSITION_RELATIVE_BROADCAST},
             .msg    = {
-                         .x        = pos.x,
-                         .y        = pos.y,
-                         .playerId = getPlayerId(endpoint),
-                         }
+                         .magick   = MAGICK_POSITION_RELATIVE_BROADCAST,
+                         .pos      = {.x = pos.x, .y = pos.y},
+                         .playerId = getPlayerId(endpoint)}
         };
         Packet packet(
             msgPosBroadcast.action.magick,
@@ -257,6 +298,25 @@ namespace Nitwork {
         Packet packet(
             packetNewBullet.action.magick,
             std::make_any<struct packetNewBullet_s>(packetNewBullet));
+        sendToAllClientsButNotOne(packet, senderEndpoint);
+    }
+
+    void NitworkServer::broadcastAbsolutePositionMsg(
+        const struct position_absolute_s &pos,
+        boost::asio::ip::udp::endpoint &senderEndpoint)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetPositionAbsoluteBroadcast_s packetPosAbsoluteBroadcast = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = POSITION_ABSOLUTE_BROADCAST},
+            .msg    = {
+                       .magick   = MAGICK_POSITION_ABSOLUTE_BROADCAST,
+                       .pos      = {.x = pos.x, .y = pos.y},
+                       .playerId = getPlayerId(senderEndpoint)}
+        };
+        Packet packet(
+            packetPosAbsoluteBroadcast.action.magick,
+            std::make_any<struct packetPositionAbsoluteBroadcast_s>(packetPosAbsoluteBroadcast));
         sendToAllClientsButNotOne(packet, senderEndpoint);
     }
 

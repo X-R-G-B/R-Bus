@@ -21,8 +21,8 @@
                 "height":10
             },
             "velocity": {
-                "speedX": -10,
-                "speedY": 0
+                "speedX": -40,
+                "speedY": 0.0
             },
             "animRect": {
                 "move": [

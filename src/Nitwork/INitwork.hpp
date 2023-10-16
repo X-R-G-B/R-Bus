@@ -56,11 +56,22 @@ namespace Nitwork {
                   endpoint(endpoint)
             {
             }
+            [[nodiscard]] bool getIsResend() const
+            {
+                return _isResend;
+            }
+            void setIsResend(bool value)
+            {
+                _isResend = value;
+            }
 
             n_id_t id = 0;
             n_actionType_t action;
             std::any body;
             boost::asio::ip::udp::endpoint endpoint;
+
+        private:
+            bool _isResend = false;
     };
 
     using actionSender = std::function<void(Packet &)>;
@@ -77,6 +88,8 @@ namespace Nitwork {
             virtual bool start(int port, int threadNb, int tick, const std::string &ip = "") = 0;
 
             virtual void stop() = 0;
+
+            virtual bool isRunning() const = 0;
 
         protected:
             INitwork() = default;

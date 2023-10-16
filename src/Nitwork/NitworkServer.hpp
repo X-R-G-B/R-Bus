@@ -21,11 +21,11 @@ namespace Nitwork {
 
             static NitworkServer &getInstance();
 
-            bool start(
+            bool startServer(
                 int port,
-                int threadNb          = DEFAULT_THREAD_NB,
-                int tick              = TICKS_PER_SECOND,
-                const std::string &ip = "") final;
+                int nbPlayer,
+                int threadNb = DEFAULT_THREAD_NB,
+                int tick     = TICKS_PER_SECOND);
 
             /* Messages creation methods */
             void addStarWaveMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t enemyId);
@@ -45,6 +45,10 @@ namespace Nitwork {
 
             void broadcastNewBulletMsg(
                 const struct msgNewBullet_s &msg,
+                boost::asio::ip::udp::endpoint &senderEndpoint);
+
+            void broadcastAbsolutePositionMsg(
+                const struct position_absolute_s &pos,
                 boost::asio::ip::udp::endpoint &senderEndpoint);
 
             n_id_t getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const;
@@ -69,6 +73,12 @@ namespace Nitwork {
 
             bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
 
+            void sendNewAllie(
+                n_id_t playerId,
+                struct packetNewAllie_s packetMsgNewAllie,
+                boost::asio::ip::udp::endpoint &endpoint,
+                bool butNoOne = true);
+
             /* BEGIN handle messages methods */
             void handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
@@ -80,6 +90,7 @@ namespace Nitwork {
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static NitworkServer _instance; // instance of the NitworkServer (singleton)
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
+            unsigned int _maxNbPlayer = 0; // max number of players
             std::list<boost::asio::ip::udp::endpoint>
                 _endpoints; // A vector of endpoints which will be used to send the actions to the clients
                             // and identify them
@@ -99,6 +110,13 @@ namespace Nitwork {
                   },
                   [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       handleReadyMsg(msg, endpoint);
+                  }}},
+                {POSITION_RELATIVE,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgPositionRelative_s>(actionHandler, header);
+                  },
+                  [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      handleRelativePositionMsg(msg, endpoint);
                   }}},
                 {LIFE_UPDATE,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
@@ -120,7 +138,14 @@ namespace Nitwork {
                   },
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::receiveNewBulletMsg(msg, endpoint);
-                  }}}
+                  }}},
+                {POSITION_ABSOLUTE,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgPositionAbsolute_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::receiveAbsolutePositionMsg(msg, endpoint);
+                  }}},
             };
             std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
                 {
@@ -146,6 +171,18 @@ namespace Nitwork {
                 {NEW_BULLET,
                  [this](Packet &packet) {
                      sendData<struct packetNewBullet_s>(packet);
+                 }},
+                {NEW_ALLIE,
+                 [this](Packet &packet) {
+                     sendData<struct packetNewAllie_s>(packet);
+                 }},
+                {POSITION_RELATIVE_BROADCAST,
+                 [this](Packet &packet) {
+                     sendData<struct packetPositionRelativeBroadcast_s>(packet);
+                 }},
+                {POSITION_ABSOLUTE_BROADCAST,
+                 [this](Packet &packet) {
+                     sendData<struct packetPositionAbsoluteBroadcast_s>(packet);
                  }},
             };
     };

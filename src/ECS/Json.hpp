@@ -11,66 +11,76 @@
 #include <unordered_map>
 #include "Logger.hpp"
 
-enum class JsonType {
-    DEFAULT_ENEMY,
-    DEFAULT_PLAYER,
-    DEFAULT_PARALLAX,
+extern "C"
+{
+#include "MessageTypes.h"
+}
+
+enum class JsonType { DEFAULT_ENEMY, DEFAULT_PLAYER, DEFAULT_PARALLAX, TERMINATOR, WAVE };
+
+const std::unordered_map<enemy_type_e, JsonType> messageTypes = {
+    {CLASSIC_ENEMY, JsonType::DEFAULT_ENEMY},
+    {TERMINATOR,    JsonType::TERMINATOR   }
 };
 
 const std::unordered_map<JsonType, std::string> pathToJson = {
     {JsonType::DEFAULT_ENEMY,    "assets/Json/enemyData.json"   },
     {JsonType::DEFAULT_PLAYER,   "assets/Json/playerData.json"  },
-    {JsonType::DEFAULT_PARALLAX, "assets/Json/parallaxData.json"}
+    {JsonType::DEFAULT_PARALLAX, "assets/Json/parallaxData.json"},
+    {JsonType::TERMINATOR,       "assets/Json/terminator.json"  },
+    {JsonType::WAVE,             "assets/Json/wave.json"        }
 };
 
 class Json {
     public:
         static Json &getInstance();
 
-        nlohmann::basic_json<> getDataByJsonType(JsonType dataType);
+        nlohmann::json getDataByJsonType(JsonType dataType);
 
-        nlohmann::basic_json<> getDataByJsonType(const std::string &index, JsonType dataType);
+        nlohmann::json getDataByJsonType(const std::string &index, JsonType dataType);
 
-        nlohmann::basic_json<> getDataByVector(const std::vector<std::string> &indexes, JsonType dataType);
+        nlohmann::json getDataByVector(const std::vector<std::string> &indexes, JsonType dataType);
 
-        std::vector<nlohmann::basic_json<>>
+        std::vector<nlohmann::json>
         getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType);
 
-        bool isDataExist(nlohmann::basic_json<> jsonData, const std::string &index);
+        nlohmann::json &getDataFromJson(nlohmann::json jsonData, const std::string &index);
 
-        std::vector<nlohmann::basic_json<>>
-        getDatasFromList(const std::vector<nlohmann::basic_json<>> &list, const std::string &key);
+        static bool isDataExist(nlohmann::json jsonData, const std::string &index);
 
-        std::vector<nlohmann::basic_json<>>
-        getDatasFromList(const nlohmann::basic_json<> &list, const std::string &key);
+        std::vector<nlohmann::json>
+        getDatasFromList(const std::vector<nlohmann::json> &list, const std::string &key);
 
-        std::vector<nlohmann::basic_json<>> getDatasFromList(const nlohmann::basic_json<> &list);
+        std::vector<nlohmann::json> getDatasFromList(const nlohmann::json &list, const std::string &key);
+
+        std::vector<nlohmann::json> getDatasFromList(const nlohmann::json &list);
 
         template <typename T>
-        T getDataFromJson(nlohmann::basic_json<> jsonData, const std::string &index)
+        T getDataFromJson(nlohmann::json jsonData, const std::string &index)
         {
             if (jsonData[index] == nullptr) {
-                Logger::error(std::string("Key : " + index + " is not valid"));
+                Logger::fatal(std::string("(getDataByJson<template>) Key : " + index + " is not valid"));
+                throw std::runtime_error("Json error");
             }
             return jsonData[index].get<T>();
         }
 
     private:
-        Json();
+        Json()  = default;
         ~Json() = default;
 
-        std::vector<nlohmann::basic_json<>> &getDatasFromList(
-            std::vector<nlohmann::basic_json<>> &datas,
-            nlohmann::basic_json<> &listData,
+        std::vector<nlohmann::json> &getDatasFromList(
+            std::vector<nlohmann::json> &datas,
+            nlohmann::json &listData,
             const std::string &key);
 
-        bool isListData(const std::vector<nlohmann::basic_json<>> &datas, const std::string &key);
+        bool isListData(const std::vector<nlohmann::json> &datas, const std::string &key);
 
         // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
         static Json _instance;
         // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
-        nlohmann::json loadJsonData(const std::string &path);
+        static nlohmann::json loadJsonData(const std::string &path);
 
         std::unordered_map<JsonType, nlohmann::json> _jsonDatas;
 };

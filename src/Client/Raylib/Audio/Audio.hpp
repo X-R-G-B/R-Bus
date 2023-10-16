@@ -37,11 +37,13 @@ namespace Raylib {
             bool NeedToPlay() const;
             void setNeedToPlay(bool needToPlay);
             std::string getPath() const;
+            std::string getRealPath() const;
 
         private:
+            std::string _path;
+            std::string _realPath;
             ::Sound _sound;
             bool _needToPlay {false};
-            std::string _path;
     };
 
     class Music {
@@ -63,10 +65,12 @@ namespace Raylib {
             bool NeedToPlay() const;
             void setNeedToPlay(bool needToPlay);
             std::string getPath() const;
+            std::string getRealPath() const;
 
         private:
+            std::string _path;
+            std::string _realPath;
             ::Music _music;
             bool _needToPlay {false};
-            std::string _path;
     };
 } // namespace Raylib
