@@ -43,7 +43,7 @@ namespace Systems {
         }
     }
 
-    const std::string musicPath      = "assets/Audio/Musics/Title.mp3";
+    const std::string musicPath = "assets/Audio/Musics/Title.mp3";
 
     void GraphicSystems::playSoundWithKey(std::size_t /*unused*/, std::size_t /*unused*/)
     {

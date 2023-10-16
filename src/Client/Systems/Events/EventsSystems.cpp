@@ -97,8 +97,8 @@ namespace Systems {
                 continue;
             }
             Nitwork::NitworkClient::getInstance().addNewBulletMsg(
-                {Maths::decimalToIntegrerWithTwoDecimals(arrPosition[id].x),//CALCULS
-                    Maths::decimalToIntegrerWithTwoDecimals(arrPosition[id].y)},
+                {Maths::decimalToIntegrerWithTwoDecimals(arrPosition[id].x), // CALCULS
+                 Maths::decimalToIntegrerWithTwoDecimals(arrPosition[id].y)},
                 CLASSIC);
             struct Types::Missiles missile = {
                 .type = CLASSIC,
