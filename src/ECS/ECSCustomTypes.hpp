@@ -138,11 +138,6 @@ namespace Types {
             static std::mutex _mutex;
     };
 
-    struct Parallax {
-            float x;
-            float y;
-    };
-
     struct Dead {
             Dead(std::size_t time = 0)
                 : deathFunction(std::nullopt),

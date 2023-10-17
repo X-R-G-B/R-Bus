@@ -24,6 +24,11 @@ namespace Types {
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Rect, x, y, width, height);
     };
 
+    struct Parallax {
+            float x;
+            float y;
+    };
+
     struct RectangleShape {
             float width;
             float height;
