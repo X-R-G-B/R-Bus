@@ -13,8 +13,8 @@
             "height": 19.0
         },
         "position" : {
-            "x": 10,
-            "y": 10
+            "x": 1000,
+            "y": 1000
         },
         "collisionRect": {
             "width": 500,
