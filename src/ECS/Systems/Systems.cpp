@@ -12,6 +12,7 @@
 #include "ECSCustomTypes.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
+#include "Maths.hpp"
 
 #ifdef CLIENT
     #include "CustomTypes.hpp"
@@ -174,8 +175,8 @@ namespace Systems {
 
         while (clock.elapsedMillisecondsSince(clockId) >= moveTime) {
             for (auto &id : ids) {
-                arrPosition[id].x += arrVelocity[id].speedX;
-                arrPosition[id].y += arrVelocity[id].speedY;
+                arrPosition[id].x += Maths::intToFloatConservingDecimals(arrVelocity[id].speedX);
+                arrPosition[id].y += Maths::intToFloatConservingDecimals(arrVelocity[id].speedY);
             }
             clock.decreaseMilliseconds(clockId, moveTime);
         }
@@ -217,12 +218,12 @@ namespace Systems {
 
 #endif
             Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
-            Types::Velocity velocity =
-                Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
             Types::CollisionRect collisionRect =
                 Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect");
             Types::Damage damageComp   = {Json::getInstance().getDataFromJson<int>(elem, "damage")};
             struct health_s healthComp = {Json::getInstance().getDataFromJson<int>(elem, "health")};
+            Types::Velocity velocity =
+                Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
 
             if (position.x == 0 && position.y == 0) {
                 Types::Position tmpPos(
@@ -264,15 +265,15 @@ namespace Systems {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
         for (auto &id : ids) {
-            if (arrPosition[id].x <= posToGo && arrVelocity[id].speedY == 0) {
-                arrVelocity[id].speedX = 0;
-                arrVelocity[id].speedY = 0.2;
+            if (arrPosition[id].x <= posToGo && Maths::intToFloatConservingDecimals(arrVelocity[id].speedY) == 0) {
+                Maths::addFloatToDecimalInt(arrVelocity[id].speedX, 0.F);
+                Maths::addFloatToDecimalInt(arrVelocity[id].speedY, 0.2F);
             }
             if (arrPosition[id].y < 0) {
-                arrVelocity[id].speedY = bossSpeed;
+                arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(bossSpeed);
             }
             if (arrPosition[id].y + arrCollisonRect[id].height > maxPercent) {
-                arrVelocity[id].speedY = -bossSpeed;
+                arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(-bossSpeed);
             }
         }
     }
@@ -496,12 +497,15 @@ namespace Systems {
 
         constexpr float bulletWidth          = 5.0F;
         constexpr float bulletHeight         = 5.0F;
+        constexpr float speedX          = 0.7F;
+        constexpr float speedY         = 0.0F;
         Types::CollisionRect collisionRect   = {bulletWidth, bulletHeight};
-        Types::Velocity velocity             = {0.7F, 0.0F};
+        Types::Velocity velocity             = {Maths::floatToIntConservingDecimals(speedX), Maths::floatToIntConservingDecimals(speedY)};
         Types::Missiles missileType          = typeOfMissile;
         Types::Dead deadComp                 = {};
         Types::PlayerAllies playerAlliesComp = {};
         Types::Position position             = {pos.x, pos.y};
+
 #ifdef CLIENT
         const std::string bulletPath = "assets/R-TypeSheet/r-typesheet1.gif";
         Types::Rect spriteRect       = {200, 121, 32, 10};

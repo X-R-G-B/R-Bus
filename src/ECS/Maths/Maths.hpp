@@ -124,4 +124,13 @@ namespace Maths {
      */
     int subNormalIntToDecimalInt(int decimalInt, int normalInt);
 
+    /**
+     * @brief add a float to an int with decimals
+     * @param decimalInt the int with decimals
+     * @param normalFloat the float
+     * @return nothing
+     * @example 500 + 5.5 = 555
+     */
+    void addFloatToDecimalInt(int &decimalInt, float normalFloat);
+
 } // namespace Maths

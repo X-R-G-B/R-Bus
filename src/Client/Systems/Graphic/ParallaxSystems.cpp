@@ -8,6 +8,7 @@
 #include "Logger.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
+#include "Maths.hpp"
 
 namespace Systems::ParallaxSystems {
     constexpr int maxOutParallaxLeft  = -100;

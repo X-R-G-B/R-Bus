@@ -72,3 +72,8 @@ int Maths::subNormalIntToDecimalInt(int decimalInt, int normalInt)
 {
     return decimalInt - addIntDecimals(normalInt);
 }
+
+void Maths::addFloatToDecimalInt(int &decimalInt, float normalFloat)
+{
+    decimalInt += floatToIntConservingDecimals(normalFloat);
+}

@@ -9,8 +9,8 @@
                 "y": 0.0
             },
             "velocity" : {
-                "speedX" : -0.03,
-                "speedY" :0.0
+                "speedX" : -3,
+                "speedY" : 0
             },
             "copy": true
         },
@@ -23,8 +23,8 @@
                 "y": 0.0
             },
             "velocity" : {
-                "speedX" : -0.03,
-                "speedY" :0.0
+                "speedX" : -3,
+                "speedY" :0
             },
             "copy": true
         },
@@ -37,8 +37,8 @@
                 "y": 0.0
             },
             "velocity" : {
-                "speedX" : -0.03,
-                "speedY" :0.0
+                "speedX" : -3,
+                "speedY" :0
             },
             "copy": true
         },
@@ -51,8 +51,8 @@
                 "y": 0.0
             },
             "velocity" : {
-                "speedX" : -0.04,
-                "speedY" :0.0
+                "speedX" : -4,
+                "speedY" :0
             },
             "copy": true
         },
@@ -65,8 +65,8 @@
                 "y": 0.0
             },
             "velocity" : {
-                "speedX" : -0.05,
-                "speedY" :0.0
+                "speedX" : -5,
+                "speedY" :0
             }
         },
         {
@@ -78,8 +78,8 @@
                 "y": 20.0
             },
             "velocity" : {
-                "speedX" : -0.2,
-                "speedY" :0.0
+                "speedX" : -20,
+                "speedY" :0
             },
             "rect" : {
                 "x" : 0.0,
@@ -97,8 +97,8 @@
                 "y": 20.0
             },
             "velocity" : {
-                "speedX" : -0.11,
-                "speedY" :0.0
+                "speedX" : -11,
+                "speedY" :0
             },
             "rect" : {
                 "x" : 0.0,
@@ -116,8 +116,8 @@
                 "y": 70.0
             },
             "velocity" : {
-                "speedX" : -0.09,
-                "speedY" :0.0
+                "speedX" : -9,
+                "speedY" : 0
             },
             "rect" : {
                 "x" : 0.0,
@@ -135,8 +135,8 @@
                 "y": 90.0
             },
             "velocity" : {
-                "speedX" : -0.09,
-                "speedY" :0.0
+                "speedX" : -9,
+                "speedY" : 0
             },
             "rect" : {
                 "x" : 0.0,
@@ -154,8 +154,8 @@
                 "y": 10.0
             },
             "velocity" : {
-                "speedX" : -0.06,
-                "speedY" :0.0
+                "speedX" : -6,
+                "speedY" :0
             },
             "rect" : {
                 "x" : 0.0,
@@ -173,8 +173,8 @@
                 "y": 70.0
             },
             "velocity" : {
-                "speedX" : -0.43,
-                "speedY" :0.0
+                "speedX" : -43,
+                "speedY" : 0
             },
             "rect" : {
                 "x" : 0.0,
@@ -192,7 +192,7 @@
                 "y": 60.0
             },
             "velocity" : {
-                "speedX" : -0.46,
+                "speedX" : -46,
                 "speedY" :0.0
             },
             "rect" : {
@@ -211,7 +211,7 @@
                 "y": 65.0
             },
             "velocity" : {
-                "speedX" : -0.42,
+                "speedX" : -42,
                 "speedY" :0.0
             },
             "rect" : {
@@ -230,7 +230,7 @@
                 "y": 20.0
             },
             "velocity" : {
-                "speedX" : -0.3,
+                "speedX" : -30,
                 "speedY" : 0.0
             },
             "rect" : {
@@ -249,7 +249,7 @@
                 "y": 50.0
             },
             "velocity" : {
-                "speedX" : -0.2,
+                "speedX" : -20,
                 "speedY" : 0.0
             },
             "rect" : {
@@ -268,7 +268,7 @@
                 "y": 20.0
             },
             "velocity" : {
-                "speedX" : -0.8,
+                "speedX" : -80,
                 "speedY" :0.0
             },
             "rect" : {
