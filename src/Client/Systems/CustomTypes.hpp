@@ -24,6 +24,11 @@ namespace Types {
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Rect, x, y, width, height);
     };
 
+    struct RectangleShape {
+        float width;
+        float height;
+    };
+
     struct FontSize {
             float fsz;
     };
