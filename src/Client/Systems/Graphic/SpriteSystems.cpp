@@ -8,7 +8,6 @@
 #include "SpriteSystems.hpp"
 #include "CustomTypes.hpp"
 #include "ECSCustomTypes.hpp"
-#include "CustomTypes.hpp"
 #include "Logger.hpp"
 #include "Raylib.hpp"
 #include "SharedValues.hpp"

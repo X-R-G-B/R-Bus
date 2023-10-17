@@ -25,8 +25,8 @@ namespace Types {
     };
 
     struct RectangleShape {
-        float width;
-        float height;
+            float width;
+            float height;
     };
 
     struct FontSize {
