@@ -10,9 +10,9 @@
 #include <nlohmann/json.hpp>
 #include <sstream>
 #include "ECSCustomTypes.hpp"
+#include "Maths.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
-#include "Maths.hpp"
 
 #ifdef CLIENT
     #include "CustomTypes.hpp"
@@ -47,11 +47,15 @@ namespace Systems {
             if (arrPosition[id].y < 0) {
                 arrPosition[id].y = 0;
             }
-            if (arrPosition[id].x + arrCollisionRect[id].width > maxPercent) {
-                arrPosition[id].x = maxPercent - arrCollisionRect[id].width;
+            if (arrPosition[id].x + Maths::intToFloatConservingDecimals(arrCollisionRect[id].width)
+                > maxPercent) {
+                arrPosition[id].x =
+                    maxPercent - Maths::intToFloatConservingDecimals(arrCollisionRect[id].width);
             }
-            if (arrPosition[id].y + arrCollisionRect[id].height > maxPercent) {
-                arrPosition[id].y = maxPercent - arrCollisionRect[id].height;
+            if (arrPosition[id].y + Maths::intToFloatConservingDecimals(arrCollisionRect[id].height)
+                > maxPercent) {
+                arrPosition[id].y =
+                    maxPercent - Maths::intToFloatConservingDecimals(arrCollisionRect[id].height);
             }
         }
     }
@@ -133,10 +137,11 @@ namespace Systems {
             if (arrCollisionRect.exist(*itIds)) {
                 Types::CollisionRect sndEntityRect = arrCollisionRect[*itIds];
                 Types::Position sndEntityPos       = arrPosition[*itIds];
-                if (entityPos.x < sndEntityPos.x + sndEntityRect.width
-                    && entityPos.x + entityColl.width > sndEntityPos.x
-                    && entityPos.y < sndEntityPos.y + sndEntityRect.height
-                    && entityPos.y + entityColl.height > sndEntityPos.y) {
+                if (entityPos.x < sndEntityPos.x + Maths::intToFloatConservingDecimals(sndEntityRect.width)
+                    && entityPos.x + Maths::intToFloatConservingDecimals(entityColl.width) > sndEntityPos.x
+                    && entityPos.y
+                        < sndEntityPos.y + Maths::intToFloatConservingDecimals(sndEntityRect.height)
+                    && entityPos.y + Maths::intToFloatConservingDecimals(entityColl.height) > sndEntityPos.y) {
                     checkSide(id, *itIds);
                 }
             }
@@ -265,14 +270,16 @@ namespace Systems {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
         for (auto &id : ids) {
-            if (arrPosition[id].x <= posToGo && Maths::intToFloatConservingDecimals(arrVelocity[id].speedY) == 0) {
+            if (arrPosition[id].x <= posToGo
+                && Maths::intToFloatConservingDecimals(arrVelocity[id].speedY) == 0) {
                 Maths::addFloatToDecimalInt(arrVelocity[id].speedX, 0.F);
                 Maths::addFloatToDecimalInt(arrVelocity[id].speedY, 0.2F);
             }
             if (arrPosition[id].y < 0) {
                 arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(bossSpeed);
             }
-            if (arrPosition[id].y + arrCollisonRect[id].height > maxPercent) {
+            if (arrPosition[id].y + Maths::intToFloatConservingDecimals(arrCollisonRect[id].height)
+                > maxPercent) {
                 arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(-bossSpeed);
             }
         }
@@ -495,12 +502,16 @@ namespace Systems {
         Registry::getInstance().addEntity();
 #endif
 
-        constexpr float bulletWidth          = 5.0F;
-        constexpr float bulletHeight         = 5.0F;
-        constexpr float speedX          = 0.7F;
-        constexpr float speedY         = 0.0F;
-        Types::CollisionRect collisionRect   = {bulletWidth, bulletHeight};
-        Types::Velocity velocity             = {Maths::floatToIntConservingDecimals(speedX), Maths::floatToIntConservingDecimals(speedY)};
+        constexpr float bulletWidth        = 5.0F;
+        constexpr float bulletHeight       = 5.0F;
+        constexpr float speedX             = 0.7F;
+        constexpr float speedY             = 0.0F;
+        Types::CollisionRect collisionRect = {
+            Maths::floatToIntConservingDecimals(bulletWidth),
+            Maths::floatToIntConservingDecimals(bulletHeight)};
+        Types::Velocity velocity = {
+            Maths::floatToIntConservingDecimals(speedX),
+            Maths::floatToIntConservingDecimals(speedY)};
         Types::Missiles missileType          = typeOfMissile;
         Types::Dead deadComp                 = {};
         Types::PlayerAllies playerAlliesComp = {};

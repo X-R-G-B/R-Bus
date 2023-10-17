@@ -7,9 +7,10 @@
 
 #include "GraphicSystems.hpp"
 #include "AudioSystems.hpp"
+#include "CustomTypes.hpp"
 #include "DeathSystems.hpp"
 #include "ECSCustomTypes.hpp"
-#include "CustomTypes.hpp"
+#include "Maths.hpp"
 #include "ParallaxSystems.hpp"
 #include "Registry.hpp"
 #include "SpriteSystems.hpp"
@@ -32,7 +33,9 @@ namespace Systems {
 
         for (auto &id : ids) {
             if (arrPosition.exist(id) && !arrRectangleShape.exist(id)) {
-                Types::RectangleShape rectShape = {arrCollisionRect[id].width, arrCollisionRect[id].height};
+                Types::RectangleShape rectShape = {
+                    Maths::intToFloatConservingDecimals(arrCollisionRect[id].width),
+                    Maths::intToFloatConservingDecimals(arrCollisionRect[id].height)};
                 Registry::getInstance().getComponents<Types::RectangleShape>().insert(id, rectShape);
             }
         }

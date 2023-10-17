@@ -17,8 +17,8 @@
             "y": 10
         },
         "collisionRect": {
-            "width": 5.0,
-            "height": 5.0
+            "width": 500,
+            "height": 500
         },
         "animRect": {
             "move" : [

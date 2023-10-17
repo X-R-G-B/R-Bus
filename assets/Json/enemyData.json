@@ -17,8 +17,8 @@
                 "height": 30
             },
             "collisionRect": {
-                "width": 10.0,
-                "height":10.0
+                "width": 1000,
+                "height":1000
             },
             "velocity": {
                 "speedX": -40,
