@@ -33,13 +33,6 @@ namespace Types {
             int y;
 
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Position, x, y);
-
-            Position &operator+=(const Position &pos)
-            {
-                x += pos.x;
-                y += pos.y;
-                return (*this);
-            }
     };
 
     struct Damage {
@@ -56,8 +49,8 @@ namespace Types {
     struct SpriteDatas {
             SpriteDatas(
                 const std::string &fileName,
-                float width,
-                float height,
+                int width,
+                int height,
                 enum LayerType layer,
                 std::size_t layerSide)
                 : fileName(fileName),
@@ -68,8 +61,8 @@ namespace Types {
             {
             }
             std::string fileName;
-            float width;
-            float height;
+            int width;
+            int height;
             std::size_t id;
             enum LayerType layer;
             size_t layerSide;

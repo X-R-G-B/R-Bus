@@ -4,8 +4,8 @@
             "spritePath": "assets/R-TypeSheet/r-typesheet20.gif",
             "damage": 10,
             "health": 1.0,
-            "width": 10.0,
-            "height": 10.0,
+            "width": 1000,
+            "height": 1000,
             "position" : {
                 "x": 11000,
                 "y": 10000

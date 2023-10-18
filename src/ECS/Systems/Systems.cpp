@@ -219,8 +219,8 @@ namespace Systems {
 
             Types::SpriteDatas enemy = {
                 Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
-                Json::getInstance().getDataFromJson<float>(elem, "width"),
-                Json::getInstance().getDataFromJson<float>(elem, "height"),
+                Json::getInstance().getDataFromJson<int>(elem, "width"),
+                Json::getInstance().getDataFromJson<int>(elem, "height"),
                 LayerType::DEFAULTLAYER,
                 0};
 
@@ -538,7 +538,7 @@ namespace Systems {
         const std::string bulletPath = "assets/R-TypeSheet/r-typesheet1.gif";
         Types::Rect spriteRect       = {200, 121, 32, 10};
         Types::SpriteDatas
-            bulletDatas(bulletPath, bulletWidth, bulletHeight, FRONTLAYER, static_cast<std::size_t>(FRONT));
+            bulletDatas(bulletPath, Maths::floatToIntConservingDecimals(bulletWidth), Maths::floatToIntConservingDecimals(bulletHeight), FRONTLAYER, static_cast<std::size_t>(FRONT));
 #endif
         struct health_s healthComp = {1};
         Types::Damage damageComp   = {10};
