@@ -301,9 +301,7 @@ namespace Systems {
             if (Maths::intToFloatConservingDecimals(arrPosition[id].y)
                     + Maths::intToFloatConservingDecimals(arrCollisonRect[id].height)
                 > maxPercent) {
-                Maths::subtractionWithTwoIntDecimals(
-                    arrVelocity[id].speedY,
-                    bossSpeed);
+                Maths::subtractionWithTwoIntDecimals(arrVelocity[id].speedY, bossSpeed);
             }
         }
     }
