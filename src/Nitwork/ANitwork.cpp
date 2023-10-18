@@ -5,9 +5,9 @@
 ** ANitwork
 */
 
-#include "ANitwork.hpp"
 #include <algorithm>
 #include <thread>
+#include "ANitwork.hpp"
 
 namespace Nitwork {
     ANitwork::ANitwork() : _socket(_context), _packetId(0)
@@ -126,6 +126,7 @@ namespace Nitwork {
 
     void ANitwork::callReceiveHandler(const std::string &message)
     {
+        Logger::error("NITWORK: " + message);
         startReceiveHandler();
     }
 
@@ -135,7 +136,8 @@ namespace Nitwork {
             callReceiveHandler(error.message());
             return;
         }
-        if (bytes_received < sizeof(struct header_s)) {
+        _receiveBuffer = Zstd::decompress(_receiveBuffer);
+        if (_receiveBuffer.size() < sizeof(struct header_s)) {
             callReceiveHandler("header not received");
             return;
         }

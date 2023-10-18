@@ -1,14 +1,18 @@
 cmake_minimum_required(VERSION 3.15)
 
+find_package(zstd REQUIRED)
+
 target_include_directories(
     ${PROJECT_NAME_CLIENT}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
+    zstd
 )
 target_include_directories(
     ${PROJECT_NAME_SERVER}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
+    zstd
 )
 
 target_sources(

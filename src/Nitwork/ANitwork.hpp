@@ -14,9 +14,9 @@
 #include <unordered_map>
 #include "INitwork.hpp"
 #include "Logger.hpp"
+#include "Zstd.hpp"
 
 namespace Nitwork {
-    constexpr int MAX_PACKET_SIZE = 1024;
 
     class ANitwork : public INitwork {
         public:
@@ -40,6 +40,7 @@ namespace Nitwork {
             void sendData(Packet &packet)
             {
                 n_id_t id = getPacketId(packet.endpoint);
+
                 if (packet.body.type() != typeid(T)) {
                     Logger::error("NITWORK: Invalid type");
                     return;
@@ -61,9 +62,10 @@ namespace Nitwork {
                         HEADER_CODE2};
                     data.header = newHeader;
                 }
+                std::array<char, MAX_PACKET_SIZE> compressed = Zstd::compress<T>(data);
 
                 _socket.async_send_to(
-                    boost::asio::buffer(&data, sizeof(T)),
+                    boost::asio::buffer(&compressed, sizeof(compressed)),
                     packet.endpoint,
                     [](const boost::system::error_code &error, std::size_t bytes_sent) {
                         Logger::debug("NITWORK: Package sent");
