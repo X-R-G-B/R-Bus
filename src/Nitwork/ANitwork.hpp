@@ -62,18 +62,18 @@ namespace Nitwork {
                         HEADER_CODE2};
                     data.header = newHeader;
                 }
-                std::array<char, MAX_PACKET_SIZE> compressed = Zstd::compress<T>(data);
+                std::vector<char> compressedPacket = Zstd::compress(data);
 
                 _socket.async_send_to(
-                    boost::asio::buffer(&compressed, sizeof(compressed)),
+                    boost::asio::buffer(compressedPacket),
                     packet.endpoint,
-                    [](const boost::system::error_code &error, std::size_t bytes_sent) {
+                    [compressedPacket](const boost::system::error_code &error, std::size_t bytes_sent) {
                         Logger::debug("NITWORK: Package sent");
                         if (error) {
                             Logger::error("NITWORK: " + std::string(error.message()));
                             return;
                         }
-                        if (bytes_sent != sizeof(T)) {
+                        if (bytes_sent != compressedPacket.size()) {
                             Logger::error("NITWORK: Package not sent");
                             return;
                         }

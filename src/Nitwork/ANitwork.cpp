@@ -136,11 +136,12 @@ namespace Nitwork {
             callReceiveHandler(error.message());
             return;
         }
-        _receiveBuffer = Zstd::decompress(_receiveBuffer);
-        if (_receiveBuffer.size() < sizeof(struct header_s)) {
+        const auto packetSize = Zstd::getFrameContentSize(_receiveBuffer);
+        if (packetSize > MAX_PACKET_SIZE || packetSize < sizeof(struct header_s)) {
             callReceiveHandler("header not received");
             return;
         }
+        _receiveBuffer = Zstd::decompress(_receiveBuffer, bytes_received);
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
         auto *header = reinterpret_cast<struct header_s *>(_receiveBuffer.data());
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
