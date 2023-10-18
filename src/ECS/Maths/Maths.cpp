@@ -58,8 +58,8 @@ int Maths::multiplicationWithTwoIntDecimals(const int decimalInt, const int othe
 
 int Maths::divisionWithTwoIntDecimals(const int dividend, const int divisor)
 {
-    float tempA  = intToFloatConservingDecimals(dividend);
-    float tempB  = intToFloatConservingDecimals(divisor);
+    float tempA = intToFloatConservingDecimals(dividend);
+    float tempB = intToFloatConservingDecimals(divisor);
     if (tempB == 0) {
         throw std::overflow_error("Division by zero");
     } else {
