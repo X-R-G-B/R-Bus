@@ -275,8 +275,8 @@ namespace Systems {
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const float posToGo = 65.0;
-        const int bossSpeed = 20;
+        const float posToGo   = 65.0;
+        const float bossSpeed = 0.2F;
         Registry::components<Types::Position> &arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Velocity> &arrVelocity =
@@ -292,8 +292,8 @@ namespace Systems {
         for (auto &id : ids) {
             if (Maths::intToFloatConservingDecimals(arrPosition[id].x) <= posToGo
                 && Maths::intToFloatConservingDecimals(arrVelocity[id].speedY) == 0) {
-                Maths::addFloatToDecimalInt(arrVelocity[id].speedX, 0.F);
-                Maths::addFloatToDecimalInt(arrVelocity[id].speedY, 0.2F);
+                arrVelocity[id].speedX = 0;
+                arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(bossSpeed);
             }
             if (arrPosition[id].y < 0) {
                 arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(bossSpeed);
@@ -301,7 +301,7 @@ namespace Systems {
             if (Maths::intToFloatConservingDecimals(arrPosition[id].y)
                     + Maths::intToFloatConservingDecimals(arrCollisonRect[id].height)
                 > maxPercent) {
-                Maths::subtractionWithTwoIntDecimals(arrVelocity[id].speedY, bossSpeed);
+                arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(-bossSpeed);
             }
         }
     }
