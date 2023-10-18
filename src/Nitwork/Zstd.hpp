@@ -51,6 +51,9 @@ namespace Nitwork {
                         std::string("ZSTD: Error while decompressing: ")
                         + ZSTD_getErrorName(decompressedSize));
                 }
+                if (decompressedSize > MAX_PACKET_SIZE) {
+                    throw std::runtime_error("ZSTD: Decompressed size is too big");
+                }
                 return decompressedArray;
             }
 
