@@ -34,6 +34,7 @@
 - [ECS](developer-guide/ecs/README.md)
     - [UML](developer-guide/ecs/uml.md)
     - [Clock](developer-guide/ecs/clock.md)
+    - [Maths](developer-guide/ecs/maths.md)
     - [Logger](developer-guide/ecs/logger.md)
     - [Json](developer-guide/ecs/json/json.md)
 
