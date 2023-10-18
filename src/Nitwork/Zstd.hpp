@@ -30,7 +30,8 @@ namespace Nitwork {
                     COMPRESSION_LEVEL);
 
                 if (ZSTD_isError(result)) {
-                    throw std::runtime_error(std::string("ZSTD: Error while compressing: ") + ZSTD_getErrorName(result));
+                    throw std::runtime_error(
+                        std::string("ZSTD: Error while compressing: ") + ZSTD_getErrorName(result));
                 }
                 compressedData.resize(result);
                 return compressedData;
