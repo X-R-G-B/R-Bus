@@ -7,11 +7,12 @@
 
 #include "Maths.hpp"
 #include <stdexcept>
+#include <cmath>
 
 int Maths::floatToIntConservingDecimals(const float normalFloat)
 {
     float temp = normalFloat * getMultiplier();
-    int result = static_cast<int>(temp);
+    int result = static_cast<int>(std::round(temp));
     return result;
 }
 
@@ -58,11 +59,11 @@ int Maths::multiplicationWithTwoIntDecimals(const int decimalInt, const int othe
 
 int Maths::divisionWithTwoIntDecimals(const int dividend, const int divisor)
 {
-    float tempA  = intToFloatConservingDecimals(dividend);
-    float tempB  = intToFloatConservingDecimals(divisor);
-    if (tempB == 0) {
+    if (divisor == 0) {
         throw std::overflow_error("Division by zero");
     } else {
+        float tempA = intToFloatConservingDecimals(dividend);
+        float tempB = intToFloatConservingDecimals(divisor);
         float result = tempA / tempB;
         return floatToIntConservingDecimals(result);
     }
