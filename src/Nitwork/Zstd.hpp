@@ -19,7 +19,9 @@ namespace Nitwork {
             template <typename T>
             static std::vector<char> compress(const T &data)
             {
-                static_assert(std::is_pod<T>::value, "ZSTD: Data must be POD");
+                if (!std::is_standard_layout_v<T> || !std::is_trivial_v<T>) {
+                    throw std::runtime_error("ZSTD: Data must be POD");
+                }
                 size_t const compressedSize = ZSTD_compressBound(sizeof(T));
                 std::vector<char> compressedData(compressedSize);
                 size_t const result = ZSTD_compress(
@@ -43,7 +45,7 @@ namespace Nitwork {
                 std::array<char, MAX_PACKET_SIZE> decompressedArray = {0};
                 size_t decompressedSize = ZSTD_decompress(decompressedArray.data(), MAX_PACKET_SIZE, data.data(), size);
 
-                if (ZSTD_isError(decompressedSize)) {
+                if (ZSTD_isError(decompressedSize) != 0U) {
                     throw std::runtime_error(std::string("ZSTD: Error while decompressing: ") + ZSTD_getErrorName(decompressedSize));
                 }
                 return decompressedArray;
@@ -51,7 +53,12 @@ namespace Nitwork {
 
             static std::size_t getFrameContentSize(const std::array<char, MAX_PACKET_SIZE> &data)
             {
-                return ZSTD_getFrameContentSize(data.data(), data.size());
+                std::size_t const frameContentSize = ZSTD_getFrameContentSize(data.data(), data.size());
+
+                if (ZSTD_isError(frameContentSize) != 0U) {
+                    throw std::runtime_error(std::string("ZSTD: Error while getting frame content size: ") + ZSTD_getErrorName(frameContentSize));
+                }
+                return frameContentSize;
             }
     };
 } // namespace Nitwork
