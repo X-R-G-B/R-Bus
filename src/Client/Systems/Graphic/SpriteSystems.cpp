@@ -224,7 +224,11 @@ namespace Systems {
         auto ids = arrSpriteDatas.getExistingsId();
         for (auto id : ids) {
             auto &spriteDatas = arrSpriteDatas[id];
-            Raylib::Sprite sprite(spriteDatas.fileName, Maths::intToFloatConservingDecimals(spriteDatas.width), Maths::intToFloatConservingDecimals(spriteDatas.height), id);
+            Raylib::Sprite sprite(
+                spriteDatas.fileName,
+                Maths::intToFloatConservingDecimals(spriteDatas.width),
+                Maths::intToFloatConservingDecimals(spriteDatas.height),
+                id);
             arrSprite.insert(id, sprite);
             switch (spriteDatas.layer) {
                 case BACKLAYER:
