@@ -1,6 +1,6 @@
 ## Maths
 
-The Maths namespace provides a collection of utility functions for precise mathematical operations involving decimal numbers. The namespace includes functions for converting between float and integer representations, performing arithmetic operations with preserved decimal precision, and modifying decimal integers using normal integers and floats.
+The Maths namespace provides a collection of utility functions for precise mathematical operations involving decimal numbers. The namespace includes functions for converting between float and integer representations, performing arithmetic operations with preserved decimal precision, and modifying decimal integers using normal integers and floats. We use a lot of these functions to reduce network traffic by sending integers instead of floats, and to ensure that calculations are performed with the same precision on both the client and server.
 
 You can use it including the following header file:
 
