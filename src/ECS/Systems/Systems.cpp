@@ -275,7 +275,7 @@ namespace Systems {
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const float posToGo   = 65.0;
+        const float posToGo = 65.0;
         const int bossSpeed = 20;
         Registry::components<Types::Position> &arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
