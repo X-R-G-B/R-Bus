@@ -5,9 +5,9 @@
 ** ANitwork
 */
 
+#include "ANitwork.hpp"
 #include <algorithm>
 #include <thread>
-#include "ANitwork.hpp"
 
 namespace Nitwork {
     ANitwork::ANitwork() : _socket(_context), _packetId(0)

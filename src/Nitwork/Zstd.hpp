@@ -5,13 +5,13 @@
 ** zstd
 */
 
-#include <string>
 #include <array>
 #include <stdexcept>
+#include <string>
 #include <zstd.h>
 
 namespace Nitwork {
-    constexpr int MAX_PACKET_SIZE = 1024;
+    constexpr int MAX_PACKET_SIZE   = 1024;
     constexpr int COMPRESSION_LEVEL = 1;
 
     class Zstd {
@@ -37,10 +37,12 @@ namespace Nitwork {
                 return compressedData;
             }
 
-            static std::array<char, MAX_PACKET_SIZE> decompress(const std::array<char, MAX_PACKET_SIZE> &data, size_t size)
+            static std::array<char, MAX_PACKET_SIZE>
+            decompress(const std::array<char, MAX_PACKET_SIZE> &data, size_t size)
             {
                 std::vector<char> decompressed(MAX_PACKET_SIZE);
-                size_t decompressedSize = ZSTD_decompress(decompressed.data(), MAX_PACKET_SIZE, data.data(), size);
+                size_t decompressedSize =
+                    ZSTD_decompress(decompressed.data(), MAX_PACKET_SIZE, data.data(), size);
 
                 if (ZSTD_isError(decompressedSize)) {
                     throw std::runtime_error("ZSTD: Error while decompressing");
