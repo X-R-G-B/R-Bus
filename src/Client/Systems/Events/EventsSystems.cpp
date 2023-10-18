@@ -33,6 +33,7 @@ namespace Systems {
 
     void EventsSystems::playerMovement(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                              = Registry::getInstance();
         Registry::components<Types::Position> arrPos    = registry.getComponents<Types::Position>();
         Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
@@ -66,6 +67,7 @@ namespace Systems {
 
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         static const std::size_t waitTimeBullet           = 500;
         static const std::string soundPathShoot           = "assets/Audio/Sounds/laser.ogg";
         Registry &registry                                = Registry::getInstance();
@@ -107,6 +109,7 @@ namespace Systems {
 
     void EventsSystems::changeScene(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
             auto &sceneManager = Scene::SceneManager::getInstance();
             if (sceneManager.getCurrentScene() == Scene::Scene::MAIN_GAME) {

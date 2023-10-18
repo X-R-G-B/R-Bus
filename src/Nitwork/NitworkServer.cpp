@@ -133,6 +133,7 @@ namespace Nitwork {
     void
     NitworkServer::handleInitMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         if (_endpoints.size() >= _maxNbPlayer) {
             std::cerr << "Too many clients, can't add an other one" << std::endl;
             return;
@@ -172,7 +173,9 @@ namespace Nitwork {
             return;
         }
         addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
-        Systems::SystemManagersDirector::getInstance().getSystemManager(0).addSystem(Systems::initWave);
+        auto &director = Systems::SystemManagersDirector::getInstance();
+        std::lock_guard<std::mutex> lock(director.mutex);
+        director.getSystemManager(0).addSystem(Systems::initWave);
     }
 
     void

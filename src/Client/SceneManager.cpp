@@ -34,6 +34,7 @@ namespace Scene {
     static void initSystemManagers()
     {
         auto &director = Systems::SystemManagersDirector::getInstance();
+        std::lock_guard<std::mutex> lock(director.mutex);
 
         for (auto systems : Systems::getSystemsGroups()) {
             director.addSystemManager(systems);
@@ -60,18 +61,25 @@ namespace Scene {
         Raylib::closeWindow();
     }
 
-    int SceneManager::run()
+    static void updateSystemManagers(std::vector<SystemManagers> &scene)
     {
         auto &director = Systems::SystemManagersDirector::getInstance();
 
+        for (auto &systemManager : scene) {
+            std::unique_lock<std::mutex> lock(director.mutex);
+            director.getSystemManager(static_cast<std::size_t>(systemManager)).updateSystems();
+            lock.unlock();
+        }
+    }
+
+    int SceneManager::run()
+    {
         try {
             while (!_stop && !Raylib::windowShouldClose()) {
                 Raylib::beginDrawing();
                 Raylib::clearBackground(Raylib::DarkGray);
                 auto scene = _scenes.at(static_cast<std::size_t>(_currentScene));
-                for (auto &systemManager : scene) {
-                    director.getSystemManager(static_cast<std::size_t>(systemManager)).updateSystems();
-                }
+                updateSystemManagers(scene);
                 Raylib::endDrawing();
             }
             destroyRaylib();

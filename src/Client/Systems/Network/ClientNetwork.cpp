@@ -45,10 +45,11 @@ namespace Systems {
 
     void handleStartWave(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        auto &director = SystemManagersDirector::getInstance();
+        std::lock_guard<std::mutex> lock(director.mutex);
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
         Types::Enemy::setEnemyNb(wave.enemyNb);
-        SystemManagersDirector::getInstance()
+            director
             .getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::GAME))
             .addSystem(initWave);
         Logger::info("Wave started");

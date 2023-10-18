@@ -31,7 +31,6 @@ namespace Systems {
 
     static void checkOutsideWindow(std::vector<std::size_t> ids)
     {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
@@ -55,6 +54,7 @@ namespace Systems {
 
     void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry = Registry::getInstance();
         std::vector<std::size_t> ids = registry.getEntitiesByComponents(
                 {typeid(Types::Player), typeid(Types::Position), typeid(Types::CollisionRect)});
@@ -254,6 +254,7 @@ namespace Systems {
 
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const float posToGo   = 65.0;
         const float bossSpeed = 0.2F;
         Registry::components<Types::Position> &arrPosition =
@@ -284,6 +285,7 @@ namespace Systems {
 
     void initWave(std::size_t managerId, std::size_t systemId)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         static std::size_t enemyNumber =
             Json::getInstance().getDataByVector({"wave", "nbrEnemy"}, JsonType::WAVE);
         const std::size_t spawnDelay = 2;
