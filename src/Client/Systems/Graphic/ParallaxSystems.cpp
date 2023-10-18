@@ -14,7 +14,7 @@ namespace Systems::ParallaxSystems {
     constexpr int maxOutParallaxLeft  = -100;
     constexpr int maxOutParallaxRight = 100;
 
-    static void initParallaxEntity(nlohmann::basic_json<> &elem, const float maxOffsideParallax = 0)
+    static void initParallaxEntity(nlohmann::basic_json<> &elem, const int maxOffsideParallax = 0)
     {
         std::size_t id          = Registry::getInstance().addEntity();
         Raylib::Sprite parralax = {
@@ -32,9 +32,11 @@ namespace Systems::ParallaxSystems {
         }
 
         if (maxOffsideParallax > 0) {
-            position.x += maxOffsideParallax;
+            Maths::addNormalIntToDecimalInt(position.x, maxOffsideParallax);
         }
-        Types::Parallax inst = {position.x, position.y};
+        Types::Parallax inst = {
+            Maths::intToFloatConservingDecimals(position.x),
+            Maths::intToFloatConservingDecimals(position.y)};
 
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(parralax);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
@@ -63,9 +65,9 @@ namespace Systems::ParallaxSystems {
         Registry::components<Types::Parallax> &arrParallax,
         Registry::components<Types::Position> &arrPosition)
     {
-        if (arrPosition[id].x <= maxOutParallaxLeft) {
-            arrPosition[id].x += maxOutParallaxRight * 2;
-            arrPosition[id].y = arrParallax[id].y;
+        if (Maths::intToFloatConservingDecimals(arrPosition[id].x) <= maxOutParallaxLeft) {
+            Maths::addNormalIntToDecimalInt(arrPosition[id].x, maxOutParallaxRight * 2);
+            arrPosition[id].y = Maths::floatToIntConservingDecimals(arrParallax[id].y);
         }
     }
 

@@ -7,6 +7,7 @@
 
 #include "EventsSystems.hpp"
 #include "CustomTypes.hpp"
+#include "Maths.hpp"
 #include "NitworkClient.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
@@ -47,19 +48,19 @@ namespace Systems {
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
                 checkAnimRect(id, clock_, clockId);
-                arrPos[id].x += 1;
+                Maths::addNormalIntToDecimalInt(arrPos[id].x, 1);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
                 checkAnimRect(id, clock_, clockId);
-                arrPos[id].x -= 1;
+                Maths::subNormalIntToDecimalInt(arrPos[id].x, 1);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
                 checkAnimRect(id, clock_, clockId);
-                arrPos[id].y -= 1;
+                Maths::subNormalIntToDecimalInt(arrPos[id].y, 1);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
                 checkAnimRect(id, clock_, clockId);
-                arrPos[id].y += 1;
+                Maths::addNormalIntToDecimalInt(arrPos[id].y, 1);
             }
         }
     }
@@ -95,7 +96,7 @@ namespace Systems {
                 continue;
             }
             Nitwork::NitworkClient::getInstance().addNewBulletMsg(
-                {static_cast<int>(arrPosition[id].x), static_cast<int>(arrPosition[id].y)},
+                {Maths::removeIntDecimals(arrPosition[id].x), Maths::removeIntDecimals(arrPosition[id].y)},
                 CLASSIC);
             struct Types::Missiles missile = {
                 .type = CLASSIC,

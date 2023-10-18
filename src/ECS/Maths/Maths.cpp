@@ -63,14 +63,14 @@ int Maths::divisionWithTwoIntDecimals(int dividend, int divisor)
     return floatToIntConservingDecimals(result);
 }
 
-int Maths::addNormalIntToDecimalInt(int decimalInt, int normalInt)
+void Maths::addNormalIntToDecimalInt(int &decimalInt, int normalInt)
 {
-    return decimalInt + addIntDecimals(normalInt);
+    decimalInt += addIntDecimals(normalInt);
 }
 
-int Maths::subNormalIntToDecimalInt(int decimalInt, int normalInt)
+void Maths::subNormalIntToDecimalInt(int &decimalInt, int normalInt)
 {
-    return decimalInt - addIntDecimals(normalInt);
+    decimalInt -= addIntDecimals(normalInt);
 }
 
 void Maths::addFloatToDecimalInt(int &decimalInt, float normalFloat)

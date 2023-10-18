@@ -20,7 +20,7 @@
             "height": 100.0,
             "position": {
                 "x": 10000,
-                "y": 000
+                "y": 0
             },
             "velocity" : {
                 "speedX" : -3,

@@ -107,22 +107,22 @@ namespace Maths {
     int divisionWithTwoIntDecimals(int dividend, int divisor);
 
     /**
-     * @brief multiplication of two ints with two decimals
-     * @param decimalInt the first int
-     * @param normalInt the second int
-     * @return the result of the multiplication
+     * @brief addition with a decimal int and a normal int
+     * @param decimalInt the decimal int
+     * @param normalInt the normal int to add
+     * @return void
      * @example 500 + 5 = 550
      */
-    int addNormalIntToDecimalInt(int decimalInt, int normalInt);
+    void addNormalIntToDecimalInt(int &decimalInt, int normalInt);
 
     /**
-     * @brief multiplication of two ints with two decimals
-     * @param decimalInt the first int
-     * @param normalInt the second int
-     * @return the result of the multiplication
+     * @brief subtraction with a decimal int and a normal int
+     * @param decimalInt the decimal int
+     * @param normalInt the normal int
+     * @return void
      * @example 550 - 5 = 500
      */
-    int subNormalIntToDecimalInt(int decimalInt, int normalInt);
+    void subNormalIntToDecimalInt(int &decimalInt, int normalInt);
 
     /**
      * @brief add a float to an int with decimals
