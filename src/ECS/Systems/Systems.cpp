@@ -9,8 +9,8 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <sstream>
-#include "ECSCustomTypes.hpp"
 #include "CustomTypes.hpp"
+#include "ECSCustomTypes.hpp"
 #include "Maths.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
@@ -48,15 +48,17 @@ namespace Systems {
             if (arrPosition[id].y < 0) {
                 arrPosition[id].y = 0;
             }
-            if (arrPosition[id].x + Maths::intToFloatConservingDecimals(arrCollisionRect[id].width)
+            if (Maths::intToFloatConservingDecimals(arrPosition[id].x)
+                    + Maths::intToFloatConservingDecimals(arrCollisionRect[id].width)
                 > maxPercent) {
-                arrPosition[id].x =
-                    maxPercent - Maths::intToFloatConservingDecimals(arrCollisionRect[id].width);
+                arrPosition[id].x = Maths::floatToIntConservingDecimals(
+                    maxPercent - Maths::intToFloatConservingDecimals(arrCollisionRect[id].width));
             }
-            if (arrPosition[id].y + Maths::intToFloatConservingDecimals(arrCollisionRect[id].height)
+            if (Maths::intToFloatConservingDecimals(arrPosition[id].y)
+                    + Maths::intToFloatConservingDecimals(arrCollisionRect[id].height)
                 > maxPercent) {
-                arrPosition[id].y =
-                    maxPercent - Maths::intToFloatConservingDecimals(arrCollisionRect[id].height);
+                arrPosition[id].y = Maths::floatToIntConservingDecimals(
+                    maxPercent - Maths::intToFloatConservingDecimals(arrCollisionRect[id].height));
             }
         }
     }
@@ -138,11 +140,18 @@ namespace Systems {
             if (arrCollisionRect.exist(*itIds)) {
                 Types::CollisionRect sndEntityRect = arrCollisionRect[*itIds];
                 Types::Position sndEntityPos       = arrPosition[*itIds];
-                if (entityPos.x < sndEntityPos.x + Maths::intToFloatConservingDecimals(sndEntityRect.width)
-                    && entityPos.x + Maths::intToFloatConservingDecimals(entityColl.width) > sndEntityPos.x
-                    && entityPos.y
-                        < sndEntityPos.y + Maths::intToFloatConservingDecimals(sndEntityRect.height)
-                    && entityPos.y + Maths::intToFloatConservingDecimals(entityColl.height) > sndEntityPos.y) {
+                if (Maths::intToFloatConservingDecimals(entityPos.x)
+                        < (Maths::intToFloatConservingDecimals(sndEntityPos.x)
+                           + Maths::intToFloatConservingDecimals(sndEntityRect.width))
+                    && (Maths::intToFloatConservingDecimals(entityPos.x)
+                        + Maths::intToFloatConservingDecimals(entityColl.width))
+                        > Maths::intToFloatConservingDecimals(sndEntityPos.x)
+                    && Maths::intToFloatConservingDecimals(entityPos.y)
+                        < (Maths::intToFloatConservingDecimals(sndEntityPos.y)
+                           + Maths::intToFloatConservingDecimals(sndEntityRect.height))
+                    && (Maths::intToFloatConservingDecimals(entityPos.y)
+                        + Maths::intToFloatConservingDecimals(entityColl.height))
+                        > Maths::intToFloatConservingDecimals(sndEntityPos.y)) {
                     checkSide(id, *itIds);
                 }
             }
@@ -181,8 +190,12 @@ namespace Systems {
 
         while (clock.elapsedMillisecondsSince(clockId) >= moveTime) {
             for (auto &id : ids) {
-                arrPosition[id].x += Maths::intToFloatConservingDecimals(arrVelocity[id].speedX);
-                arrPosition[id].y += Maths::intToFloatConservingDecimals(arrVelocity[id].speedY);
+                Maths::addFloatToDecimalInt(
+                    arrPosition[id].x,
+                    Maths::intToFloatConservingDecimals(arrVelocity[id].speedX));
+                Maths::addFloatToDecimalInt(
+                    arrPosition[id].y,
+                    Maths::intToFloatConservingDecimals(arrVelocity[id].speedY));
             }
             clock.decreaseMilliseconds(clockId, moveTime);
         }
@@ -271,7 +284,7 @@ namespace Systems {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
         for (auto &id : ids) {
-            if (arrPosition[id].x <= posToGo
+            if (Maths::intToFloatConservingDecimals(arrPosition[id].x) <= posToGo
                 && Maths::intToFloatConservingDecimals(arrVelocity[id].speedY) == 0) {
                 Maths::addFloatToDecimalInt(arrVelocity[id].speedX, 0.F);
                 Maths::addFloatToDecimalInt(arrVelocity[id].speedY, 0.2F);
@@ -279,7 +292,8 @@ namespace Systems {
             if (arrPosition[id].y < 0) {
                 arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(bossSpeed);
             }
-            if (arrPosition[id].y + Maths::intToFloatConservingDecimals(arrCollisonRect[id].height)
+            if (Maths::intToFloatConservingDecimals(arrPosition[id].y)
+                    + Maths::intToFloatConservingDecimals(arrCollisonRect[id].height)
                 > maxPercent) {
                 arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(-bossSpeed);
             }
@@ -400,8 +414,10 @@ namespace Systems {
 
     static bool isOutsideWindow(const Types::Position &pos)
     {
-        if (pos.x < outsideWindowTopLeft || pos.x > outsideWindowBotRigth || pos.y < outsideWindowTopLeft
-            || pos.y > outsideWindowBotRigth) {
+        if (Maths::intToFloatConservingDecimals(pos.x < outsideWindowTopLeft)
+            || Maths::intToFloatConservingDecimals(pos.x) > outsideWindowBotRigth
+            || Maths::intToFloatConservingDecimals(pos.y) < outsideWindowTopLeft
+            || Maths::intToFloatConservingDecimals(pos.y) > outsideWindowBotRigth) {
             return (true);
         }
         return (false);
