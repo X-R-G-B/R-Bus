@@ -65,11 +65,13 @@ int Maths::subtractionWithTwoIntDecimals(const int minuend, const int subtrahend
 - Performs multiplication on two integers with preserved decimals.
 ```cpp
 int Maths::multiplicationWithTwoIntDecimals(const int decimalInt, const int otherDecimalInt)
+// For example, `9999 * 2` results in `199.98` for `DECIMALS_TO_CONSERVE = 2`
 ```
 
 - Performs division on two integers with preserved decimals.
 ```cpp
 int Maths::divisionWithTwoIntDecimals(const int dividend, const int divisor)
+// For instance, `9999 / 2` results in `49.995` for `DECIMALS_TO_CONSERVE = 2`
 ```
 
 - Adds a normal integer to a decimal integer, modifying the decimal integer in place.
