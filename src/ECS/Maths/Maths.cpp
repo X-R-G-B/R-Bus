@@ -7,26 +7,26 @@
 
 #include "Maths.hpp"
 
-int Maths::floatToIntConservingDecimals(float normalFloat)
+int Maths::floatToIntConservingDecimals(const float normalFloat)
 {
     float temp = normalFloat * getMultiplier();
     int result = static_cast<int>(temp);
     return result;
 }
 
-float Maths::intToFloatConservingDecimals(int decimalInt)
+float Maths::intToFloatConservingDecimals(const int decimalInt)
 {
     float decimal = static_cast<float>(decimalInt % getMultiplier()) / getMultiplier();
     float result  = static_cast<float>(decimalInt / getMultiplier()) + decimal;
     return result;
 }
 
-int Maths::removeIntDecimals(int decimalInt)
+int Maths::removeIntDecimals(const int decimalInt)
 {
     return decimalInt / getMultiplier();
 }
 
-int Maths::addIntDecimals(int normalInt)
+int Maths::addIntDecimals(const int normalInt)
 {
     return normalInt * getMultiplier();
 }

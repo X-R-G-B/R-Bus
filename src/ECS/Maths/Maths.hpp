@@ -39,7 +39,7 @@ namespace Maths {
      * @example 99.99 -> 9999
      *
      */
-    int floatToIntConservingDecimals(float normalFloat);
+    int floatToIntConservingDecimals(const float normalFloat);
 
     /**
      * @brief convert an int to a float with two decimals
@@ -48,7 +48,7 @@ namespace Maths {
      * @example 9999 -> 99.99
      *
      */
-    float intToFloatConservingDecimals(int decimalInt);
+    float intToFloatConservingDecimals(const int decimalInt);
 
     /**
      * @brief remove the decimals of an int
@@ -57,7 +57,7 @@ namespace Maths {
      * @example 9999 -> 99
      *
      */
-    int removeIntDecimals(int decimalInt);
+    int removeIntDecimals(const int decimalInt);
 
     /**
      * @brief add the decimals to an int
@@ -66,7 +66,7 @@ namespace Maths {
      * @example 99 -> 9900
      *
      */
-    int addIntDecimals(int normalInt);
+    int addIntDecimals(const int normalInt);
 
     /**
      * @brief addition of two ints with two decimals
