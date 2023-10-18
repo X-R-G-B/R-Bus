@@ -39,16 +39,12 @@ namespace Nitwork {
             static std::array<char, MAX_PACKET_SIZE>
             decompress(const std::array<char, MAX_PACKET_SIZE> &data, size_t size)
             {
-                std::vector<char> decompressed(MAX_PACKET_SIZE);
-                size_t decompressedSize =
-                    ZSTD_decompress(decompressed.data(), MAX_PACKET_SIZE, data.data(), size);
+                std::array<char, MAX_PACKET_SIZE> decompressedArray = {0};
+                size_t decompressedSize = ZSTD_decompress(decompressedArray.data(), MAX_PACKET_SIZE, data.data(), size);
 
                 if (ZSTD_isError(decompressedSize)) {
-                    throw std::runtime_error(std::string("ZSTD: Error while compressing: ") + ZSTD_getErrorName(decompressedSize));
+                    throw std::runtime_error(std::string("ZSTD: Error while decompressing: ") + ZSTD_getErrorName(decompressedSize));
                 }
-                decompressed.resize(decompressedSize);
-                std::array<char, MAX_PACKET_SIZE> decompressedArray = {0};
-                std::copy(decompressed.begin(), decompressed.end(), decompressedArray.begin());
                 return decompressedArray;
             }
 
