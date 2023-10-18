@@ -19,7 +19,7 @@ namespace Nitwork {
             template <typename T>
             static std::vector<char> compress(const T &data)
             {
-                Logger::debug("ZSTD: Compressing data");
+                static_assert(std::is_pod<T>::value, "ZSTD: Data must be POD");
                 size_t const compressedSize = ZSTD_compressBound(sizeof(T));
                 std::vector<char> compressedData(compressedSize);
                 size_t const result = ZSTD_compress(
@@ -30,10 +30,9 @@ namespace Nitwork {
                     COMPRESSION_LEVEL);
 
                 if (ZSTD_isError(result)) {
-                    throw std::runtime_error("ZSTD: Error while compressing");
+                    throw std::runtime_error(std::string("ZSTD: Error while compressing: ") + ZSTD_getErrorName(result));
                 }
                 compressedData.resize(result);
-                Logger::debug("ZSTD: Compressed data");
                 return compressedData;
             }
 
@@ -43,10 +42,10 @@ namespace Nitwork {
                 size_t decompressedSize = ZSTD_decompress(decompressed.data(), MAX_PACKET_SIZE, data.data(), size);
 
                 if (ZSTD_isError(decompressedSize)) {
-                    throw std::runtime_error("ZSTD: Error while decompressing");
+                    throw std::runtime_error(std::string("ZSTD: Error while compressing: ") + ZSTD_getErrorName(decompressedSize));
                 }
                 decompressed.resize(decompressedSize);
-                std::array<char, MAX_PACKET_SIZE> decompressedArray;
+                std::array<char, MAX_PACKET_SIZE> decompressedArray = {0};
                 std::copy(decompressed.begin(), decompressed.end(), decompressedArray.begin());
                 return decompressedArray;
             }
