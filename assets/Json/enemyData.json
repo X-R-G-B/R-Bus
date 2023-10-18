@@ -4,11 +4,11 @@
             "spritePath": "assets/R-TypeSheet/r-typesheet20.gif",
             "damage": 10,
             "health": 1.0,
-            "width": 10.0,
-            "height": 10.0,
+            "width": 1000,
+            "height": 1000,
             "position" : {
-                "x": 110.0,
-                "y": 100.0
+                "x": 11000,
+                "y": 10000
             },
             "rect": {
                 "x": 18.0,
@@ -17,12 +17,12 @@
                 "height": 30
             },
             "collisionRect": {
-                "width": 10.0,
-                "height":10.0
+                "width": 1000,
+                "height":1000
             },
             "velocity": {
-                "speedX": -0.4,
-                "speedY": 0.0
+                "speedX": -40,
+                "speedY": 0
             },
             "animRect": {
                 "move": [

@@ -5,12 +5,12 @@
             "width": 100.0,
             "height": 100.0,
             "position": {
-                "x": 0.0,
-                "y": 0.0
+                "x": 0,
+                "y": 0
             },
             "velocity" : {
-                "speedX" : -0.03,
-                "speedY" :0.0
+                "speedX" : -3,
+                "speedY" : 0
             },
             "copy": true
         },
@@ -19,12 +19,12 @@
             "width": 100.0,
             "height": 100.0,
             "position": {
-                "x": 100.0,
-                "y": 0.0
+                "x": 10000,
+                "y": 0
             },
             "velocity" : {
-                "speedX" : -0.03,
-                "speedY" :0.0
+                "speedX" : -3,
+                "speedY" :0
             },
             "copy": true
         },
@@ -33,12 +33,12 @@
             "width": 100.0,
             "height": 100.0,
             "position": {
-                "x": 0.0,
-                "y": 0.0
+                "x": 0,
+                "y": 0
             },
             "velocity" : {
-                "speedX" : -0.03,
-                "speedY" :0.0
+                "speedX" : -3,
+                "speedY" :0
             },
             "copy": true
         },
@@ -47,12 +47,12 @@
             "width": 100.0,
             "height": 100.0,
             "position": {
-                "x": 0.0,
-                "y": 0.0
+                "x": 0,
+                "y": 0
             },
             "velocity" : {
-                "speedX" : -0.04,
-                "speedY" :0.0
+                "speedX" : -4,
+                "speedY" :0
             },
             "copy": true
         },
@@ -61,12 +61,12 @@
             "width": 100.0,
             "height": 100.0,
             "position": {
-                "x": 100.0,
-                "y": 0.0
+                "x": 10000,
+                "y": 0
             },
             "velocity" : {
-                "speedX" : -0.05,
-                "speedY" :0.0
+                "speedX" : -5,
+                "speedY" :0
             }
         },
         {
@@ -74,12 +74,12 @@
             "width": 7.0,
             "height": 10.0,
             "position": {
-                "x": 90.0,
-                "y": 20.0
+                "x": 9000,
+                "y": 2000
             },
             "velocity" : {
-                "speedX" : -0.2,
-                "speedY" :0.0
+                "speedX" : -20,
+                "speedY" :0
             },
             "rect" : {
                 "x" : 0.0,
@@ -93,12 +93,12 @@
             "width": 30.0,
             "height": 50.0,
             "position": {
-                "x": 100.0,
-                "y": 20.0
+                "x": 10000,
+                "y": 2000
             },
             "velocity" : {
-                "speedX" : -0.11,
-                "speedY" :0.0
+                "speedX" : -11,
+                "speedY" :0
             },
             "rect" : {
                 "x" : 0.0,
@@ -112,12 +112,12 @@
             "width": 20.0,
             "height": 30.0,
             "position": {
-                "x": 160.0,
-                "y": 70.0
+                "x": 16000,
+                "y": 7000
             },
             "velocity" : {
-                "speedX" : -0.09,
-                "speedY" :0.0
+                "speedX" : -9,
+                "speedY" : 0
             },
             "rect" : {
                 "x" : 0.0,
@@ -131,12 +131,12 @@
             "width": 16.0,
             "height": 25.0,
             "position": {
-                "x": 145.0,
-                "y": 90.0
+                "x": 14500,
+                "y": 9000
             },
             "velocity" : {
-                "speedX" : -0.09,
-                "speedY" :0.0
+                "speedX" : -9,
+                "speedY" : 0
             },
             "rect" : {
                 "x" : 0.0,
@@ -150,12 +150,12 @@
             "width": 8.0,
             "height": 12.0,
             "position": {
-                "x": 190.0,
-                "y": 10.0
+                "x": 19000,
+                "y": 1000
             },
             "velocity" : {
-                "speedX" : -0.06,
-                "speedY" :0.0
+                "speedX" : -6,
+                "speedY" :0
             },
             "rect" : {
                 "x" : 0.0,
@@ -169,11 +169,30 @@
             "width": 3.5,
             "height": 5.0,
             "position": {
-                "x": 190.0,
-                "y": 70.0
+                "x": 19000,
+                "y": 7000
             },
             "velocity" : {
-                "speedX" : -0.43,
+                "speedX" : -43,
+                "speedY" : 0
+            },
+            "rect" : {
+                "x" : 0.0,
+                "y": 0.0,
+                "width": 96.0,
+                "height": 96.0
+            }
+        },
+        {
+            "spritePath": "assets/Map/Planets/Asteroid.png",
+            "width": 3.5,
+            "height": 5.0,
+            "position": {
+                "x": 6000,
+                "y": 6000
+            },
+            "velocity" : {
+                "speedX" : -46,
                 "speedY" :0.0
             },
             "rect" : {
@@ -188,11 +207,11 @@
             "width": 3.5,
             "height": 5.0,
             "position": {
-                "x": 60.0,
-                "y": 60.0
+                "x": 10000,
+                "y": 6500
             },
             "velocity" : {
-                "speedX" : -0.46,
+                "speedX" : -42,
                 "speedY" :0.0
             },
             "rect" : {
@@ -207,30 +226,11 @@
             "width": 3.5,
             "height": 5.0,
             "position": {
-                "x": 100.0,
-                "y": 65.0
+                "x": 11000,
+                "y": 2000
             },
             "velocity" : {
-                "speedX" : -0.42,
-                "speedY" :0.0
-            },
-            "rect" : {
-                "x" : 0.0,
-                "y": 0.0,
-                "width": 96.0,
-                "height": 96.0
-            }
-        },
-        {
-            "spritePath": "assets/Map/Planets/Asteroid.png",
-            "width": 3.5,
-            "height": 5.0,
-            "position": {
-                "x": 110.0,
-                "y": 20.0
-            },
-            "velocity" : {
-                "speedX" : -0.3,
+                "speedX" : -30,
                 "speedY" : 0.0
             },
             "rect" : {
@@ -245,11 +245,11 @@
             "width": 3.5,
             "height": 5.0,
             "position": {
-                "x": 30.0,
-                "y": 50.0
+                "x": 3000,
+                "y": 5000
             },
             "velocity" : {
-                "speedX" : -0.2,
+                "speedX" : -20,
                 "speedY" : 0.0
             },
             "rect" : {
@@ -264,11 +264,11 @@
             "width": 7.0,
             "height": 10.0,
             "position": {
-                "x": 100.0,
-                "y": 20.0
+                "x": 10000,
+                "y": 2000
             },
             "velocity" : {
-                "speedX" : -0.8,
+                "speedX" : -80,
                 "speedY" :0.0
             },
             "rect" : {

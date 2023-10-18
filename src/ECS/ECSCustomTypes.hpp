@@ -22,29 +22,17 @@ extern "C"
 namespace Types {
 
     struct CollisionRect {
-            float width;
-            float height;
+            int width;
+            int height;
 
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(CollisionRect, width, height);
     };
 
-    struct RectangleShape {
-            float width;
-            float height;
-    };
-
     struct Position {
-            float x;
-            float y;
+            int x;
+            int y;
 
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Position, x, y);
-
-            Position &operator+=(const Position &pos)
-            {
-                x += pos.x;
-                y += pos.y;
-                return (*this);
-            }
     };
 
     struct Damage {
@@ -52,8 +40,8 @@ namespace Types {
     };
 
     struct Velocity {
-            float speedX;
-            float speedY;
+            int speedX;
+            int speedY;
 
             NLOHMANN_DEFINE_TYPE_INTRUSIVE(Velocity, speedX, speedY);
     };
@@ -61,8 +49,8 @@ namespace Types {
     struct SpriteDatas {
             SpriteDatas(
                 const std::string &fileName,
-                float width,
-                float height,
+                int width,
+                int height,
                 enum LayerType layer,
                 std::size_t layerSide)
                 : fileName(fileName),
@@ -73,8 +61,8 @@ namespace Types {
             {
             }
             std::string fileName;
-            float width;
-            float height;
+            int width;
+            int height;
             std::size_t id;
             enum LayerType layer;
             size_t layerSide;
@@ -141,11 +129,6 @@ namespace Types {
         private:
             static unsigned int _enemyNb;
             static std::mutex _mutex;
-    };
-
-    struct Parallax {
-            float x;
-            float y;
     };
 
     struct Dead {

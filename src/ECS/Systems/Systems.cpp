@@ -9,7 +9,9 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 #include <sstream>
+#include "CustomTypes.hpp"
 #include "ECSCustomTypes.hpp"
+#include "Maths.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
@@ -43,11 +45,17 @@ namespace Systems {
             if (arrPosition[id].y < 0) {
                 arrPosition[id].y = 0;
             }
-            if (arrPosition[id].x + arrCollisionRect[id].width > maxPercent) {
-                arrPosition[id].x = maxPercent - arrCollisionRect[id].width;
+            if (Maths::intToFloatConservingDecimals(arrPosition[id].x)
+                    + Maths::intToFloatConservingDecimals(arrCollisionRect[id].width)
+                > maxPercent) {
+                arrPosition[id].x = Maths::floatToIntConservingDecimals(
+                    maxPercent - Maths::intToFloatConservingDecimals(arrCollisionRect[id].width));
             }
-            if (arrPosition[id].y + arrCollisionRect[id].height > maxPercent) {
-                arrPosition[id].y = maxPercent - arrCollisionRect[id].height;
+            if (Maths::intToFloatConservingDecimals(arrPosition[id].y)
+                    + Maths::intToFloatConservingDecimals(arrCollisionRect[id].height)
+                > maxPercent) {
+                arrPosition[id].y = Maths::floatToIntConservingDecimals(
+                    maxPercent - Maths::intToFloatConservingDecimals(arrCollisionRect[id].height));
             }
         }
     }
@@ -142,10 +150,18 @@ namespace Systems {
             if (arrCollisionRect.exist(*itIds)) {
                 Types::CollisionRect sndEntityRect = arrCollisionRect[*itIds];
                 Types::Position sndEntityPos       = arrPosition[*itIds];
-                if (entityPos.x < sndEntityPos.x + sndEntityRect.width
-                    && entityPos.x + entityColl.width > sndEntityPos.x
-                    && entityPos.y < sndEntityPos.y + sndEntityRect.height
-                    && entityPos.y + entityColl.height > sndEntityPos.y) {
+                if (Maths::intToFloatConservingDecimals(entityPos.x)
+                        < (Maths::intToFloatConservingDecimals(sndEntityPos.x)
+                           + Maths::intToFloatConservingDecimals(sndEntityRect.width))
+                    && (Maths::intToFloatConservingDecimals(entityPos.x)
+                        + Maths::intToFloatConservingDecimals(entityColl.width))
+                        > Maths::intToFloatConservingDecimals(sndEntityPos.x)
+                    && Maths::intToFloatConservingDecimals(entityPos.y)
+                        < (Maths::intToFloatConservingDecimals(sndEntityPos.y)
+                           + Maths::intToFloatConservingDecimals(sndEntityRect.height))
+                    && (Maths::intToFloatConservingDecimals(entityPos.y)
+                        + Maths::intToFloatConservingDecimals(entityColl.height))
+                        > Maths::intToFloatConservingDecimals(sndEntityPos.y)) {
                     checkSide(id, *itIds);
                 }
             }
@@ -184,8 +200,12 @@ namespace Systems {
 
         while (clock.elapsedMillisecondsSince(clockId) >= moveTime) {
             for (auto &id : ids) {
-                arrPosition[id].x += arrVelocity[id].speedX;
-                arrPosition[id].y += arrVelocity[id].speedY;
+                Maths::addFloatToDecimalInt(
+                    arrPosition[id].x,
+                    Maths::intToFloatConservingDecimals(arrVelocity[id].speedX));
+                Maths::addFloatToDecimalInt(
+                    arrPosition[id].y,
+                    Maths::intToFloatConservingDecimals(arrVelocity[id].speedY));
             }
             clock.decreaseMilliseconds(clockId, moveTime);
         }
@@ -204,8 +224,8 @@ namespace Systems {
 #ifdef CLIENT
             Types::SpriteDatas enemy = {
                 Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
-                Json::getInstance().getDataFromJson<float>(elem, "width"),
-                Json::getInstance().getDataFromJson<float>(elem, "height"),
+                Json::getInstance().getDataFromJson<int>(elem, "width"),
+                Json::getInstance().getDataFromJson<int>(elem, "height"),
                 LayerType::DEFAULTLAYER,
                 0};
 
@@ -222,12 +242,12 @@ namespace Systems {
 
 #endif
             Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
-            Types::Velocity velocity =
-                Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
             Types::CollisionRect collisionRect =
                 Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect");
             Types::Damage damageComp   = {Json::getInstance().getDataFromJson<int>(elem, "damage")};
             struct health_s healthComp = {Json::getInstance().getDataFromJson<int>(elem, "health")};
+            Types::Velocity velocity =
+                Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
 
             if (position.x == 0 && position.y == 0) {
                 Types::Position tmpPos(
@@ -255,8 +275,8 @@ namespace Systems {
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const float posToGo   = 65.0;
-        const float bossSpeed = 0.2F;
+        const float posToGo = 65.0;
+        const int bossSpeed = 20;
         Registry::components<Types::Position> &arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::Velocity> &arrVelocity =
@@ -270,15 +290,18 @@ namespace Systems {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
         for (auto &id : ids) {
-            if (arrPosition[id].x <= posToGo && arrVelocity[id].speedY == 0) {
-                arrVelocity[id].speedX = 0;
-                arrVelocity[id].speedY = static_cast<float>(0.2);
+            if (Maths::intToFloatConservingDecimals(arrPosition[id].x) <= posToGo
+                && Maths::intToFloatConservingDecimals(arrVelocity[id].speedY) == 0) {
+                Maths::addFloatToDecimalInt(arrVelocity[id].speedX, 0.F);
+                Maths::addFloatToDecimalInt(arrVelocity[id].speedY, 0.2F);
             }
             if (arrPosition[id].y < 0) {
-                arrVelocity[id].speedY = bossSpeed;
+                arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(bossSpeed);
             }
-            if (arrPosition[id].y + arrCollisonRect[id].height > maxPercent) {
-                arrVelocity[id].speedY -= bossSpeed;
+            if (Maths::intToFloatConservingDecimals(arrPosition[id].y)
+                    + Maths::intToFloatConservingDecimals(arrCollisonRect[id].height)
+                > maxPercent) {
+                Maths::subtractionWithTwoIntDecimals(arrVelocity[id].speedY, bossSpeed);
             }
         }
     }
@@ -398,8 +421,10 @@ namespace Systems {
 
     static bool isOutsideWindow(const Types::Position &pos)
     {
-        if (pos.x < outsideWindowTopLeft || pos.x > outsideWindowBotRigth || pos.y < outsideWindowTopLeft
-            || pos.y > outsideWindowBotRigth) {
+        if (Maths::intToFloatConservingDecimals(pos.x < outsideWindowTopLeft)
+            || Maths::intToFloatConservingDecimals(pos.x) > outsideWindowBotRigth
+            || Maths::intToFloatConservingDecimals(pos.y) < outsideWindowTopLeft
+            || Maths::intToFloatConservingDecimals(pos.y) > outsideWindowBotRigth) {
             return (true);
         }
         return (false);
@@ -498,19 +523,30 @@ namespace Systems {
     {
         Registry::getInstance().addEntity();
 
-        constexpr float bulletWidth          = 5.0F;
-        constexpr float bulletHeight         = 5.0F;
-        Types::CollisionRect collisionRect   = {bulletWidth, bulletHeight};
-        Types::Velocity velocity             = {0.7F, 0.0F};
+        constexpr float bulletWidth        = 5.0F;
+        constexpr float bulletHeight       = 5.0F;
+        constexpr float speedX             = 0.7F;
+        constexpr float speedY             = 0.0F;
+        Types::CollisionRect collisionRect = {
+            Maths::floatToIntConservingDecimals(bulletWidth),
+            Maths::floatToIntConservingDecimals(bulletHeight)};
+        Types::Velocity velocity = {
+            Maths::floatToIntConservingDecimals(speedX),
+            Maths::floatToIntConservingDecimals(speedY)};
         Types::Missiles missileType          = typeOfMissile;
         Types::Dead deadComp                 = {};
         Types::PlayerAllies playerAlliesComp = {};
         Types::Position position             = {pos.x, pos.y};
+
 #ifdef CLIENT
         const std::string bulletPath = "assets/R-TypeSheet/r-typesheet1.gif";
         Types::Rect spriteRect       = {200, 121, 32, 10};
-        Types::SpriteDatas
-            bulletDatas(bulletPath, bulletWidth, bulletHeight, FRONTLAYER, static_cast<std::size_t>(FRONT));
+        Types::SpriteDatas bulletDatas(
+            bulletPath,
+            Maths::floatToIntConservingDecimals(bulletWidth),
+            Maths::floatToIntConservingDecimals(bulletHeight),
+            FRONTLAYER,
+            static_cast<std::size_t>(FRONT));
 #endif
         struct health_s healthComp = {1};
         Types::Damage damageComp   = {10};
