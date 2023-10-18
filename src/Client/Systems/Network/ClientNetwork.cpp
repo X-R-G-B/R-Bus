@@ -109,8 +109,8 @@ namespace Systems {
             "Other player id: " + std::to_string(msg.playerId)
             + " relative position: " + std::to_string(Maths::intToFloatConservingDecimals(position.x)) + " "
             + std::to_string(Maths::intToFloatConservingDecimals(position.y)));
-        arrPos[*otherPlayer].x += Maths::additionWithTwoIntDecimals(arrPos[*otherPlayer].x, position.x);
-        arrPos[*otherPlayer].y += Maths::additionWithTwoIntDecimals(arrPos[*otherPlayer].y, position.y);
+        arrPos[*otherPlayer].x = Maths::additionWithTwoIntDecimals(arrPos[*otherPlayer].x, position.x);
+        arrPos[*otherPlayer].y = Maths::additionWithTwoIntDecimals(arrPos[*otherPlayer].y, position.y);
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
@@ -139,8 +139,8 @@ namespace Systems {
         if (pos.x != posCached.x || pos.y != posCached.y) {
             registry.getClock().decreaseMilliseconds(clockId, delay);
             struct position_relative_s msg = {
-                .x = static_cast<char>(Maths::removeIntDecimals(pos.x - posCached.x)),
-                .y = static_cast<char>(Maths::removeIntDecimals(pos.y - posCached.y)),
+                .x = static_cast<char>(Maths::removeIntDecimals(Maths::subtractionWithTwoIntDecimals(pos.x, posCached.x))),
+                .y = static_cast<char>(Maths::removeIntDecimals(Maths::subtractionWithTwoIntDecimals(pos.y, posCached.y))),
             };
             Logger::trace(
                 "send pos relative\n\n" + std::to_string(msg.x) + " " + std::to_string(msg.y) + "\n\n");
