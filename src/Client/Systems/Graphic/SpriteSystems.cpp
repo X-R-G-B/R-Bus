@@ -9,6 +9,7 @@
 #include "CustomTypes.hpp"
 #include "ECSCustomTypes.hpp"
 #include "Logger.hpp"
+#include "Maths.hpp"
 #include "Raylib.hpp"
 #include "SharedValues.hpp"
 
@@ -107,8 +108,12 @@ namespace Systems {
             Types::Position &position        = arrPosition[id];
             Types::RectangleShape &rectangle = arrRect[id];
 
-            float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
-            float y = (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
+            float x = (Maths::intToFloatConservingDecimals(position.x)
+                       * static_cast<float>(Raylib::getScreenWidth()))
+                / denominator;
+            float y = (Maths::intToFloatConservingDecimals(position.y)
+                       * static_cast<float>(Raylib::getScreenHeight()))
+                / denominator;
 
             float width  = (rectangle.width * static_cast<float>(Raylib::getScreenWidth())) / denominator;
             float height = (rectangle.height * static_cast<float>(Raylib::getScreenHeight())) / denominator;
@@ -137,7 +142,9 @@ namespace Systems {
         tint     = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
         scale    = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator
             / static_cast<float>(sprite.getTextureWidth());
-        spritePos = calculatePosition(position.x, position.y);
+        spritePos = calculatePosition(
+            Maths::intToFloatConservingDecimals(position.x),
+            Maths::intToFloatConservingDecimals(position.y));
         sprite.drawEx(spritePos, rotation, scale, tint);
     }
 
@@ -162,8 +169,10 @@ namespace Systems {
                                              : origin;
         rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
         tint     = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
-        pos      = calculatePosition(position.x, position.y);
-        size     = calculateSize(sprite);
+        pos      = calculatePosition(
+            Maths::intToFloatConservingDecimals(position.x),
+            Maths::intToFloatConservingDecimals(position.y));
+        size = calculateSize(sprite);
 
         sprite.drawPro(
             Raylib::Rectangle(rect.x, rect.y, rect.width, rect.height),
