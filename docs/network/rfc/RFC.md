@@ -142,7 +142,9 @@ Table of Contents
 
 2.  Network Packet Global Structure
 
-    The packet are send over the network with the UDP protocol.
+    The packet are send compressed thanks to zstd library over the network
+    with the UDP protocol. And the packet are decompressed thanks to zstd
+    when received.
     To add some better reliability, each packet sent has a header with some
     information about all the packets received.
 
