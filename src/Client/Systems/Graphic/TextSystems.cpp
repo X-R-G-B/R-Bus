@@ -61,6 +61,7 @@ namespace Systems {
 
     void GraphicSystems::textRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Raylib::Text> arrText = Registry::getInstance().getComponents<Raylib::Text>();
 
         std::vector<std::size_t> ids = arrText.getExistingsId();

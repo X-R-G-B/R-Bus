@@ -84,6 +84,7 @@ namespace Systems {
 
     void GraphicSystems::rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::AnimRect> arrAnimRect = registry.getComponents<Types::AnimRect>();
         Registry::components<Types::Rect> arrRect         = registry.getComponents<Types::Rect>();
@@ -97,6 +98,7 @@ namespace Systems {
 
     void GraphicSystems::rectRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::RectangleShape> arrRect =
@@ -202,6 +204,7 @@ namespace Systems {
 
     void GraphicSystems::spriteRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
         std::vector<std::vector<std::size_t>> backLayers  = registry.getBackLayers();
         std::vector<std::size_t> defaultLayer             = registry.getDefaultLayer();
@@ -218,6 +221,7 @@ namespace Systems {
 
     void GraphicSystems::createSprite(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         auto &arrSpriteDatas = Registry::getInstance().getComponents<Types::SpriteDatas>();
         auto &arrSprite      = Registry::getInstance().getComponents<Raylib::Sprite>();
 
