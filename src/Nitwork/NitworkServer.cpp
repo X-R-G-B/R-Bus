@@ -150,7 +150,7 @@ namespace Nitwork {
             .action = {.magick = NEW_ALLIE},
             .msg    = {.magick = MAGICK_NEW_ALLIE, .playerId = playerId}
         };
-        Systems::initPlayer(JsonType::DEFAULT_PLAYER, playerId, true);
+        Systems::initPlayer(playerId, true);
         sendNewAllie(playerId, packetMsgNewAllie, endpoint);
         for (const auto &[_, allieId] : _playersIds) {
             if (allieId == playerId) {
