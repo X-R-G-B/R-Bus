@@ -6,8 +6,8 @@
 */
 
 #include "Maths.hpp"
-#include <stdexcept>
 #include <cmath>
+#include <stdexcept>
 
 int Maths::floatToIntConservingDecimals(const float normalFloat)
 {
@@ -62,8 +62,8 @@ int Maths::divisionWithTwoIntDecimals(const int dividend, const int divisor)
     if (divisor == 0) {
         throw std::overflow_error("Division by zero");
     } else {
-        float tempA = intToFloatConservingDecimals(dividend);
-        float tempB = intToFloatConservingDecimals(divisor);
+        float tempA  = intToFloatConservingDecimals(dividend);
+        float tempB  = intToFloatConservingDecimals(divisor);
         float result = tempA / tempB;
         return floatToIntConservingDecimals(result);
     }
