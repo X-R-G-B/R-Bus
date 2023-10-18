@@ -76,7 +76,7 @@ namespace Maths {
      * @example 9999 + 9999 -> 199.98
      *
      */
-    int additionWithTwoIntDecimals(int decimalInt, int otherDecimalInt);
+    int additionWithTwoIntDecimals(const int decimalInt, const int otherDecimalInt);
 
     /**
      * @brief subtraction of two ints with two decimals
@@ -86,7 +86,7 @@ namespace Maths {
      * @example 9999 - 9999 -> 0
      *
      */
-    int subtractionWithTwoIntDecimals(int minuend, int subtrahend);
+    int subtractionWithTwoIntDecimals(const int minuend, const int subtrahend);
 
     /**
      * @brief multiplication of two ints with two decimals
@@ -95,7 +95,7 @@ namespace Maths {
      * @return the result of the multiplication
      *
      */
-    int multiplicationWithTwoIntDecimals(int decimalInt, int otherDecimalInt);
+    int multiplicationWithTwoIntDecimals(const int decimalInt, const int otherDecimalInt);
 
     /**
      * @brief division of two int with two decimals
@@ -104,7 +104,7 @@ namespace Maths {
      * @return the result of the division
      *
      */
-    int divisionWithTwoIntDecimals(int dividend, int divisor);
+    int divisionWithTwoIntDecimals(const int dividend, const int divisor);
 
     /**
      * @brief addition with a decimal int and a normal int
@@ -113,7 +113,7 @@ namespace Maths {
      * @return void
      * @example 500 + 5 = 550
      */
-    void addNormalIntToDecimalInt(int &decimalInt, int normalInt);
+    void addNormalIntToDecimalInt(int &decimalInt, const int normalInt);
 
     /**
      * @brief subtraction with a decimal int and a normal int
@@ -122,7 +122,7 @@ namespace Maths {
      * @return void
      * @example 550 - 5 = 500
      */
-    void subNormalIntToDecimalInt(int &decimalInt, int normalInt);
+    void subNormalIntToDecimalInt(int &decimalInt, const int normalInt);
 
     /**
      * @brief add a float to an int with decimals
@@ -131,6 +131,6 @@ namespace Maths {
      * @return nothing
      * @example 500 + 5.5 = 555
      */
-    void addFloatToDecimalInt(int &decimalInt, float normalFloat);
+    void addFloatToDecimalInt(int &decimalInt, const float normalFloat);
 
 } // namespace Maths

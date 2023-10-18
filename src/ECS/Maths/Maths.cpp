@@ -31,7 +31,7 @@ int Maths::addIntDecimals(int normalInt)
     return normalInt * getMultiplier();
 }
 
-int Maths::additionWithTwoIntDecimals(int decimalInt, int otherDecimalInt)
+int Maths::additionWithTwoIntDecimals(const int decimalInt, const int otherDecimalInt)
 {
     float tempA  = intToFloatConservingDecimals(decimalInt);
     float tempB  = intToFloatConservingDecimals(otherDecimalInt);
@@ -39,7 +39,7 @@ int Maths::additionWithTwoIntDecimals(int decimalInt, int otherDecimalInt)
     return floatToIntConservingDecimals(result);
 }
 
-int Maths::subtractionWithTwoIntDecimals(int minuend, int subtrahend)
+int Maths::subtractionWithTwoIntDecimals(const int minuend, const int subtrahend)
 {
     float tempA  = intToFloatConservingDecimals(minuend);
     float tempB  = intToFloatConservingDecimals(subtrahend);
@@ -47,7 +47,7 @@ int Maths::subtractionWithTwoIntDecimals(int minuend, int subtrahend)
     return floatToIntConservingDecimals(result);
 }
 
-int Maths::multiplicationWithTwoIntDecimals(int decimalInt, int otherDecimalInt)
+int Maths::multiplicationWithTwoIntDecimals(const int decimalInt, const int otherDecimalInt)
 {
     float tempA  = intToFloatConservingDecimals(decimalInt);
     float tempB  = intToFloatConservingDecimals(otherDecimalInt);
@@ -55,7 +55,7 @@ int Maths::multiplicationWithTwoIntDecimals(int decimalInt, int otherDecimalInt)
     return floatToIntConservingDecimals(result);
 }
 
-int Maths::divisionWithTwoIntDecimals(int dividend, int divisor)
+int Maths::divisionWithTwoIntDecimals(const int dividend, const int divisor)
 {
     float tempA  = intToFloatConservingDecimals(dividend);
     float tempB  = intToFloatConservingDecimals(divisor);
@@ -63,17 +63,17 @@ int Maths::divisionWithTwoIntDecimals(int dividend, int divisor)
     return floatToIntConservingDecimals(result);
 }
 
-void Maths::addNormalIntToDecimalInt(int &decimalInt, int normalInt)
+void Maths::addNormalIntToDecimalInt(int &decimalInt, const int normalInt)
 {
     decimalInt += addIntDecimals(normalInt);
 }
 
-void Maths::subNormalIntToDecimalInt(int &decimalInt, int normalInt)
+void Maths::subNormalIntToDecimalInt(int &decimalInt, const int normalInt)
 {
     decimalInt -= addIntDecimals(normalInt);
 }
 
-void Maths::addFloatToDecimalInt(int &decimalInt, float normalFloat)
+void Maths::addFloatToDecimalInt(int &decimalInt, const float normalFloat)
 {
     decimalInt += floatToIntConservingDecimals(normalFloat);
 }
