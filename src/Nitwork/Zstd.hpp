@@ -22,6 +22,9 @@ namespace Nitwork {
                 if (!std::is_standard_layout_v<T> || !std::is_trivial_v<T>) {
                     throw std::runtime_error("ZSTD: Data must be POD");
                 }
+                if (sizeof(T) > ZSTD_compressBound(sizeof(T))) {
+                    throw std::runtime_error("ZSTD: Input data is too large");
+                }
                 size_t const compressedSize = ZSTD_compressBound(sizeof(T));
                 std::vector<char> compressedData(compressedSize);
                 size_t const result = ZSTD_compress(
