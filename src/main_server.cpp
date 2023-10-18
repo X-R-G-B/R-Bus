@@ -56,11 +56,16 @@ int main(int ac, const char **av)
     if (!Nitwork::NitworkServer::getInstance().startServer(std::stoi(av[1]), std::stoi(av[2]))) {
         return EXIT_EPITECH;
     }
-    Systems::SystemManagersDirector::getInstance().addSystemManager(Systems::getECSSystems());
+    auto &director = Systems::SystemManagersDirector::getInstance();
+    std::unique_lock<std::mutex> lock(director.mutex);
+    director.addSystemManager(Systems::getECSSystems());
     signal(SIGINT, signalHandler);
 
+    lock.unlock();
     while (isRunning && Nitwork::NitworkServer::getInstance().isRunning()) {
-        Systems::SystemManagersDirector::getInstance().getSystemManager(0).updateSystems();
+        lock.lock();
+        director.getSystemManager(0).updateSystems();
+        lock.unlock();
     }
     Nitwork::NitworkServer::getInstance().stop();
     return 0;

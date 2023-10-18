@@ -45,11 +45,11 @@ namespace Systems {
 
     void handleStartWave(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        auto &director = SystemManagersDirector::getInstance();
+        std::lock_guard<std::mutex> lock(director.mutex);
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
         Types::Enemy::setEnemyNb(wave.enemyNb);
-        SystemManagersDirector::getInstance()
-            .getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::GAME))
+        director.getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::GAME))
             .addSystem(initWave);
         Logger::info("Wave started");
     }
@@ -60,21 +60,20 @@ namespace Systems {
         const auto playerInit = std::any_cast<struct msgPlayerInit_s>(any);
 
         Logger::info("Your player id is: " + std::to_string(playerInit.playerId));
-        initPlayer(JsonType::DEFAULT_PLAYER, playerInit.playerId);
+        initPlayer(playerInit.playerId);
     }
 
     void receiveNewEnemy(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
-
-        Logger::debug("ROLLBACK RECREATE ENEMY !!!!!");
-        initEnemy(newEnemy.enemyInfos.type, {0.0, 0.0}, true, newEnemy.enemyInfos.id);
         Types::Position pos = {
             static_cast<float>(newEnemy.enemyInfos.pos.x),
             static_cast<float>(newEnemy.enemyInfos.pos.y)};
+
+        Logger::debug("ROLLBACK RECREATE ENEMY !!!!!");
+        initEnemy(newEnemy.enemyInfos.type, pos, true, newEnemy.enemyInfos.id);
         struct health_s hp = newEnemy.enemyInfos.life;
-        Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
         Registry::getInstance().getComponents<struct health_s>().insertBack(hp);
     }
 
@@ -84,7 +83,7 @@ namespace Systems {
         const auto newAllie = std::any_cast<struct msgNewAllie_s>(any);
 
         Logger::info("New Ally created with id: " + std::to_string(newAllie.playerId));
-        initPlayer(JsonType::DEFAULT_PLAYER, newAllie.playerId, true);
+        initPlayer(newAllie.playerId, true);
     }
 
     void receiveRelativePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)

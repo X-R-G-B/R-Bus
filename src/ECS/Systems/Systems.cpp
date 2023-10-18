@@ -29,15 +29,12 @@ extern "C"
 namespace Systems {
     constexpr float maxPercent = 100.0F;
 
-    void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
+    static void checkOutsideWindow(std::vector<std::size_t> ids)
     {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
             registry.getComponents<Types::CollisionRect>();
-        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
-            {typeid(Types::Player), typeid(Types::Position), typeid(Types::CollisionRect)});
 
         for (std::size_t id : ids) {
             if (arrPosition[id].x < 0) {
@@ -53,6 +50,19 @@ namespace Systems {
                 arrPosition[id].y = maxPercent - arrCollisionRect[id].height;
             }
         }
+    }
+
+    void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        Registry &registry           = Registry::getInstance();
+        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
+            {typeid(Types::Player), typeid(Types::Position), typeid(Types::CollisionRect)});
+        std::vector<std::size_t> idsOtherPlayer = registry.getEntitiesByComponents(
+            {typeid(Types::OtherPlayer), typeid(Types::Position), typeid(Types::CollisionRect)});
+
+        checkOutsideWindow(ids);
+        checkOutsideWindow(idsOtherPlayer);
     }
 
     static bool checkAllies(std::size_t fstId, std::size_t scdId)
@@ -189,14 +199,9 @@ namespace Systems {
             Json::getInstance().getDataByJsonType("enemy", jsonType);
 
         for (auto &elem : enemyData) {
-#ifdef CLIENT
-            std::size_t id = Registry::getInstance().addEntity();
-#else
             Registry::getInstance().addEntity();
-#endif
 
 #ifdef CLIENT
-
             Types::SpriteDatas enemy = {
                 Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
                 Json::getInstance().getDataFromJson<float>(elem, "width"),
@@ -204,7 +209,7 @@ namespace Systems {
                 LayerType::DEFAULTLAYER,
                 0};
 
-            Types::Rect rect = Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect");
+            auto rect = Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect");
 
             nlohmann::basic_json<> animRectData =
                 Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(elem, "animRect");
@@ -249,6 +254,7 @@ namespace Systems {
 
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const float posToGo   = 65.0;
         const float bossSpeed = 0.2F;
         Registry::components<Types::Position> &arrPosition =
@@ -266,19 +272,20 @@ namespace Systems {
         for (auto &id : ids) {
             if (arrPosition[id].x <= posToGo && arrVelocity[id].speedY == 0) {
                 arrVelocity[id].speedX = 0;
-                arrVelocity[id].speedY = 0.2;
+                arrVelocity[id].speedY = static_cast<float>(0.2);
             }
             if (arrPosition[id].y < 0) {
                 arrVelocity[id].speedY = bossSpeed;
             }
             if (arrPosition[id].y + arrCollisonRect[id].height > maxPercent) {
-                arrVelocity[id].speedY = -bossSpeed;
+                arrVelocity[id].speedY -= bossSpeed;
             }
         }
     }
 
     void initWave(std::size_t managerId, std::size_t systemId)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         static std::size_t enemyNumber =
             Json::getInstance().getDataByVector({"wave", "nbrEnemy"}, JsonType::WAVE);
         const std::size_t spawnDelay = 2;
@@ -426,17 +433,18 @@ namespace Systems {
         }
     }
 
-    void initPlayer(JsonType playerType, unsigned int constId, bool otherPlayer)
+    void initPlayer(unsigned int constId, bool otherPlayer)
     {
-#ifdef CLIENT
-        std::size_t id = Registry::getInstance().addEntity();
-#else
-        Registry::getInstance().addEntity();
-#endif
+        JsonType playerType = JsonType::DEFAULT_PLAYER;
 
-        Types::Dead deadComp = {Json::getInstance().getDataByVector({"player", "deadTime"}, playerType)};
+        Registry::getInstance().addEntity();
+
+        Logger::info("player avant template");
+        Types::Dead deadComp = {
+            Json::getInstance().getDataByVector<std::size_t>({"player", "deadTime"}, playerType)};
         struct health_s healthComp = {
-            Json::getInstance().getDataByVector({"player", "health"}, playerType)};
+            Json::getInstance().getDataByVector<int>({"player", "health"}, playerType)};
+        Logger::info("player after template");
         Types::Damage damageComp = {Json::getInstance().getDataByVector({"player", "damage"}, playerType)};
 #ifdef CLIENT
         Types::SpriteDatas playerDatas(
@@ -488,11 +496,7 @@ namespace Systems {
 
     void createMissile(Types::Position &pos, Types::Missiles &typeOfMissile)
     {
-#ifdef CLIENT
-        std::size_t entityId = Registry::getInstance().addEntity();
-#else
         Registry::getInstance().addEntity();
-#endif
 
         constexpr float bulletWidth          = 5.0F;
         constexpr float bulletHeight         = 5.0F;
