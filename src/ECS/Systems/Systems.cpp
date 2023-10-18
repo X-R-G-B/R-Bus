@@ -303,7 +303,7 @@ namespace Systems {
                 > maxPercent) {
                 Maths::subtractionWithTwoIntDecimals(
                     arrVelocity[id].speedY,
-                    Maths::intToFloatConservingDecimals(bossSpeed));
+                    bossSpeed);
             }
         }
     }
