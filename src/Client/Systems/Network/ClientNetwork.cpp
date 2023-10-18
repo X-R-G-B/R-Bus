@@ -2,6 +2,7 @@
 #include <algorithm>
 #include "ECSCustomTypes.hpp"
 #include "Json.hpp"
+#include "Maths.hpp"
 #include "NitworkClient.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
@@ -69,10 +70,10 @@ namespace Systems {
         const auto newEnemy = std::any_cast<struct msgNewEnemy_s>(any);
 
         Logger::debug("ROLLBACK RECREATE ENEMY !!!!!");
-        initEnemy(newEnemy.enemyInfos.type, {0.0, 0.0}, true, newEnemy.enemyInfos.id);
+        initEnemy(newEnemy.enemyInfos.type, {0, 0}, true, newEnemy.enemyInfos.id);
         Types::Position pos = {
-            static_cast<float>(newEnemy.enemyInfos.pos.x),
-            static_cast<float>(newEnemy.enemyInfos.pos.y)};
+            Maths::addIntDecimals(newEnemy.enemyInfos.pos.x),
+            Maths::addIntDecimals(newEnemy.enemyInfos.pos.y)};
         struct health_s hp = newEnemy.enemyInfos.life;
         Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
         Registry::getInstance().getComponents<struct health_s>().insertBack(hp);
@@ -92,7 +93,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const struct msgPositionRelativeBroadcast_s &msg =
             std::any_cast<struct msgPositionRelativeBroadcast_s>(any);
-        Types::Position position = {static_cast<float>(msg.pos.x), static_cast<float>(msg.pos.y)};
+        Types::Position position = {Maths::addIntDecimals(msg.pos.x), Maths::addIntDecimals(msg.pos.y)};
         auto &arrPos             = Registry::getInstance().getComponents<Types::Position>();
         auto &arrOtherPlayers    = Registry::getInstance().getComponents<Types::OtherPlayer>();
         auto ids                 = Registry::getInstance().getEntitiesByComponents(
@@ -106,8 +107,10 @@ namespace Systems {
         }
         Logger::trace(
             "Other player id: " + std::to_string(msg.playerId)
-            + " relative position: " + std::to_string(position.x) + " " + std::to_string(position.y));
-        arrPos[*otherPlayer] += position;
+            + " relative position: " + std::to_string(Maths::intToFloatConservingDecimals(position.x)) + " "
+            + std::to_string(Maths::intToFloatConservingDecimals(position.y)));
+        arrPos[*otherPlayer].x += Maths::additionWithTwoIntDecimals(arrPos[*otherPlayer].x, position.x);
+        arrPos[*otherPlayer].y += Maths::additionWithTwoIntDecimals(arrPos[*otherPlayer].y, position.y);
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
@@ -136,8 +139,8 @@ namespace Systems {
         if (pos.x != posCached.x || pos.y != posCached.y) {
             registry.getClock().decreaseMilliseconds(clockId, delay);
             struct position_relative_s msg = {
-                .x = static_cast<char>(static_cast<int>(pos.x - posCached.x)),
-                .y = static_cast<char>(static_cast<int>(pos.y - posCached.y)),
+                .x = static_cast<char>(Maths::removeIntDecimals(pos.x - posCached.x)),
+                .y = static_cast<char>(Maths::removeIntDecimals(pos.y - posCached.y)),
             };
             Logger::trace(
                 "send pos relative\n\n" + std::to_string(msg.x) + " " + std::to_string(msg.y) + "\n\n");
@@ -165,8 +168,8 @@ namespace Systems {
             return;
         }
         struct position_absolute_s msg = {
-            .x = static_cast<int>(arrPosition[ids[0]].x),
-            .y = static_cast<int>(arrPosition[ids[0]].y),
+            .x = Maths::removeIntDecimals(arrPosition[ids[0]].x),
+            .y = Maths::removeIntDecimals(arrPosition[ids[0]].y),
         };
         if (position.x == msg.x && position.y == msg.y) {
             return;
@@ -183,8 +186,8 @@ namespace Systems {
         const struct msgNewBullet_s &msgNewBullet = std::any_cast<struct msgNewBullet_s>(any);
 
         struct Types::Position position = {
-            static_cast<float>(msgNewBullet.pos.x),
-            static_cast<float>(msgNewBullet.pos.y),
+            Maths::addIntDecimals(msgNewBullet.pos.x),
+            Maths::addIntDecimals(msgNewBullet.pos.y),
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
         Systems::createMissile(position, missileType);
@@ -197,8 +200,8 @@ namespace Systems {
         const struct msgPositionAbsoluteBroadcast_s &msg =
             std::any_cast<struct msgPositionAbsoluteBroadcast_s>(any);
         struct Types::Position position = {
-            static_cast<float>(msg.pos.x),
-            static_cast<float>(msg.pos.y),
+            Maths::addIntDecimals(msg.pos.x),
+            Maths::addIntDecimals(msg.pos.y),
         };
         auto &arrPos          = Registry::getInstance().getComponents<Types::Position>();
         auto &arrOtherPlayers = Registry::getInstance().getComponents<Types::OtherPlayer>();
