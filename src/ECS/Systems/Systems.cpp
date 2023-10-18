@@ -29,15 +29,13 @@ extern "C"
 namespace Systems {
     constexpr float maxPercent = 100.0F;
 
-    void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
+    static void checkOutsideWindow(std::vector<std::size_t> ids)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        Registry &registry                                = Registry::getInstance();
+        Registry &registry = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
-            registry.getComponents<Types::CollisionRect>();
-        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
-            {typeid(Types::Player), typeid(Types::Position), typeid(Types::CollisionRect)});
+                registry.getComponents<Types::CollisionRect>();
 
         for (std::size_t id : ids) {
             if (arrPosition[id].x < 0) {
@@ -53,6 +51,18 @@ namespace Systems {
                 arrPosition[id].y = maxPercent - arrCollisionRect[id].height;
             }
         }
+    }
+
+    void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Registry &registry = Registry::getInstance();
+        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
+                {typeid(Types::Player), typeid(Types::Position), typeid(Types::CollisionRect)});
+        std::vector<std::size_t> idsOtherPlayer = registry.getEntitiesByComponents(
+                {typeid(Types::OtherPlayer), typeid(Types::Position), typeid(Types::CollisionRect)});
+
+        checkOutsideWindow(ids);
+        checkOutsideWindow(idsOtherPlayer);
     }
 
     static bool checkAllies(std::size_t fstId, std::size_t scdId)
