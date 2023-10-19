@@ -1,12 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
 
-# -- This definition specifies the minimum Windows version required for compilation
-# -- Avoids boost warnings
-# -- In this case, Windows 7
-if(WIN32)
-    add_definitions(-D_WIN32_WINNT=0x0601)
-endif()
-
 # -- Fetch Boost
 include(FetchContent)
 FetchContent_Declare(
