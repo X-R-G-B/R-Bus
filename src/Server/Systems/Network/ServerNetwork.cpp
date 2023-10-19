@@ -49,26 +49,26 @@ namespace Systems {
         auto &arrEnemies = registry.getComponents<Types::Enemy>();
         auto arrHealth   = registry.getComponents<struct health_s>();
         auto arrPos      = registry.getComponents<Types::Position>();
-        auto it = std::find_if(arrEnemies.begin(), arrEnemies.end(), [&msgEnemyDeath](auto &enemy) {
-            return enemy.getConstId().id == msgEnemyDeath.enemyId.id;
-        });
-        if (it == arrEnemies.end()) {
-            return;
+        auto ids = arrEnemies.getExistingsId();
+
+        for (auto &id : ids) {
+            if (arrEnemies[id].getConstId().id == msgEnemyDeath.enemyId.id) {
+                if (arrHealth.exist(id) && arrPos.exist(id)) {
+                    Nitwork::NitworkServer::getInstance().addNewEnemyMessage(
+                        endpoint,
+                        {
+                            .id   = arrEnemies[id].getConstId(),
+                            .life = arrHealth[id],
+                            .pos =
+                                {static_cast<char>(Maths::removeIntDecimals(arrPos[id].x)),
+                                      static_cast<char>(Maths::removeIntDecimals(arrPos[id].y))},
+                            .type = arrEnemies[id].type,
+                    });
+
+                }
+                return;
+            }
         }
-        auto index = std::distance(arrEnemies.begin(), it);
-        if (!arrEnemies.exist(index) || !arrHealth.exist(index) || !arrPos.exist(index)) {
-            return;
-        }
-        Nitwork::NitworkServer::getInstance().addNewEnemyMessage(
-            endpoint,
-            {
-                .id   = arrEnemies[index].getConstId(),
-                .life = arrHealth[index],
-                .pos =
-                    {static_cast<char>(Maths::removeIntDecimals(arrPos[index].x)),
-                          static_cast<char>(Maths::removeIntDecimals(arrPos[index].y))},
-                .type = arrEnemies[index].type,
-        });
     }
 
     void receiveNewBulletMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
