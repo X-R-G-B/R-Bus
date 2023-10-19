@@ -125,6 +125,20 @@ std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list)
     return (datas);
 }
 
+nlohmann::json Json::getJsonObjectById(JsonType type, const std::string &id)
+{
+    auto objectList = getDataByJsonType(type)["bullets"];
+
+    for (const auto &object : objectList) {
+        auto idField = object.find("id");
+        if (idField != object.end() && idField->is_string() && *idField == id) {
+            return object;
+        }
+    }
+    Logger::fatal(std::string("(getJsonObject) Key : " + id + " is not valid"));
+    throw std::runtime_error("Json error");
+}
+
 std::vector<nlohmann::json> &
 Json::getDatasFromList(std::vector<nlohmann::json> &datas, nlohmann::json &listData, const std::string &key)
 {

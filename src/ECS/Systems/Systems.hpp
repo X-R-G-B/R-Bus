@@ -13,7 +13,10 @@
 #include <vector>
 #include "ECSCustomTypes.hpp"
 #include "Json.hpp"
+extern "C"
+{
 #include "MessageTypes.h"
+}
 
 namespace Systems {
     void initEnemy(
