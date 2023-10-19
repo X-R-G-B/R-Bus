@@ -13,7 +13,7 @@
 
     #define HEADER_SIZE sizeof(struct header_s)
     #define ONE_SECOND 1000
-    #define TICKS_PER_SECOND 256
+    #define TICKS_PER_SECOND 128
     #define TICK (ONE_SECOND / (TICKS_PER_SECOND * ONE_SECOND))
     #define DEFAULT_THREAD_NB 4
     #define MAX_NB_ACTION 16
