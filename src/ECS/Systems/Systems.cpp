@@ -313,8 +313,7 @@ namespace Systems {
             Json::getInstance().getDataByVector({"wave", "nbrEnemy"}, JsonType::WAVE);
         const std::size_t spawnDelay = 2;
         Clock &clock                 = Registry::getInstance().getClock();
-        static std::size_t clockId   = clock.create(true);
-        static bool fstCall          = true;
+        static std::size_t clockId   = clock.create();
         std::vector<nlohmann::json> jsonVector =
             Json::getInstance().getDataByVector({"wave", "positions"}, JsonType::WAVE);
         nlohmann::json jsonPos;
@@ -330,10 +329,6 @@ namespace Systems {
             jsonPos = Json::getInstance().getDataFromJson<Types::Position>(jsonVector[0], "position");
         }
         Types::Position pos(jsonPos);
-        if (fstCall) {
-            fstCall = false;
-            clock.restart(clockId);
-        }
         if (clock.elapsedSecondsSince(clockId) >= spawnDelay && enemyNumber > 0) {
             initEnemy(CLASSIC_ENEMY, pos);
             enemyNumber--;
