@@ -236,7 +236,7 @@ jobs:
       - name: Get Zstd
         run: |
           git clone https://github.com/facebook/zstd.git zstd-repo
-          cd zstd-repo  -('"a&  m || exit 14
+          cd zstd-repo || exit 14
           git checkout ${{ env.ZSTD_TAG }}
           cd ..
 
