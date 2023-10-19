@@ -15,7 +15,8 @@
 #include "Systems.hpp"
 
 namespace Systems {
-    static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId , Types::Direction direction)
+    static void
+    checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId, Types::Direction direction)
     {
         Registry::components<Types::AnimRect> arrAnimRect =
             Registry::getInstance().getComponents<Types::AnimRect>();
