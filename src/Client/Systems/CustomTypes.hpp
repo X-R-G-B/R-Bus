@@ -15,14 +15,6 @@
 #endif
 
 namespace Types {
-    struct Rect {
-            float x;
-            float y;
-            float width;
-            float height;
-
-            NLOHMANN_DEFINE_TYPE_INTRUSIVE(Rect, x, y, width, height);
-    };
 
     struct FontSize {
             float fsz;
@@ -47,34 +39,6 @@ namespace Types {
     };
 #endif
 
-    enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };
-
-    struct AnimRect {
-        public:
-            AnimRect(
-                Rect rect,
-                std::vector<Rect> _moveRects,
-                std::vector<Rect> _attackRects = {},
-                std::vector<Rect> _deadRects   = {})
-                : defaultRect(rect),
-                  moveRects(_moveRects),
-                  attackRects(_attackRects),
-                  deadRects(_deadRects),
-                  currentRectList(Types::RectListType::DEFAULTRECT),
-                  currentRectInList(0)
-            {
-            }
-            Rect defaultRect;
-            std::vector<Rect> moveRects;
-            std::vector<Rect> attackRects;
-            std::vector<Rect> deadRects;
-            RectListType currentRectList;
-            std::size_t currentRectInList;
-            void changeRectList(RectListType type = RectListType::DEFAULTRECT)
-            {
-                currentRectList   = type;
-                currentRectInList = 0;
-            }
-    };
-
 } // namespace Types
+
+#include "AnimRect.hpp"

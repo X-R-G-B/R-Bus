@@ -14,7 +14,7 @@
 #include "Systems.hpp"
 
 namespace Systems {
-    static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId)
+    static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId , Types::Direction direction)
     {
         Registry::components<Types::AnimRect> arrAnimRect =
             Registry::getInstance().getComponents<Types::AnimRect>();
@@ -23,9 +23,8 @@ namespace Systems {
 
         if (arrAnimRect.exist(id)) {
             Types::AnimRect &anim = arrAnimRect[id];
-            if (anim.currentRectList != Types::RectListType::MOVE) {
-                anim.changeRectList(Types::RectListType::MOVE);
-            }
+            anim.changeRectList(Types::RectListType::MOVE);
+            anim.changeDirection(direction);
         }
     }
 
@@ -46,19 +45,19 @@ namespace Systems {
                 continue;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
-                checkAnimRect(id, clock_, clockId);
+                checkAnimRect(id, clock_, clockId, Types::Direction::RIGHT);
                 arrPos[id].x += 1;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
-                checkAnimRect(id, clock_, clockId);
+                checkAnimRect(id, clock_, clockId, Types::Direction::LEFT);
                 arrPos[id].x -= 1;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
-                checkAnimRect(id, clock_, clockId);
+                checkAnimRect(id, clock_, clockId, Types::Direction::UP);
                 arrPos[id].y -= 1;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
-                checkAnimRect(id, clock_, clockId);
+                checkAnimRect(id, clock_, clockId, Types::Direction::DOWN);
                 arrPos[id].y += 1;
             }
         }
