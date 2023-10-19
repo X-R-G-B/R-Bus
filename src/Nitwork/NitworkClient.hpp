@@ -23,7 +23,7 @@ namespace Nitwork {
 
             using ANitwork::start;
             bool
-            startClient(int port, const std::string &ip, int threadNb = DEFAULT_THREAD_NB, int tick = TICK);
+            startClient(int port, const std::string &ip, int threadNb = DEFAULT_THREAD_NB, int tick = TICKS);
 
             // Messages creation methods
             void addInitMsg();
