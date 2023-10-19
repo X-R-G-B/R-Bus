@@ -65,6 +65,32 @@ class Json {
             return jsonData[index].get<T>();
         }
 
+        template <typename T>
+        T getDataByJsonType(const std::string &index, JsonType dataType)
+        {
+            return getDataFromJson<T>(_jsonDatas[dataType], index);
+        }
+
+        template <typename T>
+        T getDataByVector(const std::vector<std::string> &indexes, JsonType dataType)
+        {
+            auto datas = getDataByJsonType(dataType);
+            auto begin = indexes.begin();
+
+            if (indexes.empty()) {
+                Logger::fatal(std::string("(getDataByVector<T>): empty list"));
+                throw std::runtime_error("Json error");
+            }
+            for (; begin + 1 != indexes.end(); begin++) {
+                if (datas[*begin] == nullptr) {
+                    Logger::fatal(std::string("(getDataByVector<T>) Key : " + *begin + " is not valid"));
+                    throw std::runtime_error("Json error");
+                }
+                datas = datas[*begin];
+            }
+            return getDataFromJson<T>(datas, *(indexes.end() - 1));
+        }
+
     private:
         Json()  = default;
         ~Json() = default;

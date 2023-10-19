@@ -7,6 +7,7 @@
 
 #include "TextSystems.hpp"
 #include "CustomTypes.hpp"
+#include "Maths.hpp"
 #include "Raylib.hpp"
 #include "SharedValues.hpp"
 
@@ -21,8 +22,10 @@ namespace Systems {
 
     static void setPositionResponsive(Raylib::Text &text, Types::Position &pos)
     {
-        float x = (pos.x * static_cast<float>(GetScreenWidth())) / denominator;
-        float y = (pos.y * static_cast<float>(GetScreenHeight())) / denominator;
+        float x = (Maths::intToFloatConservingDecimals(pos.x) * static_cast<float>(GetScreenWidth()))
+            / denominator;
+        float y = (Maths::intToFloatConservingDecimals(pos.y) * static_cast<float>(GetScreenHeight()))
+            / denominator;
 
         text.setPixelPosition({x, y});
     }
@@ -42,7 +45,9 @@ namespace Systems {
             setFontSizeResponsive(text, arrFsz[id]);
         }
 
-        Types::Position defaultPosition = {text.getPosition().x, text.getPosition().y};
+        Types::Position defaultPosition = {
+            Maths::floatToIntConservingDecimals(text.getPosition().x),
+            Maths::floatToIntConservingDecimals(text.getPosition().y)};
         setPositionResponsive(text, defaultPosition);
         if (arrPosition.exist(id)) {
             setPositionResponsive(text, arrPosition[id]);
@@ -56,6 +61,7 @@ namespace Systems {
 
     void GraphicSystems::textRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Raylib::Text> arrText = Registry::getInstance().getComponents<Raylib::Text>();
 
         std::vector<std::size_t> ids = arrText.getExistingsId();

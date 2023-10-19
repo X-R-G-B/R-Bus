@@ -9,6 +9,7 @@
 #include "CustomTypes.hpp"
 #include "ECSCustomTypes.hpp"
 #include "Logger.hpp"
+#include "Maths.hpp"
 #include "Raylib.hpp"
 #include "SharedValues.hpp"
 
@@ -83,6 +84,7 @@ namespace Systems {
 
     void GraphicSystems::rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::AnimRect> arrAnimRect = registry.getComponents<Types::AnimRect>();
         Registry::components<Types::Rect> arrRect         = registry.getComponents<Types::Rect>();
@@ -96,6 +98,7 @@ namespace Systems {
 
     void GraphicSystems::rectRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::RectangleShape> arrRect =
@@ -107,8 +110,12 @@ namespace Systems {
             Types::Position &position        = arrPosition[id];
             Types::RectangleShape &rectangle = arrRect[id];
 
-            float x = (position.x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
-            float y = (position.y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
+            float x = (Maths::intToFloatConservingDecimals(position.x)
+                       * static_cast<float>(Raylib::getScreenWidth()))
+                / denominator;
+            float y = (Maths::intToFloatConservingDecimals(position.y)
+                       * static_cast<float>(Raylib::getScreenHeight()))
+                / denominator;
 
             float width  = (rectangle.width * static_cast<float>(Raylib::getScreenWidth())) / denominator;
             float height = (rectangle.height * static_cast<float>(Raylib::getScreenHeight())) / denominator;
@@ -137,7 +144,9 @@ namespace Systems {
         tint     = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
         scale    = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator
             / static_cast<float>(sprite.getTextureWidth());
-        spritePos = calculatePosition(position.x, position.y);
+        spritePos = calculatePosition(
+            Maths::intToFloatConservingDecimals(position.x),
+            Maths::intToFloatConservingDecimals(position.y));
         sprite.drawEx(spritePos, rotation, scale, tint);
     }
 
@@ -162,8 +171,10 @@ namespace Systems {
                                              : origin;
         rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
         tint     = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
-        pos      = calculatePosition(position.x, position.y);
-        size     = calculateSize(sprite);
+        pos      = calculatePosition(
+            Maths::intToFloatConservingDecimals(position.x),
+            Maths::intToFloatConservingDecimals(position.y));
+        size = calculateSize(sprite);
 
         sprite.drawPro(
             Raylib::Rectangle(rect.x, rect.y, rect.width, rect.height),
@@ -193,6 +204,7 @@ namespace Systems {
 
     void GraphicSystems::spriteRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
         std::vector<std::vector<std::size_t>> backLayers  = registry.getBackLayers();
         std::vector<std::size_t> defaultLayer             = registry.getDefaultLayer();
@@ -209,13 +221,18 @@ namespace Systems {
 
     void GraphicSystems::createSprite(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         auto &arrSpriteDatas = Registry::getInstance().getComponents<Types::SpriteDatas>();
         auto &arrSprite      = Registry::getInstance().getComponents<Raylib::Sprite>();
 
         auto ids = arrSpriteDatas.getExistingsId();
         for (auto id : ids) {
             auto &spriteDatas = arrSpriteDatas[id];
-            Raylib::Sprite sprite(spriteDatas.fileName, spriteDatas.width, spriteDatas.height, id);
+            Raylib::Sprite sprite(
+                spriteDatas.fileName,
+                Maths::intToFloatConservingDecimals(spriteDatas.width),
+                Maths::intToFloatConservingDecimals(spriteDatas.height),
+                id);
             arrSprite.insert(id, sprite);
             switch (spriteDatas.layer) {
                 case BACKLAYER:
