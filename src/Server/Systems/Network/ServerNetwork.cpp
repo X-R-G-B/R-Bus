@@ -49,7 +49,7 @@ namespace Systems {
         auto &arrEnemies = registry.getComponents<Types::Enemy>();
         auto arrHealth   = registry.getComponents<struct health_s>();
         auto arrPos      = registry.getComponents<Types::Position>();
-        auto ids = arrEnemies.getExistingsId();
+        auto ids         = arrEnemies.getExistingsId();
 
         for (auto &id : ids) {
             if (arrEnemies[id].getConstId().id == msgEnemyDeath.enemyId.id) {
@@ -64,7 +64,6 @@ namespace Systems {
                                       static_cast<char>(Maths::removeIntDecimals(arrPos[id].y))},
                             .type = arrEnemies[id].type,
                     });
-
                 }
                 return;
             }
