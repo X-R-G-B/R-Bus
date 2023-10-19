@@ -11,7 +11,7 @@
 namespace Types {
     constexpr std::size_t defaultTimeAnim = 120;
 
-    AnimRect::AnimRect(Rect rect, nlohmann::json animRectData, RectListType state, Direction direction)
+    AnimRect::AnimRect(const Rect &rect, nlohmann::json animRectData, RectListType state, Direction direction)
         : _defaultRect(rect),
           _currentRectList(state),
           _currentDirection(direction),
@@ -47,7 +47,7 @@ namespace Types {
         }
     }
 
-    bool AnimRect::searchForKey()
+    bool AnimRect::checkValidKey()
     {
         DirectionVector animRects;
 
@@ -63,7 +63,7 @@ namespace Types {
 
     std::size_t AnimRect::getActualAnimDelay()
     {
-        if (!searchForKey()) {
+        if (!checkValidKey()) {
             return (defaultTimeAnim);
         }
         return (_animRects[_currentRectList][_currentDirection].first);
@@ -71,7 +71,7 @@ namespace Types {
 
     Rect AnimRect::getCurrentAnimRect()
     {
-        if (!searchForKey()) {
+        if (!checkValidKey()) {
             return (_defaultRect);
         }
         std::vector<Rect> &animRect(_animRects[_currentRectList][_currentDirection].second);

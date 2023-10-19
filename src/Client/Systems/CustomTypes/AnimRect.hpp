@@ -50,7 +50,7 @@ namespace Types {
                 std::unordered_map<Direction, std::pair<std::size_t, std::vector<Rect>>>;
             using NoIncrVector = std::unordered_map<Direction, bool>;
             AnimRect(
-                Rect rect,
+                const Rect &rect,
                 nlohmann::json animRectData,
                 RectListType state  = RectListType::DEFAULT_RECT,
                 Direction direction = Direction::NONE);
@@ -62,7 +62,7 @@ namespace Types {
 
             void changeDirection(Direction direction = Direction::NONE);
 
-            bool searchForKey();
+            bool checkValidKey();
 
             Rect getCurrentAnimRect();
 
