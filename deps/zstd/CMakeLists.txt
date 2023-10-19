@@ -7,7 +7,8 @@ set(ZSTD_BUILD_SHARED OFF)
 
 FetchContent_Declare(
     zstd
-    URL "https://github.com/facebook/zstd/releases/download/v1.5.5/zstd-1.5.5.tar.gz"
+    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_CONFIGURATION_TYPES=\"Release;Release\"" "-DCONFIG=Release"
+    URL "https://github.com/X-R-G-B/R-Bus/releases/latest/download/zstd.tar"
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
     SOURCE_SUBDIR build/cmake
 )
