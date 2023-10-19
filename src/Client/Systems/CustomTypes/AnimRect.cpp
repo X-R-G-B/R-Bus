@@ -83,4 +83,4 @@ namespace Types {
 
         return (rect);
     }
-}
+} // namespace Types
