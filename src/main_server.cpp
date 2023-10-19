@@ -53,7 +53,7 @@ int main(int ac, const char **av)
         return EXIT_EPITECH;
     }
     Logger::info("Starting Server...");
-    if (!Nitwork::NitworkServer::getInstance().startServer(std::stoi(av[1]), std::stoi(av[2]))) {
+    if (!Nitwork::NitworkServer::getInstance().startServer(std::stoi(av[1]), std::stoi(av[2]), DEFAULT_THREAD_NB, TICK)) {
         return EXIT_EPITECH;
     }
     auto &director = Systems::SystemManagersDirector::getInstance();

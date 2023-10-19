@@ -25,7 +25,7 @@ namespace Nitwork {
                 int port,
                 int nbPlayer,
                 int threadNb = DEFAULT_THREAD_NB,
-                int tick     = TICKS_PER_SECOND);
+                int tick     = TICK);
 
             /* Messages creation methods */
             void addStarWaveMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t enemyId);
