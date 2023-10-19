@@ -62,6 +62,8 @@ namespace Types {
 
             void changeDirection(Direction direction = Direction::NONE);
 
+            bool searchForKey();
+
             Rect getCurrentAnimRect();
 
         private:

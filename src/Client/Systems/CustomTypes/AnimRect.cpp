@@ -47,32 +47,35 @@ namespace Types {
         }
     }
 
-    std::size_t AnimRect::getActualAnimDelay()
+    bool AnimRect::searchForKey()
     {
         DirectionVector animRects;
 
         if (auto search = _animRects.find(_currentRectList); search == _animRects.end()) {
-            return (defaultTimeAnim);
+            return (false);
         }
         animRects = _animRects[_currentRectList];
         if (auto search = animRects.find(_currentDirection); search == animRects.end()) {
+            return (false);
+        }
+        return (true);
+    }
+
+
+    std::size_t AnimRect::getActualAnimDelay()
+    {
+        if (!searchForKey()) {
             return (defaultTimeAnim);
         }
-        return (animRects[_currentDirection].first);
+        return (_animRects[_currentRectList][_currentDirection].first);
     }
 
     Rect AnimRect::getCurrentAnimRect()
     {
-        DirectionVector animRects;
-
-        if (auto search = _animRects.find(_currentRectList); search == _animRects.end()) {
+        if (!searchForKey()) {
             return (_defaultRect);
         }
-        animRects = _animRects[_currentRectList];
-        if (auto search = animRects.find(_currentDirection); search == animRects.end()) {
-            return (_defaultRect);
-        }
-        std::vector<Rect> &animRect(animRects[_currentDirection].second);
+        std::vector<Rect> &animRect(_animRects[_currentRectList][_currentDirection].second);
 
         _currentRectInList += 1;
         if (animRect.size() <= _currentRectInList) {
