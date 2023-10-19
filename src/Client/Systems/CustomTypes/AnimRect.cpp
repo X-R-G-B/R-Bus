@@ -61,7 +61,6 @@ namespace Types {
         return (true);
     }
 
-
     std::size_t AnimRect::getActualAnimDelay()
     {
         if (!searchForKey()) {
