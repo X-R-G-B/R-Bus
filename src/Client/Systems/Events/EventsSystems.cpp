@@ -7,6 +7,7 @@
 
 #include "EventsSystems.hpp"
 #include "CustomTypes.hpp"
+#include "Maths.hpp"
 #include "NitworkClient.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
@@ -33,6 +34,7 @@ namespace Systems {
 
     void EventsSystems::playerMovement(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                              = Registry::getInstance();
         Registry::components<Types::Position> arrPos    = registry.getComponents<Types::Position>();
         Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
@@ -47,25 +49,26 @@ namespace Systems {
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
                 checkAnimRect(id, clock_, clockId);
-                arrPos[id].x += 1;
+                Maths::addNormalIntToDecimalInt(arrPos[id].x, 1);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
                 checkAnimRect(id, clock_, clockId);
-                arrPos[id].x -= 1;
+                Maths::subNormalIntToDecimalInt(arrPos[id].x, 1);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
                 checkAnimRect(id, clock_, clockId);
-                arrPos[id].y -= 1;
+                Maths::subNormalIntToDecimalInt(arrPos[id].y, 1);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
                 checkAnimRect(id, clock_, clockId);
-                arrPos[id].y += 1;
+                Maths::addNormalIntToDecimalInt(arrPos[id].y, 1);
             }
         }
     }
 
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         static const std::size_t waitTimeBullet           = 500;
         static const std::string soundPathShoot           = "assets/Audio/Sounds/laser.ogg";
         Registry &registry                                = Registry::getInstance();
@@ -95,7 +98,7 @@ namespace Systems {
                 continue;
             }
             Nitwork::NitworkClient::getInstance().addNewBulletMsg(
-                {static_cast<int>(arrPosition[id].x), static_cast<int>(arrPosition[id].y)},
+                {Maths::removeIntDecimals(arrPosition[id].x), Maths::removeIntDecimals(arrPosition[id].y)},
                 CLASSIC);
             struct Types::Missiles missile = {
                 .type = CLASSIC,
@@ -107,6 +110,7 @@ namespace Systems {
 
     void EventsSystems::changeScene(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
             auto &sceneManager = Scene::SceneManager::getInstance();
             if (sceneManager.getCurrentScene() == Scene::Scene::MAIN_GAME) {

@@ -7,6 +7,7 @@
 
 #include "ServerNetwork.hpp"
 #include "ECSCustomTypes.hpp"
+#include "Maths.hpp"
 #include "NitworkServer.hpp"
 #include "Registry.hpp"
 #include "Systems.hpp"
@@ -64,8 +65,8 @@ namespace Systems {
                 .id   = arrEnemies[index].getConstId(),
                 .life = arrHealth[index],
                 .pos =
-                    {static_cast<char>(static_cast<int>(arrPos[index].x)),
-                          static_cast<char>(static_cast<int>(arrPos[index].y))},
+                    {static_cast<char>(Maths::removeIntDecimals(arrPos[index].x)),
+                          static_cast<char>(Maths::removeIntDecimals(arrPos[index].y))},
                 .type = arrEnemies[index].type,
         });
     }
@@ -77,8 +78,8 @@ namespace Systems {
         const struct msgNewBullet_s &msgNewBullet = std::any_cast<struct msgNewBullet_s>(msg);
 
         struct Types::Position position = {
-            static_cast<float>(msgNewBullet.pos.x),
-            static_cast<float>(msgNewBullet.pos.y),
+            Maths::addIntDecimals(msgNewBullet.pos.x),
+            Maths::addIntDecimals(msgNewBullet.pos.y),
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
         Systems::createMissile(position, missileType);
@@ -103,8 +104,8 @@ namespace Systems {
             auto &pos         = arrPos[id];
             auto &otherPlayer = arrOtherPlayers[id];
             if (otherPlayer.constId == playerId) {
-                pos.x = static_cast<float>(msgAbsolutePosition.pos.x);
-                pos.y = static_cast<float>(msgAbsolutePosition.pos.y);
+                pos.x = Maths::addIntDecimals(msgAbsolutePosition.pos.x);
+                pos.y = Maths::addIntDecimals(msgAbsolutePosition.pos.y);
                 Nitwork::NitworkServer::getInstance().broadcastAbsolutePositionMsg(
                     msgAbsolutePosition.pos,
                     endpoint);
