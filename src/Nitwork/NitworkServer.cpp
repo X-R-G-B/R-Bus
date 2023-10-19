@@ -215,10 +215,15 @@ namespace Nitwork {
             Logger::info("A new client is ready, waiting for others");
             return;
         }
-        addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
-        auto &director = Systems::SystemManagersDirector::getInstance();
-        std::lock_guard<std::mutex> lock(director.mutex);
-        director.getSystemManager(0).addSystem(Systems::initWave);
+        std::thread([this, &endpoint]() {
+            Logger::fatal("Starting wave in 5 seconds");
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+            addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
+            auto &director = Systems::SystemManagersDirector::getInstance();
+            std::lock_guard<std::mutex> lock(director.mutex);
+            director.getSystemManager(0).addSystem(Systems::initWave);
+            Logger::fatal("Wave started");
+        }).detach();
     }
 
     void
