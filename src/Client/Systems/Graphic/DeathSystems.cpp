@@ -30,6 +30,7 @@ namespace Systems {
 
     void DeathSystems::setEntityDeathFunction(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
 
         std::vector<std::size_t> ids = arrDead.getExistingsId();

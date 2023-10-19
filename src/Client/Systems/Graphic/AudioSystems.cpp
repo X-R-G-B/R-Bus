@@ -61,6 +61,7 @@ namespace Systems {
 
     void GraphicSystems::initAudio(std::size_t managerId, std::size_t systemId)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         constexpr float musicVolume = 0.60F;
         constexpr float soundVolume = 0.63F;
 

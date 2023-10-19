@@ -16,6 +16,16 @@
 
 namespace Types {
 
+    struct Parallax {
+            float x;
+            float y;
+    };
+
+    struct RectangleShape {
+            float width;
+            float height;
+    };
+
     struct FontSize {
             float fsz;
     };
