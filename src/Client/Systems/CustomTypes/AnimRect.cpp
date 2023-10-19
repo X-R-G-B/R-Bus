@@ -11,7 +11,11 @@
 namespace Types {
     constexpr std::size_t defaultTimeAnim = 120;
 
-    AnimRect::AnimRect(const Rect &rect, nlohmann::json animRectData, RectListType state, Direction direction)
+    AnimRect::AnimRect(
+        const Rect &rect,
+        nlohmann::json animRectData,
+        RectListType state,
+        Direction direction)
         : _defaultRect(rect),
           _currentRectList(state),
           _currentDirection(direction),
