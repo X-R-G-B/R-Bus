@@ -33,7 +33,6 @@ namespace Systems {
         return (size);
     }
 
-
     static void updateAnimRect(std::size_t id, Types::AnimRect &animRect, Types::Rect &rect)
     {
         Clock &clock_ = Registry::getInstance().getClock();
@@ -46,7 +45,7 @@ namespace Systems {
             return;
         }
         Types::Rect rectAnim = animRect.getCurrentAnimRect();
-        rect = rectAnim;
+        rect                 = rectAnim;
         clock_.decreaseMilliseconds(clockIds[id], animRect.getActualAnimDelay());
     }
 
