@@ -26,6 +26,7 @@
             },
             "animRect": [
                 {
+                    "direction": "left",
                     "type": "move",
                     "list": [
                         {

@@ -33,22 +33,21 @@ namespace Systems {
         return (size);
     }
 
-    constexpr std::size_t elapsedBetweenAnim = 120;
 
     static void updateAnimRect(std::size_t id, Types::AnimRect &animRect, Types::Rect &rect)
     {
         Clock &clock_ = Registry::getInstance().getClock();
         static std::unordered_map<std::size_t, std::size_t> clockIds;
-        auto clockId = clockIds.find(id);
-        if (clockId == clockIds.end()) {
+
+        if (auto clockId = clockIds.find(id); clockId == clockIds.end()) {
             clockIds[id] = clock_.create();
         }
-
-        if (clock_.elapsedMillisecondsSince(clockIds[id]) < elapsedBetweenAnim) {
+        if (clock_.elapsedMillisecondsSince(clockIds[id]) < animRect.getActualAnimDelay()) {
             return;
         }
-        rect = animRect.getCurrentAnimRect();
-        clock_.decreaseMilliseconds(clockIds[id], elapsedBetweenAnim);
+        Types::Rect rectAnim = animRect.getCurrentAnimRect();
+        rect = rectAnim;
+        clock_.decreaseMilliseconds(clockIds[id], animRect.getActualAnimDelay());
     }
 
     void GraphicSystems::updateAnimation(std::size_t /*unused*/, std::size_t /*unused*/)

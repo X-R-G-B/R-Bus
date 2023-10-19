@@ -9,60 +9,74 @@
 #include <iostream>
 
 namespace Types {
+    constexpr std::size_t defaultTimeAnim = 120;
+
     AnimRect::AnimRect(Rect rect, nlohmann::json animRectData, RectListType state, Direction direction)
         : _defaultRect(rect), _currentRectList(state), _currentDirection(direction), _currentRectInList(0)
     {
         for (auto &it : animRectData) {
-            std::cout << it << "    :::: DATAAAAAAAAAAA" << std::endl;
             Direction direction = it["direction"].get<Direction>();
             RectListType type = it["type"].get<RectListType>();
+            std::size_t time;
+            bool noIncr = false;
             std::vector<Rect> animRect = it["list"].get<std::vector<Rect>>();
 
-            std::cout << "Actual direction : " << direction << std::endl;
-            std::cout << "Actual type : " << type << std::endl;
-
-            _animRects[type][direction] = animRect;
+            time = it["time"] == nullptr ? defaultTimeAnim : it["time"].get<std::size_t>();
+            noIncr = it["noIncr"] == nullptr ?  false : it["noIncr"].get<bool>();
+            _animRects[type][direction] = std::make_pair(time, animRect);
+            _noIncrVector[type][direction] = noIncr;
         }
     }
 
     void AnimRect::changeRectList(RectListType type)
     {
-        _currentRectList = type;
-        _currentRectInList = 0;
+        if (type != _currentRectList) {
+            _currentRectList = type;
+            _currentRectInList = 0;
+        }
     }
 
     void AnimRect::changeDirection(Direction direction)
     {
-        _currentDirection = direction;
-        _currentRectInList = 0;
+        if (direction != _currentDirection) {
+            _currentDirection = direction;
+            _currentRectInList = 0;
+        }
     }
 
-    Rect &AnimRect::getCurrentAnimRect()
+    std::size_t AnimRect::getActualAnimDelay()
     {
         DirectionVector animRects;
+
         if (auto search = _animRects.find(_currentRectList); search == _animRects.end()) {
-            std::cout << "BAD TYPE" << std::endl;
-            std::cout << "ACTUAL TYPE : " << _currentRectList << std::endl;
+            return (defaultTimeAnim);
+        }
+        animRects = _animRects[_currentRectList];
+        if (auto search = animRects.find(_currentDirection); search == animRects.end()) {
+            return (defaultTimeAnim);
+        }
+        return (animRects[_currentDirection].first);
+    }
+
+    Rect AnimRect::getCurrentAnimRect()
+    {
+        DirectionVector animRects;
+
+        if (auto search = _animRects.find(_currentRectList); search == _animRects.end()) {
             return (_defaultRect);
         }
         animRects = _animRects[_currentRectList];
-
-        std::vector<Rect> animRect;
         if (auto search = animRects.find(_currentDirection); search == animRects.end()) {
-            std::cout << "BAD DIRECTION" << std::endl;
-            std::cout << "ACTUAL DIRECTION : " << _currentDirection << std::endl;
             return (_defaultRect);
         }
-        animRect = animRects[_currentDirection];
+        std::vector<Rect> &animRect(animRects[_currentDirection].second);
+
         _currentRectInList += 1;
         if (animRect.size() <= _currentRectInList) {
-            _currentRectInList = 0;
+            _currentRectInList = _noIncrVector[_currentRectList][_currentDirection] ? animRect.size() - 1 : 0;
         }
-        std::cout << "pos X : " << animRect[_currentRectInList].x << std::endl;
-        std::cout << "pos Y : " << animRect[_currentRectInList].y << std::endl;
-        std::cout << "width : " << animRect[_currentRectInList].width << std::endl;
-        std::cout << "height : " << animRect[_currentRectInList].height << std::endl;
-        std::cout << "rect in list : " << _currentRectInList << std::endl;
-        return (animRect[_currentRectInList]);
+        Types::Rect &rect(animRect[_currentRectInList]);
+
+        return (rect);
     }
 }

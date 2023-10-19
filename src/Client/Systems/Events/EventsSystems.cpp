@@ -49,19 +49,24 @@ namespace Systems {
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::RIGHT);
                 Maths::addNormalIntToDecimalInt(arrPos[id].x, 1);
+                return;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::LEFT);
                 Maths::subNormalIntToDecimalInt(arrPos[id].x, 1);
+                return;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::UP);
                 Maths::subNormalIntToDecimalInt(arrPos[id].y, 1);
+                return;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::DOWN);
                 Maths::addNormalIntToDecimalInt(arrPos[id].y, 1);
+                return;
             }
+            checkAnimRect(id, clock_, clockId, Types::Direction::NONE);
         }
     }
 

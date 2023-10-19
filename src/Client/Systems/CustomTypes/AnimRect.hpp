@@ -34,6 +34,7 @@ namespace Types {
 
     NLOHMANN_JSON_SERIALIZE_ENUM( RectListType, {
         {UNDEFINED, nullptr},
+        {DEFAULT_RECT, "default"},
         {MOVE, "move"},
         {ATTACK, "attack"},
         {DEAD, "dead"},
@@ -42,15 +43,19 @@ namespace Types {
     class AnimRect {
         public:
 
-            using DirectionVector =  std::unordered_map<Direction, std::vector<Rect>>;
+            using DirectionVector =  std::unordered_map<Direction, std::pair<std::size_t, std::vector<Rect>>>;
+            using NoIncrVector =  std::unordered_map<Direction, bool>;
             AnimRect(Rect rect, nlohmann::json animRectData, RectListType state = RectListType::DEFAULT_RECT, Direction direction = Direction::NONE);
             ~AnimRect() = default;
 
             void changeRectList(RectListType type = RectListType::DEFAULT_RECT);
 
+            std::size_t getActualAnimDelay();
+
             void changeDirection(Direction direction = Direction::NONE);
 
-            Rect &getCurrentAnimRect();
+
+            Rect getCurrentAnimRect();
 
         private:
             Rect _defaultRect;
@@ -58,5 +63,6 @@ namespace Types {
             Direction _currentDirection;
             std::size_t _currentRectInList;
             std::unordered_map<RectListType, DirectionVector> _animRects;
+            std::unordered_map<RectListType, NoIncrVector> _noIncrVector;
     };
 }
