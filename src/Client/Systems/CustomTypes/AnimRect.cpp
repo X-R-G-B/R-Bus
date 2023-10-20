@@ -5,8 +5,6 @@
 ** AnimRect
 */
 
-#include <iostream>
-#include "Registry.hpp"
 #include "AnimRect.hpp"
 #include "Json.hpp"
 
@@ -15,7 +13,7 @@ namespace Types {
 
     AnimRect::AnimRect(
         const Rect &rect,
-        const nlohmann::json &animRectData,
+        nlohmann::json animRectData,
         RectListType state,
         Direction direction)
         : _defaultRect(rect),
@@ -41,16 +39,20 @@ namespace Types {
         RectListType type   = json["type"].get<RectListType>();
         std::size_t time;
         std::size_t restartIndex = 0;
-        bool noIncr                = false;
+        bool noIncr              = false;
         std::vector<Rect> animRect({});
 
-        !Json::getInstance().isDataExist(json, "list") ? animRect.push_back(_defaultRect) : fillVectorList(json["list"], animRect);
-        time   = !Json::getInstance().isDataExist(json, "time") ? defaultTimeAnim : json["time"].get<std::size_t>();
-        restartIndex   = !Json::getInstance().isDataExist(json, "restartIndex") ? 0 : json["restartIndex"].get<std::size_t>();
+        !Json::getInstance().isDataExist(json, "list") ? animRect.push_back(_defaultRect)
+                                                       : fillVectorList(json["list"], animRect);
+        time         = !Json::getInstance().isDataExist(json, "time") ? defaultTimeAnim
+                                                                      : json["time"].get<std::size_t>();
+        restartIndex = !Json::getInstance().isDataExist(json, "restartIndex")
+            ? 0
+            : json["restartIndex"].get<std::size_t>();
         noIncr = !Json::getInstance().isDataExist(json, "noIncr") ? false : json["noIncr"].get<bool>();
         _animRects[type][direction]    = std::make_pair(time, animRect);
         _noIncrVector[type][direction] = noIncr;
-        _animRestart[type][direction] = restartIndex;
+        _animRestart[type][direction]  = restartIndex;
     }
 
     void AnimRect::changeRectList(RectListType type)
@@ -100,8 +102,9 @@ namespace Types {
 
         _currentRectInList += 1;
         if (animRect.size() <= _currentRectInList) {
-            _currentRectInList =
-                _noIncrVector[_currentRectList][_currentDirection] ? animRect.size() - 1 : _animRestart[_currentRectList][_currentDirection];
+            _currentRectInList = _noIncrVector[_currentRectList][_currentDirection]
+                ? animRect.size() - 1
+                : _animRestart[_currentRectList][_currentDirection];
         }
         Types::Rect &rect(animRect[_currentRectInList]);
 
