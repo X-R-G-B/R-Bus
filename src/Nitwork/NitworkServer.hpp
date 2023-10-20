@@ -37,7 +37,7 @@ namespace Nitwork {
                 boost::asio::ip::udp::endpoint &endpoint,
                 const struct enemy_infos_s &enemyInfos);
 
-            void addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
+            void addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId, const struct position_absolute_s &pos, const struct health_s &life);
 
             void broadcastNewBulletMsg(
                 const struct msgNewBullet_s &msg,
@@ -71,7 +71,7 @@ namespace Nitwork {
 
             void sendNewAllie(
                 n_id_t playerId,
-                struct packetNewAllie_s packetMsgNewAllie,
+                struct packetCreatePlayer_s packetMsgCreatePlayer,
                 boost::asio::ip::udp::endpoint &endpoint,
                 bool butNoOne = true);
 
@@ -146,7 +146,7 @@ namespace Nitwork {
             std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
                 {
                  INIT, [this](Packet &packet) {
-                        sendData<struct packetMsgPlayerInit_s>(packet);
+                        sendData<struct packetCreatePlayer_s>(packet);
                     }, },
                 {LIFE_UPDATE,
                  [this](Packet &packet) {
@@ -170,7 +170,7 @@ namespace Nitwork {
                  }},
                 {NEW_ALLIE,
                  [this](Packet &packet) {
-                     sendData<struct packetNewAllie_s>(packet);
+                     sendData<struct packetCreatePlayer_s>(packet);
                  }},
                 {POSITION_RELATIVE_BROADCAST,
                  [this](Packet &packet) {

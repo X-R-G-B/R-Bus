@@ -55,15 +55,6 @@ namespace Systems {
         Logger::info("Wave started");
     }
 
-    void receivePlayerInit(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
-    {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const auto playerInit = std::any_cast<struct msgPlayerInit_s>(any);
-
-        Logger::info("Your player id is: " + std::to_string(playerInit.playerId));
-        initPlayer(playerInit.playerId);
-    }
-
     void receiveNewEnemy(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
@@ -78,13 +69,17 @@ namespace Systems {
         Registry::getInstance().getComponents<struct health_s>().insertBack(hp);
     }
 
-    void receiveNewAllie(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
+    void receiveNewPlayer(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const auto newAllie = std::any_cast<struct msgNewAllie_s>(any);
+        const auto newPlayer = std::any_cast<struct msgCreatePlayer_s>(any);
 
-        Logger::info("New Ally created with id: " + std::to_string(newAllie.playerId));
-        initPlayer(newAllie.playerId, true);
+        if (newPlayer.isOtherPlayer) {
+            Logger::info("New Ally created with id: " + std::to_string(newPlayer.playerId));
+        } else {
+            Logger::info("Your player id is: " + std::to_string(newPlayer.playerId));
+        }
+        initPlayer(newPlayer.playerId, newPlayer.pos, newPlayer.life, newPlayer.isOtherPlayer);
     }
 
     void receiveRelativePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)

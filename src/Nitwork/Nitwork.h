@@ -31,7 +31,8 @@
     #define MAGICK_NEW_BULLET '\x0d'
     #define MAGICK_POSITION_RELATIVE_BROADCAST '\x0f'
     #define MAGICK_POSITION_ABSOLUTE_BROADCAST '\x10'
-    #define MAGICK_NEW_ALLIE '\x0a'
+    #define MAGICK_NEW_PLAYER '\x0a'
+    #define MAGICK_PLAYER_DEATH '\x11'
 
 typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
@@ -91,17 +92,17 @@ PACK(struct packetMsgReady_s {
         struct msgReady_s msgReady;
 });
 
-/* Message Position Relative */
-PACK(struct msgPlayerInit_s {
-        n_magick_t magick;
-        n_id_t playerId;
-});
-
-PACK(struct packetMsgPlayerInit_s {
-        struct header_s header;
-        struct action_s action;
-        struct msgPlayerInit_s msg;
-});
+///* Message Position Relative */
+//PACK(struct msgPlayerInit_s {
+//        n_magick_t magick;
+//        n_id_t playerId;
+//});
+//
+//PACK(struct packetMsgPlayerInit_s {
+//        struct header_s header;
+//        struct action_s action;
+//        struct msgPlayerInit_s msg;
+//});
 
 /* Message Start Game */
 PACK(struct msgStartWave_s {
@@ -189,15 +190,19 @@ PACK(struct packetPositionAbsolute_s {
         struct msgPositionAbsolute_s msg;
 });
 
-PACK(struct msgNewAllie_s {
+/* Message New Allie */
+PACK(struct msgCreatePlayer_s {
         n_magick_t magick;
         n_id_t playerId;
+        struct position_absolute_s pos;
+        struct health_s life;
+        bool isOtherPlayer;
 });
 
-PACK(struct packetNewAllie_s {
+PACK(struct packetCreatePlayer_s {
     struct header_s header;
     struct action_s action;
-    struct msgNewAllie_s msg;
+    struct msgCreatePlayer_s msg;
 });
 
 /* Message broadcast position relative */
@@ -224,6 +229,30 @@ PACK(struct packetPositionAbsoluteBroadcast_s {
         struct header_s header;
         struct action_s action;
         struct msgPositionAbsoluteBroadcast_s msg;
+});
+
+/* Message Player death */
+PACK(struct msgPlayerDeath_s {
+        n_magick_t magick;
+        n_id_t playerId;
+});
+
+PACK(struct packetPlayerDeath_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgPlayerDeath_s msg;
+});
+
+/* Message Player death broadcast */
+PACK(struct msgPlayerDeathBroadcast_s {
+        n_magick_t magick;
+        n_id_t playerId;
+});
+
+PACK(struct packetPlayerDeathBroadcast_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgPlayerDeathBroadcast_s msg;
 });
 
 #endif

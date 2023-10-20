@@ -110,20 +110,20 @@ namespace Nitwork {
 
     void NitworkServer::sendNewAllie(
         n_id_t playerId,
-        struct packetNewAllie_s packetMsgNewAllie,
+        struct packetCreatePlayer_s packetMsgCreatePlayer,
         boost::asio::ip::udp::endpoint &endpoint,
         bool butNoOne)
     {
-        packetMsgNewAllie.msg.playerId = playerId;
+        packetMsgCreatePlayer.msg.playerId = playerId;
         if (butNoOne) {
             Packet packet(
-                packetMsgNewAllie.action.magick,
-                std::make_any<struct packetNewAllie_s>(packetMsgNewAllie));
+                packetMsgCreatePlayer.action.magick,
+                std::make_any<struct packetCreatePlayer_s>(packetMsgCreatePlayer));
             sendToAllClientsButNotOne(packet, endpoint);
         } else {
             Packet packet(
-                packetMsgNewAllie.action.magick,
-                std::make_any<struct packetNewAllie_s>(packetMsgNewAllie),
+                packetMsgCreatePlayer.action.magick,
+                std::make_any<struct packetCreatePlayer_s>(packetMsgCreatePlayer),
                 endpoint);
             addPacketToSend(packet);
         }
@@ -144,20 +144,26 @@ namespace Nitwork {
         }
         _endpoints.emplace_back(endpoint);
         auto playerId = static_cast<n_id_t>(_endpoints.size() - 1);
+        auto &jsonInstance = Json::getInstance();
         // Send new Allie to others
-        addPlayerInitMessage(endpoint, playerId);
-        struct packetNewAllie_s packetMsgNewAllie = {
+        struct packetCreatePlayer_s packetMsgCreatePlayer = {
             .header = {0, 0, 0, 0, 1, 0},
             .action = {.magick = NEW_ALLIE},
-            .msg    = {.magick = MAGICK_NEW_ALLIE, .playerId = playerId}
+            .msg    = {.magick = MAGICK_NEW_PLAYER,
+                       .playerId = playerId,
+                       .pos = {jsonInstance.getDataByVector<int>({"player", "position", "x"}, JsonType::DEFAULT_PLAYER), jsonInstance.getDataByVector<int>({"player", "position", "y"}, JsonType::DEFAULT_PLAYER)},
+                       .life = {jsonInstance.getDataByVector<int>({"player", "health"}, JsonType::DEFAULT_PLAYER)},
+                       .isOtherPlayer = false}
         };
-        Systems::initPlayer(playerId, true);
-        sendNewAllie(playerId, packetMsgNewAllie, endpoint);
+        addPlayerInitMessage(endpoint, playerId, packetMsgCreatePlayer.msg.pos, packetMsgCreatePlayer.msg.life);
+        packetMsgCreatePlayer.msg.isOtherPlayer = true;
+        Systems::initPlayer(playerId, packetMsgCreatePlayer.msg.pos, packetMsgCreatePlayer.msg.life, packetMsgCreatePlayer.msg.isOtherPlayer);
+        sendNewAllie(playerId, packetMsgCreatePlayer, endpoint);
         for (const auto &[_, allieId] : _playersIds) {
             if (allieId == playerId) {
                 continue;
             }
-            sendNewAllie(allieId, packetMsgNewAllie, endpoint, false);
+            sendNewAllie(allieId, packetMsgCreatePlayer, endpoint, false);
         }
     }
 
@@ -209,17 +215,23 @@ namespace Nitwork {
     /* End Handle packet (msg) Section */
 
     /* Message Creation Section */
-    void NitworkServer::addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
+    void NitworkServer::addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId, const struct position_absolute_s &pPos, const struct health_s &pLife)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
-        struct packetMsgPlayerInit_s packetMsgPlayerInit = {
+        struct packetCreatePlayer_s packetCreatePlayer = {
             .header = {0, 0, 0, 0, 1, 0},
             .action = {.magick = INIT},
-            .msg    = {.magick = MAGICK_INIT, .playerId = playerId}
+            .msg    = {
+                .magick = MAGICK_INIT,
+                .playerId = playerId,
+                .pos = pPos,
+                .life = pLife,
+                .isOtherPlayer = false
+            }
         };
         Packet packet(
-            packetMsgPlayerInit.action.magick,
-            std::make_any<struct packetMsgPlayerInit_s>(packetMsgPlayerInit),
+            packetCreatePlayer.action.magick,
+            std::make_any<struct packetCreatePlayer_s>(packetCreatePlayer),
             endpoint);
         addPacketToSend(packet);
         _playersIds[endpoint] = playerId;
