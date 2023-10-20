@@ -152,12 +152,15 @@ Here's a json file with an array of enemy objects :
             "spritePath" : "path"
         }
     ]
-    nlohmann::json object = Json::getJsonObjectById(enemyType, "1");
+}
+```
 
+Here's how to get an enemy object from his id :
+```cpp
+    nlohmann::json object = Json::getJsonObjectById(enemyType, "1");
     //the returned object will be :
     // {
     //     "id" : "1",
     //     "spritePath" : "path"
     // }
-}
 ```
