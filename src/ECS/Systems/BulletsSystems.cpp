@@ -67,23 +67,11 @@ namespace Systems {
         return newPos;
     }
 
-    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
+#ifdef CLIENT
+    static void addSpriteRectsForBullet(nlohmann::json &bulletData, Types::CollisionRect &collisionRect)
     {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
-        nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
-        Types::CollisionRect collisionRect =
-            json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
-        Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");
-        Types::Missiles missileType = typeOfMissile;
-        Types::Dead deadComp        = {};
-        Types::PlayerAllies playerAlliesComp = {};
-        Types::Position position             = adjustMissilePosition(pos, collisionRect);
-        struct health_s healthComp           = {json.getDataFromJson<int>(bulletData, "health")};
-        Types::Damage damageComp             = {json.getDataFromJson<int>(bulletData, "damage")};
-
-#ifdef CLIENT
         const std::string bulletPath = json.getDataFromJson<std::string>(bulletData, "spritePath");
         Types::Rect spriteRect       = json.getDataFromJson<Types::Rect>(bulletData, "spriteRect");
         Types::SpriteDatas bulletDatas(
@@ -105,8 +93,28 @@ namespace Systems {
             animRect.changeRectList(Types::RectListType::MOVE);
             Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
         }
-        playBulletSound(typeOfMissile);
+    }
+#endif
 
+    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
+    {
+        Json &json = Json::getInstance();
+        Registry::getInstance().addEntity();
+        nlohmann::json bulletData =
+            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
+        Types::CollisionRect collisionRect =
+            json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
+        Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");
+        Types::Missiles missileType = typeOfMissile;
+        Types::Dead deadComp        = {};
+        Types::PlayerAllies playerAlliesComp = {};
+        Types::Position position             = adjustMissilePosition(pos, collisionRect);
+        struct health_s healthComp           = {json.getDataFromJson<int>(bulletData, "health")};
+        Types::Damage damageComp             = {json.getDataFromJson<int>(bulletData, "damage")};
+
+#ifdef CLIENT
+        addSpriteRectsForBullet(bulletData, collisionRect);
+        playBulletSound(typeOfMissile);
 #endif
 
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
