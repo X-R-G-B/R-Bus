@@ -29,7 +29,7 @@ namespace Systems {
     void deathChecker(std::size_t, std::size_t);
     void updateSpecialBullets(std::size_t, std::size_t);
     void initWave(std::size_t managerId, std::size_t systemId);
-    void createMissile(Types::Position &pos, Types::Missiles &typeOfMissile);
+    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile);
     void initPlayer(unsigned int constId, bool otherPlayer = false);
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems();
     std::vector<std::function<void(std::size_t, std::size_t)>> getBulletSystems();

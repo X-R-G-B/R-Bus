@@ -28,7 +28,7 @@ namespace Systems {
             case CLASSIC: return "classic";
             case FAST: return "fast";
             case BOUNCE: return "bounce";
-            case LOADED: return "loaded";
+            case PERFORANT: return "perforant";
             default: break;
         }
         throw std::runtime_error("Unknown missile type");
@@ -53,7 +53,16 @@ namespace Systems {
     }
 #endif
 
-    void createMissile(Types::Position &pos, Types::Missiles &typeOfMissile)
+    static Types::Position adjustMissilePosition(Types::Position &pos, Types::CollisionRect &collisionRect)
+    {
+        Types::Position newPos = pos;
+        int halfSprite = Maths::divisionWithTwoIntDecimals(collisionRect.width, 200);
+        newPos.y = Maths::subtractionWithTwoIntDecimals(newPos.y, halfSprite);
+        newPos.x = pos.x;
+        return newPos;
+    }
+
+    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
     {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
@@ -64,7 +73,7 @@ namespace Systems {
         Types::Missiles missileType = typeOfMissile;
         Types::Dead deadComp        = {};
         Types::PlayerAllies playerAlliesComp = {};
-        Types::Position position             = {pos.x, pos.y};
+        Types::Position position             = adjustMissilePosition(pos, collisionRect);
         struct health_s healthComp           = {1};
         Types::Damage damageComp             = {10};
 

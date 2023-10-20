@@ -24,7 +24,7 @@ namespace Systems {
         {CLASSIC, Raylib::KeyboardKey::KB_SPACE},
         {FAST, Raylib::KeyboardKey::KB_C},
         {BOUNCE, Raylib::KeyboardKey::KB_V},
-        {LOADED, Raylib::KeyboardKey::KB_B},
+        {PERFORANT, Raylib::KeyboardKey::KB_B},
     };
 
     static std::size_t getClockIdFromMissileType(enum missileTypes_e type)
@@ -32,13 +32,13 @@ namespace Systems {
         static std::size_t clockIdClassic = Registry::getInstance().getClock().create(true);
         static std::size_t clockIdFast    = Registry::getInstance().getClock().create(true);
         static std::size_t clockIdBounce  = Registry::getInstance().getClock().create(true);
-        static std::size_t clockIdLoaded  = Registry::getInstance().getClock().create(true);
+        static std::size_t clockIdPerforant  = Registry::getInstance().getClock().create(true);
 
         switch (type) {
             case CLASSIC: return clockIdClassic;
             case FAST: return clockIdFast;
             case BOUNCE: return clockIdBounce;
-            case LOADED: return clockIdLoaded;
+            case PERFORANT: return clockIdPerforant;
             default: break;
         }
         throw std::runtime_error("Unknown missile type");
@@ -53,8 +53,8 @@ namespace Systems {
             bulletType = "fast";
         } else if (clockId == getClockIdFromMissileType(BOUNCE)) {
             bulletType = "bounce";
-        } else if (clockId == getClockIdFromMissileType(LOADED)) {
-            bulletType = "loaded";
+        } else if (clockId == getClockIdFromMissileType(PERFORANT)) {
+            bulletType = "perforant";
         }
         nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, bulletType);
         float waitTimeBullet = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
@@ -82,6 +82,24 @@ namespace Systems {
         return true;
     }
 
+    static Types::Position adjustPlayerBulletPosition(Types::Position &playerPos, std::size_t id)
+    {
+        Registry &registry                                = Registry::getInstance();
+        Registry::components<Types::CollisionRect> arrCol = registry.getComponents<Types::CollisionRect>();
+
+        if (arrCol.exist(id)) {
+            Types::CollisionRect &col = arrCol[id];
+            float posX = Maths::intToFloatConservingDecimals(playerPos.x) + (Maths::intToFloatConservingDecimals(col.width) / 2.F);
+            float posY = Maths::intToFloatConservingDecimals(playerPos.y) + (Maths::intToFloatConservingDecimals(col.height) / 2.F);
+            return {
+                Maths::floatToIntConservingDecimals(posX),
+                Maths::floatToIntConservingDecimals(posY)
+            };
+        } else {
+            return {playerPos.x, playerPos.y};
+        }
+    }
+
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
@@ -105,7 +123,7 @@ namespace Systems {
             Nitwork::NitworkClient::getInstance().addNewBulletMsg(
                 {Maths::removeIntDecimals(arrPosition[id].x), Maths::removeIntDecimals(arrPosition[id].y)},
                 missile.type);
-            createMissile(arrPosition[id], missile);
+            createMissile(adjustPlayerBulletPosition(arrPosition[id], id), missile);
             clock_.restart(getClockIdFromMissileType(missile.type));
         }
     }

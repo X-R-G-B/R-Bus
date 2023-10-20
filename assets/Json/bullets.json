@@ -136,14 +136,13 @@
             }
         },
         {
-            "id": "loaded",
+            "id": "perforant",
             "damage": 20,
             "velocity": {
                 "speedX": 90,
                 "speedY": 0
             },
-            "loadTimeBullet": 1000,
-            "waitTimeBullet": 2000,
+            "waitTimeBullet": 1000,
             "collisionRect": {
                 "width": 500,
                 "height": 500
