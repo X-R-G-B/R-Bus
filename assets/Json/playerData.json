@@ -24,7 +24,7 @@
             {
                 "direction": "up",
                 "type": "move",
-                "time": 180,
+                "time": 80,
                 "noIncr": true,
                 "list": [
                     {

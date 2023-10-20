@@ -28,15 +28,17 @@
                 {
                     "direction": "left",
                     "type": "move",
+                    "time": 400,
+                    "restartIndex": 1,
                     "list": [
                         {
-                            "x": 18.0,
+                            "x": 51.0,
                             "y": 67.0,
                             "width": 31.0,
                             "height": 30.0
                         },
                         {
-                            "x": 51.0,
+                            "x": 18.0,
                             "y": 67.0,
                             "width": 31.0,
                             "height": 30.0

@@ -5,8 +5,9 @@
 ** AnimRect
 */
 
-#include "AnimRect.hpp"
 #include <iostream>
+#include "AnimRect.hpp"
+#include "Json.hpp"
 
 namespace Types {
     constexpr std::size_t defaultTimeAnim = 120;
@@ -22,17 +23,33 @@ namespace Types {
           _currentRectInList(0)
     {
         for (auto &it : animRectData) {
-            Direction direction = it["direction"].get<Direction>();
-            RectListType type   = it["type"].get<RectListType>();
-            std::size_t time;
-            bool noIncr                = false;
-            std::vector<Rect> animRect = it["list"].get<std::vector<Rect>>();
-
-            time   = it["time"] == nullptr ? defaultTimeAnim : it["time"].get<std::size_t>();
-            noIncr = it["noIncr"] == nullptr ? false : it["noIncr"].get<bool>();
-            _animRects[type][direction]    = std::make_pair(time, animRect);
-            _noIncrVector[type][direction] = noIncr;
+            initAnimRectData(it);
         }
+    }
+
+    void AnimRect::fillVectorList(nlohmann::json &list, std::vector<Rect> &animRect)
+    {
+        for (auto &it : list) {
+            animRect.push_back(Types::Rect(it));
+        }
+    }
+
+    void AnimRect::initAnimRectData(nlohmann::json &json)
+    {
+        Direction direction = json["direction"].get<Direction>();
+        RectListType type   = json["type"].get<RectListType>();
+        std::size_t time;
+        std::size_t restartIndex = 0;
+        bool noIncr                = false;
+        std::vector<Rect> animRect({});
+
+        !Json::getInstance().isDataExist(json, "list") ? animRect.push_back(_defaultRect) : fillVectorList(json["list"], animRect);
+        time   = !Json::getInstance().isDataExist(json, "time") ? defaultTimeAnim : json["time"].get<std::size_t>();
+        restartIndex   = !Json::getInstance().isDataExist(json, "restartIndex") ? 0 : json["restartIndex"].get<std::size_t>();
+        noIncr = !Json::getInstance().isDataExist(json, "noIncr") ? false : json["noIncr"].get<bool>();
+        _animRects[type][direction]    = std::make_pair(time, animRect);
+        _noIncrVector[type][direction] = noIncr;
+        _animRestart[type][direction] = restartIndex;
     }
 
     void AnimRect::changeRectList(RectListType type)
@@ -83,7 +100,7 @@ namespace Types {
         _currentRectInList += 1;
         if (animRect.size() <= _currentRectInList) {
             _currentRectInList =
-                _noIncrVector[_currentRectList][_currentDirection] ? animRect.size() - 1 : 0;
+                _noIncrVector[_currentRectList][_currentDirection] ? animRect.size() - 1 : _animRestart[_currentRectList][_currentDirection];
         }
         Types::Rect &rect(animRect[_currentRectInList]);
 
