@@ -22,8 +22,9 @@ namespace Systems {
 
     static const std::unordered_map<enum missileTypes_e, Raylib::KeyboardKey> bulletKeyMap = {
         {CLASSIC, Raylib::KeyboardKey::KB_SPACE},
-        {FAST, Raylib::KeyboardKey::KB_F},
-        {BOUNCE, Raylib::KeyboardKey::KB_B},
+        {FAST, Raylib::KeyboardKey::KB_C},
+        {BOUNCE, Raylib::KeyboardKey::KB_V},
+        {LOADED, Raylib::KeyboardKey::KB_B},
     };
 
     static std::size_t getClockIdFromMissileType(enum missileTypes_e type)
@@ -31,11 +32,13 @@ namespace Systems {
         static std::size_t clockIdClassic = Registry::getInstance().getClock().create(true);
         static std::size_t clockIdFast    = Registry::getInstance().getClock().create(true);
         static std::size_t clockIdBounce  = Registry::getInstance().getClock().create(true);
+        static std::size_t clockIdLoaded  = Registry::getInstance().getClock().create(true);
 
         switch (type) {
             case CLASSIC: return clockIdClassic;
             case FAST: return clockIdFast;
             case BOUNCE: return clockIdBounce;
+            case LOADED: return clockIdLoaded;
             default: break;
         }
         throw std::runtime_error("Unknown missile type");
@@ -50,6 +53,8 @@ namespace Systems {
             bulletType = "fast";
         } else if (clockId == getClockIdFromMissileType(BOUNCE)) {
             bulletType = "bounce";
+        } else if (clockId == getClockIdFromMissileType(LOADED)) {
+            bulletType = "loaded";
         }
         nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, bulletType);
         float waitTimeBullet = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
@@ -141,19 +146,19 @@ namespace Systems {
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
                 checkAnimRect(id, clock_, clockId);
-                Maths::addNormalIntToDecimalInt(arrPos[id].x, 1);
+                Maths::addFloatToDecimalInt(arrPos[id].x, 1.F);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
                 checkAnimRect(id, clock_, clockId);
-                Maths::subNormalIntToDecimalInt(arrPos[id].x, 1);
+                Maths::subFloatToDecimalInt(arrPos[id].x, 1.F);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
                 checkAnimRect(id, clock_, clockId);
-                Maths::subNormalIntToDecimalInt(arrPos[id].y, 1);
+                Maths::subFloatToDecimalInt(arrPos[id].y, 1.5F);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
                 checkAnimRect(id, clock_, clockId);
-                Maths::addNormalIntToDecimalInt(arrPos[id].y, 1);
+                Maths::addFloatToDecimalInt(arrPos[id].y, 1.5F);
             }
         }
     }

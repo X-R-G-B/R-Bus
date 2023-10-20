@@ -10,6 +10,7 @@
 #include "Systems.hpp"
 #include "MessageTypes.h"
 #include "Maths.hpp"
+#include "Logger.hpp"
 
 #ifdef CLIENT
     #include "CustomTypes.hpp"
@@ -27,6 +28,7 @@ namespace Systems {
             case CLASSIC: return "classic";
             case FAST: return "fast";
             case BOUNCE: return "bounce";
+            case LOADED: return "loaded";
             default: break;
         }
         throw std::runtime_error("Unknown missile type");
@@ -77,7 +79,19 @@ namespace Systems {
             static_cast<std::size_t>(FRONT));
         Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(bulletDatas);
         Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
+
+        if (json.isDataExist(bulletData, "animRect")) {
+            nlohmann::json animRectData = json.getDataFromJson<nlohmann::json>(bulletData, "animRect");
+            Types::AnimRect animRect = {
+                spriteRect,
+                json.getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
+                json.getDataFromJson<std::vector<Types::Rect>>(animRectData, "attack"),
+                json.getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")};
+            animRect.changeRectList(Types::RectListType::MOVE);
+            Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
+        }
         playBulletSound(typeOfMissile);
+
 #endif
 
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);

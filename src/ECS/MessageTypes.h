@@ -20,6 +20,7 @@ enum missileTypes_e {
     CLASSIC = 0,
     FAST,
     BOUNCE,
+    LOADED
 };
 
 PACK(struct health_s {
