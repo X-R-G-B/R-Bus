@@ -12,6 +12,7 @@
                 "height": 500
             },
             "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "soundPath": "assets/Audio/Sounds/laser.ogg",
             "spriteRect": {
                 "x": 200,
                 "y": 121,
@@ -31,6 +32,7 @@
                 "height": 500
             },
             "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "soundPath": "assets/Audio/Sounds/laser.ogg",
             "spriteRect": {
                 "x": 200,
                 "y": 121,
