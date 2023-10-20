@@ -43,8 +43,8 @@ namespace Systems {
         }
     }
 
-    const std::string musicPath      = "assets/Audio/Musics/Title.mp3";
-    const std::string soundPathShoot = "assets/Audio/Sounds/laser.ogg";
+    const std::string musicPath       = "assets/Audio/Musics/Title.mp3";
+    const std::string soundPathShoot  = "assets/Audio/Sounds/laser.ogg";
     const std::string soundPathShoot2 = "assets/Audio/Sounds/laser2.ogg";
     const std::string soundPathShoot3 = "assets/Audio/Sounds/glitch.ogg";
 

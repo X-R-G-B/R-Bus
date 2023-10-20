@@ -7,32 +7,32 @@
 
 #include "EventsSystems.hpp"
 #include "CustomTypes.hpp"
+#include "Json.hpp"
+#include "Logger.hpp"
 #include "Maths.hpp"
 #include "NitworkClient.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
 #include "Systems.hpp"
-#include "Logger.hpp"
-#include "Json.hpp"
 
 namespace Systems {
 
     // BULLET SYSTEMS
 
     static const std::unordered_map<enum missileTypes_e, Raylib::KeyboardKey> bulletKeyMap = {
-        {CLASSIC, Raylib::KeyboardKey::KB_SPACE},
-        {FAST, Raylib::KeyboardKey::KB_C},
-        {BOUNCE, Raylib::KeyboardKey::KB_V},
-        {PERFORANT, Raylib::KeyboardKey::KB_B},
+        {CLASSIC,   Raylib::KeyboardKey::KB_SPACE},
+        {FAST,      Raylib::KeyboardKey::KB_C    },
+        {BOUNCE,    Raylib::KeyboardKey::KB_V    },
+        {PERFORANT, Raylib::KeyboardKey::KB_B    },
     };
 
     static std::size_t getClockIdFromMissileType(enum missileTypes_e type)
     {
-        static std::size_t clockIdClassic = Registry::getInstance().getClock().create(true);
-        static std::size_t clockIdFast    = Registry::getInstance().getClock().create(true);
-        static std::size_t clockIdBounce  = Registry::getInstance().getClock().create(true);
-        static std::size_t clockIdPerforant  = Registry::getInstance().getClock().create(true);
+        static std::size_t clockIdClassic   = Registry::getInstance().getClock().create(true);
+        static std::size_t clockIdFast      = Registry::getInstance().getClock().create(true);
+        static std::size_t clockIdBounce    = Registry::getInstance().getClock().create(true);
+        static std::size_t clockIdPerforant = Registry::getInstance().getClock().create(true);
 
         switch (type) {
             case CLASSIC: return clockIdClassic;
@@ -46,8 +46,8 @@ namespace Systems {
 
     static bool isBulletTimeElapsed(std::size_t clockId)
     {
-        Clock &clock_ = Registry::getInstance().getClock();
-        Json &json = Json::getInstance();
+        Clock &clock_          = Registry::getInstance().getClock();
+        Json &json             = Json::getInstance();
         std::string bulletType = "classic";
         if (clockId == getClockIdFromMissileType(FAST)) {
             bulletType = "fast";
@@ -57,7 +57,7 @@ namespace Systems {
             bulletType = "perforant";
         }
         nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, bulletType);
-        float waitTimeBullet = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
+        float waitTimeBullet      = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
 
         if (clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
             return false;
@@ -89,12 +89,11 @@ namespace Systems {
 
         if (arrCol.exist(id)) {
             Types::CollisionRect &col = arrCol[id];
-            float posX = Maths::intToFloatConservingDecimals(playerPos.x) + (Maths::intToFloatConservingDecimals(col.width) / 2.F);
-            float posY = Maths::intToFloatConservingDecimals(playerPos.y) + (Maths::intToFloatConservingDecimals(col.height) / 2.F);
-            return {
-                Maths::floatToIntConservingDecimals(posX),
-                Maths::floatToIntConservingDecimals(posY)
-            };
+            float posX                = Maths::intToFloatConservingDecimals(playerPos.x)
+                + (Maths::intToFloatConservingDecimals(col.width) / 2.F);
+            float posY = Maths::intToFloatConservingDecimals(playerPos.y)
+                + (Maths::intToFloatConservingDecimals(col.height) / 2.F);
+            return {Maths::floatToIntConservingDecimals(posX), Maths::floatToIntConservingDecimals(posY)};
         } else {
             return {playerPos.x, playerPos.y};
         }
@@ -103,9 +102,9 @@ namespace Systems {
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        struct Types::Missiles missile = {CLASSIC};
+        struct Types::Missiles missile                    = {CLASSIC};
         Registry &registry                                = Registry::getInstance();
-        Clock &clock_ = registry.getClock();
+        Clock &clock_                                     = registry.getClock();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<struct health_s> arrHealth   = registry.getComponents<struct health_s>();
         std::vector<std::size_t> ids =

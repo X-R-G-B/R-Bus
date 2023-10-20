@@ -124,7 +124,7 @@ namespace Nitwork {
             });
     }
 
-    void ANitwork::callReceiveHandler(const std::string &/*unused*/)
+    void ANitwork::callReceiveHandler(const std::string & /*unused*/)
     {
         startReceiveHandler();
     }
