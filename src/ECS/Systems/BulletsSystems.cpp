@@ -74,8 +74,8 @@ namespace Systems {
         Types::Dead deadComp        = {};
         Types::PlayerAllies playerAlliesComp = {};
         Types::Position position             = adjustMissilePosition(pos, collisionRect);
-        struct health_s healthComp           = {1};
-        Types::Damage damageComp             = {10};
+        struct health_s healthComp           = {json.getDataFromJson<int>(bulletData, "health")};
+        Types::Damage damageComp             = {json.getDataFromJson<int>(bulletData, "damage")};
 
 #ifdef CLIENT
         const std::string bulletPath = json.getDataFromJson<std::string>(bulletData, "spritePath");

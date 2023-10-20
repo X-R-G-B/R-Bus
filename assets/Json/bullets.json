@@ -3,6 +3,7 @@
         {
             "id": "classic",
             "damage": 1,
+            "health": 1,
             "velocity": {
                 "speedX": 120,
                 "speedY": 0
@@ -66,6 +67,7 @@
         {
             "id": "fast",
             "damage": 1,
+            "health": 1,
             "velocity": {
                 "speedX": 400,
                 "speedY": 0
@@ -87,6 +89,7 @@
         {
             "id": "bounce",
             "damage": 1,
+            "health": 1,
             "velocity": {
                 "speedX": 80,
                 "speedY": 120
@@ -137,7 +140,8 @@
         },
         {
             "id": "perforant",
-            "damage": 20,
+            "damage": 500,
+            "health": 200,
             "velocity": {
                 "speedX": 90,
                 "speedY": 0
