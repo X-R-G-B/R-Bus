@@ -19,7 +19,7 @@ namespace Systems {
             Registry::getInstance().getComponents<Raylib::Sound>();
 
         for (auto &soundEffect : arrSoundEffect) {
-            if (soundEffect.NeedToPlay()) {
+            if (soundEffect.NeedToPlay() && !soundEffect.isPlaying()) {
                 soundEffect.play();
                 soundEffect.setNeedToPlay(false);
             }
@@ -45,6 +45,8 @@ namespace Systems {
 
     const std::string musicPath      = "assets/Audio/Musics/Title.mp3";
     const std::string soundPathShoot = "assets/Audio/Sounds/laser.ogg";
+    const std::string soundPathShoot2 = "assets/Audio/Sounds/laser2.ogg";
+    const std::string soundPathShoot3 = "assets/Audio/Sounds/glitch.ogg";
 
     void GraphicSystems::playSoundWithKey(std::size_t /*unused*/, std::size_t /*unused*/)
     {
@@ -67,10 +69,17 @@ namespace Systems {
 
         Raylib::Music music(musicPath, musicVolume);
         Raylib::Sound soundEffectShoot(soundPathShoot, soundVolume);
+        Raylib::Sound soundEffectShoot2(soundPathShoot2, soundVolume);
+        Raylib::Sound soundEffectShoot3(soundPathShoot3, soundVolume);
 
         Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Raylib::Music>().insertBack(music);
+        Registry::getInstance().addEntity();
         Registry::getInstance().getComponents<Raylib::Sound>().insertBack(soundEffectShoot);
+        Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(soundEffectShoot2);
+        Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(soundEffectShoot3);
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
