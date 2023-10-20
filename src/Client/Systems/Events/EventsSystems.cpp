@@ -14,6 +14,7 @@
 #include "SceneManager.hpp"
 #include "Systems.hpp"
 #include "Logger.hpp"
+#include "Json.hpp"
 
 namespace Systems {
 
@@ -22,44 +23,60 @@ namespace Systems {
     static const std::unordered_map<enum missileTypes_e, Raylib::KeyboardKey> bulletKeyMap = {
         {CLASSIC, Raylib::KeyboardKey::KB_SPACE},
         {FAST, Raylib::KeyboardKey::KB_F},
-        {REBOUND, Raylib::KeyboardKey::KB_R},
+        {BOUNCE, Raylib::KeyboardKey::KB_B},
     };
 
     static std::size_t getClockIdFromMissileType(enum missileTypes_e type)
     {
-        static std::size_t clockIdClassic = Registry::getInstance().getClock().create();
-        static std::size_t clockIdFast    = Registry::getInstance().getClock().create();
-        static std::size_t clockIdRebound = Registry::getInstance().getClock().create();
+        static std::size_t clockIdClassic = Registry::getInstance().getClock().create(true);
+        static std::size_t clockIdFast    = Registry::getInstance().getClock().create(true);
+        static std::size_t clockIdBounce  = Registry::getInstance().getClock().create(true);
 
         switch (type) {
             case CLASSIC: return clockIdClassic;
             case FAST: return clockIdFast;
-            case REBOUND: return clockIdRebound;
+            case BOUNCE: return clockIdBounce;
+            default: break;
         }
         throw std::runtime_error("Unknown missile type");
     }
 
-    static void restartBulletClocks(enum missileTypes_e type)
+    static bool isBulletTimeElapsed(std::size_t clockId)
     {
         Clock &clock_ = Registry::getInstance().getClock();
-        clock_.restart(getClockIdFromMissileType(type));
+        Json &json = Json::getInstance();
+        std::string bulletType = "default";
+        if (clockId == getClockIdFromMissileType(FAST)) {
+            bulletType = "fast";
+        } else if (clockId == getClockIdFromMissileType(BOUNCE)) {
+            bulletType = "bounce";
+        }
+        nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, bulletType);
+        float waitTimeBullet = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
+
+        if (clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
+            return false;
+        }
+        return true;
     }
 
     static bool checkBulletRequirements(struct Types::Missiles &missile)
     {
-        Clock &clock_                                     = Registry::getInstance().getClock();
-        static const std::size_t waitTimeBullet           = 500;
+        Clock &clock_                           = Registry::getInstance().getClock();
+        static const std::size_t waitTimeBullet = 500;
+        bool isKeyPressed                       = false;
 
-        if (clock_.elapsedMillisecondsSince(getClockIdFromMissileType(missile.type)) < waitTimeBullet) {
-            return false;
-        }
         for (auto &key : bulletKeyMap) {
             if (Raylib::isKeyDown(key.second)) {
                 missile.type = key.first;
-                return true;
+                isKeyPressed = true;
             }
         }
-        return false;
+        if (isKeyPressed == false
+            || isBulletTimeElapsed(getClockIdFromMissileType(missile.type)) == false) {
+            return false;
+        }
+        return true;
     }
 
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -67,6 +84,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         struct Types::Missiles missile = {CLASSIC};
         Registry &registry                                = Registry::getInstance();
+        Clock &clock_ = registry.getClock();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<struct health_s> arrHealth   = registry.getComponents<struct health_s>();
         std::vector<std::size_t> ids =
@@ -83,9 +101,9 @@ namespace Systems {
             }
             Nitwork::NitworkClient::getInstance().addNewBulletMsg(
                 {Maths::removeIntDecimals(arrPosition[id].x), Maths::removeIntDecimals(arrPosition[id].y)},
-                CLASSIC);
+                missile.type);
             createMissile(arrPosition[id], missile);
-            restartBulletClocks(missile.type);
+            clock_.restart(getClockIdFromMissileType(missile.type));
         }
     }
 
