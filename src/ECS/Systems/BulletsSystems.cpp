@@ -8,6 +8,8 @@
 #include <fstream>
 #include "Registry.hpp"
 #include "Systems.hpp"
+#include "MessageTypes.h"
+#include "Maths.hpp"
 
 #ifdef CLIENT
     #include "CustomTypes.hpp"
@@ -19,12 +21,23 @@
 
 namespace Systems {
 
+    static std::string getMissileId(missileTypes_e type)
+    {
+        switch (type) {
+            case CLASSIC: return "classic";
+            case FAST: return "fast";
+            case BOUNCE: return "bounce";
+            default: break;
+        }
+        throw std::runtime_error("Unknown missile type");
+    }
+
 #ifdef CLIENT
     static void playBulletSound(Types::Missiles &typeOfMissile)
     {
         Json &json = Json::getInstance();
         Registry::components<Raylib::Sound> arrSounds = Registry::getInstance().getComponents<Raylib::Sound>();
-        nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, "default");
+        nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type));
 
         const std::string soundPathShoot =
             json.getDataFromJson<std::string>(bulletData, "soundPath");
@@ -42,7 +55,7 @@ namespace Systems {
     {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
-        nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, "default");
+        nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type));
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");
@@ -75,6 +88,29 @@ namespace Systems {
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
+    }
+
+    void updateSpecialBullets(std::size_t, std::size_t) {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        Registry::components<Types::Missiles> missiles = Registry::getInstance().getComponents<Types::Missiles>();
+        Registry::components<Types::Velocity> velocities = Registry::getInstance().getComponents<Types::Velocity>();
+        Registry::components<Types::CollisionRect> collisionRects = Registry::getInstance().getComponents<Types::CollisionRect>();
+        Registry::components<Types::Position> positions = Registry::getInstance().getComponents<Types::Position>();
+        std::vector<std::size_t> ids =
+            Registry::getInstance().getEntitiesByComponents({typeid(Types::Position), typeid(Types::Missiles), typeid(Types::Velocity), typeid(Types::CollisionRect)});
+
+        for (std::size_t id : ids) {
+            if (missiles[id].type == BOUNCE) {
+                if (Maths::intToFloatConservingDecimals(positions[id].y) <= 0 ||
+                    Maths::intToFloatConservingDecimals(positions[id].y) + Maths::intToFloatConservingDecimals(collisionRects[id].height) >= 100) {
+                    velocities[id].speedY = -velocities[id].speedY;
+                }
+            }
+        }
+    }
+
+    std::vector<std::function<void(std::size_t, std::size_t)>> getBulletSystems() {
+        return {updateSpecialBullets};
     }
 
 } // namespace Systems

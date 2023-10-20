@@ -513,12 +513,17 @@ namespace Systems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
     {
-        return {
+        std::vector<std::function<void(std::size_t, std::size_t)>> EcsSystems {
             windowCollision,
             checkDestroyAfterDeathCallBack,
             entitiesCollision,
             destroyOutsideWindow,
             deathChecker,
             moveEntities};
+
+        std::vector<std::function<void(std::size_t, std::size_t)>> bulletSystems = getBulletSystems();
+
+        EcsSystems.insert(EcsSystems.end(), bulletSystems.begin(), bulletSystems.end());
+        return EcsSystems;
     }
 } // namespace Systems

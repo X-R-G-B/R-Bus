@@ -1,7 +1,7 @@
 {
     "bullets": [
         {
-            "id": "default",
+            "id": "classic",
             "damage": 1,
             "velocity": {
                 "speedX": 120,
@@ -34,7 +34,7 @@
                 "height": 500
             },
             "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
-            "soundPath": "assets/Audio/Sounds/laser2.ogg",
+            "soundPath": "assets/Audio/Sounds/glitch.ogg",
             "spriteRect": {
                 "x": 200,
                 "y": 121,
@@ -46,8 +46,8 @@
             "id": "bounce",
             "damage": 1,
             "velocity": {
-                "speedX": 100,
-                "speedY": 100
+                "speedX": 90,
+                "speedY": 120
             },
             "waitTimeBullet": 500,
             "collisionRect": {
@@ -55,7 +55,7 @@
                 "height": 500
             },
             "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
-            "soundPath": "assets/Audio/Sounds/glitch.ogg",
+            "soundPath": "assets/Audio/Sounds/laser2.ogg",
             "spriteRect": {
                 "x": 200,
                 "y": 121,

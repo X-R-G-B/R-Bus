@@ -45,7 +45,7 @@ namespace Systems {
     {
         Clock &clock_ = Registry::getInstance().getClock();
         Json &json = Json::getInstance();
-        std::string bulletType = "default";
+        std::string bulletType = "classic";
         if (clockId == getClockIdFromMissileType(FAST)) {
             bulletType = "fast";
         } else if (clockId == getClockIdFromMissileType(BOUNCE)) {
@@ -62,9 +62,7 @@ namespace Systems {
 
     static bool checkBulletRequirements(struct Types::Missiles &missile)
     {
-        Clock &clock_                           = Registry::getInstance().getClock();
-        static const std::size_t waitTimeBullet = 500;
-        bool isKeyPressed                       = false;
+        bool isKeyPressed = false;
 
         for (auto &key : bulletKeyMap) {
             if (Raylib::isKeyDown(key.second)) {
