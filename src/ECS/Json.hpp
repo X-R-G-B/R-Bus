@@ -66,7 +66,7 @@ class Json {
             return jsonData[index].get<T>();
         }
 
-        nlohmann::json getJsonObjectById(JsonType type, const std::string &id);
+        nlohmann::json getJsonObjectById(JsonType type, const std::string &id, const std::string &arrayName);
 
         template <typename T>
         T getDataByJsonType(const std::string &index, JsonType dataType)

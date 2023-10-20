@@ -125,9 +125,9 @@ std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list)
     return (datas);
 }
 
-nlohmann::json Json::getJsonObjectById(JsonType type, const std::string &id)
+nlohmann::json Json::getJsonObjectById(JsonType type, const std::string &id, const std::string &arrayName)
 {
-    auto objectList = getDataByJsonType(type)["bullets"];
+    auto objectList = getDataByJsonType(type)[arrayName];
 
     for (const auto &object : objectList) {
         auto idField = object.find("id");

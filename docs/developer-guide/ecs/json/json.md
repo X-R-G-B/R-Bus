@@ -52,7 +52,7 @@ std::vector<nlohmann::json> Json::getDatasFromList(const std::vector<nlohmann::j
 
 - Get a json object from a jsonType and an id :
 ```cpp
-nlohmann::json Json::getJsonObjectById(JsonType type, const std::string &id)
+nlohmann::json Json::getJsonObjectById(JsonType type, const std::string &id, const std::string &arrayName);
 ```
 
 - Get a json list from a json data :
@@ -157,7 +157,7 @@ Here's a json file with an array of enemy objects :
 
 Here's how to get an enemy object from his id :
 ```cpp
-    nlohmann::json object = Json::getJsonObjectById(enemyType, "1");
+    nlohmann::json object = Json::getJsonObjectById(enemyType, "1", "enemy");
     //the returned object will be :
     // {
     //     "id" : "1",

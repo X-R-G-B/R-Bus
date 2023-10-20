@@ -22,14 +22,18 @@
 
 namespace Systems {
 
+    static std::map<missileTypes_e, std::string> missileTypeMap = {
+        {CLASSIC,   "classic"  },
+        {FAST,      "fast"     },
+        {BOUNCE,    "bounce"   },
+        {PERFORANT, "perforant"}
+    };
+
     static std::string getMissileId(missileTypes_e type)
     {
-        switch (type) {
-            case CLASSIC: return "classic";
-            case FAST: return "fast";
-            case BOUNCE: return "bounce";
-            case PERFORANT: return "perforant";
-            default: break;
+        auto it = missileTypeMap.find(type);
+        if (it != missileTypeMap.end()) {
+            return it->second;
         }
         throw std::runtime_error("Unknown missile type");
     }
@@ -41,7 +45,7 @@ namespace Systems {
         Registry::components<Raylib::Sound> arrSounds =
             Registry::getInstance().getComponents<Raylib::Sound>();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type));
+            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
 
         const std::string soundPathShoot = json.getDataFromJson<std::string>(bulletData, "soundPath");
 
@@ -68,7 +72,7 @@ namespace Systems {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type));
+            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");

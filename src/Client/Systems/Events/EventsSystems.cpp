@@ -56,7 +56,7 @@ namespace Systems {
         } else if (clockId == getClockIdFromMissileType(PERFORANT)) {
             bulletType = "perforant";
         }
-        nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, bulletType);
+        nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, bulletType, "bullets");
         float waitTimeBullet      = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
 
         if (clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
@@ -73,6 +73,7 @@ namespace Systems {
             if (Raylib::isKeyDown(key.second)) {
                 missile.type = key.first;
                 isKeyPressed = true;
+                break;
             }
         }
         if (isKeyPressed == false
