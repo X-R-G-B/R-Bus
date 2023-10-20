@@ -60,7 +60,7 @@ namespace Nitwork {
         _clockThread = std::thread([this, tick]() {
             try {
                 while (_isRunning) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(tick));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(TICKS_PER_MILLISECOND(tick)));
                     _tickMutex.lock();
                     _tickConvVar.notify_all();
                     _tickMutex.unlock();
