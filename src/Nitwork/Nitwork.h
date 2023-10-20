@@ -12,8 +12,9 @@
     #include "MessageTypes.h"
 
     #define HEADER_SIZE sizeof(struct header_s)
-    #define TICKS_PER_SECOND 60
-    #define ONE_SECOND 1000
+    #define TICKS 128
+    #define TICKS_PER_SECOND(t) (t / TICKS)
+    #define TICKS_PER_MILLISECOND(t) (TICKS_PER_SECOND(t) / 1000)
     #define DEFAULT_THREAD_NB 4
     #define MAX_NB_ACTION 16
     #define HEADER_CODE1 '\x01'
