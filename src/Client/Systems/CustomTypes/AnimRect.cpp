@@ -6,6 +6,7 @@
 */
 
 #include <iostream>
+#include "Registry.hpp"
 #include "AnimRect.hpp"
 #include "Json.hpp"
 
@@ -14,7 +15,7 @@ namespace Types {
 
     AnimRect::AnimRect(
         const Rect &rect,
-        nlohmann::json animRectData,
+        const nlohmann::json &animRectData,
         RectListType state,
         Direction direction)
         : _defaultRect(rect),
@@ -22,7 +23,7 @@ namespace Types {
           _currentDirection(direction),
           _currentRectInList(0)
     {
-        for (auto &it : animRectData) {
+        for (auto it : animRectData) {
             initAnimRectData(it);
         }
     }
@@ -68,7 +69,7 @@ namespace Types {
         }
     }
 
-    bool AnimRect::checkValidKey()
+    bool AnimRect::isCurrentKeyValid()
     {
         DirectionVector animRects;
 
@@ -84,7 +85,7 @@ namespace Types {
 
     std::size_t AnimRect::getActualAnimDelay()
     {
-        if (!checkValidKey()) {
+        if (!isCurrentKeyValid()) {
             return (defaultTimeAnim);
         }
         return (_animRects[_currentRectList][_currentDirection].first);
@@ -92,7 +93,7 @@ namespace Types {
 
     Rect AnimRect::getCurrentAnimRect()
     {
-        if (!checkValidKey()) {
+        if (!isCurrentKeyValid()) {
             return (_defaultRect);
         }
         std::vector<Rect> &animRect(_animRects[_currentRectList][_currentDirection].second);

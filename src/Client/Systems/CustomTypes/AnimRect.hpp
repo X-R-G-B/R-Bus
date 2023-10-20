@@ -58,7 +58,7 @@ namespace Types {
              * @param state The type/state of the rectangle list (default to DEFAULT_RECT).
              * @param direction The initial direction for the animation (default to NONE).
              */
-            AnimRect(const Rect &rect, nlohmann::json animRectData, RectListType state  = RectListType::DEFAULT_RECT, Direction direction = Direction::NONE);
+            AnimRect(const Rect &rect, const nlohmann::json &animRectData, RectListType state  = RectListType::DEFAULT_RECT, Direction direction = Direction::NONE);
 
             /// Destructor for the AnimRect class.
             ~AnimRect() = default;
@@ -89,7 +89,7 @@ namespace Types {
              * 
              * @return True if the key is valid, false otherwise.
              */
-            bool checkValidKey();
+            bool isCurrentKeyValid();
 
             /**
              * @brief Retrieves the current rectangle for the animation.
