@@ -50,6 +50,11 @@ T Json::getDataFromJson(nlohmann::json jsonData, const std::string &index);
 std::vector<nlohmann::json> Json::getDatasFromList(const std::vector<nlohmann::json> &list, const std::string &key);
 ```
 
+- Get a json object from a jsonType and an id :
+```cpp
+nlohmann::json Json::getJsonObjectById(JsonType type, const std::string &id)
+```
+
 - Get a json list from a json data :
 ```cpp
 std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list, const std::string &key);
@@ -130,5 +135,29 @@ And now you can iterate on your datas :
 for (auto &data : enemyData) {
     std::cout << Json::getInstance().getDataFromJson(elem, "spritePath") <<  
         std::endl;
+}
+```
+
+### Get a json object from a jsonType and an id
+Here's a json file with an array of enemy objects :
+```json
+{
+    "enemy" : [
+        {
+            "id" : "1",
+            "spritePath" : "path"
+        },
+        {
+            "id" : "2",
+            "spritePath" : "path"
+        }
+    ]
+    nlohmann::json object = Json::getJsonObjectById(enemyType, "1");
+
+    //the returned object will be :
+    // {
+    //     "id" : "1",
+    //     "spritePath" : "path"
+    // }
 }
 ```
