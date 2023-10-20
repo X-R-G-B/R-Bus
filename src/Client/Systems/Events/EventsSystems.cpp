@@ -13,8 +13,84 @@
 #include "Registry.hpp"
 #include "SceneManager.hpp"
 #include "Systems.hpp"
+#include "Logger.hpp"
 
 namespace Systems {
+
+    // BULLET SYSTEMS
+
+    static const std::unordered_map<enum missileTypes_e, Raylib::KeyboardKey> bulletKeyMap = {
+        {CLASSIC, Raylib::KeyboardKey::KB_SPACE},
+        {FAST, Raylib::KeyboardKey::KB_F},
+        {REBOUND, Raylib::KeyboardKey::KB_R},
+    };
+
+    static std::size_t getClockIdFromMissileType(enum missileTypes_e type)
+    {
+        static std::size_t clockIdClassic = Registry::getInstance().getClock().create();
+        static std::size_t clockIdFast    = Registry::getInstance().getClock().create();
+        static std::size_t clockIdRebound = Registry::getInstance().getClock().create();
+
+        switch (type) {
+            case CLASSIC: return clockIdClassic;
+            case FAST: return clockIdFast;
+            case REBOUND: return clockIdRebound;
+        }
+        throw std::runtime_error("Unknown missile type");
+    }
+
+    static void restartBulletClocks(enum missileTypes_e type)
+    {
+        Clock &clock_ = Registry::getInstance().getClock();
+        clock_.restart(getClockIdFromMissileType(type));
+    }
+
+    static bool checkBulletRequirements(struct Types::Missiles &missile)
+    {
+        Clock &clock_                                     = Registry::getInstance().getClock();
+        static const std::size_t waitTimeBullet           = 500;
+
+        if (clock_.elapsedMillisecondsSince(getClockIdFromMissileType(missile.type)) < waitTimeBullet) {
+            return false;
+        }
+        for (auto &key : bulletKeyMap) {
+            if (Raylib::isKeyDown(key.second)) {
+                missile.type = key.first;
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        struct Types::Missiles missile = {CLASSIC};
+        Registry &registry                                = Registry::getInstance();
+        Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
+        Registry::components<struct health_s> arrHealth   = registry.getComponents<struct health_s>();
+        std::vector<std::size_t> ids =
+            registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
+
+        if (checkBulletRequirements(missile) == false) {
+            return;
+        }
+
+        for (auto &id : ids) {
+            // send bullet to server
+            if (arrHealth.exist(id) && arrHealth[id].hp <= 0) {
+                continue;
+            }
+            Nitwork::NitworkClient::getInstance().addNewBulletMsg(
+                {Maths::removeIntDecimals(arrPosition[id].x), Maths::removeIntDecimals(arrPosition[id].y)},
+                CLASSIC);
+            createMissile(arrPosition[id], missile);
+            restartBulletClocks(missile.type);
+        }
+    }
+
+    // END OF BULLET SYSTEMS
+
     static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId)
     {
         Registry::components<Types::AnimRect> arrAnimRect =
@@ -63,48 +139,6 @@ namespace Systems {
                 checkAnimRect(id, clock_, clockId);
                 Maths::addNormalIntToDecimalInt(arrPos[id].y, 1);
             }
-        }
-    }
-
-    void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
-    {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        static const std::size_t waitTimeBullet           = 500;
-        static const std::string soundPathShoot           = "assets/Audio/Sounds/laser.ogg";
-        Registry &registry                                = Registry::getInstance();
-        Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
-        Registry::components<struct health_s> arrHealth   = registry.getComponents<struct health_s>();
-        Clock &clock_                                     = registry.getClock();
-        static std::size_t clockId                        = clock_.create(true);
-        Registry::components<Raylib::Sound> arrSounds     = registry.getComponents<Raylib::Sound>();
-        std::vector<std::size_t> ids =
-            registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
-
-        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE) == false
-            || clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
-            return;
-        }
-
-        for (auto &sound : arrSounds) {
-            if (sound.getPath() == soundPathShoot) {
-                sound.setNeedToPlay(true);
-                break;
-            }
-        }
-
-        for (auto &id : ids) {
-            // send bullet to server
-            if (arrHealth.exist(id) && arrHealth[id].hp <= 0) {
-                continue;
-            }
-            Nitwork::NitworkClient::getInstance().addNewBulletMsg(
-                {Maths::removeIntDecimals(arrPosition[id].x), Maths::removeIntDecimals(arrPosition[id].y)},
-                CLASSIC);
-            struct Types::Missiles missile = {
-                .type = CLASSIC,
-            };
-            createMissile(arrPosition[id], missile);
-            clock_.restart(clockId);
         }
     }
 
