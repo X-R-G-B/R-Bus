@@ -84,6 +84,10 @@ namespace Types {
             missileTypes_e type;
     };
 
+    struct Physics {
+            physicsType_e type;
+    };
+
     struct PlayerAllies { };
 
     struct EnemyAllies { };

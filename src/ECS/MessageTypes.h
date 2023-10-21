@@ -23,6 +23,11 @@ enum missileTypes_e {
     PERFORANT
 };
 
+enum physicsType_e {
+    GRAVITY = 0,
+    BOUNCE
+};
+
 PACK(struct health_s {
     int hp;
 });
