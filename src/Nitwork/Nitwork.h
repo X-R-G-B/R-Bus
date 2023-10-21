@@ -157,6 +157,7 @@ PACK(struct msgNewBullet_s {
         n_magick_t magick;
         struct position_absolute_s pos;
         missileTypes_e missileType;
+        unsigned long int timestamp;
 });
 
 PACK(struct packetNewBullet_s {
