@@ -10,7 +10,7 @@
 #include "Logger.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
-#include "Systems.hpp"
+#include "ECSSystems.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)

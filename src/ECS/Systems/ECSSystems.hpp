@@ -16,16 +16,9 @@
 #include "MessageTypes.h"
 
 namespace Systems {
-    void initEnemy(
-        enemy_type_e enemyType,
-        Types::Position position,
-        bool setId                  = false,
-        struct ::enemy_id_s enemyId = {0});
     void windowCollision(std::size_t, std::size_t);
+    bool checkAllies(std::size_t fstId, std::size_t scdId);
     void entitiesCollision(std::size_t, std::size_t);
     void deathChecker(std::size_t, std::size_t);
-    void initWave(std::size_t managerId, std::size_t systemId);
-    void createMissile(Types::Position &pos, Types::Missiles &typeOfMissile);
-    void initPlayer(unsigned int constId, bool otherPlayer = false);
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems();
 } // namespace Systems

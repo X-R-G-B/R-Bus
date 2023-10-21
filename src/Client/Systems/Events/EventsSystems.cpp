@@ -6,13 +6,13 @@
 */
 
 #include "EventsSystems.hpp"
-#include "CustomTypes.hpp"
+#include "GraphicsCustomTypes.hpp"
 #include "Maths.hpp"
 #include "NitworkClient.hpp"
 #include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
-#include "Systems.hpp"
+#include "ECSSystems.hpp"
 
 namespace Systems {
     static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId)

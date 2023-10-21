@@ -5,7 +5,7 @@
 ** GraphicSystems
 */
 
-#include "GraphicSystems.hpp"
+#include "GraphicsSystems.hpp"
 #include "AudioSystems.hpp"
 #include "CustomTypes.hpp"
 #include "DeathSystems.hpp"

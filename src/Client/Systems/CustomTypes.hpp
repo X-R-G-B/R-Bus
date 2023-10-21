@@ -7,84 +7,70 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-#include "ECSCustomTypes.hpp"
-#ifdef CLIENT
-    #include "Raylib.hpp"
-#endif
+#include <mutex>
+#include "MessageTypes.h"
 
 namespace Types {
-    struct Rect {
-            float x;
-            float y;
-            float width;
-            float height;
-
-            NLOHMANN_DEFINE_TYPE_INTRUSIVE(Rect, x, y, width, height);
+    struct Player {
+        unsigned int constId;
     };
 
-    struct Parallax {
-            float x;
-            float y;
+    struct OtherPlayer {
+    public:
+        OtherPlayer(unsigned int id) : constId(id)
+        {
+        }
+        unsigned int constId;
     };
 
-    struct RectangleShape {
-            float width;
-            float height;
+    struct Missiles {
+        missileTypes_e type;
     };
 
-    struct FontSize {
-            float fsz;
+    struct PlayerAllies { };
+
+    struct EnemyAllies { };
+
+    struct Enemy {
+    public:
+        Enemy(enum enemy_type_e _type = enemy_type_e::CLASSIC_ENEMY) : type(_type)
+        {
+            std::lock_guard<std::mutex> lock(_mutex);
+
+            constId = enemy_id_s {_enemyNb};
+            _enemyNb++;
+        }
+
+        Enemy(struct enemy_id_s _constId, enum enemy_type_e _type = enemy_type_e::CLASSIC_ENEMY)
+                : constId(_constId),
+                  type(_type)
+        {
+        }
+
+        [[nodiscard]] enemy_id_s getConstId() const
+        {
+            return constId;
+        }
+
+        static void setEnemyNb(unsigned int nb)
+        {
+            std::lock_guard<std::mutex> lock(_mutex);
+
+            _enemyNb = nb;
+        }
+
+        static unsigned int getEnemyNb()
+        {
+            std::lock_guard<std::mutex> lock(_mutex);
+
+            return _enemyNb;
+        }
+
+        enemy_id_s constId;
+        enum enemy_type_e type;
+
+    private:
+        static unsigned int _enemyNb;
+        static std::mutex _mutex;
     };
-
-    struct Origin {
-            float x;
-            float y;
-    };
-
-    struct Rotation {
-            float rotate;
-    };
-
-    struct Scale {
-            float size;
-    };
-
-#ifdef CLIENT
-    struct Color {
-            Raylib::Color color;
-    };
-#endif
-
-    enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };
-
-    struct AnimRect {
-        public:
-            AnimRect(
-                Rect rect,
-                std::vector<Rect> _moveRects,
-                std::vector<Rect> _attackRects = {},
-                std::vector<Rect> _deadRects   = {})
-                : defaultRect(rect),
-                  moveRects(_moveRects),
-                  attackRects(_attackRects),
-                  deadRects(_deadRects),
-                  currentRectList(Types::RectListType::DEFAULTRECT),
-                  currentRectInList(0)
-            {
-            }
-            Rect defaultRect;
-            std::vector<Rect> moveRects;
-            std::vector<Rect> attackRects;
-            std::vector<Rect> deadRects;
-            RectListType currentRectList;
-            std::size_t currentRectInList;
-            void changeRectList(RectListType type = RectListType::DEFAULTRECT)
-            {
-                currentRectList   = type;
-                currentRectInList = 0;
-            }
-    };
-
-} // namespace Types
+}

@@ -28,7 +28,7 @@ enum BackLayers { BACK = 0, BACKMAX };
 /*
  * FRONT is the frontest layer, so when adding a new one increment the FRONT
  * value and add the new one above
- */
+*/
 
 enum FrontLayers { FRONT = 0, FRONTMAX };
 
@@ -54,6 +54,8 @@ class Registry {
 
         std::vector<std::size_t> getEntitiesByComponents(std::vector<std::type_index>);
 
+        std::vector<std::size_t> getEntitiesWithOneOfComponents(std::vector<std::type_index>);
+
         void setToBackLayers(std::size_t id, BackLayers layer = BackLayers::BACK);
 
         void setToDefaultLayer(std::size_t id);
@@ -66,6 +68,14 @@ class Registry {
 
         std::vector<std::vector<std::size_t>> getFrontLayers();
 
+        void addAllie(std::size_t typeId, std::type_index type);
+
+        void clearAllies(std::size_t typeId);
+
+        void clearAllies();
+
+        bool checkAllies(std::size_t fstId, std::size_t scdId);
+
         Registry &operator=(const Registry &) = delete;
         Registry(const Registry &)            = delete;
         void operator=(const Registry &&)     = delete;
@@ -73,7 +83,7 @@ class Registry {
 
         Clock &getClock();
 
-#ifdef CLIENT
+#ifdef GRAPHICS
         void unloadRaylibComponents(std::size_t id);
 #endif
 
@@ -147,4 +157,7 @@ class Registry {
         std::vector<std::vector<std::size_t>> _backLayers;
         std::vector<std::size_t> _defaultLayer;
         std::vector<std::vector<std::size_t>> _frontLayers;
+
+        std::map<std::size_t, std::vector<std::type_index>> _allies;
+
 };

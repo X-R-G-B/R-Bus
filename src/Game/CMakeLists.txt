@@ -5,7 +5,6 @@ target_include_directories(
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
-
 target_include_directories(
     ${PROJECT_NAME_SERVER}
     PRIVATE
@@ -15,15 +14,11 @@ target_include_directories(
 target_sources(
     ${PROJECT_NAME_CLIENT}
     PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/ECSSystems.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameSystems.cpp
 )
 
 target_sources(
-        ${PROJECT_NAME_SERVER}
-        PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/ECSSystems.cpp
+    ${PROJECT_NAME_SERVER}
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameSystems.cpp
 )
-
-add_subdirectory(Graphics)

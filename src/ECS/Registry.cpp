@@ -5,6 +5,7 @@
 ** Registry
 */
 
+#include <unordered_set>
 #include "Registry.hpp"
 #include "Clock.hpp"
 
@@ -42,7 +43,7 @@ static bool removeEntityFromLayer(std::size_t id, std::vector<std::size_t> &list
 
 void Registry::removeEntity(std::size_t id)
 {
-#ifdef CLIENT
+#ifdef GRAPHICS
     unloadRaylibComponents(id);
 #endif
     for (auto function : _removeComponentFunctions) {
@@ -61,7 +62,7 @@ void Registry::removeEntity(std::size_t id)
 void Registry::clear()
 {
     // Call unload functions for raylib components
-#ifdef CLIENT
+#ifdef GRAPHICS
     for (std::size_t i = 0; i < _entitiesNb; i++) {
         unloadRaylibComponents(i);
     }
@@ -71,6 +72,7 @@ void Registry::clear()
     _addComponentPlaceFunctions.clear();
     _removeComponentFunctions.clear();
     _getExistingsId.clear();
+    clearAllies();
     _entitiesNb = 0;
 
     // Clear sprites layers
@@ -116,6 +118,19 @@ std::vector<std::size_t> Registry::getEntitiesByComponents(std::vector<std::type
         res = match(res, getExistings(*it));
     }
     return res;
+}
+
+std::vector<std::size_t> Registry::getEntitiesWithOneOfComponents(std::vector<std::type_index> types)
+{
+    std::vector<std::size_t> vectorRes;
+    std::unordered_set<std::size_t> res;
+
+    for (auto type : types) {
+        std::vector<std::size_t> tmp = getExistings(type);
+        res.insert(tmp.begin(), tmp.end());
+    }
+    vectorRes.insert(vectorRes.end(), res.begin(), res.end());
+    return vectorRes;
 }
 
 void Registry::setToBackLayers(std::size_t id, BackLayers layer)
@@ -178,6 +193,32 @@ void Registry::removeFromDefaultLayer(std::size_t id)
             _defaultLayer.erase(i);
             break;
         }
+    }
+}
+
+void Registry::addAllie(std::size_t typeId, std::type_index type)
+{
+    if (std::find(_allies[typeId].begin(), _allies[typeId].end(), type) == _allies[typeId].end()) {
+        _allies[typeId].push_back(type);
+    }
+}
+
+void Registry::clearAllies(std::size_t typeId)
+{
+    _allies[typeId].clear();
+}
+
+void Registry::clearAllies()
+{
+    _allies.clear();
+}
+
+bool Registry::checkAllies(std::size_t fstId, std::size_t scdId)
+{
+    Registry &registry = Registry::getInstance();
+
+    for (auto group : _allies) {
+        std::vector<std::size_t> ids = registry.getEntitiesWithOneOfComponents({group.second});
     }
 }
 
