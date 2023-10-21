@@ -5,14 +5,15 @@
 ** EventsSystems implementation
 */
 
+#pragma once
+
 #include "EventsSystems.hpp"
 #include "GraphicsCustomTypes.hpp"
+#include "GameSystems.hpp"
 #include "Maths.hpp"
 #include "NitworkClient.hpp"
-#include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
-#include "ECSSystems.hpp"
 
 namespace Systems {
     static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId)
@@ -113,15 +114,15 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
             auto &sceneManager = Scene::SceneManager::getInstance();
-            if (sceneManager.getCurrentScene() == Scene::Scene::MAIN_GAME) {
-                sceneManager.changeScene(Scene::Scene::MENU);
+            if (sceneManager.getCurrentScene() == SceneType::MAIN_GAME) {
+                sceneManager.changeScene(SceneType::MENU);
             } else {
-                sceneManager.changeScene(Scene::Scene::MAIN_GAME);
+                sceneManager.changeScene(SceneType::MAIN_GAME);
             }
         }
     }
 
-    std::vector<std::function<void(std::size_t, std::size_t)>> EventsSystems::getEventSystems()
+    std::vector<std::function<void(std::size_t, std::size_t)>> EventsSystems::getEventsSystems()
     {
         return {playerMovement, changeScene, playerShootBullet};
     }

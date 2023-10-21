@@ -6,57 +6,52 @@
 */
 
 #include "ECSSystems.hpp"
-#include <fstream>
 #include <nlohmann/json.hpp>
-#include <sstream>
 #include "ECSCustomTypes.hpp"
 #include "Maths.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
 namespace Systems {
-    constexpr float maxPercent = 100.0F;
 
-    static void checkOutsideWindow(std::vector<std::size_t> ids)
+    static void checkOutsideWindow(std::size_t id, Types::Container &container)
     {
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
             registry.getComponents<Types::CollisionRect>();
 
-        for (std::size_t id : ids) {
-            if (arrPosition[id].x < 0) {
-                arrPosition[id].x = 0;
-            }
-            if (arrPosition[id].y < 0) {
-                arrPosition[id].y = 0;
-            }
-            if (Maths::intToFloatConservingDecimals(arrPosition[id].x)
-                    + Maths::intToFloatConservingDecimals(arrCollisionRect[id].width)
-                > maxPercent) {
-                arrPosition[id].x = Maths::floatToIntConservingDecimals(
-                    maxPercent - Maths::intToFloatConservingDecimals(arrCollisionRect[id].width));
-            }
-            if (Maths::intToFloatConservingDecimals(arrPosition[id].y)
-                    + Maths::intToFloatConservingDecimals(arrCollisionRect[id].height)
-                > maxPercent) {
-                arrPosition[id].y = Maths::floatToIntConservingDecimals(
-                    maxPercent - Maths::intToFloatConservingDecimals(arrCollisionRect[id].height));
-            }
+        if (Maths::intToFloatConservingDecimals(arrPosition[id].x) < container.minX) {
+            arrPosition[id].x = Maths::floatToIntConservingDecimals(container.minX);
+        }
+        if (Maths::intToFloatConservingDecimals(arrPosition[id].y) < container.minY) {
+            arrPosition[id].y = Maths::floatToIntConservingDecimals(container.minY);
+        }
+        if (Maths::intToFloatConservingDecimals(arrPosition[id].x)
+                + Maths::intToFloatConservingDecimals(arrCollisionRect[id].width)
+            > container.maxX) {
+            arrPosition[id].x = Maths::floatToIntConservingDecimals(
+                container.maxX - Maths::intToFloatConservingDecimals(arrCollisionRect[id].width));
+        }
+        if (Maths::intToFloatConservingDecimals(arrPosition[id].y)
+                + Maths::intToFloatConservingDecimals(arrCollisionRect[id].height)
+            > container.maxY) {
+            arrPosition[id].y = Maths::floatToIntConservingDecimals(
+                container.maxY - Maths::intToFloatConservingDecimals(arrCollisionRect[id].height));
         }
     }
 
-#ifdef CLIENT
-    static void sendLifeUpdateToServer(std::size_t id, Registry::components<struct health_s> &arrHealth)
+    void containerCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        Registry::components<Types::Player> arrPlayer =
-            Registry::getInstance().getComponents<Types::Player>();
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        Registry &registry           = Registry::getInstance();
+        auto &arrContainers          = registry.getComponents<Types::Container>();
+        auto ids = registry.getEntitiesByComponents({typeid(Types::Position), typeid(Types::CollisionRect), typeid(Types::Container)});
 
-        if (arrPlayer.exist(id)) {
-            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, arrHealth[id]);
+        for (auto &id : ids) {
+            checkOutsideWindow(id, arrContainers[id]);
         }
     }
-#endif
 
     static void giveDamages(std::size_t firstEntity, std::size_t secondEntity)
     {
@@ -68,16 +63,14 @@ namespace Systems {
         if (arrDamage.exist(firstEntity) && arrDamage[firstEntity].damage > 0) {
             if (arrHealth.exist(secondEntity)) {
                 arrHealth[secondEntity].hp -= arrDamage[firstEntity].damage;
-#ifdef CLIENT
-                sendLifeUpdateToServer(secondEntity, arrHealth);
-#endif
+                Registry::getInstance().callback(Events::TAKE_DAMAGE, secondEntity);
             }
         }
     }
 
     static void checkSide(std::size_t firstEntity, std::size_t secondEntity)
     {
-        if (checkAllies(firstEntity, secondEntity)) {
+        if (Registry::getInstance().checkAllies(firstEntity, secondEntity)) {
             return;
         }
         giveDamages(firstEntity, secondEntity);
@@ -197,20 +190,6 @@ namespace Systems {
         }
     }
 
-    static void sendEnemyDeath(std::size_t arrId)
-    {
-        auto &arrEnemies = Registry::getInstance().getComponents<Types::Enemy>();
-
-        if (!arrEnemies.exist(arrId)) {
-            return;
-        }
-#ifdef CLIENT
-        Nitwork::NitworkClient::getInstance().addEnemyDeathMsg(arrEnemies[arrId].getConstId().id);
-#else
-        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(arrEnemies[arrId].getConstId().id);
-#endif
-    }
-
     void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
@@ -224,7 +203,6 @@ namespace Systems {
         for (auto &id : ids) {
             auto tmpId = id - decrease;
             if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
-                sendEnemyDeath(tmpId);
                 executeDeathFunction(tmpId, arrDead, decrease);
             }
         }
@@ -249,7 +227,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
-#ifdef CLIENT
+#ifdef GRAPHICS
         Registry::components<Types::Parallax> arrParallax =
             Registry::getInstance().getComponents<Types::Parallax>();
 #endif
@@ -260,7 +238,7 @@ namespace Systems {
         std::sort(ids.begin(), ids.end());
         for (auto &id : ids) {
             auto tmpId = id - decrease;
-#ifdef CLIENT
+#ifdef GRAPHICS
             bool isNotParallax = !arrParallax.exist(tmpId);
 #else
             bool isNotParallax = true;
@@ -275,7 +253,7 @@ namespace Systems {
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
     {
         return {
-            windowCollision,
+            containerCollision,
             checkDestroyAfterDeathCallBack,
             entitiesCollision,
             destroyOutsideWindow,

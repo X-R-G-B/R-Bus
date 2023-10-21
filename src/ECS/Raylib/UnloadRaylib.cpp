@@ -8,6 +8,7 @@
 #include "Raylib.hpp"
 #include "Registry.hpp"
 
+#ifdef GRAPHICS
 static void unloadSounds(std::size_t id)
 {
     Registry::components<Raylib::Sound> arrSound = Registry::getInstance().getComponents<Raylib::Sound>();
@@ -53,3 +54,4 @@ void Registry::unloadRaylibComponents(std::size_t id)
     unloadSprite(id);
     unloadImage(id);
 }
+#endif

@@ -7,11 +7,10 @@
 
 #include "GraphicsSystems.hpp"
 #include "AudioSystems.hpp"
-#include "CustomTypes.hpp"
 #include "DeathSystems.hpp"
-#include "ECSCustomTypes.hpp"
-#include "Maths.hpp"
+#include "GraphicsCustomTypes.hpp"
 #include "ParallaxSystems.hpp"
+#include "Maths.hpp"
 #include "Registry.hpp"
 #include "SpriteSystems.hpp"
 #include "TextSystems.hpp"
@@ -42,13 +41,11 @@ namespace Systems {
     }
 #endif
 
-    std::vector<std::function<void(std::size_t, std::size_t)>> GraphicSystems::getGraphicsSystems()
+    std::vector<std::function<void(std::size_t, std::size_t)>> GraphicsSystems::getGraphicsSystems()
     {
         std::vector<std::function<void(std::size_t, std::size_t)>> audioSystems  = getAudioSystems();
         std::vector<std::function<void(std::size_t, std::size_t)>> spriteSystems = getSpriteSystems();
         std::vector<std::function<void(std::size_t, std::size_t)>> textSystems   = getTextSystems();
-        std::vector<std::function<void(std::size_t, std::size_t)>> deathSystems =
-            DeathSystems::getDeathSystems();
         std::vector<std::function<void(std::size_t, std::size_t)>> parallaxSystems =
             ParallaxSystems::getParallaxSystems();
 
@@ -57,7 +54,6 @@ namespace Systems {
 #endif
         audioSystems.insert(audioSystems.end(), spriteSystems.begin(), spriteSystems.end());
         audioSystems.insert(audioSystems.end(), textSystems.begin(), textSystems.end());
-        audioSystems.insert(audioSystems.end(), deathSystems.begin(), deathSystems.end());
         audioSystems.insert(audioSystems.end(), parallaxSystems.begin(), parallaxSystems.end());
         return audioSystems;
     }

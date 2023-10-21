@@ -6,12 +6,14 @@
 */
 
 #include "SceneManager.hpp"
-#include "ClientSystems.hpp"
-#include "CustomTypes.hpp"
 #include "Logger.hpp"
-#include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
+#include "ECSSystems.hpp"
+#ifdef GRAPHICS
+    #include "Raylib.hpp"
+    #include "GraphicsSystems.hpp"
+#endif
 
 namespace Scene {
 
@@ -25,49 +27,42 @@ namespace Scene {
 
     static void initRaylib()
     {
+#ifdef GRAPHICS
         Raylib::initWindow(screenWidth, screenHeight, "R-Bus");
         Raylib::setWindowState(Raylib::ConfigFlags::WINDOW_RESIZABLE);
         Raylib::setTargetFPS(Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
         Raylib::initAudioDevice();
-    }
-
-    static void initSystemManagers()
-    {
-        auto &director = Systems::SystemManagersDirector::getInstance();
-        std::lock_guard<std::mutex> lock(director.mutex);
-
-        for (auto systems : Systems::getSystemsGroups()) {
-            director.addSystemManager(systems);
-        }
-        initRaylib();
+#endif
     }
 
     SceneManager &SceneManager::getInstance()
     {
         if (!_init) {
             _init = true;
-            initSystemManagers();
+            initRaylib();
         }
         return _instance;
     }
 
-    SceneManager::SceneManager() : _currentScene(Scene::MENU), _stop(false)
+    SceneManager::SceneManager() : _currentScene(0), _stop(false)
     {
     }
 
     static void destroyRaylib()
     {
+#ifdef GRAPHICS
         Raylib::closeAudioDevice();
         Raylib::closeWindow();
+#endif
     }
 
-    static void updateSystemManagers(std::vector<SystemManagers> &scene)
+    static void updateSystemManagers(std::vector<std::size_t> &scene)
     {
         auto &director = Systems::SystemManagersDirector::getInstance();
 
         for (auto &systemManager : scene) {
             std::unique_lock<std::mutex> lock(director.mutex);
-            director.getSystemManager(static_cast<std::size_t>(systemManager)).updateSystems();
+            director.getSystemManager(systemManager).updateSystems();
             lock.unlock();
         }
     }
@@ -75,14 +70,21 @@ namespace Scene {
     int SceneManager::run()
     {
         try {
-            while (!_stop && !Raylib::windowShouldClose()) {
+            while (!_stop
+#ifdef GRAPHICS
+                   && !Raylib::windowShouldClose()) {
                 Raylib::beginDrawing();
                 Raylib::clearBackground(Raylib::DarkGray);
+#else
+                   ) {
+#endif
                 auto scene = _scenes.at(static_cast<std::size_t>(_currentScene));
                 updateSystemManagers(scene);
+#ifdef GRAPHICS
                 Raylib::endDrawing();
-            }
+#endif
             destroyRaylib();
+            }
         } catch (std::exception &e) {
             Logger::fatal(e.what());
             return static_cast<int>(ReturnValue::RET_ERROR);
@@ -90,14 +92,14 @@ namespace Scene {
         return static_cast<int>(ReturnValue::OK);
     }
 
-    void SceneManager::changeScene(Scene scene)
+    void SceneManager::changeScene(std::size_t scene)
     {
         _currentScene = scene;
         Registry::getInstance().clear();
         Systems::SystemManagersDirector::getInstance().resetChanges();
     }
 
-    Scene SceneManager::getCurrentScene() const
+    std::size_t SceneManager::getCurrentScene() const
     {
         return _currentScene;
     }
@@ -105,6 +107,16 @@ namespace Scene {
     void SceneManager::stop()
     {
         _stop = true;
+    }
+
+    void SceneManager::setScenes(std::vector<std::vector<std::size_t>> scenes)
+    {
+        _scenes = scenes;
+    }
+
+    void SceneManager::addScene(std::vector<std::size_t> scene)
+    {
+        _scenes.push_back(scene);
     }
 
 } // namespace Scene

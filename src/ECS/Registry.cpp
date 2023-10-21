@@ -43,12 +43,15 @@ static bool removeEntityFromLayer(std::size_t id, std::vector<std::size_t> &list
 
 void Registry::removeEntity(std::size_t id)
 {
+    callback(Events::REMOVE_ENTITY, id);
+
 #ifdef GRAPHICS
     unloadRaylibComponents(id);
 #endif
     for (auto function : _removeComponentFunctions) {
         function(*this, id);
     }
+
     _entitiesNb--;
     for (auto &layer : _backLayers) {
         removeEntityFromLayer(id, layer);
@@ -73,6 +76,7 @@ void Registry::clear()
     _removeComponentFunctions.clear();
     _getExistingsId.clear();
     clearAllies();
+    _eventsCallbacks.clear();
     _entitiesNb = 0;
 
     // Clear sprites layers
@@ -219,6 +223,22 @@ bool Registry::checkAllies(std::size_t fstId, std::size_t scdId)
 
     for (auto group : _allies) {
         std::vector<std::size_t> ids = registry.getEntitiesWithOneOfComponents({group.second});
+        if (std::find(ids.begin(), ids.end(), fstId) != ids.end() && std::find(ids.begin(), ids.end(), scdId) != ids.end()) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void Registry::addEventCallback(Events event, std::function<void(std::size_t)> callback)
+{
+    _eventsCallbacks[event].push_back(callback);
+}
+
+void Registry::callback(Events event, std::size_t id)
+{
+    for (auto callback_ : _eventsCallbacks[event]) {
+        callback_(id);
     }
 }
 

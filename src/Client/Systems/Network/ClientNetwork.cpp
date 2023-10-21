@@ -1,6 +1,7 @@
 #include "ClientNetwork.hpp"
 #include <algorithm>
 #include "ECSCustomTypes.hpp"
+#include "GameSystems.hpp"
 #include "Json.hpp"
 #include "Maths.hpp"
 #include "NitworkClient.hpp"

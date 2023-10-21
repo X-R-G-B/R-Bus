@@ -8,11 +8,17 @@
 #include "DeathSystems.hpp"
 #include <optional>
 #include <unordered_map>
-#include "CustomTypes.hpp"
+#include "GameCustomTypes.hpp"
 #include "Registry.hpp"
+#ifdef CLIENT
+    #include "GraphicsCustomTypes.hpp"
+#else
+    #include "ECSCustomTypes.hpp"
+#endif
 
 namespace Systems {
 
+#ifdef CLIENT
     const std::function<void(std::size_t)> setPlayerAnimRectDeath = [](std::size_t id) {
         Registry::components<Types::AnimRect> arrAnimRect =
             Registry::getInstance().getComponents<Types::AnimRect>();
@@ -23,6 +29,9 @@ namespace Systems {
                 anim.changeRectList(Types::RectListType::DEAD);
             }
         }
+#else
+    const std::function<void(std::size_t)> setPlayerAnimRectDeath = [](std::size_t /*unused*/) {
+#endif
     };
 
     // MAP FOR DEATH FUNCTIONS FOR EACH ENTITY

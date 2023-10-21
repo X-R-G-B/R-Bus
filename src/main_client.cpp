@@ -9,7 +9,9 @@
 #include "NitworkClient.hpp"
 #include "Registry.hpp"
 #include "ResourcesManager.hpp"
+#include "SystemManagersDirector.hpp"
 #include "SceneManager.hpp"
+#include "init.hpp"
 
 constexpr int EXIT_EPITECH = 84;
 
@@ -45,14 +47,14 @@ int main(int ac, const char **av)
     if (!checkArgs(ac, av)) {
         return EXIT_EPITECH;
     }
-    auto &sceneManager = Scene::SceneManager::getInstance();
+    initScenes(true);
     if (!Nitwork::NitworkClient::getInstance()
              .startClient(std::stoi(av[2]), av[1], DEFAULT_THREAD_NB, TICKS_PER_SECOND)) {
         return EXIT_EPITECH;
     }
     Nitwork::NitworkClient::getInstance().addInitMsg();
     Nitwork::NitworkClient::getInstance().addReadyMsg();
-    int res = sceneManager.run();
+    int res = Scene::SceneManager::getInstance().run();
     Nitwork::NitworkClient::getInstance().stop();
     return res;
 }

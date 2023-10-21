@@ -6,11 +6,9 @@
 */
 
 #include "SpriteSystems.hpp"
-#include "CustomTypes.hpp"
-#include "ECSCustomTypes.hpp"
+#include "GraphicsCustomTypes.hpp"
 #include "Logger.hpp"
 #include "Maths.hpp"
-#include "Raylib.hpp"
 #include "SharedValues.hpp"
 
 namespace Systems {
@@ -82,7 +80,7 @@ namespace Systems {
         clock_.decreaseMilliseconds(clockIds[id], elapsedBetweenAnim);
     }
 
-    void GraphicSystems::rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/)
+    void GraphicsSystems::rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
@@ -96,7 +94,7 @@ namespace Systems {
         }
     }
 
-    void GraphicSystems::rectRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
+    void GraphicsSystems::rectRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
@@ -202,7 +200,7 @@ namespace Systems {
         }
     }
 
-    void GraphicSystems::spriteRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
+    void GraphicsSystems::spriteRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
@@ -219,7 +217,7 @@ namespace Systems {
         }
     }
 
-    void GraphicSystems::createSprite(std::size_t /*unused*/, std::size_t /*unused*/)
+    void GraphicsSystems::createSprite(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         auto &arrSpriteDatas = Registry::getInstance().getComponents<Types::SpriteDatas>();
@@ -251,7 +249,7 @@ namespace Systems {
         arrSpriteDatas.clear();
     }
 
-    std::vector<std::function<void(std::size_t, std::size_t)>> GraphicSystems::getSpriteSystems()
+    std::vector<std::function<void(std::size_t, std::size_t)>> GraphicsSystems::getSpriteSystems()
     {
         return {rectIncrementation, rectRenderer, spriteRenderer, createSprite};
     }

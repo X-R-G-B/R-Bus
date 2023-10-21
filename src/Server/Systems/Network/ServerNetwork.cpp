@@ -5,8 +5,8 @@
 ** ServerNitwork
 */
 
+#include "GameSystems.hpp"
 #include "ServerNetwork.hpp"
-#include "ECSCustomTypes.hpp"
 #include "Maths.hpp"
 #include "NitworkServer.hpp"
 #include "Registry.hpp"

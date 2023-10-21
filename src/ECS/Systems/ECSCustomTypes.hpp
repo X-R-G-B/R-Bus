@@ -80,4 +80,13 @@ namespace Types {
             bool launched;
     };
 
+    struct Container {
+        float minX;
+        float maxX;
+        float minY;
+        float maxY;
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Container, minX, maxX, minY, maxY);
+    };
+
 } // namespace Types

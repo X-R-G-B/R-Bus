@@ -15,10 +15,14 @@ target_sources(
     ${PROJECT_NAME_CLIENT}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/GameSystems.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameCustomTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/DeathSystems.cpp
 )
 
 target_sources(
     ${PROJECT_NAME_SERVER}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/GameSystems.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/GameCustomTypes.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/DeathSystems.cpp
 )

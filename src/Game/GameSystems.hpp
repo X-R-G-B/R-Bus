@@ -1,10 +1,16 @@
 #pragma once
 
 #include "ECSCustomTypes.hpp"
+#include "GameCustomTypes.hpp"
 extern "C"
 {
 #include "MessageTypes.h"
 }
+
+enum class AlliesType {
+    PLAYERS,
+    ENEMIES
+};
 
 namespace Systems {
     void initEnemy(

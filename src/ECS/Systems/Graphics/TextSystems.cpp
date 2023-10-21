@@ -6,7 +6,7 @@
 */
 
 #include "TextSystems.hpp"
-#include "CustomTypes.hpp"
+#include "GraphicsCustomTypes.hpp"
 #include "Maths.hpp"
 #include "Raylib.hpp"
 #include "SharedValues.hpp"
@@ -59,7 +59,7 @@ namespace Systems {
         text.draw();
     }
 
-    void GraphicSystems::textRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
+    void GraphicsSystems::textRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Raylib::Text> arrText = Registry::getInstance().getComponents<Raylib::Text>();
@@ -71,7 +71,7 @@ namespace Systems {
         }
     }
 
-    std::vector<std::function<void(std::size_t, std::size_t)>> GraphicSystems::getTextSystems()
+    std::vector<std::function<void(std::size_t, std::size_t)>> GraphicsSystems::getTextSystems()
     {
         return {textRenderer};
     }

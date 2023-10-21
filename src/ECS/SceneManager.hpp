@@ -16,33 +16,22 @@ namespace Scene {
 
     enum class ReturnValue { OK = 0, RET_ERROR = 84 };
 
-    enum class Scene { MENU, MAIN_GAME, SCENE_MAX };
-
-    enum class SystemManagers { GAME, EVENTS, DISPLAY, NETWORK };
-
     class SceneManager {
         public:
             static SceneManager &getInstance();
             int run();
-            void changeScene(Scene scene);
-            Scene getCurrentScene() const;
+            void changeScene(std::size_t scene);
+            std::size_t getCurrentScene() const;
             void stop();
+            void setScenes(std::vector<std::vector<std::size_t>> scenes);
+            void addScene(std::vector<std::size_t> scene);
 
         private:
             SceneManager();
 
-            Scene _currentScene;
+            std::size_t _currentScene;
             bool _stop;
-            const std::array<std::vector<SystemManagers>, 2> _scenes = {
-                {{SystemManagers::EVENTS,
-                  SystemManagers::GAME,
-                  SystemManagers::DISPLAY,
-                  SystemManagers::NETWORK},
-                 {SystemManagers::EVENTS,
-                  SystemManagers::GAME,
-                  SystemManagers::DISPLAY,
-                  SystemManagers::NETWORK}}
-            };
+            std::vector<std::vector<std::size_t>> _scenes;
 
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static bool _init;

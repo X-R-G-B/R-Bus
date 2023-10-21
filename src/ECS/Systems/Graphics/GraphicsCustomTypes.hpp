@@ -13,8 +13,6 @@
 #include "Raylib.hpp"
 
 namespace Types {
-    struct Boss { };
-
     struct Rect {
         float x;
         float y;
@@ -51,11 +49,9 @@ namespace Types {
         float size;
     };
 
-#ifdef CLIENT
     struct Color {
             Raylib::Color color;
     };
-#endif
 
     enum RectListType { DEFAULTRECT, MOVE, ATTACK, DEAD };
 

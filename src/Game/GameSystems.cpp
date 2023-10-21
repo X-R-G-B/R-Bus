@@ -1,5 +1,15 @@
 
 #include "GameSystems.hpp"
+#include "Json.hpp"
+#include "Maths.hpp"
+#include "SystemManagersDirector.hpp"
+#include "GameCustomTypes.hpp"
+#ifdef CLIENT
+    #include "GraphicsCustomTypes.hpp"
+    #include "NitworkClient.hpp"
+#else
+    #include "NitworkServer.hpp"
+#endif
 
 namespace Systems {
     void
@@ -18,18 +28,19 @@ namespace Systems {
                 Json::getInstance().getDataFromJson<int>(elem, "width"),
                 Json::getInstance().getDataFromJson<int>(elem, "height"),
                 LayerType::DEFAULTLAYER,
-                0};
+                0
+            };
 
-                auto rect = Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect");
+            auto rect = Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect");
 
-                nlohmann::basic_json<> animRectData =
-                Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(elem, "animRect");
-                Types::AnimRect animRect = {
-                rect,
-                Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
-                Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "attack"),
-                Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")};
-                animRect.changeRectList(Types::RectListType::MOVE);
+            nlohmann::basic_json<> animRectData =
+            Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(elem, "animRect");
+            Types::AnimRect animRect = {
+            rect,
+            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
+            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "attack"),
+            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")};
+            animRect.changeRectList(Types::RectListType::MOVE);
 
     #endif
             Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
@@ -62,6 +73,8 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Enemy>().insertBack(enemyComp);
         }
     }
+
+    static constexpr float maxPercent = 100.0F;
 
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
@@ -150,6 +163,7 @@ namespace Systems {
                 Json::getInstance().getDataByVector<int>({"player", "health"}, playerType)};
         Logger::info("player after template");
         Types::Damage damageComp = {Json::getInstance().getDataByVector({"player", "damage"}, playerType)};
+        Types::Container container = {Json::getInstance().getDataByVector({"player", "container"}, playerType)};
     #ifdef CLIENT
         Types::SpriteDatas playerDatas(
                 Json::getInstance().getDataByVector({"player", "spritePath"}, playerType),
@@ -244,16 +258,58 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
     }
 
-    void windowCollision(std::size_t /*unused*/, std::size_t /*unused*/)
+    void addAllies(std::size_t managerId, std::size_t sysId)
     {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        Registry &registry           = Registry::getInstance();
-        std::vector<std::size_t> ids = registry.getEntitiesByComponents(
-                {typeid(Types::Player), typeid(Types::Position), typeid(Types::CollisionRect)});
-        std::vector<std::size_t> idsOtherPlayer = registry.getEntitiesByComponents(
-                {typeid(Types::OtherPlayer), typeid(Types::Position), typeid(Types::CollisionRect)});
+        auto &registry = Registry::getInstance();
+        registry.addAllie(static_cast<std::size_t>(AlliesType::PLAYERS), typeid(Types::Player));
+        registry.addAllie(static_cast<std::size_t>(AlliesType::PLAYERS), typeid(Types::OtherPlayer));
+        registry.addAllie(static_cast<std::size_t>(AlliesType::PLAYERS), typeid(Types::PlayerAllies));
+        registry.addAllie(static_cast<std::size_t>(AlliesType::ENEMIES), typeid(Types::Enemy));
+        registry.addAllie(static_cast<std::size_t>(AlliesType::ENEMIES), typeid(Types::EnemyAllies));
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(sysId);
+    }
 
-        checkOutsideWindow(ids);
-        checkOutsideWindow(idsOtherPlayer);
+    static void sendEnemyDeath(std::size_t arrId)
+    {
+        auto &arrEnemies = Registry::getInstance().getComponents<Types::Enemy>();
+
+        if (!arrEnemies.exist(arrId)) {
+            return;
+        }
+#ifdef CLIENT
+        Nitwork::NitworkClient::getInstance().addEnemyDeathMsg(arrEnemies[arrId].getConstId().id);
+#else
+        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(arrEnemies[arrId].getConstId().id);
+#endif
+    }
+
+#ifdef CLIENT
+    static void sendLifeUpdateToServer(std::size_t id)
+    {
+        Registry::components<Types::Player> arrPlayer =
+            Registry::getInstance().getComponents<Types::Player>();
+        auto arrHealth = Registry::getInstance().getComponents<struct health_s>();
+
+        if (arrPlayer.exist(id)) {
+            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, arrHealth[id]);
+        }
+    }
+#endif
+
+    void setupEventsCallback(std::size_t managerId, std::size_t sysId)
+    {
+        Registry::getInstance().addEventCallback(Events::REMOVE_ENTITY, sendEnemyDeath);
+#ifdef CLIENT
+        Registry::getInstance().addEventCallback(Events::TAKE_DAMAGE, sendLifeUpdateToServer);
+#endif
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(sysId);
+    }
+
+    std::vector<std::function<void(std::size_t, std::size_t)>> Systems::getGameSystems()
+    {
+        return {
+            setupEventsCallback,
+            addAllies
+        };
     }
 }

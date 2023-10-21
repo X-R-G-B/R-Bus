@@ -12,11 +12,11 @@
 #include <vector>
 
 namespace Systems {
-    namespace GraphicSystems {
+    namespace GraphicsSystems {
         void rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/);
         void rectRenderer(std::size_t /*unused*/, std::size_t /*unused*/);
         void spriteRenderer(std::size_t /*unused*/, std::size_t /*unused*/);
         void createSprite(std::size_t managerId, std::size_t systemId);
         std::vector<std::function<void(std::size_t, std::size_t)>> getSpriteSystems();
-    } // namespace GraphicSystems
+    } // namespace GraphicsSystems
 } // namespace Systems

@@ -11,6 +11,8 @@
 #include "MessageTypes.h"
 
 namespace Types {
+    struct Boss { };
+
     struct Player {
         unsigned int constId;
     };

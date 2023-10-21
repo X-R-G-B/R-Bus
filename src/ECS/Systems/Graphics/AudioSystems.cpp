@@ -6,13 +6,12 @@
 */
 
 #include "AudioSystems.hpp"
-#include "CustomTypes.hpp"
-#include "Raylib.hpp"
+#include "GraphicsCustomTypes.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 
 namespace Systems {
-    void GraphicSystems::soundEffectPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
+    void GraphicsSystems::soundEffectPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Raylib::Sound> arrSoundEffect =
@@ -26,7 +25,7 @@ namespace Systems {
         }
     }
 
-    void GraphicSystems::musicPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
+    void GraphicsSystems::musicPlayer(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Raylib::Music> arrMusics =
@@ -46,7 +45,7 @@ namespace Systems {
     const std::string musicPath      = "assets/Audio/Musics/Title.mp3";
     const std::string soundPathShoot = "assets/Audio/Sounds/laser.ogg";
 
-    void GraphicSystems::playSoundWithKey(std::size_t /*unused*/, std::size_t /*unused*/)
+    void GraphicsSystems::playSoundWithKey(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                            = Registry::getInstance();
@@ -59,7 +58,7 @@ namespace Systems {
         }
     }
 
-    void GraphicSystems::initAudio(std::size_t managerId, std::size_t systemId)
+    void GraphicsSystems::initAudio(std::size_t managerId, std::size_t systemId)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         constexpr float musicVolume = 0.60F;
@@ -74,7 +73,7 @@ namespace Systems {
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
-    std::vector<std::function<void(std::size_t, std::size_t)>> GraphicSystems::getAudioSystems()
+    std::vector<std::function<void(std::size_t, std::size_t)>> GraphicsSystems::getAudioSystems()
     {
         return {soundEffectPlayer, musicPlayer, playSoundWithKey, initAudio};
     }

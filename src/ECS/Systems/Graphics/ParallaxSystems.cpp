@@ -1,11 +1,7 @@
 #include <fstream>
-#include <sstream>
 #include <string>
-#include "CustomTypes.hpp"
-#include "ECSCustomTypes.hpp"
-#include "Graphics.hpp"
+#include "GraphicsCustomTypes.hpp"
 #include "Json.hpp"
-#include "Logger.hpp"
 #include "Maths.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"

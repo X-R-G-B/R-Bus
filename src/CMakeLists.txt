@@ -10,12 +10,14 @@ target_sources(
     ${PROJECT_NAME_CLIENT}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/main_client.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/init.cpp
 )
 
 target_sources(
     ${PROJECT_NAME_SERVER}
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/main_server.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/init.cpp
 )
 
 add_subdirectory(Client)

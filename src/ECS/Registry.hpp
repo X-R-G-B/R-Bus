@@ -32,6 +32,8 @@ enum BackLayers { BACK = 0, BACKMAX };
 
 enum FrontLayers { FRONT = 0, FRONTMAX };
 
+enum Events {REMOVE_ENTITY, TAKE_DAMAGE};
+
 class Registry {
     public:
         template <class Component>
@@ -75,6 +77,10 @@ class Registry {
         void clearAllies();
 
         bool checkAllies(std::size_t fstId, std::size_t scdId);
+
+        void addEventCallback(Events event, std::function<void(std::size_t)> callback);
+
+        void callback(Events event, std::size_t id);
 
         Registry &operator=(const Registry &) = delete;
         Registry(const Registry &)            = delete;
@@ -160,4 +166,5 @@ class Registry {
 
         std::map<std::size_t, std::vector<std::type_index>> _allies;
 
+        std::map<Events, std::vector<std::function<void(std::size_t)>>> _eventsCallbacks;
 };

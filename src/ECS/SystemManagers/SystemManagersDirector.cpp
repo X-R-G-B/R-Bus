@@ -24,24 +24,24 @@ namespace Systems {
         return _systemManagers[id];
     }
 
-    std::size_t SystemManagersDirector::addSystemManager(
+    void SystemManagersDirector::addSystemManager(std::size_t id,
         std::vector<std::function<void(std::size_t, std::size_t)>> systems)
     {
-        _systemManagers.emplace_back(systems);
-        return _systemManagers.size() - 1;
+        if (_systemManagers.find(id) != _systemManagers.end()) {
+            throw std::runtime_error("System manager already exists, id: " + std::to_string(id));
+        }
+        _systemManagers[id] = SystemManager(systems);
     }
 
     void SystemManagersDirector::removeSystemManager(std::size_t id)
     {
-        auto it = _systemManagers.begin();
-        std::advance(it, id);
-        _systemManagers.erase(it);
+        _systemManagers.erase(id);
     }
 
     void SystemManagersDirector::resetChanges()
     {
         for (auto &manager : _systemManagers) {
-            manager.resetChanges();
+            manager.second.resetChanges();
         }
     }
 } // namespace Systems

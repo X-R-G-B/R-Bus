@@ -3,8 +3,8 @@
 #include "NitworkServer.hpp"
 #include "Registry.hpp"
 #include "ResourcesManager.hpp"
-#include "SystemManagersDirector.hpp"
-#include "ECSSystems.hpp"
+#include "init.hpp"
+#include "SceneManager.hpp"
 
 constexpr int EXIT_EPITECH = 84;
 constexpr int PORT_MIN     = 0;
@@ -56,17 +56,9 @@ int main(int ac, const char **av)
     if (!Nitwork::NitworkServer::getInstance().startServer(std::stoi(av[1]), std::stoi(av[2]))) {
         return EXIT_EPITECH;
     }
-    auto &director = Systems::SystemManagersDirector::getInstance();
-    std::unique_lock<std::mutex> lock(director.mutex);
-    director.addSystemManager(Systems::getECSSystems());
+    initScenes(false);
     signal(SIGINT, signalHandler);
-
-    lock.unlock();
-    while (isRunning && Nitwork::NitworkServer::getInstance().isRunning()) {
-        lock.lock();
-        director.getSystemManager(0).updateSystems();
-        lock.unlock();
-    }
+    Scene::SceneManager::getInstance().run();
     Nitwork::NitworkServer::getInstance().stop();
     return 0;
 }

@@ -12,8 +12,8 @@
 #include <vector>
 
 namespace Systems {
-    namespace GraphicSystems {
+    namespace GraphicsSystems {
         void textRenderer(std::size_t /*unused*/, std::size_t /*unused*/);
         std::vector<std::function<void(std::size_t, std::size_t)>> getTextSystems();
-    } // namespace GraphicSystems
+    } // namespace GraphicsSystems
 } // namespace Systems
