@@ -37,7 +37,7 @@ namespace Nitwork {
                 boost::asio::ip::udp::endpoint &endpoint,
                 const struct enemy_infos_s &enemyInfos);
 
-            void addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId, const struct position_absolute_s &pos, const struct health_s &life);
+            void addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, const msgCreatePlayer_s &playerMsg);
 
             void broadcastNewBulletMsg(
                 const struct msgNewBullet_s &msg,
@@ -46,6 +46,12 @@ namespace Nitwork {
             void broadcastAbsolutePositionMsg(
                 const struct position_absolute_s &pos,
                 boost::asio::ip::udp::endpoint &senderEndpoint);
+
+            void addPlayerDeathMsg(n_id_t id);
+
+            void addNewPlayerMsg(
+                boost::asio::ip::udp::endpoint &endpoint,
+                const struct msgCreatePlayer_s &playerMsg);
 
             n_id_t getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const;
 
@@ -68,6 +74,8 @@ namespace Nitwork {
             getActionToSendHandlers() const final;
 
             bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
+
+            void sendAlliesAlreadyPresent(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
 
             void sendNewAllie(
                 n_id_t playerId,
@@ -142,6 +150,13 @@ namespace Nitwork {
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::receiveAbsolutePositionMsg(msg, endpoint);
                   }}},
+                {PLAYER_DEATH,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgPlayerDeath_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::receivePlayerDeathMsg(msg, endpoint);
+                  }}},
             };
             std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
                 {
@@ -168,7 +183,7 @@ namespace Nitwork {
                  [this](Packet &packet) {
                      sendData<struct packetNewBullet_s>(packet);
                  }},
-                {NEW_ALLIE,
+                {NEW_PLAYER,
                  [this](Packet &packet) {
                      sendData<struct packetCreatePlayer_s>(packet);
                  }},
@@ -180,6 +195,10 @@ namespace Nitwork {
                  [this](Packet &packet) {
                      sendData<struct packetPositionAbsoluteBroadcast_s>(packet);
                  }},
+//                {PLAYER_DEATH,
+//                    [this](Packet &packet) {
+//                        sendData<struct packetPlayerDeath_s>(packet);
+//                    }},
             };
     };
 } // namespace Nitwork

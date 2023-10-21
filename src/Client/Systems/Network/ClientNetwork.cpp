@@ -7,6 +7,7 @@
 #include "Registry.hpp"
 #include "SceneManager.hpp"
 #include "SystemManagersDirector.hpp"
+#include "CustomTypes.hpp"
 #include "Systems.hpp"
 
 namespace Systems {
@@ -33,12 +34,15 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto enemyDeath                      = std::any_cast<struct msgEnemyDeath_s>(any);
         Registry::components<Types::Enemy> enemies = Registry::getInstance().getComponents<Types::Enemy>();
+        auto &arrHealth                           = Registry::getInstance().getComponents<struct health_s>();
         std::vector<std::size_t> ids               = enemies.getExistingsId();
 
         for (auto id : ids) {
             if (enemies[id].getConstId().id == enemyDeath.enemyId.id) {
                 Logger::debug("ROLLBACK REMOVE ENEMY !!!!!");
-                Registry::getInstance().removeEntity(id);
+                if (arrHealth.exist(id)) {
+                    arrHealth[id].hp = 0;
+                }
                 return;
             }
         }
@@ -69,6 +73,41 @@ namespace Systems {
         Registry::getInstance().getComponents<struct health_s>().insertBack(hp);
     }
 
+    static void createNewPlayer(const struct msgCreatePlayer_s &newPlayer)
+    {
+        Registry &registry = Registry::getInstance();
+        Registry::components<Types::AnimRect> arrAnimRect =
+            Registry::getInstance().getComponents<Types::AnimRect>();
+        auto &arrPos       = registry.getComponents<Types::Position>();
+        auto &arrPlayer    = registry.getComponents<Types::Player>();
+        auto &arrHealth    = registry.getComponents<struct health_s>();
+        auto &arrOtherPlayer = registry.getComponents<Types::OtherPlayer>();
+        auto idsPlayer           = registry.getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::Player), typeid(struct health_s)});
+        auto idsOtherPlayer = registry.getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct health_s)});
+        auto player = std::find_if(idsPlayer.begin(), idsPlayer.end(), [&arrPlayer, &newPlayer](std::size_t id) {
+            return arrPlayer[id].constId == newPlayer.playerId;
+        });
+        auto otherPlayers = std::find_if(idsOtherPlayer.begin(), idsOtherPlayer.end(), [&arrOtherPlayer, &newPlayer](std::size_t id) {
+            return arrOtherPlayer[id].constId == newPlayer.playerId;
+        });
+
+        if (player != idsPlayer.end() || otherPlayers != idsOtherPlayer.end()) {
+            Logger::fatal("Player already exist");
+            auto id = player != idsPlayer.end() ? *player : *otherPlayers;
+            arrHealth[id].hp = newPlayer.life.hp;
+            arrPos[id] = {newPlayer.pos.x, newPlayer.pos.y};
+            if (arrAnimRect.exist(id)) {
+                arrAnimRect[id].changeRectList(Types::RectListType::DEFAULTRECT);
+            }
+            return;
+        } else {
+            Logger::fatal("Player does not exist");
+            initPlayer(newPlayer.playerId, newPlayer.pos, newPlayer.life, newPlayer.isOtherPlayer);
+        }
+    }
+
     void receiveNewPlayer(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
@@ -79,7 +118,7 @@ namespace Systems {
         } else {
             Logger::info("Your player id is: " + std::to_string(newPlayer.playerId));
         }
-        initPlayer(newPlayer.playerId, newPlayer.pos, newPlayer.life, newPlayer.isOtherPlayer);
+        createNewPlayer(newPlayer);
     }
 
     void receiveRelativePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
@@ -211,6 +250,34 @@ namespace Systems {
             return;
         }
         arrPos[*otherPlayer] = position;
+    }
+
+    void receivePlayerDeath(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const auto playerDeath = std::any_cast<struct msgPlayerDeath_s>(any);
+        auto &arrPlayer = Registry::getInstance().getComponents<Types::Player>();
+        auto &arrOtherPlayers = Registry::getInstance().getComponents<Types::OtherPlayer>();
+        auto &arrHealth = Registry::getInstance().getComponents<struct health_s>();
+        auto playersIds = Registry::getInstance().getEntitiesByComponents({typeid(Types::Player), typeid(struct health_s)});
+        auto otherPlayersIds = Registry::getInstance().getEntitiesByComponents({typeid(Types::OtherPlayer), typeid(struct health_s)});
+
+        for (auto &id : playersIds) {
+            if (arrPlayer[id].constId == playerDeath.playerId) {
+                Logger::fatal("Player death");
+                arrHealth[id].hp = 0;
+                Logger::fatal("Player death");
+                return;
+            }
+        }
+        for (auto &id : otherPlayersIds) {
+            if (arrOtherPlayers[id].constId == playerDeath.playerId) {
+                Logger::fatal("Other player death");
+                arrHealth[id].hp = 0;
+                Logger::fatal("Other player death");
+                return;
+            }
+        }
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()

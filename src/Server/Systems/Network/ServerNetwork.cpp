@@ -27,6 +27,7 @@ namespace Systems {
             auto &life        = arrHealth[id];
             auto &otherPlayer = arrOtherPlayers[id];
             if (otherPlayer.constId == msg.playerId && life.hp != msg.life.hp) {
+                Logger::fatal("handleLifeUpdateMsg: life.hp != msg.life.hp");
                 Nitwork::NitworkServer::getInstance().addLifeUpdateMessage(
                     endpoint,
                     msg.playerId,
@@ -112,5 +113,41 @@ namespace Systems {
             }
         }
         Logger::error("Error: player not found");
+    }
+
+    void receivePlayerDeathMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const struct msgPlayerDeath_s &msgPlayerDeath = std::any_cast<struct msgPlayerDeath_s>(msg);
+        auto &registry                                = Registry::getInstance();
+        auto &arrHealth                               = registry.getComponents<struct health_s>();
+        auto &arrPos                                  = registry.getComponents<Types::Position>();
+        auto &arrOtherPlayers                         = registry.getComponents<Types::OtherPlayer>();
+        std::vector<std::size_t> ids =
+            registry.getEntitiesByComponents({typeid(struct health_s), typeid(Types::OtherPlayer), typeid(Types::Position)});
+
+        for (auto &id : ids) {
+            auto &life        = arrHealth[id];
+            auto &otherPlayer = arrOtherPlayers[id];
+            auto &pos = arrPos[id];
+            if (otherPlayer.constId == msgPlayerDeath.playerId) {
+                if (life.hp > 0) {
+                    Logger::fatal("Error: player is not dead");
+                    Nitwork::NitworkServer::getInstance().addNewPlayerMsg(
+                        endpoint,
+                        {
+                            .magick      = MAGICK_NEW_PLAYER,
+                            .playerId    = otherPlayer.constId,
+                            .pos         = {pos.x, pos.y},
+                            .life        = life,
+                            .isOtherPlayer = true,
+                        });
+                } else {
+                    Logger::error("Player " + std::to_string(otherPlayer.constId) + " is been dead");
+                }
+                return;
+            }
+        }
+        Logger::fatal("player not found in receivePlayerDeathMsg");
     }
 } // namespace Systems

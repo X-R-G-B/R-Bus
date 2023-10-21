@@ -49,9 +49,10 @@ enum n_actionType_t {
     POSITION_ABSOLUTE = 8,
     NEW_BULLET = 9,
     NEW_ENEMY = 10,
-    NEW_ALLIE = 11,
+    NEW_PLAYER = 11,
     POSITION_RELATIVE_BROADCAST = 12,
     POSITION_ABSOLUTE_BROADCAST = 13,
+    PLAYER_DEATH = 14,
     N_ACTION_TYPE_MAX,
 };
 
@@ -241,18 +242,6 @@ PACK(struct packetPlayerDeath_s {
         struct header_s header;
         struct action_s action;
         struct msgPlayerDeath_s msg;
-});
-
-/* Message Player death broadcast */
-PACK(struct msgPlayerDeathBroadcast_s {
-        n_magick_t magick;
-        n_id_t playerId;
-});
-
-PACK(struct packetPlayerDeathBroadcast_s {
-        struct header_s header;
-        struct action_s action;
-        struct msgPlayerDeathBroadcast_s msg;
 });
 
 #endif

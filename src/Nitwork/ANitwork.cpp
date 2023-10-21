@@ -233,7 +233,7 @@ namespace Nitwork {
         for (auto &data : _outputQueue) {
             auto it = actionToSendHandlers.find(data.action);
             if (it == actionToSendHandlers.end()) {
-                Logger::error("NITWORK: action not found");
+                Logger::error("NITWORK: action not found: " + std::to_string(data.action));
                 continue;
             }
             addPacketToSentPackages(data);

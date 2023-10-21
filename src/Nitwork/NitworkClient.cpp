@@ -224,4 +224,27 @@ namespace Nitwork {
             _serverEndpoint);
         addPacketToSend(packet);
     }
+
+    void NitworkClient::addPlayerDeathMsg(n_id_t id)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetPlayerDeath_s packetPlayerDeath = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                    .magick = PLAYER_DEATH,
+                },
+            .msg =
+                {
+                   .magick  = MAGICK_PLAYER_DEATH,
+                   .playerId = id
+               },
+        };
+        Packet packet(
+            packetPlayerDeath.action.magick,
+            std::make_any<struct packetPlayerDeath_s>(packetPlayerDeath),
+            _serverEndpoint);
+        Logger::fatal("addPlayerDeathMsg");
+        addPacketToSend(packet);
+    }
 } // namespace Nitwork

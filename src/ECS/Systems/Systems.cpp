@@ -355,12 +355,20 @@ namespace Systems {
         Clock &clock         = registry.getClock();
         std::size_t decrease = 0;
 
+        auto &arrPlayer = Registry::getInstance().getComponents<Types::Player>();
+        auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
+
         std::sort(deadIdList.begin(), deadIdList.end());
         for (auto id : deadIdList) {
             auto tmpId        = id - decrease;
             Types::Dead &dead = deadList[tmpId];
             if (static_cast<int>(dead.clockId) > -1
                 && clock.elapsedMillisecondsSince(dead.clockId) >= dead.timeToWait) {
+                if (arrPlayer.exist(id)) {
+                    Logger::info("destroying: Id = " + std::to_string(arrPlayer[id].constId));
+                } else if (arrOtherPlayer.exist(id)) {
+                    Logger::info("destroying: Id = " + std::to_string(arrOtherPlayer[id].constId));
+                }
                 registry.removeEntity(tmpId);
                 decrease++;
             }
@@ -370,7 +378,15 @@ namespace Systems {
     static void
     executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead, std::size_t &decrease)
     {
+        auto &arrPlayer = Registry::getInstance().getComponents<Types::Player>();
+        auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
+
         if (arrDead.exist(id) && arrDead[id].deathFunction != std::nullopt) {
+            if (arrPlayer.exist(id)) {
+                Logger::info("executeDeathFunction: Id = " + std::to_string(arrPlayer[id].constId));
+            } else if (arrOtherPlayer.exist(id)) {
+                Logger::info("executeDeathFunction: Id = " + std::to_string(arrOtherPlayer[id].constId));
+            }
             Types::Dead &deadComp = arrDead[id];
             if (!deadComp.launched) {
                 deadComp.deathFunction.value()(id);
@@ -386,22 +402,15 @@ namespace Systems {
     static void sendDeathMsg(std::size_t arrId)
     {
         auto &arrEnemies = Registry::getInstance().getComponents<Types::Enemy>();
-        auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
 
+#ifndef CLIENT
+        auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
         if (arrOtherPlayer.exist(arrId)) {
-#ifdef CLIENT
-//            Nitwork::NitworkClient::getInstance().addPlayerDeathMessage(arrPlayer[arrId].constId);
-#else
-//            Nitwork::NitworkServer::getInstance().addPlayerDeathMessage(arrOtherPlayer[arrId].constId);
-#endif
+            Logger::info("sendDeathMsg: arrId = " + std::to_string(arrOtherPlayer[arrId].constId));
+            Nitwork::NitworkServer::getInstance().addPlayerDeathMsg(arrOtherPlayer[arrId].constId);
         }
-#ifdef CLIENT
-//        auto &arrPlayer  = Registry::getInstance().getComponents<Types::Player>();
-//        if (arrPlayer.exist(arrId)) {
-//            Nitwork::NitworkClient::getInstance().addPlayerDeathMsg(arrPlayer[arrId].constId.id);
-//        }
 #endif
-        else if (arrEnemies.exist(arrId)) {
+        if (arrEnemies.exist(arrId)) {
 #ifdef CLIENT
         Nitwork::NitworkClient::getInstance().addEnemyDeathMsg(arrEnemies[arrId].getConstId().id);
 #else
@@ -480,8 +489,6 @@ namespace Systems {
         Logger::info("player avant template");
         Types::Dead deadComp = {
             Json::getInstance().getDataByVector<std::size_t>({"player", "deadTime"}, playerType)};
-//        struct health_s healthComp = {
-//            Json::getInstance().getDataByVector<int>({"player", "health"}, playerType)};
         struct health_s healthComp = life;
         Logger::info("player after template");
         Types::Damage damageComp = {Json::getInstance().getDataByVector({"player", "damage"}, playerType)};
@@ -515,9 +522,6 @@ namespace Systems {
             Types::Player playerComp = {constId};
             Registry::getInstance().getComponents<Types::Player>().insertBack(playerComp);
         }
-
-//        Types::Position position = {
-//            Types::Position(Json::getInstance().getDataByVector({"player", "position"}, playerType))};
         Types::Position position = {pos.x, pos.y};
         Types::CollisionRect collisionRect = {Types::CollisionRect(
             Json::getInstance().getDataByVector({"player", "collisionRect"}, playerType))};

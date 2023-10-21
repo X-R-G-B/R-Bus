@@ -121,7 +121,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    NEW_ALLIE,
+                    NEW_PLAYER,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgCreatePlayer_s>(handler, header);
@@ -163,7 +163,18 @@ namespace Nitwork {
                             Systems::receiveBroadcastAbsolutePosition(any, endpoint);
                         }
                     }
-                }
+                },
+//                {
+//                    PLAYER_DEATH,
+//                    {
+//                        [this](actionHandler &handler, const struct header_s &header) {
+//                            handleBody<struct msgPlayerDeath_s>(handler, header);
+//                        },
+//                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+//                            Systems::receivePlayerDeath(any, endpoint);
+//                        }
+//                    }
+//                }
             };
             std::map<
                 enum n_actionType_t,
@@ -209,6 +220,12 @@ namespace Nitwork {
                     ENEMY_DEATH,
                         [this](Packet &packet) {
                             sendData<struct packetEnemyDeath_s>(packet);
+                        }
+                },
+                {
+                    PLAYER_DEATH,
+                        [this](Packet &packet) {
+                            sendData<struct packetPlayerDeath_s>(packet);
                         }
                 }
             };

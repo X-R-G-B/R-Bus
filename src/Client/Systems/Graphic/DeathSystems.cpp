@@ -10,13 +10,23 @@
 #include <unordered_map>
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
+#include "NitworkClient.hpp"
 
 namespace Systems {
 
-    const std::function<void(std::size_t)> setPlayerAnimRectDeath = [](std::size_t id) {
+    void setPlayerAnimRectDeath(std::size_t id) {
         Registry::components<Types::AnimRect> arrAnimRect =
             Registry::getInstance().getComponents<Types::AnimRect>();
+        auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
+        auto &arrPlayer      = Registry::getInstance().getComponents<Types::Player>();
 
+        if (arrPlayer.exist(id)) {
+            Logger::fatal("setPlayerAnimRectDeath: player is dead, id = " + std::to_string(arrPlayer[id].constId));
+            Nitwork::NitworkClient::getInstance().addPlayerDeathMsg(arrPlayer[id].constId);
+        } else if (arrOtherPlayer.exist(id)) {
+            Logger::fatal("setPlayerAnimRectDeath: other player is dead, id = " + std::to_string(arrOtherPlayer[id].constId));
+            Nitwork::NitworkClient::getInstance().addPlayerDeathMsg(arrOtherPlayer[id].constId);
+        }
         if (arrAnimRect.exist(id)) {
             Types::AnimRect& anim = arrAnimRect[id];
             if (anim.currentRectList != Types::RectListType::DEAD) {
@@ -28,6 +38,7 @@ namespace Systems {
     // MAP FOR DEATH FUNCTIONS FOR EACH ENTITY
     const std::unordered_map<std::type_index, std::function<void(std::size_t)>> deathFunctions = {
         {std::type_index(typeid(Types::Player)), setPlayerAnimRectDeath},
+        {std::type_index(typeid(Types::OtherPlayer)), setPlayerAnimRectDeath}
     };
 
     void DeathSystems::setEntityDeathFunction(std::size_t /*unused*/, std::size_t /*unused*/)
