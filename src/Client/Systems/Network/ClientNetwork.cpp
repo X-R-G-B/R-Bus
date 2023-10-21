@@ -1,3 +1,4 @@
+#include "CustomTypes.hpp"
 #include "ClientNetwork.hpp"
 #include <algorithm>
 #include "ECSCustomTypes.hpp"
@@ -7,7 +8,6 @@
 #include "Registry.hpp"
 #include "SceneManager.hpp"
 #include "SystemManagersDirector.hpp"
-#include "CustomTypes.hpp"
 #include "Systems.hpp"
 
 namespace Systems {
