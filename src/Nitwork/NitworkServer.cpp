@@ -142,7 +142,7 @@ namespace Nitwork {
             if (allieId == playerId) {
                 continue;
             }
-            auto idIt = std::find_if(ids.begin(), ids.end(), [&allieId, &arrOtherPlayers](std::size_t id) {
+            auto idIt = std::find_if(ids.begin(), ids.end(), [allieId, &arrOtherPlayers](std::size_t id) {
                 return arrOtherPlayers[id].constId == allieId;
             });
             if (idIt == ids.end()) {
