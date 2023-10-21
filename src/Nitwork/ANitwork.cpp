@@ -10,7 +10,7 @@
 #include <thread>
 
 namespace Nitwork {
-    ANitwork::ANitwork() : _socket(_context), _packetId(0)
+    ANitwork::ANitwork() : _socket(_context)
     {
     }
 
