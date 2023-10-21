@@ -10,6 +10,7 @@ FetchContent_Declare(
     CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_CONFIGURATION_TYPES=\"Release;Release\"" "-DCONFIG=Release"
     URL "https://github.com/X-R-G-B/R-Bus/releases/latest/download/zstd.tar"
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+    DOWNLOAD_NO_PROGRESS FALSE
     SOURCE_SUBDIR build/cmake
 )
 
@@ -21,8 +22,20 @@ target_link_libraries(
     libzstd_static
 )
 
+target_include_directories(
+    ${PROJECT_NAME_CLIENT}
+    PRIVATE
+    ${zstd_SOURCE_DIR}/lib
+)
+
 target_link_libraries(
     ${PROJECT_NAME_SERVER}
     PRIVATE
     libzstd_static
+)
+
+target_include_directories(
+    ${PROJECT_NAME_SERVER}
+    PRIVATE
+    ${zstd_SOURCE_DIR}/lib
 )
