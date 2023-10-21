@@ -376,7 +376,6 @@ namespace Nitwork {
         Packet packet(
             packetPlayerDeath.action.magick,
             std::make_any<struct packetPlayerDeath_s>(packetPlayerDeath));
-        Logger::fatal("add player death msg");
         sendToAllClients(packet);
     }
 
@@ -394,7 +393,6 @@ namespace Nitwork {
             packetCreatePlayer.action.magick,
             std::make_any<struct packetCreatePlayer_s>(packetCreatePlayer),
             endpoint);
-        Logger::fatal("add new player msg");
         addPacketToSend(packet);
     }
 

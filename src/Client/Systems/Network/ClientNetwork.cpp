@@ -94,11 +94,9 @@ namespace Systems {
         });
 
         if (player != idsPlayer.end() || otherPlayers != idsOtherPlayer.end()) {
-            Logger::fatal("Player already exist");
             auto id          = player != idsPlayer.end() ? *player : *otherPlayers;
             Registry::getInstance().removeEntity(id);
         }
-        Logger::fatal("Player does not exist");
         initPlayer(newPlayer.playerId, newPlayer.pos, newPlayer.life, newPlayer.isOtherPlayer);
     }
 
@@ -258,17 +256,13 @@ namespace Systems {
 
         for (auto &id : playersIds) {
             if (arrPlayer[id].constId == playerDeath.playerId) {
-                Logger::fatal("Player death");
                 arrHealth[id].hp = 0;
-                Logger::fatal("Player death");
                 return;
             }
         }
         for (auto &id : otherPlayersIds) {
             if (arrOtherPlayers[id].constId == playerDeath.playerId) {
-                Logger::fatal("Other player death");
                 arrHealth[id].hp = 0;
-                Logger::fatal("Other player death");
                 return;
             }
         }

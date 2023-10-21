@@ -365,9 +365,7 @@ namespace Systems {
             if (static_cast<int>(dead.clockId) > -1
                 && clock.elapsedMillisecondsSince(dead.clockId) >= dead.timeToWait) {
                 if (arrPlayer.exist(id)) {
-                    Logger::info("destroying: Id = " + std::to_string(arrPlayer[id].constId));
                 } else if (arrOtherPlayer.exist(id)) {
-                    Logger::info("destroying: Id = " + std::to_string(arrOtherPlayer[id].constId));
                 }
                 registry.removeEntity(tmpId);
                 decrease++;
@@ -387,10 +385,8 @@ namespace Systems {
 #ifdef CLIENT
             if (arrPlayer.exist(id)) {
                 Nitwork::NitworkClient::getInstance().addPlayerDeathMsg(arrPlayer[id].constId);
-                Logger::info("executeDeathFunction: Id = " + std::to_string(arrPlayer[id].constId));
             } else if (arrOtherPlayer.exist(id)) {
                 Nitwork::NitworkClient::getInstance().addPlayerDeathMsg(arrOtherPlayer[id].constId);
-                Logger::info("executeDeathFunction: Id = " + std::to_string(arrOtherPlayer[id].constId));
             }
 #endif
             Types::Dead &deadComp = arrDead[id];
@@ -412,7 +408,6 @@ namespace Systems {
 #ifndef CLIENT
         auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
         if (arrOtherPlayer.exist(arrId)) {
-            Logger::info("sendDeathMsg: arrId = " + std::to_string(arrOtherPlayer[arrId].constId));
             Nitwork::NitworkServer::getInstance().addPlayerDeathMsg(arrOtherPlayer[arrId].constId);
         }
 #endif
@@ -492,11 +487,9 @@ namespace Systems {
 
         Registry::getInstance().addEntity();
 
-        Logger::info("player avant template");
         Types::Dead deadComp = {
             Json::getInstance().getDataByVector<std::size_t>({"player", "deadTime"}, playerType)};
         struct health_s healthComp = life;
-        Logger::info("player after template");
         Types::Damage damageComp = {Json::getInstance().getDataByVector({"player", "damage"}, playerType)};
 #ifdef CLIENT
         Types::SpriteDatas playerDatas(

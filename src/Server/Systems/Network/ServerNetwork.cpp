@@ -27,7 +27,6 @@ namespace Systems {
             auto &life        = arrHealth[id];
             auto &otherPlayer = arrOtherPlayers[id];
             if (otherPlayer.constId == msg.playerId && life.hp != msg.life.hp) {
-                Logger::fatal("handleLifeUpdateMsg: life.hp != msg.life.hp");
                 Nitwork::NitworkServer::getInstance().addLifeUpdateMessage(
                     endpoint,
                     msg.playerId,
@@ -132,7 +131,6 @@ namespace Systems {
             auto &pos = arrPos[id];
             if (otherPlayer.constId == msgPlayerDeath.playerId) {
                 if (life.hp > 0) {
-                    Logger::fatal("Error: player is not dead");
                     Nitwork::NitworkServer::getInstance().addNewPlayerMsg(
                         endpoint,
                         {
@@ -143,12 +141,10 @@ namespace Systems {
                             .isOtherPlayer = (Nitwork::NitworkServer::getInstance().getPlayerId(endpoint) != otherPlayer.constId) ? true : false,
                         });
 
-                } else {
-                    Logger::error("Player " + std::to_string(otherPlayer.constId) + " is been dead");
                 }
                 return;
             }
         }
-        Logger::fatal("player not found in receivePlayerDeathMsg");
+        Logger::debug("player not found in receivePlayerDeathMsg");
     }
 } // namespace Systems

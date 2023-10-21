@@ -244,7 +244,6 @@ namespace Nitwork {
             packetPlayerDeath.action.magick,
             std::make_any<struct packetPlayerDeath_s>(packetPlayerDeath),
             _serverEndpoint);
-        Logger::fatal("addPlayerDeathMsg");
         addPacketToSend(packet);
     }
 } // namespace Nitwork
