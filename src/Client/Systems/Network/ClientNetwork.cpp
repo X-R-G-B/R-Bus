@@ -76,11 +76,7 @@ namespace Systems {
     static void createNewPlayer(const struct msgCreatePlayer_s &newPlayer)
     {
         Registry &registry = Registry::getInstance();
-        Registry::components<Types::AnimRect> arrAnimRect =
-            Registry::getInstance().getComponents<Types::AnimRect>();
-        auto &arrPos       = registry.getComponents<Types::Position>();
         auto &arrPlayer    = registry.getComponents<Types::Player>();
-        auto &arrHealth    = registry.getComponents<struct health_s>();
         auto &arrOtherPlayer = registry.getComponents<Types::OtherPlayer>();
         auto idsPlayer           = registry.getEntitiesByComponents(
             {typeid(Types::Position), typeid(Types::Player), typeid(struct health_s)});

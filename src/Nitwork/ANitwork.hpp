@@ -165,8 +165,6 @@ namespace Nitwork {
         private:
             bool _isRunning = false; // A boolean to know if the NitworkServer is running
 
-            n_id_t _packetId; // The packet id
-
             std::mutex _inputQueueMutex;          // Mutex for the input queue
             std::mutex _tickMutex;                // Mutex for the tick
             std::condition_variable _tickConvVar; // Condition variable for the tick

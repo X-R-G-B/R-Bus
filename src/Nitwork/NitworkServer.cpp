@@ -138,7 +138,8 @@ namespace Nitwork {
         auto &arrOtherPlayers = Registry::getInstance().getComponents<Types::OtherPlayer>();
         auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct health_s)});
 
-        for (const auto &[_, allieId] : _playersIds) {
+        for (const auto &e : _playersIds) {
+            auto allieId = e.second;
             if (allieId == playerId) {
                 continue;
             }
