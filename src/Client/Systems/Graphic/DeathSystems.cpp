@@ -10,7 +10,6 @@
 #include <unordered_map>
 #include "CustomTypes.hpp"
 #include "Registry.hpp"
-#include "NitworkClient.hpp"
 
 namespace Systems {
 
