@@ -6,6 +6,7 @@
 */
 
 #include "NitworkClient.hpp"
+#include <chrono>
 #include "Registry.hpp"
 
 namespace Nitwork {
@@ -147,6 +148,7 @@ namespace Nitwork {
                        .magick      = MAGICK_NEW_BULLET,
                        .pos         = pos,
                        .missileType = missileType,
+                       .timestamp   = static_cast<unsigned long int>(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())),
                        },
         };
         Packet packet(
