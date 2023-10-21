@@ -2,7 +2,7 @@ name: Release
 
 on:
   push:
-    branches: [main, dev, feature/RB-143-compression-pack-network]
+    branches: [main, dev]
 
 env:
   BRANCH: "main"
