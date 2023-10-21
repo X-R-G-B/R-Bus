@@ -10,6 +10,7 @@
 #include <condition_variable>
 #include <iostream>
 #include <list>
+#include <memory>
 #include <mutex>
 #include <unordered_map>
 #include "INitwork.hpp"
@@ -62,10 +63,10 @@ namespace Nitwork {
                         HEADER_CODE2};
                     data.header = newHeader;
                 }
-                std::vector<char> compressedPacket = Zstd::compress(data);
+                std::shared_ptr<std::vector<char>> compressedPacket = std::make_shared<std::vector<char>>(Zstd::compress(data));
 
                 _socket.async_send_to(
-                    boost::asio::buffer(compressedPacket),
+                    boost::asio::buffer(*compressedPacket),
                     packet.endpoint,
                     [compressedPacket](const boost::system::error_code &error, std::size_t bytes_sent) {
                         Logger::debug("NITWORK: Package sent");
@@ -73,7 +74,7 @@ namespace Nitwork {
                             Logger::error("NITWORK: " + std::string(error.message()));
                             return;
                         }
-                        if (bytes_sent != compressedPacket.size()) {
+                        if (bytes_sent != compressedPacket->size()) {
                             Logger::error("NITWORK: Package not sent");
                             return;
                         }
