@@ -378,15 +378,21 @@ namespace Systems {
     static void
     executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead, std::size_t &decrease)
     {
+#ifdef CLIENT
         auto &arrPlayer = Registry::getInstance().getComponents<Types::Player>();
         auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
+#endif
 
         if (arrDead.exist(id) && arrDead[id].deathFunction != std::nullopt) {
+#ifdef CLIENT
             if (arrPlayer.exist(id)) {
+                Nitwork::NitworkClient::getInstance().addPlayerDeathMsg(arrPlayer[id].constId);
                 Logger::info("executeDeathFunction: Id = " + std::to_string(arrPlayer[id].constId));
             } else if (arrOtherPlayer.exist(id)) {
+                Nitwork::NitworkClient::getInstance().addPlayerDeathMsg(arrOtherPlayer[id].constId);
                 Logger::info("executeDeathFunction: Id = " + std::to_string(arrOtherPlayer[id].constId));
             }
+#endif
             Types::Dead &deadComp = arrDead[id];
             if (!deadComp.launched) {
                 deadComp.deathFunction.value()(id);

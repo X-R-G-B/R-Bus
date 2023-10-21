@@ -164,17 +164,17 @@ namespace Nitwork {
                         }
                     }
                 },
-//                {
-//                    PLAYER_DEATH,
-//                    {
-//                        [this](actionHandler &handler, const struct header_s &header) {
-//                            handleBody<struct msgPlayerDeath_s>(handler, header);
-//                        },
-//                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
-//                            Systems::receivePlayerDeath(any, endpoint);
-//                        }
-//                    }
-//                }
+                {
+                    PLAYER_DEATH,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgPlayerDeath_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receivePlayerDeath(any, endpoint);
+                        }
+                    }
+                }
             };
             std::map<
                 enum n_actionType_t,

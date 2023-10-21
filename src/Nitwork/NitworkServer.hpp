@@ -95,9 +95,6 @@ namespace Nitwork {
             static NitworkServer _instance; // instance of the NitworkServer (singleton)
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
             unsigned int _maxNbPlayer = 0; // max number of players
-            std::list<boost::asio::ip::udp::endpoint>
-                _endpoints; // A vector of endpoints which will be used to send the actions to the clients
-                            // and identify them
 
             // maps that will be used to handle the actions, in order to send or receive them
             std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
@@ -195,10 +192,10 @@ namespace Nitwork {
                  [this](Packet &packet) {
                      sendData<struct packetPositionAbsoluteBroadcast_s>(packet);
                  }},
-//                {PLAYER_DEATH,
-//                    [this](Packet &packet) {
-//                        sendData<struct packetPlayerDeath_s>(packet);
-//                    }},
+                {PLAYER_DEATH,
+                    [this](Packet &packet) {
+                        sendData<struct packetPlayerDeath_s>(packet);
+                    }},
             };
     };
 } // namespace Nitwork

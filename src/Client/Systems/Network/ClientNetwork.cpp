@@ -95,17 +95,11 @@ namespace Systems {
 
         if (player != idsPlayer.end() || otherPlayers != idsOtherPlayer.end()) {
             Logger::fatal("Player already exist");
-            auto id = player != idsPlayer.end() ? *player : *otherPlayers;
-            arrHealth[id].hp = newPlayer.life.hp;
-            arrPos[id] = {newPlayer.pos.x, newPlayer.pos.y};
-            if (arrAnimRect.exist(id)) {
-                arrAnimRect[id].changeRectList(Types::RectListType::DEFAULTRECT);
-            }
-            return;
-        } else {
-            Logger::fatal("Player does not exist");
-            initPlayer(newPlayer.playerId, newPlayer.pos, newPlayer.life, newPlayer.isOtherPlayer);
+            auto id          = player != idsPlayer.end() ? *player : *otherPlayers;
+            Registry::getInstance().removeEntity(id);
         }
+        Logger::fatal("Player does not exist");
+        initPlayer(newPlayer.playerId, newPlayer.pos, newPlayer.life, newPlayer.isOtherPlayer);
     }
 
     void receiveNewPlayer(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)

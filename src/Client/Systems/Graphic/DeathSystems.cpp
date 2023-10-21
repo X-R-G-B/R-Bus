@@ -17,16 +17,7 @@ namespace Systems {
     void setPlayerAnimRectDeath(std::size_t id) {
         Registry::components<Types::AnimRect> arrAnimRect =
             Registry::getInstance().getComponents<Types::AnimRect>();
-        auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
-        auto &arrPlayer      = Registry::getInstance().getComponents<Types::Player>();
 
-        if (arrPlayer.exist(id)) {
-            Logger::fatal("setPlayerAnimRectDeath: player is dead, id = " + std::to_string(arrPlayer[id].constId));
-            Nitwork::NitworkClient::getInstance().addPlayerDeathMsg(arrPlayer[id].constId);
-        } else if (arrOtherPlayer.exist(id)) {
-            Logger::fatal("setPlayerAnimRectDeath: other player is dead, id = " + std::to_string(arrOtherPlayer[id].constId));
-            Nitwork::NitworkClient::getInstance().addPlayerDeathMsg(arrOtherPlayer[id].constId);
-        }
         if (arrAnimRect.exist(id)) {
             Types::AnimRect& anim = arrAnimRect[id];
             if (anim.currentRectList != Types::RectListType::DEAD) {

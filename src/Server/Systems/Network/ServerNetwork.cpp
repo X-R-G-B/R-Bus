@@ -140,8 +140,9 @@ namespace Systems {
                             .playerId    = otherPlayer.constId,
                             .pos         = {pos.x, pos.y},
                             .life        = life,
-                            .isOtherPlayer = true,
+                            .isOtherPlayer = (Nitwork::NitworkServer::getInstance().getPlayerId(endpoint) != otherPlayer.constId) ? true : false,
                         });
+
                 } else {
                     Logger::error("Player " + std::to_string(otherPlayer.constId) + " is been dead");
                 }
