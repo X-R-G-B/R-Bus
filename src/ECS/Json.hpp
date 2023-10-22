@@ -16,7 +16,7 @@ extern "C"
 #include "MessageTypes.h"
 }
 
-enum class JsonType { DEFAULT_ENEMY, DEFAULT_PLAYER, DEFAULT_PARALLAX, TERMINATOR, WAVE };
+enum class JsonType { DEFAULT_ENEMY, DEFAULT_PLAYER, DEFAULT_PARALLAX, TERMINATOR, WAVE, BULLETS };
 
 const std::unordered_map<enemy_type_e, JsonType> messageTypes = {
     {CLASSIC_ENEMY, JsonType::DEFAULT_ENEMY},
@@ -28,7 +28,8 @@ const std::unordered_map<JsonType, std::string> pathToJson = {
     {JsonType::DEFAULT_PLAYER,   "assets/Json/playerData.json"  },
     {JsonType::DEFAULT_PARALLAX, "assets/Json/parallaxData.json"},
     {JsonType::TERMINATOR,       "assets/Json/terminator.json"  },
-    {JsonType::WAVE,             "assets/Json/wave.json"        }
+    {JsonType::WAVE,             "assets/Json/wave.json"        },
+    {JsonType::BULLETS,          "assets/Json/bullets.json"     }
 };
 
 class Json {
@@ -64,6 +65,9 @@ class Json {
             }
             return jsonData[index].get<T>();
         }
+
+        nlohmann::json
+        getJsonObjectById(JsonType type, const std::string &id, const std::string &arrayName);
 
         template <typename T>
         T getDataByJsonType(const std::string &index, JsonType dataType)
