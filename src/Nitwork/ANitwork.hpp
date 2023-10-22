@@ -119,7 +119,7 @@ namespace Nitwork {
             // check if the packet has already been received
             bool isAlreadyReceived(n_id_t id, const boost::asio::ip::udp::endpoint &endpoint);
             // call startReceiveHandler method by displaying a message
-            void callReceiveHandler(const std::string & /*unused*/);
+            void callReceiveHandler(const std::string &message);
 
             // handler func for receive handler which handle the action
             template <typename B>
