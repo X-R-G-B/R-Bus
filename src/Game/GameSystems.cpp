@@ -305,7 +305,7 @@ namespace Systems {
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(sysId);
     }
 
-    std::vector<std::function<void(std::size_t, std::size_t)>> Systems::getGameSystems()
+    std::vector<std::function<void(std::size_t, std::size_t)>> getGameSystems()
     {
         return {
             setupEventsCallback,
