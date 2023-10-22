@@ -163,7 +163,7 @@ namespace Systems {
                 Json::getInstance().getDataByVector<int>({"player", "health"}, playerType)};
         Logger::info("player after template");
         Types::Damage damageComp = {Json::getInstance().getDataByVector({"player", "damage"}, playerType)};
-        Types::Container container = {Json::getInstance().getDataByVector({"player", "container"}, playerType)};
+        Types::Container container(Json::getInstance().getDataByVector({"player", "container"}, playerType));
     #ifdef CLIENT
         Types::SpriteDatas playerDatas(
                 Json::getInstance().getDataByVector({"player", "spritePath"}, playerType),
