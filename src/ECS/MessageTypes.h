@@ -24,8 +24,8 @@ enum missileTypes_e {
 };
 
 enum physicsType_e {
-    GRAVITY = 0,
-    BOUNCE
+    ZIGZAG = 0,
+    BOUNCING
 };
 
 PACK(struct health_s {

@@ -116,7 +116,7 @@ namespace Systems {
         addSpriteRectsForBullet(bulletData, collisionRect);
         playBulletSound(typeOfMissile);
 #endif
-
+        Types::Physics physicComp = {BOUNCING};
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
@@ -125,27 +125,21 @@ namespace Systems {
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
+        Registry::getInstance().getComponents<Types::Physics>().insertBack(physicComp);
     }
 
-    void updateSpecialBullets(std::size_t, std::size_t)
+    static void updateBouncePhysics(std::vector<std::size_t> ids)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        Registry::components<Types::Missiles> missiles =
-            Registry::getInstance().getComponents<Types::Missiles>();
         Registry::components<Types::Velocity> velocities =
             Registry::getInstance().getComponents<Types::Velocity>();
         Registry::components<Types::CollisionRect> collisionRects =
             Registry::getInstance().getComponents<Types::CollisionRect>();
         Registry::components<Types::Position> positions =
             Registry::getInstance().getComponents<Types::Position>();
-        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-            {typeid(Types::Position),
-             typeid(Types::Missiles),
-             typeid(Types::Velocity),
-             typeid(Types::CollisionRect)});
 
         for (std::size_t id : ids) {
-            if (missiles[id].type == BOUNCE) {
+            if (velocities.exist(id) && collisionRects.exist(id) && positions.exist(id)) {
                 if (Maths::intToFloatConservingDecimals(positions[id].y) <= 0
                     || Maths::intToFloatConservingDecimals(positions[id].y)
                             + Maths::intToFloatConservingDecimals(collisionRects[id].height)
@@ -156,9 +150,53 @@ namespace Systems {
         }
     }
 
+    static void updateZigzagPhysics(std::vector<std::size_t> ids)
+    {
+        static constexpr float timeBetweenTwoUpdates = 300.F;
+        static std::size_t clockId = Registry::getInstance().getClock().create(false);
+
+        if (Registry::getInstance().getClock().elapsedMillisecondsSince(clockId) < timeBetweenTwoUpdates) {
+            return;
+        } else if (ids.size() > 0) {
+            Registry::getInstance().getClock().restart(clockId);
+        }
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        Registry::components<Types::Velocity> velocities =
+            Registry::getInstance().getComponents<Types::Velocity>();
+        
+        for (std::size_t id : ids) {
+            if (velocities.exist(id)) {
+                if (velocities[id].speedY == 0) {
+                    velocities[id].speedY = 100;
+                }
+                velocities[id].speedY = -velocities[id].speedY;
+            }
+        }
+    }
+
+    void updatePhysics(std::size_t, std::size_t)
+    {
+        std::vector<std::size_t> bouncingId;
+        std::vector<std::size_t> zigzagId;
+        Registry::components<Types::Physics> physicComps =
+            Registry::getInstance().getComponents<Types::Physics>();
+        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Physics)});
+
+        for (std::size_t id : ids) {
+            if (physicComps[id].type == BOUNCING) {
+                bouncingId.push_back(id);
+            } else if (physicComps[id].type == ZIGZAG) {
+                zigzagId.push_back(id);
+            }
+        }
+        updateBouncePhysics(bouncingId);
+        updateZigzagPhysics(zigzagId);
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> getBulletSystems()
     {
-        return {updateSpecialBullets};
+        return {updatePhysics};
     }
 
 } // namespace Systems
