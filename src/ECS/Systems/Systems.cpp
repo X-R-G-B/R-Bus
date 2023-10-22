@@ -7,7 +7,10 @@
 
 #include "Systems.hpp"
 #include <fstream>
+#include <nlohmann/json.hpp>
 #include <sstream>
+#include "CustomTypes.hpp"
+#include "ECSCustomTypes.hpp"
 #include "Maths.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
@@ -19,6 +22,11 @@
 #else
     #include "NitworkServer.hpp"
 #endif
+
+extern "C"
+{
+#include "MessageTypes.h"
+}
 
 namespace Systems {
     constexpr float maxPercent = 100.0F;
@@ -511,19 +519,60 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
     }
 
+    void createMissile(Types::Position &pos, Types::Missiles &typeOfMissile)
+    {
+        Registry::getInstance().addEntity();
+
+        constexpr float bulletWidth        = 5.0F;
+        constexpr float bulletHeight       = 5.0F;
+        constexpr float speedX             = 0.7F;
+        constexpr float speedY             = 0.0F;
+        Types::CollisionRect collisionRect = {
+            Maths::floatToIntConservingDecimals(bulletWidth),
+            Maths::floatToIntConservingDecimals(bulletHeight)};
+        Types::Velocity velocity = {
+            Maths::floatToIntConservingDecimals(speedX),
+            Maths::floatToIntConservingDecimals(speedY)};
+        Types::Missiles missileType          = typeOfMissile;
+        Types::Dead deadComp                 = {};
+        Types::PlayerAllies playerAlliesComp = {};
+        Types::Position position             = {pos.x, pos.y};
+
+#ifdef CLIENT
+        const std::string bulletPath = "assets/R-TypeSheet/r-typesheet1.gif";
+        Types::Rect spriteRect       = {200, 121, 32, 10};
+        Types::SpriteDatas bulletDatas(
+            bulletPath,
+            Maths::floatToIntConservingDecimals(bulletWidth),
+            Maths::floatToIntConservingDecimals(bulletHeight),
+            FRONTLAYER,
+            static_cast<std::size_t>(FRONT));
+#endif
+        struct health_s healthComp = {1};
+        Types::Damage damageComp   = {10};
+
+        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+#ifdef CLIENT
+        Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(bulletDatas);
+        Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
+#endif
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
+        Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
+        Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
+        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
+        Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
     {
-        std::vector<std::function<void(std::size_t, std::size_t)>> EcsSystems {
+        return {
             windowCollision,
             checkDestroyAfterDeathCallBack,
             entitiesCollision,
             destroyOutsideWindow,
             deathChecker,
             moveEntities};
-
-        std::vector<std::function<void(std::size_t, std::size_t)>> bulletSystems = getBulletSystems();
-
-        EcsSystems.insert(EcsSystems.end(), bulletSystems.begin(), bulletSystems.end());
-        return EcsSystems;
     }
 } // namespace Systems

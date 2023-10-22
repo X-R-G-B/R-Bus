@@ -133,13 +133,4 @@ namespace Maths {
      */
     void addFloatToDecimalInt(int &decimalInt, const float normalFloat);
 
-    /**
-     * @brief sub a float to an int with decimals
-     * @param decimalInt decimalInt the decimal int that will be modified
-     * @param normalFloat the normal float that will be subtracted
-     * @return nothing
-     * @example 500 - 5.5 = 445 for DECIMALS_TO_CONSERVE = 2
-     */
-    void subFloatToDecimalInt(int &decimalInt, const float normalFloat);
-
 } // namespace Maths

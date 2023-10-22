@@ -17,7 +17,6 @@ target_sources(
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Systems.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/BulletsSystems.cpp
 )
 
 target_sources(
@@ -25,7 +24,6 @@ target_sources(
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/Systems.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/BulletsSystems.cpp
 )
 
 add_subdirectory(Managers)

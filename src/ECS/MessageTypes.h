@@ -18,14 +18,6 @@ enum enemy_type_e {
 
 enum missileTypes_e {
     CLASSIC = 0,
-    FAST,
-    BOUNCE,
-    PERFORANT
-};
-
-enum physicsType_e {
-    ZIGZAG = 0,
-    BOUNCING
 };
 
 PACK(struct health_s {
