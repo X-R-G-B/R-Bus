@@ -22,11 +22,16 @@
 
 namespace Systems {
 
-    static std::map<missileTypes_e, std::string> missileTypeMap = {
+    static const std::map<missileTypes_e, std::string> missileTypeMap = {
         {CLASSIC,   "classic"  },
         {FAST,      "fast"     },
         {BOUNCE,    "bounce"   },
         {PERFORANT, "perforant"}
+    };
+
+    static const std::map<std::string, physicsType_e> physicsTypeMap = {
+        {"bouncing", BOUNCING},
+        {"zigzag",   ZIGZAG  }
     };
 
     static std::string getMissileId(missileTypes_e type)
@@ -96,6 +101,23 @@ namespace Systems {
     }
 #endif
 
+    static void addPhysicsToBullet(nlohmann::json bulletData)
+    {
+        Json &json = Json::getInstance();
+        if (!json.isDataExist(bulletData, "physics")) {
+            return;
+        }
+        Types::Physics physicComp = {BOUNCING};
+        std::string physicType    = json.getDataFromJson<std::string>(bulletData, "physics");
+        auto it                   = physicsTypeMap.find(physicType);
+        if (it != physicsTypeMap.end()) {
+            physicComp.type = it->second;
+        } else {
+            throw std::runtime_error("Unknown bullet physics type");
+        }
+        Registry::getInstance().getComponents<Types::Physics>().insertBack(physicComp);
+    }
+
     void createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
     {
         Json &json = Json::getInstance();
@@ -116,7 +138,7 @@ namespace Systems {
         addSpriteRectsForBullet(bulletData, collisionRect);
         playBulletSound(typeOfMissile);
 #endif
-        Types::Physics physicComp = {BOUNCING};
+        addPhysicsToBullet(bulletData);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
@@ -125,7 +147,6 @@ namespace Systems {
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
-        Registry::getInstance().getComponents<Types::Physics>().insertBack(physicComp);
     }
 
     static void updateBouncePhysics(std::vector<std::size_t> ids)
