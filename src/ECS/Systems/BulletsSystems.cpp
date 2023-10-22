@@ -174,7 +174,7 @@ namespace Systems {
     static void updateZigzagPhysics(std::vector<std::size_t> ids)
     {
         static constexpr float timeBetweenTwoUpdates = 300.F;
-        static std::size_t clockId = Registry::getInstance().getClock().create(false);
+        static std::size_t clockId                   = Registry::getInstance().getClock().create(false);
 
         if (Registry::getInstance().getClock().elapsedMillisecondsSince(clockId) < timeBetweenTwoUpdates) {
             return;
@@ -184,7 +184,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::Velocity> velocities =
             Registry::getInstance().getComponents<Types::Velocity>();
-        
+
         for (std::size_t id : ids) {
             if (velocities.exist(id)) {
                 if (velocities[id].speedY == 0) {
@@ -201,8 +201,8 @@ namespace Systems {
         std::vector<std::size_t> zigzagId;
         Registry::components<Types::Physics> physicComps =
             Registry::getInstance().getComponents<Types::Physics>();
-        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-            {typeid(Types::Physics)});
+        std::vector<std::size_t> ids =
+            Registry::getInstance().getEntitiesByComponents({typeid(Types::Physics)});
 
         for (std::size_t id : ids) {
             if (physicComps[id].type == BOUNCING) {
