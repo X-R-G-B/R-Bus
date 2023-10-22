@@ -124,7 +124,7 @@ namespace Nitwork {
             });
     }
 
-    void ANitwork::callReceiveHandler(const std::string & message)
+    void ANitwork::callReceiveHandler(const std::string &message)
     {
         Logger::error("NITWORK: " + message);
         startReceiveHandler();
