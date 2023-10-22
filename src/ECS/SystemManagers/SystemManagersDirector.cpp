@@ -21,7 +21,7 @@ namespace Systems {
 
     SystemManager &SystemManagersDirector::getSystemManager(std::size_t id)
     {
-        return _systemManagers[id];
+        return _systemManagers.at(id);
     }
 
     void SystemManagersDirector::addSystemManager(std::size_t id,
@@ -30,7 +30,7 @@ namespace Systems {
         if (_systemManagers.find(id) != _systemManagers.end()) {
             throw std::runtime_error("System manager already exists, id: " + std::to_string(id));
         }
-        _systemManagers[id] = SystemManager(systems);
+        _systemManagers.insert({id, Systems::SystemManager(id, systems)});
     }
 
     void SystemManagersDirector::removeSystemManager(std::size_t id)

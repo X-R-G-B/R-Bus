@@ -89,7 +89,7 @@ class Registry {
 
         Clock &getClock();
 
-#ifdef GRAPHICS
+#ifdef CLIENT
         void unloadRaylibComponents(std::size_t id);
 #endif
 

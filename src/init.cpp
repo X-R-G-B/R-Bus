@@ -4,10 +4,8 @@
 #include "ECSSystems.hpp"
 #include "GameSystems.hpp"
 
-#ifdef GRAPHICS
-    #include "GraphicsSystems.hpp"
-#endif
 #ifdef CLIENT
+    #include "GraphicsSystems.hpp"
     #include "ClientNetwork.hpp"
     #include "EventsSystems.hpp"
 #endif
@@ -32,8 +30,6 @@ void initScenes(bool client)
 #ifdef CLIENT
         systems.insert({SystemManagers::EVENTS, &Systems::EventsSystems::getEventsSystems});
         systems.insert({SystemManagers::CLIENTNETWORK, &Systems::getNetworkSystems});
-#endif
-#ifdef GRAPHICS
         systems.insert({SystemManagers::GRAPHICS, &Systems::GraphicsSystems::getGraphicsSystems});
 #endif
     }

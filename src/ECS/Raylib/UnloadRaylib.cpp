@@ -8,7 +8,7 @@
 #include "Raylib.hpp"
 #include "Registry.hpp"
 
-#ifdef GRAPHICS
+#ifdef CLIENT
 static void unloadSounds(std::size_t id)
 {
     Registry::components<Raylib::Sound> arrSound = Registry::getInstance().getComponents<Raylib::Sound>();

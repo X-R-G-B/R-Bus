@@ -11,22 +11,12 @@
 
 namespace Systems {
 
-    // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
-    std::size_t SystemManager::_managerNb = 0;
-    // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
-
-    SystemManager::SystemManager() : _id(_managerNb), _modified(false)
-    {
-        _managerNb += 1;
-    }
-
-    SystemManager::SystemManager(std::vector<std::function<void(std::size_t, std::size_t)>> systems)
-        : _id(_managerNb),
+    SystemManager::SystemManager(std::size_t id, std::vector<std::function<void(std::size_t, std::size_t)>> systems)
+        : _id(id),
           _originalSystems(std::move(systems)),
           _modifiedSystems(_originalSystems),
           _modified(false)
     {
-        _managerNb += 1;
     }
 
     void SystemManager::updateSystems()

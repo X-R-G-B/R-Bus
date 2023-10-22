@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
 #include "ECSCustomTypes.hpp"
 #include "Raylib.hpp"
 

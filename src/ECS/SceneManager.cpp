@@ -10,7 +10,7 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #include "ECSSystems.hpp"
-#ifdef GRAPHICS
+#ifdef CLIENT
     #include "Raylib.hpp"
     #include "GraphicsSystems.hpp"
 #endif
@@ -27,7 +27,7 @@ namespace Scene {
 
     static void initRaylib()
     {
-#ifdef GRAPHICS
+#ifdef CLIENT
         Raylib::initWindow(screenWidth, screenHeight, "R-Bus");
         Raylib::setWindowState(Raylib::ConfigFlags::WINDOW_RESIZABLE);
         Raylib::setTargetFPS(Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
@@ -50,7 +50,7 @@ namespace Scene {
 
     static void destroyRaylib()
     {
-#ifdef GRAPHICS
+#ifdef CLIENT
         Raylib::closeAudioDevice();
         Raylib::closeWindow();
 #endif
@@ -62,7 +62,11 @@ namespace Scene {
 
         for (auto &systemManager : scene) {
             std::unique_lock<std::mutex> lock(director.mutex);
-            director.getSystemManager(systemManager).updateSystems();
+            try {
+                director.getSystemManager(systemManager).updateSystems();
+            } catch (std::exception &e) {
+                Logger::fatal(e.what());
+            }
             lock.unlock();
         }
     }
@@ -71,7 +75,7 @@ namespace Scene {
     {
         try {
             while (!_stop
-#ifdef GRAPHICS
+#ifdef CLIENT
                    && !Raylib::windowShouldClose()) {
                 Raylib::beginDrawing();
                 Raylib::clearBackground(Raylib::DarkGray);
@@ -80,11 +84,11 @@ namespace Scene {
 #endif
                 auto scene = _scenes.at(static_cast<std::size_t>(_currentScene));
                 updateSystemManagers(scene);
-#ifdef GRAPHICS
+#ifdef CLIENT
                 Raylib::endDrawing();
 #endif
-            destroyRaylib();
             }
+            destroyRaylib();
         } catch (std::exception &e) {
             Logger::fatal(e.what());
             return static_cast<int>(ReturnValue::RET_ERROR);

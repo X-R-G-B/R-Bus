@@ -45,7 +45,7 @@ void Registry::removeEntity(std::size_t id)
 {
     callback(Events::REMOVE_ENTITY, id);
 
-#ifdef GRAPHICS
+#ifdef CLIENT
     unloadRaylibComponents(id);
 #endif
     for (auto function : _removeComponentFunctions) {
@@ -65,7 +65,7 @@ void Registry::removeEntity(std::size_t id)
 void Registry::clear()
 {
     // Call unload functions for raylib components
-#ifdef GRAPHICS
+#ifdef CLIENT
     for (std::size_t i = 0; i < _entitiesNb; i++) {
         unloadRaylibComponents(i);
     }
