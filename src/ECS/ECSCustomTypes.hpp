@@ -10,6 +10,7 @@
 #include <cstddef>
 #include <functional>
 #include <mutex>
+#include <vector>
 #include <optional>
 #include "nlohmann/json.hpp"
 extern "C"
@@ -85,7 +86,7 @@ namespace Types {
     };
 
     struct Physics {
-            physicsType_e type;
+        std::vector<physicsType_e> types;
     };
 
     struct PlayerAllies { };

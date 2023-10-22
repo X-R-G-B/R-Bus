@@ -107,15 +107,19 @@ namespace Systems {
         if (!json.isDataExist(bulletData, "physics")) {
             return;
         }
-        Types::Physics physicComp = {BOUNCING};
-        std::string physicType    = json.getDataFromJson<std::string>(bulletData, "physics");
-        auto it                   = physicsTypeMap.find(physicType);
-        if (it != physicsTypeMap.end()) {
-            physicComp.type = it->second;
-        } else {
-            throw std::runtime_error("Unknown bullet physics type");
+        Types::Physics physicComp = {};
+        std::vector<std::string> physics = json.getDataFromJson<std::vector<std::string>>(bulletData, "physics");
+        for (const auto &it : physics) {
+            auto foundedType = physicsTypeMap.find(it);
+            if (foundedType != physicsTypeMap.end()) {
+                physicComp.types.push_back(foundedType->second);
+            } else {
+                Logger::error("Unknown bullet physics type");
+            }
         }
-        Registry::getInstance().getComponents<Types::Physics>().insertBack(physicComp);
+        if (physicComp.types.size() > 0) {
+            Registry::getInstance().getComponents<Types::Physics>().insertBack(physicComp);
+        }
     }
 
     void createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
@@ -205,10 +209,12 @@ namespace Systems {
             Registry::getInstance().getEntitiesByComponents({typeid(Types::Physics)});
 
         for (std::size_t id : ids) {
-            if (physicComps[id].type == BOUNCING) {
-                bouncingId.push_back(id);
-            } else if (physicComps[id].type == ZIGZAG) {
-                zigzagId.push_back(id);
+            for (auto &type : physicComps[id].types) {
+                if (type == BOUNCING) {
+                    bouncingId.push_back(id);
+                } else if (type == ZIGZAG) {
+                    zigzagId.push_back(id);
+                }
             }
         }
         updateBouncePhysics(bouncingId);

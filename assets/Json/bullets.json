@@ -90,7 +90,9 @@
             "id": "bounce",
             "damage": 1,
             "health": 1,
-            "physics": "bouncing",
+            "physics": [
+                "bouncing"
+            ],
             "velocity": {
                 "speedX": 80,
                 "speedY": 120
@@ -147,7 +149,9 @@
                 "speedX": 90,
                 "speedY": 0
             },
-            "physics": "zigzag",
+            "physics": [
+                "zigzag"
+            ],
             "waitTimeBullet": 1000,
             "collisionRect": {
                 "width": 500,
