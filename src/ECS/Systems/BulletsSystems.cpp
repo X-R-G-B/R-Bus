@@ -108,7 +108,8 @@ namespace Systems {
             return;
         }
         Types::Physics physicComp = {};
-        std::vector<std::string> physics = json.getDataFromJson<std::vector<std::string>>(bulletData, "physics");
+        std::vector<std::string> physics =
+            json.getDataFromJson<std::vector<std::string>>(bulletData, "physics");
         for (const auto &it : physics) {
             auto foundedType = physicsTypeMap.find(it);
             if (foundedType != physicsTypeMap.end()) {
