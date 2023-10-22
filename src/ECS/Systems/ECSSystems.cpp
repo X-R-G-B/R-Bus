@@ -213,7 +213,7 @@ namespace Systems {
 
     static bool isOutsideWindow(const Types::Position &pos)
     {
-        if (Maths::intToFloatConservingDecimals(pos.x < outsideWindowTopLeft)
+        if (Maths::intToFloatConservingDecimals(pos.x) < outsideWindowTopLeft
             || Maths::intToFloatConservingDecimals(pos.x) > outsideWindowBotRigth
             || Maths::intToFloatConservingDecimals(pos.y) < outsideWindowTopLeft
             || Maths::intToFloatConservingDecimals(pos.y) > outsideWindowBotRigth) {
