@@ -63,7 +63,8 @@ namespace Nitwork {
                         HEADER_CODE2};
                     data.header = newHeader;
                 }
-                std::shared_ptr<std::vector<char>> compressedPacket = std::make_shared<std::vector<char>>(Zstd::compress(data));
+                std::shared_ptr<std::vector<char>> compressedPacket =
+                    std::make_shared<std::vector<char>>(Zstd::compress(data));
 
                 _socket.async_send_to(
                     boost::asio::buffer(*compressedPacket),
