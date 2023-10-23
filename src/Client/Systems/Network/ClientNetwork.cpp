@@ -1,6 +1,5 @@
 #include "ClientNetwork.hpp"
 #include <algorithm>
-#include "CustomTypes.hpp"
 #include "ECSCustomTypes.hpp"
 #include "Json.hpp"
 #include "Maths.hpp"
