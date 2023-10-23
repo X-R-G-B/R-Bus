@@ -145,7 +145,7 @@ namespace Systems {
         }
     }
 
-    constexpr std::size_t elapsedBetweenMove = 20;
+    constexpr std::size_t elapsedBetweenMove = 15;
 
     void EventsSystems::playerMovement(std::size_t /*unused*/, std::size_t /*unused*/)
     {
@@ -172,11 +172,11 @@ namespace Systems {
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
                 checkAnimRect(id, clock_, clockId);
-                Maths::subFloatToDecimalInt(arrPos[id].y, 1.5F);
+                Maths::subFloatToDecimalInt(arrPos[id].y, 1.F);
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
                 checkAnimRect(id, clock_, clockId);
-                Maths::addFloatToDecimalInt(arrPos[id].y, 1.5F);
+                Maths::addFloatToDecimalInt(arrPos[id].y, 1.F);
             }
         }
     }
