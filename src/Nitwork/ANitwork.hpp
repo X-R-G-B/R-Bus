@@ -96,7 +96,7 @@ namespace Nitwork {
             {
                 // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
                 auto *body = reinterpret_cast<B *>(
-                    _receiveBuffer.data() + sizeof(struct header_s) + sizeof(struct action_s));
+                    _receiveBuffer.data() + HEADER_SIZE + sizeof(struct action_s));
                 // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
                 handleBodyDatas<B>(handler, header, *body, boost::system::error_code());
             }

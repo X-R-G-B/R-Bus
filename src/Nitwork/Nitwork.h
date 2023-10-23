@@ -69,7 +69,6 @@ PACK(struct action_s {
         enum n_actionType_t magick;
 });
 
-
 /* Message Init */
 PACK(struct msgInit_s {
         n_magick_t magick;
@@ -80,7 +79,6 @@ PACK(struct packetMsgInit_s {
         struct action_s action;
         struct msgInit_s msgInit;
 });
-
 
 /* Message ready */
 PACK(struct msgReady_s {

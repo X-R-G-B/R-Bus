@@ -67,7 +67,7 @@ namespace Nitwork {
     {
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
+        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + HEADER_SIZE);
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
         auto it = _actionsHandlers.find(action->magick);
