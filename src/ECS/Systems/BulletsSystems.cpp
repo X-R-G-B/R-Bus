@@ -119,7 +119,7 @@ namespace Systems {
         }
     }
 
-    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
+    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile, unsigned long int timestamp)
     {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
@@ -174,12 +174,13 @@ namespace Systems {
 
     static void updateZigzagPhysics(std::vector<std::size_t> ids)
     {
-        static constexpr float timeBetweenTwoUpdates = 300.F;
+        static constexpr std::size_t timeBetweenTwoUpdates = 300.F;
         static std::size_t clockId                   = Registry::getInstance().getClock().create(false);
 
         if (Registry::getInstance().getClock().elapsedMillisecondsSince(clockId) < timeBetweenTwoUpdates) {
             return;
-        } else if (ids.size() > 0) {
+        }
+        if (!ids.empty()) {
             Registry::getInstance().getClock().restart(clockId);
         }
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
@@ -196,7 +197,7 @@ namespace Systems {
         }
     }
 
-    void updatePhysics(std::size_t, std::size_t)
+    void updatePhysics(std::size_t /* unused */, std::size_t /* unused */)
     {
         std::vector<std::size_t> bouncingId;
         std::vector<std::size_t> zigzagId;

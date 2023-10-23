@@ -110,7 +110,7 @@ namespace Systems {
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
-        if (checkBulletRequirements(missile) == false) {
+        if (checkBulletRequirements(missile)) {
             return;
         }
 
