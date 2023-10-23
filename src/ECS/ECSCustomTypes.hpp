@@ -92,7 +92,7 @@ namespace Types {
                 {"bouncing", BOUNCING},
                 {"zigzag",   ZIGZAG  }
             };
-            Physics(const Types::Position& originPos);
+            Physics(const Types::Position &originPos);
 
             void addPhysic(physicsType_e type);
             void addPhysic(std::string type);
