@@ -39,9 +39,11 @@ namespace Systems {
 
         for (auto id : ids) {
             if (enemies[id].getConstId().id == enemyDeath.enemyId.id) {
-                Logger::debug("ROLLBACK REMOVE ENEMY !!!!!");
                 if (arrHealth.exist(id)) {
                     arrHealth[id].hp = 0;
+                } else {
+                    Logger::fatal("\n\n\n!!!! Enemy has no health component, but is alive !!!!\n\n\n");
+                    Registry::getInstance().removeEntity(id);
                 }
                 return;
             }
