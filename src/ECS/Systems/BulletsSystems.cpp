@@ -89,13 +89,9 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
 
         if (json.isDataExist(bulletData, "animRect")) {
-            nlohmann::json animRectData = json.getDataFromJson<nlohmann::json>(bulletData, "animRect");
-            Types::AnimRect animRect    = {
-                spriteRect,
-                json.getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
-                json.getDataFromJson<std::vector<Types::Rect>>(animRectData, "attack"),
-                json.getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")};
-            animRect.changeRectList(Types::RectListType::MOVE);
+            nlohmann::basic_json<> animRectData =
+                Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(bulletData, "animRect");
+            Types::AnimRect animRect(spriteRect, animRectData, Types::RectListType::MOVE);
             Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
         }
     }
