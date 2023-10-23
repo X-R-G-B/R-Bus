@@ -122,25 +122,27 @@ namespace Systems {
         auto &arrHealth                               = registry.getComponents<struct health_s>();
         auto &arrPos                                  = registry.getComponents<Types::Position>();
         auto &arrOtherPlayers                         = registry.getComponents<Types::OtherPlayer>();
-        std::vector<std::size_t> ids =
-            registry.getEntitiesByComponents({typeid(struct health_s), typeid(Types::OtherPlayer), typeid(Types::Position)});
+        std::vector<std::size_t> ids                  = registry.getEntitiesByComponents(
+            {typeid(struct health_s), typeid(Types::OtherPlayer), typeid(Types::Position)});
 
         for (auto &id : ids) {
             auto &life        = arrHealth[id];
             auto &otherPlayer = arrOtherPlayers[id];
-            auto &pos = arrPos[id];
+            auto &pos         = arrPos[id];
             if (otherPlayer.constId == msgPlayerDeath.playerId) {
                 if (life.hp > 0) {
                     Nitwork::NitworkServer::getInstance().addNewPlayerMsg(
                         endpoint,
                         {
-                            .magick      = MAGICK_NEW_PLAYER,
-                            .playerId    = otherPlayer.constId,
-                            .pos         = {pos.x, pos.y},
-                            .life        = life,
-                            .isOtherPlayer = (Nitwork::NitworkServer::getInstance().getPlayerId(endpoint) != otherPlayer.constId) ? true : false,
-                        });
-
+                            .magick        = MAGICK_NEW_PLAYER,
+                            .playerId      = otherPlayer.constId,
+                            .pos           = {pos.x, pos.y},
+                            .life          = life,
+                            .isOtherPlayer = (Nitwork::NitworkServer::getInstance().getPlayerId(endpoint)
+                                              != otherPlayer.constId)
+                                ? true
+                                : false,
+                    });
                 }
                 return;
             }
