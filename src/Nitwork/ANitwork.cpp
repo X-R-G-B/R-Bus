@@ -137,7 +137,7 @@ namespace Nitwork {
             return;
         }
         const auto packetSize = Zstd::getFrameContentSize(_receiveBuffer);
-        if (packetSize > MAX_PACKET_SIZE || packetSize < sizeof(struct header_s)) {
+        if (packetSize > MAX_PACKET_SIZE || packetSize < HEADER_SIZE) {
             callReceiveHandler("header not received");
             return;
         }

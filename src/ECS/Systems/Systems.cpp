@@ -343,18 +343,12 @@ namespace Systems {
         Clock &clock         = registry.getClock();
         std::size_t decrease = 0;
 
-        auto &arrPlayer      = Registry::getInstance().getComponents<Types::Player>();
-        auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
-
         std::sort(deadIdList.begin(), deadIdList.end());
         for (auto id : deadIdList) {
             auto tmpId        = id - decrease;
             Types::Dead &dead = deadList[tmpId];
             if (static_cast<int>(dead.clockId) > -1
                 && clock.elapsedMillisecondsSince(dead.clockId) >= dead.timeToWait) {
-                if (arrPlayer.exist(id)) {
-                } else if (arrOtherPlayer.exist(id)) {
-                }
                 registry.removeEntity(tmpId);
                 decrease++;
             }
