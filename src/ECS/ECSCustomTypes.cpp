@@ -36,7 +36,7 @@ namespace Types {
     {
         if (_physicsMap.find(type) == _physicsMap.end()) {
             Logger::error("Physics not found");
-            throw std::runtime_error("Get clock: Physics not found");
+            throw std::runtime_error("Get clock: Physics of type " + std::to_string(type) + " not found");
         }
         return _physicsMap.at(type);
     }
@@ -75,7 +75,7 @@ namespace Types {
         auto it = _physicsMap.find(type);
         if (it == _physicsMap.end()) {
             Logger::error("Get clock id: Physics not found");
-            throw std::runtime_error("Physics not found in getClockId");
+            throw std::runtime_error("Physics of type " + std::to_string(type) + " not found in getClockId");
         }
         return it->second.value();
     }
