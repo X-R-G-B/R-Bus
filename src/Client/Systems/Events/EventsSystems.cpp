@@ -148,6 +148,7 @@ namespace Systems {
 
     void EventsSystems::playerMovement(std::size_t /*unused*/, std::size_t /*unused*/)
     {
+        bool isKeyPressed = false;
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                              = Registry::getInstance();
         Registry::components<Types::Position> arrPos    = registry.getComponents<Types::Position>();
@@ -164,24 +165,26 @@ namespace Systems {
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::RIGHT);
                 Maths::addFloatToDecimalInt(arrPos[id].x, 1.F);
-                return;
+                isKeyPressed = true;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::LEFT);
                 Maths::subFloatToDecimalInt(arrPos[id].x, 1.F);
-                return;
+                isKeyPressed = true;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::UP);
                 Maths::subFloatToDecimalInt(arrPos[id].y, 1.F);
-                return;
+                isKeyPressed = true;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::DOWN);
                 Maths::addFloatToDecimalInt(arrPos[id].y, 1.F);
-                return;
+                isKeyPressed = true;
             }
-            checkAnimRect(id, clock_, clockId, Types::Direction::NONE);
+            if (isKeyPressed == false) {
+                checkAnimRect(id, clock_, clockId, Types::Direction::NONE);
+            }
         }
     }
 
