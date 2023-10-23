@@ -24,7 +24,7 @@
             "animRect": [
                 {
                     "type": "move",
-                    "time": 120,
+                    "time": 400,
                     "list": [
                         {
                             "x": 306,
@@ -112,36 +112,38 @@
                 "width": 12,
                 "height": 12
             },
-            "animRect": {
-                "move": [
-                    {
-                        "x": 306,
-                        "y": 146,
-                        "width": 12,
-                        "height": 12
-                    },
-                    {
-                        "x": 322,
-                        "y": 146,
-                        "width": 12,
-                        "height": 12
-                    },
-                    {
-                        "x": 338,
-                        "y": 146,
-                        "width": 12,
-                        "height": 12
-                    },
-                    {
-                        "x": 354,
-                        "y": 146,
-                        "width": 12,
-                        "height": 12
-                    }
-                ],
-                "attack": [],
-                "dead": []
-            }
+            "animRect": [
+                {
+                    "type": "move",
+                    "time": 400,
+                    "list": [
+                        {
+                            "x": 306,
+                            "y": 146,
+                            "width": 12,
+                            "height": 12
+                        },
+                        {
+                            "x": 322,
+                            "y": 146,
+                            "width": 12,
+                            "height": 12
+                        },
+                        {
+                            "x": 338,
+                            "y": 146,
+                            "width": 12,
+                            "height": 12
+                        },
+                        {
+                            "x": 354,
+                            "y": 146,
+                            "width": 12,
+                            "height": 12
+                        }
+                    ]
+                }
+            ]
         },
         {
             "id": "perforant",
@@ -167,36 +169,38 @@
                 "width": 16,
                 "height": 16
             },
-            "animRect": {
-                "move": [
-                    {
-                        "x": 224,
-                        "y": 64,
-                        "width": 16,
-                        "height": 16
-                    },
-                    {
-                        "x": 241,
-                        "y": 64,
-                        "width": 16,
-                        "height": 16
-                    },
-                    {
-                        "x": 256,
-                        "y": 64,
-                        "width": 16,
-                        "height": 16
-                    },
-                    {
-                        "x": 272,
-                        "y": 64,
-                        "width": 16,
-                        "height": 16
-                    }
-                ],
-                "attack": [],
-                "dead": []
-            }
+            "animRect": [
+                {
+                    "type": "move",
+                    "time": 400,
+                    "list": [
+                        {
+                            "x": 224,
+                            "y": 64,
+                            "width": 16,
+                            "height": 16
+                        },
+                        {
+                            "x": 241,
+                            "y": 64,
+                            "width": 16,
+                            "height": 16
+                        },
+                        {
+                            "x": 256,
+                            "y": 64,
+                            "width": 16,
+                            "height": 16
+                        },
+                        {
+                            "x": 272,
+                            "y": 64,
+                            "width": 16,
+                            "height": 16
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
