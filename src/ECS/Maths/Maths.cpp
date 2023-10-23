@@ -83,3 +83,8 @@ void Maths::addFloatToDecimalInt(int &decimalInt, const float normalFloat)
 {
     decimalInt += floatToIntConservingDecimals(normalFloat);
 }
+
+void Maths::subFloatToDecimalInt(int &decimalInt, const float normalFloat)
+{
+    decimalInt -= floatToIntConservingDecimals(normalFloat);
+}

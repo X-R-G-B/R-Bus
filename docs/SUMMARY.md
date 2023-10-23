@@ -37,6 +37,7 @@
     - [Maths](developer-guide/ecs/maths.md)
     - [Logger](developer-guide/ecs/logger.md)
     - [Json](developer-guide/ecs/json/json.md)
+    - [Bullets](developer-guide/ecs/bullets.md)
 
 - [Server](developer-guide/server/README.md)
 
