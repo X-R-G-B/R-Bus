@@ -6,6 +6,8 @@ FetchContent_Declare(
     Boost
     URL "https://github.com/boostorg/boost/releases/download/boost-1.83.0/boost-1.83.0.tar.xz"
     DOWNLOAD_EXTRACT_TIMESTAMP ON
+    CMAKE_ARGS "-DCMAKE_BUILD_TYPE=Release" "-DCMAKE_CONFIGURATION_TYPES=\"Release;Release\"" "-DCONFIG=Release"
+    DOWNLOAD_NO_PROGRESS FALSE
 )
 
 set(BOOST_RUNTIME_LINK static)
