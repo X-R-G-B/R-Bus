@@ -40,6 +40,9 @@ Table of Contents
                     2.2.2.1.2. Server
                         2.2.2.1.2.1. Magick
                         2.2.2.1.2.2. Player ID
+                        2.2.2.1.2.3. Position
+                        2.2.2.1.2.4. Life
+                        2.2.2.1.2.5. Is Other Player
                 2.2.2.2. READY
                     2.2.2.2.1. Client
                         2.2.2.2.1.1. Magick
@@ -98,14 +101,13 @@ Table of Contents
                                 2.2.2.9.1.2.3.1. X
                                 2.2.2.9.1.2.3.2. Y
                             2.2.2.9.1.2.4. Enemy Type
-                2.2.2.10. NEW_ALLIE
+                2.2.2.10. NEW_PLAYER
                     2.2.2.10.1. Server
                         2.2.2.10.1.1. Magick
-                        2.2.2.10.1.2. Allie
-                            2.2.2.10.1.2.1. ID
-                            2.2.2.10.1.2.2. Position
-                                2.2.2.10.1.2.2.1. X
-                                2.2.2.10.1.2.2.2. Y
+                        2.2.2.10.1.2. Player ID
+                        2.2.2.10.1.3. Position
+                        2.2.2.10.1.4. Life
+                        2.2.2.10.1.5. Is Other Player
                 2.2.2.11. POSITION_RELATIVE_BROADCAST
                     2.2.2.11.1. Server
                         2.2.2.11.1.1. Magick
@@ -120,6 +122,13 @@ Table of Contents
                             2.2.2.12.1.2.1. X
                             2.2.2.12.1.2.2. Y
                         2.2.2.12.1.3. Player ID
+                2.2.2.13 PLAYER_DEATH
+                    2.2.2.13.1. Client
+                        2.2.2.13.1.1. Magick
+                        2.2.2.13.1.2. Player ID
+                    2.2.2.13.2. Server
+                        2.2.2.13.2.1. Magick
+                        2.2.2.13.2.2. Player ID
     3. References
         3.1. R-Bus
         3.2. RFC
@@ -248,9 +257,10 @@ Table of Contents
     - POSITION_ABSOLUTE = 8,
     - NEW_BULLET = 9,
     - NEW_ENEMY = 10,
-    - NEW_ALLIE = 11,
+    - NEW_PLAYER = 11,
     - POSITION_RELATIVE_BROADCAST = 12,
     - POSITION_ABSOLUTE_BROADCAST = 13,
+    - PLAYER_DEATH = 14,
 
 2.2.2.  Action Body
 
@@ -277,6 +287,9 @@ Table of Contents
     The Server action contains the following fields:
     - `magick`
     - `player_id`
+    - `pos`
+    - `life`
+    - `isOtherPlayer`
 
 2.2.2.1.2.1.    Magick
 
@@ -293,6 +306,42 @@ Table of Contents
     This field must be of size 4 bytes.
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each client
+
+2.2.2.1.2.3.    Position
+
+    This field correspond to the position of the client and contains the
+    following fields:
+    - `x`
+    - `y`
+
+2.2.2.1.2.3.1. X
+
+    This field must be of size 4 byte.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+2.2.2.1.2.3.2. Y
+
+    This field must be of size 4 byte.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+2.2.2.1.2.4.    Life
+
+    This field correspond to the life of the client and contains the following
+    fields:
+    - `hp` This field must be of size 4 byte. This field is signed (so starting
+    from -((2^32)/2) to +(((2^32)/2)-1))
+
+2.2.2.1.2.5.    Is Other Player
+
+    This field correspond to the fact that the client is an other player or not.
+    It is used to know if it concern the client player himself or an other
+    player.
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to one of these value:
+    - TRUE = 1,
+    - FALSE = 0, 
 
 2.2.2.2.    READY
 
@@ -664,7 +713,7 @@ Table of Contents
     This field must be equal to one of these value:
     - CLASSIC_ENEMY = 0
 
-2.2.2.10.   NEW_ALLIE
+2.2.2.10.   NEW_PLAYER
 
     The Server must send a new allie action when a new player enter in the
     game.
@@ -673,9 +722,12 @@ Table of Contents
 
     The Server action contains the following fields:
     - `magick`
-    - `allie`
+    - `playerId`
+    - `pos`
+    - `life`
+    - `isOtherPlayer`
 
-2.2.2.10.1.1.   Magick
+2.2.2.10.1.1.    Magick
 
     This field help to know the packet is realy a new allie action.
 
@@ -683,35 +735,51 @@ Table of Contents
     This field is unsigned (so starting from 0 to 2^8)
     This field must be equal to the ascii `\x0a`
 
-2.2.2.10.1.2.   Allie
+2.2.2.10.1.2.    Player ID
 
-    This field correspond to the new allie and contains the following fields:
-    - `id`
-    - `position`
-
-2.2.2.10.1.2.1.     ID
-
-    This field correspond to the ID of the new allie.
+    This field correspond to the ID of the client.
 
     This field must be of size 4 bytes.
     This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each client
 
-2.2.2.10.1.2.2.     Position
+2.2.2.10.1.3.    Position
 
-    This field correspond to the absolute position of the new allie and
-    contains the following fields:
-    - `x`
-    - `y`
+    This field correspond to the position of the client and contains the
+    following fields:
+    - `x` This field must be of size 4 byte. This field is signed (so starting
+    from -((2^32)/2) to +(((2^32)/2)-1))
+    - `y` This field must be of size 4 byte. This field is signed (so starting
+    from -((2^32)/2) to +(((2^32)/2)-1))
 
-2.2.2.10.1.2.2.1.   X
+2.2.2.10.1.3.1. X
+
+    This field must be of size 4 byte.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+2.2.2.10.1.3.2. Y
 
     This field must be of size 4 byte.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-2.2.2.10.1.2.2.2.   Y
+2.2.2.10.1.4.    Life
 
-    This field must be of size 4 byte.
-    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+    This field correspond to the life of the client and contains the following
+    fields:
+    - `hp` This field must be of size 4 byte. This field is signed (so starting
+    from -((2^32)/2) to +(((2^32)/2)-1))
+
+2.2.2.10.1.5.    Is Other Player
+
+    This field correspond to the fact that the client is an other player or not.
+    It is used to know if it concern the client player himself or an other
+    player.
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to one of these value:
+    - TRUE = 1,
+    - FALSE = 0, 
 
 2.2.2.11.   POSITION_RELATIVE_BROADCAST
 
@@ -800,6 +868,54 @@ Table of Contents
 
     This field correspond to the ID of the player that has its position
     modified.
+
+2.2.2.13.   PLAYER_DEATH
+
+    The Client must send a player death action when he die. Or any other player
+    The Server must send a player death action when a player die. And check if 
+    a player is dead when he receive a PLAYER_DEATH action from a client.
+
+2.2.2.13.1.    Client
+
+    The Client action contains the following fields:
+    - `magick`
+    - `player_id`
+
+2.2.2.13.1.1.  Magick
+
+    This field help to know the packet is realy a player death action.
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x11`
+
+2.2.2.13.1.2.  Player ID
+
+    This field correspond to the ID of the player that has died.
+
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
+
+2.2.2.13.2.    Server
+
+    The Server action contains the following fields:
+    - `magick`
+    - `player_id`
+
+2.2.2.13.2.1.  Magick
+
+    This field help to know the packet is realy a player death action.
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x11`
+
+2.2.2.13.2.2.  Player ID
+
+    This field correspond to the ID of the player that has died.
+
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
 
 3.  References
 

@@ -37,7 +37,9 @@ namespace Nitwork {
                 boost::asio::ip::udp::endpoint &endpoint,
                 const struct enemy_infos_s &enemyInfos);
 
-            void addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
+            void addPlayerInitMessage(
+                boost::asio::ip::udp::endpoint &endpoint,
+                const msgCreatePlayer_s &playerMsg);
 
             void broadcastNewBulletMsg(
                 const struct msgNewBullet_s &msg,
@@ -46,6 +48,12 @@ namespace Nitwork {
             void broadcastAbsolutePositionMsg(
                 const struct position_absolute_s &pos,
                 boost::asio::ip::udp::endpoint &senderEndpoint);
+
+            void addPlayerDeathMsg(n_id_t id);
+
+            void addNewPlayerMsg(
+                boost::asio::ip::udp::endpoint &endpoint,
+                const struct msgCreatePlayer_s &playerMsg);
 
             n_id_t getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const;
 
@@ -69,9 +77,11 @@ namespace Nitwork {
 
             bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
 
+            void sendAlliesAlreadyPresent(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
+
             void sendNewAllie(
                 n_id_t playerId,
-                struct packetNewAllie_s packetMsgNewAllie,
+                struct packetCreatePlayer_s packetMsgCreatePlayer,
                 boost::asio::ip::udp::endpoint &endpoint,
                 bool butNoOne = true);
 
@@ -87,9 +97,6 @@ namespace Nitwork {
             static NitworkServer _instance; // instance of the NitworkServer (singleton)
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
             unsigned int _maxNbPlayer = 0; // max number of players
-            std::list<boost::asio::ip::udp::endpoint>
-                _endpoints; // A vector of endpoints which will be used to send the actions to the clients
-                            // and identify them
 
             // maps that will be used to handle the actions, in order to send or receive them
             std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
@@ -142,11 +149,18 @@ namespace Nitwork {
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::receiveAbsolutePositionMsg(msg, endpoint);
                   }}},
+                {PLAYER_DEATH,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgPlayerDeath_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::receivePlayerDeathMsg(msg, endpoint);
+                  }}},
             };
             std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
                 {
                  INIT, [this](Packet &packet) {
-                        sendData<struct packetMsgPlayerInit_s>(packet);
+                        sendData<struct packetCreatePlayer_s>(packet);
                     }, },
                 {LIFE_UPDATE,
                  [this](Packet &packet) {
@@ -168,9 +182,9 @@ namespace Nitwork {
                  [this](Packet &packet) {
                      sendData<struct packetNewBullet_s>(packet);
                  }},
-                {NEW_ALLIE,
+                {NEW_PLAYER,
                  [this](Packet &packet) {
-                     sendData<struct packetNewAllie_s>(packet);
+                     sendData<struct packetCreatePlayer_s>(packet);
                  }},
                 {POSITION_RELATIVE_BROADCAST,
                  [this](Packet &packet) {
@@ -179,6 +193,10 @@ namespace Nitwork {
                 {POSITION_ABSOLUTE_BROADCAST,
                  [this](Packet &packet) {
                      sendData<struct packetPositionAbsoluteBroadcast_s>(packet);
+                 }},
+                {PLAYER_DEATH,
+                 [this](Packet &packet) {
+                     sendData<struct packetPlayerDeath_s>(packet);
                  }},
             };
     };

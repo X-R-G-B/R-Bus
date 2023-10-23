@@ -95,8 +95,8 @@ namespace Nitwork {
             void handleBody(const actionHandler &handler, const struct header_s &header)
             {
                 // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
-                auto *body = reinterpret_cast<B *>(
-                    _receiveBuffer.data() + sizeof(struct header_s) + sizeof(struct action_s));
+                auto *body =
+                    reinterpret_cast<B *>(_receiveBuffer.data() + HEADER_SIZE + sizeof(struct action_s));
                 // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
                 handleBodyDatas<B>(handler, header, *body, boost::system::error_code());
             }
@@ -168,8 +168,6 @@ namespace Nitwork {
 
         private:
             bool _isRunning = false; // A boolean to know if the NitworkServer is running
-
-            n_id_t _packetId; // The packet id
 
             std::mutex _inputQueueMutex;          // Mutex for the input queue
             std::mutex _tickMutex;                // Mutex for the tick

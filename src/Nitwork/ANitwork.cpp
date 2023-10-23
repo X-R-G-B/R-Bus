@@ -10,7 +10,7 @@
 #include <thread>
 
 namespace Nitwork {
-    ANitwork::ANitwork() : _socket(_context), _packetId(0)
+    ANitwork::ANitwork() : _socket(_context)
     {
     }
 
@@ -137,7 +137,7 @@ namespace Nitwork {
             return;
         }
         const auto packetSize = Zstd::getFrameContentSize(_receiveBuffer);
-        if (packetSize > MAX_PACKET_SIZE || packetSize < sizeof(struct header_s)) {
+        if (packetSize > MAX_PACKET_SIZE || packetSize < HEADER_SIZE) {
             callReceiveHandler("header not received");
             return;
         }
@@ -236,7 +236,7 @@ namespace Nitwork {
         for (auto &data : _outputQueue) {
             auto it = actionToSendHandlers.find(data.action);
             if (it == actionToSendHandlers.end()) {
-                Logger::error("NITWORK: action not found");
+                Logger::error("NITWORK: action not found: " + std::to_string(data.action));
                 continue;
             }
             addPacketToSentPackages(data);

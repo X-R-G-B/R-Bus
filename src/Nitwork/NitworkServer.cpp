@@ -67,7 +67,7 @@ namespace Nitwork {
     {
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
+        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + HEADER_SIZE);
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
         auto it = _actionsHandlers.find(action->magick);
@@ -110,26 +110,59 @@ namespace Nitwork {
 
     void NitworkServer::sendNewAllie(
         n_id_t playerId,
-        struct packetNewAllie_s packetMsgNewAllie,
+        struct packetCreatePlayer_s packetMsgCreatePlayer,
         boost::asio::ip::udp::endpoint &endpoint,
         bool butNoOne)
     {
-        packetMsgNewAllie.msg.playerId = playerId;
+        packetMsgCreatePlayer.msg.playerId = playerId;
         if (butNoOne) {
             Packet packet(
-                packetMsgNewAllie.action.magick,
-                std::make_any<struct packetNewAllie_s>(packetMsgNewAllie));
+                packetMsgCreatePlayer.action.magick,
+                std::make_any<struct packetCreatePlayer_s>(packetMsgCreatePlayer));
             sendToAllClientsButNotOne(packet, endpoint);
         } else {
             Packet packet(
-                packetMsgNewAllie.action.magick,
-                std::make_any<struct packetNewAllie_s>(packetMsgNewAllie),
+                packetMsgCreatePlayer.action.magick,
+                std::make_any<struct packetCreatePlayer_s>(packetMsgCreatePlayer),
                 endpoint);
             addPacketToSend(packet);
         }
     }
 
     /* Handle packet (msg) Section */
+    void NitworkServer::sendAlliesAlreadyPresent(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
+    {
+        auto &arrPos          = Registry::getInstance().getComponents<Types::Position>();
+        auto &arrHealth       = Registry::getInstance().getComponents<struct health_s>();
+        auto &arrOtherPlayers = Registry::getInstance().getComponents<Types::OtherPlayer>();
+        auto ids              = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct health_s)});
+
+        for (const auto &e : _playersIds) {
+            auto allieId = e.second;
+            if (allieId == playerId) {
+                continue;
+            }
+            auto idIt = std::find_if(ids.begin(), ids.end(), [allieId, &arrOtherPlayers](std::size_t id) {
+                return arrOtherPlayers[id].constId == allieId;
+            });
+            if (idIt == ids.end()) {
+                continue;
+            }
+            struct packetCreatePlayer_s packetMsgCreatePlayer = {
+                .header = {0, 0, 0, 0, 1, 0},
+                .action = {.magick = INIT},
+                .msg    = {
+                           .magick        = MAGICK_NEW_PLAYER,
+                           .playerId      = allieId,
+                           .pos           = {arrPos[*idIt].x, arrPos[*idIt].y},
+                           .life          = arrHealth[*idIt],
+                           .isOtherPlayer = true}
+            };
+            sendNewAllie(allieId, packetMsgCreatePlayer, endpoint, false);
+        }
+    }
+
     void
     NitworkServer::handleInitMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
@@ -143,22 +176,32 @@ namespace Nitwork {
             return;
         }
         _endpoints.emplace_back(endpoint);
-        auto playerId = static_cast<n_id_t>(_endpoints.size() - 1);
-        // Send new Allie to others
-        addPlayerInitMessage(endpoint, playerId);
-        struct packetNewAllie_s packetMsgNewAllie = {
+        auto playerId      = static_cast<n_id_t>(_endpoints.size() - 1);
+        auto &jsonInstance = Json::getInstance();
+
+        struct packetCreatePlayer_s packetMsgCreatePlayer = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = NEW_ALLIE},
-            .msg    = {.magick = MAGICK_NEW_ALLIE, .playerId = playerId}
+            .action = {.magick = NEW_PLAYER},
+            .msg    = {
+                       .magick   = MAGICK_NEW_PLAYER,
+                       .playerId = playerId,
+                       .pos =
+                    {jsonInstance
+                            .getDataByVector<int>({"player", "position", "x"}, JsonType::DEFAULT_PLAYER),
+                        jsonInstance
+                            .getDataByVector<int>({"player", "position", "y"}, JsonType::DEFAULT_PLAYER)},
+                       .life = {jsonInstance.getDataByVector<int>({"player", "health"}, JsonType::DEFAULT_PLAYER)},
+                       .isOtherPlayer = false}
         };
-        Systems::initPlayer(playerId, true);
-        sendNewAllie(playerId, packetMsgNewAllie, endpoint);
-        for (const auto &[_, allieId] : _playersIds) {
-            if (allieId == playerId) {
-                continue;
-            }
-            sendNewAllie(allieId, packetMsgNewAllie, endpoint, false);
-        }
+        addPlayerInitMessage(endpoint, packetMsgCreatePlayer.msg);
+        packetMsgCreatePlayer.msg.isOtherPlayer = true;
+        Systems::initPlayer(
+            playerId,
+            packetMsgCreatePlayer.msg.pos,
+            packetMsgCreatePlayer.msg.life,
+            packetMsgCreatePlayer.msg.isOtherPlayer);
+        sendNewAllie(playerId, packetMsgCreatePlayer, endpoint);
+        sendAlliesAlreadyPresent(endpoint, playerId);
     }
 
     void
@@ -209,20 +252,22 @@ namespace Nitwork {
     /* End Handle packet (msg) Section */
 
     /* Message Creation Section */
-    void NitworkServer::addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
+    void NitworkServer::addPlayerInitMessage(
+        boost::asio::ip::udp::endpoint &endpoint,
+        const msgCreatePlayer_s &playerMsg)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
-        struct packetMsgPlayerInit_s packetMsgPlayerInit = {
+        struct packetCreatePlayer_s packetCreatePlayer = {
             .header = {0, 0, 0, 0, 1, 0},
             .action = {.magick = INIT},
-            .msg    = {.magick = MAGICK_INIT, .playerId = playerId}
+            .msg    = playerMsg
         };
         Packet packet(
-            packetMsgPlayerInit.action.magick,
-            std::make_any<struct packetMsgPlayerInit_s>(packetMsgPlayerInit),
+            packetCreatePlayer.action.magick,
+            std::make_any<struct packetCreatePlayer_s>(packetCreatePlayer),
             endpoint);
         addPacketToSend(packet);
-        _playersIds[endpoint] = playerId;
+        _playersIds[endpoint] = playerMsg.playerId;
     }
 
     void NitworkServer::addStarWaveMessage(boost::asio::ip::udp::endpoint & /* unused */, n_id_t enemyId)
@@ -321,6 +366,37 @@ namespace Nitwork {
             packetPosAbsoluteBroadcast.action.magick,
             std::make_any<struct packetPositionAbsoluteBroadcast_s>(packetPosAbsoluteBroadcast));
         sendToAllClientsButNotOne(packet, senderEndpoint);
+    }
+
+    void NitworkServer::addPlayerDeathMsg(n_id_t id)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetPlayerDeath_s packetPlayerDeath = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = PLAYER_DEATH},
+            .msg    = {.magick = MAGICK_PLAYER_DEATH, .playerId = id}
+        };
+        Packet packet(
+            packetPlayerDeath.action.magick,
+            std::make_any<struct packetPlayerDeath_s>(packetPlayerDeath));
+        sendToAllClients(packet);
+    }
+
+    void NitworkServer::addNewPlayerMsg(
+        boost::asio::ip::udp::endpoint &endpoint,
+        const struct msgCreatePlayer_s &playerMsg)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetCreatePlayer_s packetCreatePlayer = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = NEW_PLAYER},
+            .msg    = playerMsg
+        };
+        Packet packet(
+            packetCreatePlayer.action.magick,
+            std::make_any<struct packetCreatePlayer_s>(packetCreatePlayer),
+            endpoint);
+        addPacketToSend(packet);
     }
 
     n_id_t NitworkServer::getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const

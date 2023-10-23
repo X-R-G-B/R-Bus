@@ -19,7 +19,7 @@ namespace Nitwork {
             template <typename T>
             static std::vector<char> compress(const T &data)
             {
-                if (!std::is_standard_layout_v<T> || !std::is_trivial_v<T>) {
+                if constexpr (!std::is_standard_layout_v<T> || !std::is_trivial_v<T>) {
                     throw std::runtime_error("ZSTD: Data must be POD");
                 }
                 if (sizeof(T) > ZSTD_compressBound(sizeof(T))) {
