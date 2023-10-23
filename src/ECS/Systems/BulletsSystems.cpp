@@ -5,8 +5,10 @@
 ** Bullets systems implementation
 */
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <fstream>
+#include "ECSCustomTypes.hpp"
 #include "Logger.hpp"
 #include "Maths.hpp"
 #include "MessageTypes.h"
@@ -93,13 +95,13 @@ namespace Systems {
     }
 #endif
 
-    static void addPhysicsToBullet(nlohmann::json bulletData)
+    static void addPhysicsToBullet(nlohmann::json bulletData, Types::Position &position)
     {
         Json &json = Json::getInstance();
         if (!json.isDataExist(bulletData, "physics")) {
             return;
         }
-        Types::Physics physicComp;
+        Types::Physics physicComp(position);
         std::vector<std::string> physics =
             json.getDataFromJson<std::vector<std::string>>(bulletData, "physics");
         for (const auto &it : physics) {
@@ -130,7 +132,7 @@ namespace Systems {
         addSpriteRectsForBullet(bulletData, collisionRect);
         playBulletSound(typeOfMissile);
 #endif
-        addPhysicsToBullet(bulletData);
+        addPhysicsToBullet(bulletData, position);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
@@ -170,22 +172,26 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Velocity>();
         Registry::components<Types::Physics> physicComps =
             Registry::getInstance().getComponents<Types::Physics>();
+        Registry::components<Types::Position> positionComp =
+            Registry::getInstance().getComponents<Types::Position>();
 
         for (std::size_t id : ids) {
             std::size_t clockId = physicComps[id].getClockId(ZIGZAG);
-            std::size_t elapsedTimeInMs = Registry::getInstance().getClock().elapsedMillisecondsSince(clockId);
+            std::size_t elapsedTimeInMs =
+                Registry::getInstance().getClock().elapsedMillisecondsSince(clockId);
             if (elapsedTimeInMs == static_cast<std::size_t>(-1)) {
                 Registry::getInstance().getClock().restart(clockId);
                 elapsedTimeInMs = 0;
             }
-            std::cout << "elapsed:" << elapsedTimeInMs << std::endl;
-            float y = static_cast<float>(elapsedTimeInMs % 20);
-            std::cout << "elapsed casted:" << y << std::endl;
-            float yy = y * 6.28F / 20.F;
-            float offsetY = sin(yy);
-            float RealoffsetY = offsetY * 2;
-            std::cout << "realOffsetY:" << RealoffsetY << std::endl;
-            Maths::addFloatToDecimalInt(velocities[id].speedY, RealoffsetY);
+            // Height of the wave = 10% of the screen
+            float amplitude = 10.0F;
+            // Time for the complete zigzag cycle 400ms
+            float period = 400.0F;
+            float WavePosY =
+                amplitude * std::sin(2.0F * static_cast<float>(M_PI) * elapsedTimeInMs / period);
+            positionComp[id].y =
+                physicComps[id].getOriginPos().y + Maths::floatToIntConservingDecimals(WavePosY);
+            velocities[id].speedY = 0;
         }
     }
 
@@ -195,8 +201,8 @@ namespace Systems {
         std::vector<std::size_t> zigzagId;
         Registry::components<Types::Physics> physicComps =
             Registry::getInstance().getComponents<Types::Physics>();
-        std::vector<std::size_t> ids =
-            Registry::getInstance().getEntitiesByComponents({typeid(Types::Physics)});
+        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Physics), typeid(Types::Position), typeid(Types::Velocity)});
 
         for (std::size_t id : ids) {
             if (physicComps[id].hasPhysics(BOUNCING)) {

@@ -92,82 +92,23 @@ namespace Types {
                 {"bouncing", BOUNCING},
                 {"zigzag",   ZIGZAG  }
             };
+            Physics(const Types::Position& originPos);
 
-            void addPhysic(physicsType_e type)
-            {
-                if (_physicsMap.find(type) != _physicsMap.end()) {
-                    Logger::error("Physics already added");
-                    return;
-                }
-                if (type == ZIGZAG) {
-                    _physicsMap[type] = Registry::getInstance().getClock().create(true);
-                } else {
-                    _physicsMap[type] = std::nullopt;
-                }
-            }
-
-            void addPhysic(std::string type)
-            {
-                auto it = physicsTypeMap.find(type);
-                if (it == physicsTypeMap.end()) {
-                    Logger::error("Physics not found");
-                    return;
-                }
-                addPhysic(it->second);
-            }
-
-            std::optional<std::size_t> getClock(physicsType_e type) const
-            {
-                if (_physicsMap.find(type) == _physicsMap.end()) {
-                    Logger::error("Physics not found");
-                    return std::nullopt;
-                }
-                return _physicsMap.at(type);
-            }
-
-            std::vector<physicsType_e> getPhysics() const
-            {
-                std::vector<physicsType_e> physics;
-
-                for (auto &pair : _physicsMap) {
-                    physics.push_back(pair.first);
-                }
-                return physics;
-            }
-
-            bool hasPhysics(physicsType_e type) const
-            {
-                return _physicsMap.find(type) != _physicsMap.end();
-            }
-
-            bool hasPhysics() const
-            {
-                return !_physicsMap.empty();
-            }
-
-            void removePhysics(physicsType_e type)
-            {
-                if (_physicsMap.find(type) == _physicsMap.end()) {
-                    Logger::error("Physics not found");
-                    return;
-                }
-                _physicsMap.erase(type);
-            }
-
-            std::size_t getClockId(physicsType_e type) const
-            {
-                auto it = _physicsMap.find(type);
-                if (it == _physicsMap.end()) {
-                    Logger::error("Physics not found");
-                    throw std::runtime_error("Physics not found");
-                }
-                return it->second.value();
-            }
+            void addPhysic(physicsType_e type);
+            void addPhysic(std::string type);
+            std::optional<std::size_t> getClock(physicsType_e type) const;
+            std::vector<physicsType_e> getPhysics() const;
+            bool hasPhysics(physicsType_e type) const;
+            bool hasPhysics() const;
+            void removePhysics(physicsType_e type);
+            std::size_t getClockId(physicsType_e type) const;
+            const Types::Position &getOriginPos() const;
 
         private:
             // we have a map with a physic and an optional clock
             // because some physics don't need a clock
             std::unordered_map<physicsType_e, std::optional<std::size_t>> _physicsMap;
+            Types::Position _originPos;
     };
 
     struct PlayerAllies { };
