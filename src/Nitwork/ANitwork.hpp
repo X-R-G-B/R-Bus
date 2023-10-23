@@ -13,8 +13,8 @@
 #include <memory>
 #include <mutex>
 #include <unordered_map>
-#include "Logger.hpp"
 #include "INitwork.hpp"
+#include "Logger.hpp"
 #include "Zstd.hpp"
 
 namespace Nitwork {
