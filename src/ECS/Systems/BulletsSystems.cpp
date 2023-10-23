@@ -5,6 +5,7 @@
 ** Bullets systems implementation
 */
 
+#include <cmath>
 #include <fstream>
 #include "Logger.hpp"
 #include "Maths.hpp"
@@ -27,11 +28,6 @@ namespace Systems {
         {FAST,      "fast"     },
         {BOUNCE,    "bounce"   },
         {PERFORANT, "perforant"}
-    };
-
-    static const std::map<std::string, physicsType_e> physicsTypeMap = {
-        {"bouncing", BOUNCING},
-        {"zigzag",   ZIGZAG  }
     };
 
     static std::string getMissileId(missileTypes_e type)
@@ -103,18 +99,13 @@ namespace Systems {
         if (!json.isDataExist(bulletData, "physics")) {
             return;
         }
-        Types::Physics physicComp = {};
+        Types::Physics physicComp;
         std::vector<std::string> physics =
             json.getDataFromJson<std::vector<std::string>>(bulletData, "physics");
         for (const auto &it : physics) {
-            auto foundedType = physicsTypeMap.find(it);
-            if (foundedType != physicsTypeMap.end()) {
-                physicComp.types.push_back(foundedType->second);
-            } else {
-                Logger::error("Unknown bullet physics type");
-            }
+            physicComp.addPhysic(it);
         }
-        if (physicComp.types.size() > 0) {
+        if (physicComp.hasPhysics()) {
             Registry::getInstance().getComponents<Types::Physics>().insertBack(physicComp);
         }
     }
@@ -174,25 +165,27 @@ namespace Systems {
 
     static void updateZigzagPhysics(std::vector<std::size_t> ids)
     {
-        static constexpr float timeBetweenTwoUpdates = 300.F;
-        static std::size_t clockId                   = Registry::getInstance().getClock().create(false);
-
-        if (Registry::getInstance().getClock().elapsedMillisecondsSince(clockId) < timeBetweenTwoUpdates) {
-            return;
-        } else if (ids.size() > 0) {
-            Registry::getInstance().getClock().restart(clockId);
-        }
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::Velocity> velocities =
             Registry::getInstance().getComponents<Types::Velocity>();
+        Registry::components<Types::Physics> physicComps =
+            Registry::getInstance().getComponents<Types::Physics>();
 
         for (std::size_t id : ids) {
-            if (velocities.exist(id)) {
-                if (velocities[id].speedY == 0) {
-                    velocities[id].speedY = 100;
-                }
-                velocities[id].speedY = -velocities[id].speedY;
+            std::size_t clockId = physicComps[id].getClockId(ZIGZAG);
+            std::size_t elapsedTimeInMs = Registry::getInstance().getClock().elapsedMillisecondsSince(clockId);
+            if (elapsedTimeInMs == static_cast<std::size_t>(-1)) {
+                Registry::getInstance().getClock().restart(clockId);
+                elapsedTimeInMs = 0;
             }
+            std::cout << "elapsed:" << elapsedTimeInMs << std::endl;
+            float y = static_cast<float>(elapsedTimeInMs % 20);
+            std::cout << "elapsed casted:" << y << std::endl;
+            float yy = y * 6.28F / 20.F;
+            float offsetY = sin(yy);
+            float RealoffsetY = offsetY * 2;
+            std::cout << "realOffsetY:" << RealoffsetY << std::endl;
+            Maths::addFloatToDecimalInt(velocities[id].speedY, RealoffsetY);
         }
     }
 
@@ -206,12 +199,10 @@ namespace Systems {
             Registry::getInstance().getEntitiesByComponents({typeid(Types::Physics)});
 
         for (std::size_t id : ids) {
-            for (auto &type : physicComps[id].types) {
-                if (type == BOUNCING) {
-                    bouncingId.push_back(id);
-                } else if (type == ZIGZAG) {
-                    zigzagId.push_back(id);
-                }
+            if (physicComps[id].hasPhysics(BOUNCING)) {
+                bouncingId.push_back(id);
+            } else if (physicComps[id].hasPhysics(ZIGZAG)) {
+                zigzagId.push_back(id);
             }
         }
         updateBouncePhysics(bouncingId);
