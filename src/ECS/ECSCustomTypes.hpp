@@ -12,7 +12,7 @@
 #include <mutex>
 #include <optional>
 #include <vector>
-#include "clock.hpp"
+#include "Clock.hpp"
 #include "nlohmann/json.hpp"
 extern "C"
 {
