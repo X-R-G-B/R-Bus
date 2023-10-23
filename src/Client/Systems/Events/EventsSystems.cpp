@@ -19,7 +19,6 @@
 namespace Systems {
 
     // BULLET SYSTEMS
-
     static const std::unordered_map<enum missileTypes_e, Raylib::KeyboardKey> bulletKeyMap = {
         {CLASSIC,   Raylib::KeyboardKey::KB_SPACE},
         {FAST,      Raylib::KeyboardKey::KB_C    },
@@ -130,7 +129,8 @@ namespace Systems {
 
     // END OF BULLET SYSTEMS
 
-    static void checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId)
+    static void
+    checkAnimRect(std::size_t id, Clock &clock_, std::size_t clockId, Types::Direction direction)
     {
         Registry::components<Types::AnimRect> arrAnimRect =
             Registry::getInstance().getComponents<Types::AnimRect>();
@@ -139,9 +139,8 @@ namespace Systems {
 
         if (arrAnimRect.exist(id)) {
             Types::AnimRect &anim = arrAnimRect[id];
-            if (anim.currentRectList != Types::RectListType::MOVE) {
-                anim.changeRectList(Types::RectListType::MOVE);
-            }
+            anim.changeRectList(Types::RectListType::MOVE);
+            anim.changeDirection(direction);
         }
     }
 
@@ -163,21 +162,26 @@ namespace Systems {
                 continue;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
-                checkAnimRect(id, clock_, clockId);
+                checkAnimRect(id, clock_, clockId, Types::Direction::RIGHT);
                 Maths::addFloatToDecimalInt(arrPos[id].x, 1.F);
+                return;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
-                checkAnimRect(id, clock_, clockId);
+                checkAnimRect(id, clock_, clockId, Types::Direction::LEFT);
                 Maths::subFloatToDecimalInt(arrPos[id].x, 1.F);
+                return;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
-                checkAnimRect(id, clock_, clockId);
+                checkAnimRect(id, clock_, clockId, Types::Direction::UP);
                 Maths::subFloatToDecimalInt(arrPos[id].y, 1.F);
+                return;
             }
             if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
-                checkAnimRect(id, clock_, clockId);
+                checkAnimRect(id, clock_, clockId, Types::Direction::DOWN);
                 Maths::addFloatToDecimalInt(arrPos[id].y, 1.F);
+                return;
             }
+            checkAnimRect(id, clock_, clockId, Types::Direction::NONE);
         }
     }
 

@@ -8,6 +8,7 @@
 #include "Systems.hpp"
 #include <fstream>
 #include <sstream>
+#include "ECSCustomTypes.hpp"
 #include "Maths.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
@@ -225,12 +226,7 @@ namespace Systems {
 
             nlohmann::basic_json<> animRectData =
                 Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(elem, "animRect");
-            Types::AnimRect animRect = {
-                rect,
-                Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
-                Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "attack"),
-                Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")};
-            animRect.changeRectList(Types::RectListType::MOVE);
+            Types::AnimRect animRect(rect, animRectData, Types::RectListType::MOVE, Types::Direction::LEFT);
 
 #endif
             Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
@@ -475,12 +471,7 @@ namespace Systems {
             Types::Rect(Json::getInstance().getDataByVector({"player", "rect"}, playerType))};
         nlohmann::basic_json<> animRectData =
             Json::getInstance().getDataByVector({"player", "animRect"}, playerType);
-        Types::AnimRect animRect = {
-            rect,
-            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "move"),
-            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "attack"),
-            Json::getInstance().getDataFromJson<std::vector<Types::Rect>>(animRectData, "dead")};
-
+        Types::AnimRect animRect(rect, animRectData, Types::RectListType::MOVE);
 #endif
 
         // Add components to registry
