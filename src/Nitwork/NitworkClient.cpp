@@ -232,13 +232,9 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                    .magick = PLAYER_DEATH,
-                },
-            .msg =
-                {
-                   .magick  = MAGICK_PLAYER_DEATH,
-                   .playerId = id
-               },
+                       .magick = PLAYER_DEATH,
+                       },
+            .msg = {.magick = MAGICK_PLAYER_DEATH, .playerId = id},
         };
         Packet packet(
             packetPlayerDeath.action.magick,
