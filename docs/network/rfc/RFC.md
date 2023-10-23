@@ -333,7 +333,9 @@ Table of Contents
 
 2.2.2.1.2.5.    Is Other Player
 
-    This field correspond to the fact that the client is an other player or not
+    This field correspond to the fact that the client is an other player or not.
+    It is used to know if it concern the client player himself or an other
+    player.
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
@@ -769,7 +771,9 @@ Table of Contents
 
 2.2.2.10.1.5.    Is Other Player
 
-    This field correspond to the fact that the client is an other player or not
+    This field correspond to the fact that the client is an other player or not.
+    It is used to know if it concern the client player himself or an other
+    player.
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
