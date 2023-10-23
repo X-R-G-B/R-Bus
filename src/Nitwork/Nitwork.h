@@ -93,18 +93,6 @@ PACK(struct packetMsgReady_s {
         struct msgReady_s msgReady;
 });
 
-///* Message Position Relative */
-//PACK(struct msgPlayerInit_s {
-//        n_magick_t magick;
-//        n_id_t playerId;
-//});
-//
-//PACK(struct packetMsgPlayerInit_s {
-//        struct header_s header;
-//        struct action_s action;
-//        struct msgPlayerInit_s msg;
-//});
-
 /* Message Start Game */
 PACK(struct msgStartWave_s {
         n_magick_t magick;
