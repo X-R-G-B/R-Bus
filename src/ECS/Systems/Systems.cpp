@@ -338,7 +338,7 @@ namespace Systems {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry   = Registry::getInstance();
-        auto deadList        = registry.getComponents<Types::Dead>();
+        auto &deadList        = registry.getComponents<Types::Dead>();
         auto deadIdList      = deadList.getExistingsId();
         Clock &clock         = registry.getClock();
         std::size_t decrease = 0;
