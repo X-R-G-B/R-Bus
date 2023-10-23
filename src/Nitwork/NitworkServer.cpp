@@ -130,13 +130,13 @@ namespace Nitwork {
     }
 
     /* Handle packet (msg) Section */
-    void NitworkServer::sendAlliesAlreadyPresent(boost::asio::ip::udp::endpoint &endpoint,
-        n_id_t playerId)
+    void NitworkServer::sendAlliesAlreadyPresent(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
     {
-        auto &arrPos = Registry::getInstance().getComponents<Types::Position>();
-        auto &arrHealth = Registry::getInstance().getComponents<struct health_s>();
+        auto &arrPos          = Registry::getInstance().getComponents<Types::Position>();
+        auto &arrHealth       = Registry::getInstance().getComponents<struct health_s>();
         auto &arrOtherPlayers = Registry::getInstance().getComponents<Types::OtherPlayer>();
-        auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct health_s)});
+        auto ids              = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct health_s)});
 
         for (const auto &e : _playersIds) {
             auto allieId = e.second;
@@ -153,12 +153,11 @@ namespace Nitwork {
                 .header = {0, 0, 0, 0, 1, 0},
                 .action = {.magick = INIT},
                 .msg    = {
-                    .magick = MAGICK_NEW_PLAYER,
-                    .playerId = allieId,
-                    .pos = {arrPos[*idIt].x, arrPos[*idIt].y},
-                    .life = arrHealth[*idIt],
-                    .isOtherPlayer = true
-                }
+                           .magick        = MAGICK_NEW_PLAYER,
+                           .playerId      = allieId,
+                           .pos           = {arrPos[*idIt].x, arrPos[*idIt].y},
+                           .life          = arrHealth[*idIt],
+                           .isOtherPlayer = true}
             };
             sendNewAllie(allieId, packetMsgCreatePlayer, endpoint, false);
         }
@@ -177,21 +176,30 @@ namespace Nitwork {
             return;
         }
         _endpoints.emplace_back(endpoint);
-        auto playerId = static_cast<n_id_t>(_endpoints.size() - 1);
+        auto playerId      = static_cast<n_id_t>(_endpoints.size() - 1);
         auto &jsonInstance = Json::getInstance();
 
         struct packetCreatePlayer_s packetMsgCreatePlayer = {
             .header = {0, 0, 0, 0, 1, 0},
             .action = {.magick = NEW_PLAYER},
-            .msg    = {.magick = MAGICK_NEW_PLAYER,
+            .msg    = {
+                       .magick   = MAGICK_NEW_PLAYER,
                        .playerId = playerId,
-                       .pos = {jsonInstance.getDataByVector<int>({"player", "position", "x"}, JsonType::DEFAULT_PLAYER), jsonInstance.getDataByVector<int>({"player", "position", "y"}, JsonType::DEFAULT_PLAYER)},
+                       .pos =
+                    {jsonInstance
+                            .getDataByVector<int>({"player", "position", "x"}, JsonType::DEFAULT_PLAYER),
+                        jsonInstance
+                            .getDataByVector<int>({"player", "position", "y"}, JsonType::DEFAULT_PLAYER)},
                        .life = {jsonInstance.getDataByVector<int>({"player", "health"}, JsonType::DEFAULT_PLAYER)},
                        .isOtherPlayer = false}
         };
         addPlayerInitMessage(endpoint, packetMsgCreatePlayer.msg);
         packetMsgCreatePlayer.msg.isOtherPlayer = true;
-        Systems::initPlayer(playerId, packetMsgCreatePlayer.msg.pos, packetMsgCreatePlayer.msg.life, packetMsgCreatePlayer.msg.isOtherPlayer);
+        Systems::initPlayer(
+            playerId,
+            packetMsgCreatePlayer.msg.pos,
+            packetMsgCreatePlayer.msg.life,
+            packetMsgCreatePlayer.msg.isOtherPlayer);
         sendNewAllie(playerId, packetMsgCreatePlayer, endpoint);
         sendAlliesAlreadyPresent(endpoint, playerId);
     }
@@ -215,10 +223,10 @@ namespace Nitwork {
             std::lock_guard<std::mutex> lock(director.mutex);
             director.getSystemManager(0).addSystem(Systems::initWave);
         }).detach();
-//        addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
-//        auto &director = Systems::SystemManagersDirector::getInstance();
-//        std::lock_guard<std::mutex> lock(director.mutex);
-//        director.getSystemManager(0).addSystem(Systems::initWave);
+        //        addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
+        //        auto &director = Systems::SystemManagersDirector::getInstance();
+        //        std::lock_guard<std::mutex> lock(director.mutex);
+        //        director.getSystemManager(0).addSystem(Systems::initWave);
     }
 
     void
@@ -252,13 +260,15 @@ namespace Nitwork {
     /* End Handle packet (msg) Section */
 
     /* Message Creation Section */
-    void NitworkServer::addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, const msgCreatePlayer_s &playerMsg)
+    void NitworkServer::addPlayerInitMessage(
+        boost::asio::ip::udp::endpoint &endpoint,
+        const msgCreatePlayer_s &playerMsg)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetCreatePlayer_s packetCreatePlayer = {
             .header = {0, 0, 0, 0, 1, 0},
             .action = {.magick = INIT},
-            .msg = playerMsg
+            .msg    = playerMsg
         };
         Packet packet(
             packetCreatePlayer.action.magick,
@@ -388,7 +398,7 @@ namespace Nitwork {
         struct packetCreatePlayer_s packetCreatePlayer = {
             .header = {0, 0, 0, 0, 1, 0},
             .action = {.magick = NEW_PLAYER},
-            .msg = playerMsg
+            .msg    = playerMsg
         };
         Packet packet(
             packetCreatePlayer.action.magick,

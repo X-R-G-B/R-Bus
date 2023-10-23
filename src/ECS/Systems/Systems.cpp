@@ -338,12 +338,12 @@ namespace Systems {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry   = Registry::getInstance();
-        auto &deadList        = registry.getComponents<Types::Dead>();
+        auto &deadList       = registry.getComponents<Types::Dead>();
         auto deadIdList      = deadList.getExistingsId();
         Clock &clock         = registry.getClock();
         std::size_t decrease = 0;
 
-        auto &arrPlayer = Registry::getInstance().getComponents<Types::Player>();
+        auto &arrPlayer      = Registry::getInstance().getComponents<Types::Player>();
         auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
 
         std::sort(deadIdList.begin(), deadIdList.end());
@@ -365,7 +365,7 @@ namespace Systems {
     executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead, std::size_t &decrease)
     {
 #ifdef CLIENT
-        auto &arrPlayer = Registry::getInstance().getComponents<Types::Player>();
+        auto &arrPlayer      = Registry::getInstance().getComponents<Types::Player>();
         auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
 #endif
 
@@ -401,9 +401,9 @@ namespace Systems {
 #endif
         if (arrEnemies.exist(arrId)) {
 #ifdef CLIENT
-        Nitwork::NitworkClient::getInstance().addEnemyDeathMsg(arrEnemies[arrId].getConstId().id);
+            Nitwork::NitworkClient::getInstance().addEnemyDeathMsg(arrEnemies[arrId].getConstId().id);
 #else
-        Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(arrEnemies[arrId].getConstId().id);
+            Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(arrEnemies[arrId].getConstId().id);
 #endif
         }
     }
@@ -469,7 +469,11 @@ namespace Systems {
         }
     }
 
-    void initPlayer(unsigned int constId, const struct position_absolute_s &pos, const struct health_s &life, bool otherPlayer)
+    void initPlayer(
+        unsigned int constId,
+        const struct position_absolute_s &pos,
+        const struct health_s &life,
+        bool otherPlayer)
     {
         JsonType playerType = JsonType::DEFAULT_PLAYER;
 
@@ -504,7 +508,7 @@ namespace Systems {
             Types::Player playerComp = {constId};
             Registry::getInstance().getComponents<Types::Player>().insertBack(playerComp);
         }
-        Types::Position position = {pos.x, pos.y};
+        Types::Position position           = {pos.x, pos.y};
         Types::CollisionRect collisionRect = {Types::CollisionRect(
             Json::getInstance().getDataByVector({"player", "collisionRect"}, playerType))};
 

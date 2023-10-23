@@ -1,6 +1,6 @@
-#include "CustomTypes.hpp"
 #include "ClientNetwork.hpp"
 #include <algorithm>
+#include "CustomTypes.hpp"
 #include "ECSCustomTypes.hpp"
 #include "Json.hpp"
 #include "Maths.hpp"
@@ -34,8 +34,8 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto enemyDeath                      = std::any_cast<struct msgEnemyDeath_s>(any);
         Registry::components<Types::Enemy> enemies = Registry::getInstance().getComponents<Types::Enemy>();
-        auto &arrHealth                           = Registry::getInstance().getComponents<struct health_s>();
-        std::vector<std::size_t> ids               = enemies.getExistingsId();
+        auto &arrHealth              = Registry::getInstance().getComponents<struct health_s>();
+        std::vector<std::size_t> ids = enemies.getExistingsId();
 
         for (auto id : ids) {
             if (enemies[id].getConstId().id == enemyDeath.enemyId.id) {
@@ -75,22 +75,26 @@ namespace Systems {
 
     static void createNewPlayer(const struct msgCreatePlayer_s &newPlayer)
     {
-        Registry &registry = Registry::getInstance();
-        auto &arrPlayer    = registry.getComponents<Types::Player>();
+        Registry &registry   = Registry::getInstance();
+        auto &arrPlayer      = registry.getComponents<Types::Player>();
         auto &arrOtherPlayer = registry.getComponents<Types::OtherPlayer>();
-        auto idsPlayer           = registry.getEntitiesByComponents(
+        auto idsPlayer       = registry.getEntitiesByComponents(
             {typeid(Types::Position), typeid(Types::Player), typeid(struct health_s)});
         auto idsOtherPlayer = registry.getEntitiesByComponents(
             {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct health_s)});
-        auto player = std::find_if(idsPlayer.begin(), idsPlayer.end(), [&arrPlayer, &newPlayer](std::size_t id) {
-            return arrPlayer[id].constId == newPlayer.playerId;
-        });
-        auto otherPlayers = std::find_if(idsOtherPlayer.begin(), idsOtherPlayer.end(), [&arrOtherPlayer, &newPlayer](std::size_t id) {
-            return arrOtherPlayer[id].constId == newPlayer.playerId;
-        });
+        auto player =
+            std::find_if(idsPlayer.begin(), idsPlayer.end(), [&arrPlayer, &newPlayer](std::size_t id) {
+                return arrPlayer[id].constId == newPlayer.playerId;
+            });
+        auto otherPlayers = std::find_if(
+            idsOtherPlayer.begin(),
+            idsOtherPlayer.end(),
+            [&arrOtherPlayer, &newPlayer](std::size_t id) {
+                return arrOtherPlayer[id].constId == newPlayer.playerId;
+            });
 
         if (player != idsPlayer.end() || otherPlayers != idsOtherPlayer.end()) {
-            auto id          = player != idsPlayer.end() ? *player : *otherPlayers;
+            auto id = player != idsPlayer.end() ? *player : *otherPlayers;
             Registry::getInstance().removeEntity(id);
         }
         initPlayer(newPlayer.playerId, newPlayer.pos, newPlayer.life, newPlayer.isOtherPlayer);
@@ -244,11 +248,13 @@ namespace Systems {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto playerDeath = std::any_cast<struct msgPlayerDeath_s>(any);
-        auto &arrPlayer = Registry::getInstance().getComponents<Types::Player>();
-        auto &arrOtherPlayers = Registry::getInstance().getComponents<Types::OtherPlayer>();
-        auto &arrHealth = Registry::getInstance().getComponents<struct health_s>();
-        auto playersIds = Registry::getInstance().getEntitiesByComponents({typeid(Types::Player), typeid(struct health_s)});
-        auto otherPlayersIds = Registry::getInstance().getEntitiesByComponents({typeid(Types::OtherPlayer), typeid(struct health_s)});
+        auto &arrPlayer        = Registry::getInstance().getComponents<Types::Player>();
+        auto &arrOtherPlayers  = Registry::getInstance().getComponents<Types::OtherPlayer>();
+        auto &arrHealth        = Registry::getInstance().getComponents<struct health_s>();
+        auto playersIds        = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Player), typeid(struct health_s)});
+        auto otherPlayersIds = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::OtherPlayer), typeid(struct health_s)});
 
         for (auto &id : playersIds) {
             if (arrPlayer[id].constId == playerDeath.playerId) {

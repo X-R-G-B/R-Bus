@@ -37,7 +37,9 @@ namespace Nitwork {
                 boost::asio::ip::udp::endpoint &endpoint,
                 const struct enemy_infos_s &enemyInfos);
 
-            void addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, const msgCreatePlayer_s &playerMsg);
+            void addPlayerInitMessage(
+                boost::asio::ip::udp::endpoint &endpoint,
+                const msgCreatePlayer_s &playerMsg);
 
             void broadcastNewBulletMsg(
                 const struct msgNewBullet_s &msg,
@@ -193,9 +195,9 @@ namespace Nitwork {
                      sendData<struct packetPositionAbsoluteBroadcast_s>(packet);
                  }},
                 {PLAYER_DEATH,
-                    [this](Packet &packet) {
-                        sendData<struct packetPlayerDeath_s>(packet);
-                    }},
+                 [this](Packet &packet) {
+                     sendData<struct packetPlayerDeath_s>(packet);
+                 }},
             };
     };
 } // namespace Nitwork
