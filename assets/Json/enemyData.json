@@ -24,30 +24,34 @@
                 "speedX": -40,
                 "speedY": 0
             },
-            "animRect": {
-                "move": [
-                    {
-                        "x": 18.0,
-                        "y": 67.0,
-                        "width": 31.0,
-                        "height": 30.0
-                    },
-                    {
-                        "x": 51.0,
-                        "y": 67.0,
-                        "width": 31.0,
-                        "height": 30.0
-                    },
-                    {
-                        "x": 85.0,
-                        "y": 69.0,
-                        "width": 30.0,
-                        "height": 29.0
-                    }
-                ],
-                "attack": [],
-                "dead": []
-            }
+            "animRect": [
+                {
+                    "direction": "left",
+                    "type": "move",
+                    "time": 400,
+                    "restartIndex": 1,
+                    "list": [
+                        {
+                            "x": 51.0,
+                            "y": 67.0,
+                            "width": 31.0,
+                            "height": 30.0
+                        },
+                        {
+                            "x": 18.0,
+                            "y": 67.0,
+                            "width": 31.0,
+                            "height": 30.0
+                        },
+                        {
+                            "x": 85.0,
+                            "y": 69.0,
+                            "width": 30.0,
+                            "height": 29.0
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
