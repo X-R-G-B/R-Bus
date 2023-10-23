@@ -19,9 +19,7 @@ namespace Systems {
 
         if (arrAnimRect.exist(id)) {
             Types::AnimRect& anim = arrAnimRect[id];
-            if (anim.currentRectList != Types::RectListType::DEAD) {
-                anim.changeRectList(Types::RectListType::DEAD);
-            }
+            anim.changeRectList(Types::RectListType::DEAD);
         }
     };
 
