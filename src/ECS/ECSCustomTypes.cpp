@@ -75,7 +75,8 @@ namespace Types {
         auto it = _physicsMap.find(type);
         if (it == _physicsMap.end()) {
             Logger::error("Get clock id: Physics not found");
-            throw std::runtime_error("Physics of type " + std::to_string(type) + " not found in getClockId");
+            throw std::runtime_error(
+                "Physics of type " + std::to_string(type) + " not found in getClockId");
         }
         return it->second.value();
     }
