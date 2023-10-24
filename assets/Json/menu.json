@@ -1,0 +1,66 @@
+{
+    "menu": {
+        "connect": {
+            "type": "button",
+            "from": "sprite",
+            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "width": 500,
+            "height" : 500,
+            "rect": {
+                "x": 101.0,
+                "y": 0.0,
+                "width": 32.0,
+                "height": 19.0
+            },
+            "position" : {
+                "x": 1000,
+                "y": 1000
+            },
+            "collisionRect": {
+                "width": 500,
+                "height": 500
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 233.0,
+                            "y": 2.0,
+                            "width": 32.0,
+                            "height": 14.0
+                        }
+                    ]
+                },
+                {
+                    "type": "dead",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 233.0,
+                            "y": 2.0,
+                            "width": 32.0,
+                            "height": 14.0
+                        }
+                    ]
+                }
+            ]
+        },
+        "ip": {
+            "type": "input",
+            "width": 500,
+            "height" : 500,
+            "position" : {
+                "x": 2000,
+                "y": 2000
+            },
+            "collisionRect": {
+                "width": 500,
+                "height": 500
+            }
+        }
+    }
+}

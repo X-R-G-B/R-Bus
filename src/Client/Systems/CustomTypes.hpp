@@ -43,6 +43,11 @@ namespace Types {
             float size;
     };
 
+    struct Button {
+        Button(std::function<void()> &fct) : callback(fct) {};
+        std::function<void()> callback;
+    };
+
 #ifdef CLIENT
     struct Color {
             Raylib::Color color;

@@ -61,6 +61,7 @@ namespace Systems {
         for (auto id : ids) {
             updateAnimRect(id, arrAnimRect[id], arrRect[id]);
         }
+
     }
 
     void GraphicSystems::rectRenderer(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -94,6 +95,7 @@ namespace Systems {
                 static_cast<int>(height),
                 PURPLE);
         }
+
     }
 
     static void

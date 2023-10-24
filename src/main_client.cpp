@@ -50,8 +50,6 @@ int main(int ac, const char **av)
              .startClient(std::stoi(av[2]), av[1], DEFAULT_THREAD_NB, TICKS)) {
         return EXIT_EPITECH;
     }
-    Nitwork::NitworkClient::getInstance().addInitMsg();
-    Nitwork::NitworkClient::getInstance().addReadyMsg();
     int res = sceneManager.run();
     Nitwork::NitworkClient::getInstance().stop();
     return res;
