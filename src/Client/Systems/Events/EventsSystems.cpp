@@ -103,9 +103,9 @@ namespace Systems {
             json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
-        int halfSprite         = Maths::divisionWithTwoIntDecimals(collisionRect.width, 200);
-        newPos.y               = Maths::subtractionWithTwoIntDecimals(newPos.y, halfSprite);
-        newPos.x               = pos.x;
+        int halfSprite = Maths::divisionWithTwoIntDecimals(collisionRect.width, 200);
+        newPos.y       = Maths::subtractionWithTwoIntDecimals(newPos.y, halfSprite);
+        newPos.x       = pos.x;
         return newPos;
     }
 
