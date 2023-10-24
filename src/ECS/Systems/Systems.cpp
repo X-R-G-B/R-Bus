@@ -237,17 +237,7 @@ namespace Systems {
             Types::Velocity velocity =
                 Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
 
-            if (Json::getInstance().isDataExist(elem, "physics")) {
-                Types::Physics physicComp(position);
-                std::vector<std::string> physics =
-                    Json::getInstance().getDataFromJson<std::vector<std::string>>(elem, "physics");
-                for (const auto &it : physics) {
-                    physicComp.addPhysic(it);
-                }
-                if (physicComp.hasPhysics()) {
-                    Registry::getInstance().getComponents<Types::Physics>().insertBack(physicComp);
-                }
-            }
+            addPhysicsToEntity(elem, position);
 
             if (position.x == 0 && position.y == 0) {
                 Types::Position tmpPos(

@@ -96,7 +96,23 @@ namespace Systems {
         updateZigzagPhysics(zigzagId);
     }
 
-    
+    void addPhysicsToEntity(nlohmann::json jsonObject, const Types::Position &originPos)
+    {
+        Json &json = Json::getInstance();
+        if (!json.isDataExist(jsonObject, "physics")) {
+            return;
+        }
+        Types::Physics physicComp(originPos);
+        std::vector<std::string> physics =
+            json.getDataFromJson<std::vector<std::string>>(jsonObject, "physics");
+        for (const auto &it : physics) {
+            physicComp.addPhysic(it);
+        }
+        if (physicComp.hasPhysics()) {
+            Registry::getInstance().getComponents<Types::Physics>().insertBack(physicComp);
+        }
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> getBulletSystems()
     {
         return {updatePhysics};

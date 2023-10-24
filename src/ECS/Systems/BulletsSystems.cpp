@@ -93,23 +93,6 @@ namespace Systems {
     }
 #endif
 
-    static void addPhysicsToBullet(nlohmann::json bulletData, Types::Position &position)
-    {
-        Json &json = Json::getInstance();
-        if (!json.isDataExist(bulletData, "physics")) {
-            return;
-        }
-        Types::Physics physicComp(position);
-        std::vector<std::string> physics =
-            json.getDataFromJson<std::vector<std::string>>(bulletData, "physics");
-        for (const auto &it : physics) {
-            physicComp.addPhysic(it);
-        }
-        if (physicComp.hasPhysics()) {
-            Registry::getInstance().getComponents<Types::Physics>().insertBack(physicComp);
-        }
-    }
-
     void createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
     {
         Json &json = Json::getInstance();
@@ -130,7 +113,7 @@ namespace Systems {
         addSpriteRectsForBullet(bulletData, collisionRect);
         playBulletSound(typeOfMissile);
 #endif
-        addPhysicsToBullet(bulletData, position);
+        addPhysicsToEntity(bulletData, position);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
