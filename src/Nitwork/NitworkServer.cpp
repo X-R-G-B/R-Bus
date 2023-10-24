@@ -28,6 +28,30 @@ namespace Nitwork {
         return ANitwork::start(port, threadNb, tick, "");
     }
 
+    struct lobby_s NitworkServer::getServerInfos() const
+    {
+        // change this with good infos (like server name, owner infos, etc...)
+        struct lobby_s lobby = {
+            .name = "Main Server",
+            .maxNbPlayer = _maxNbPlayer,
+            .lobbyInfos = {
+                .ip = "",
+                .port = _socket.local_endpoint().port()
+            },
+            .ownerInfos = {
+                .ip = "127.0.0.1",
+                .port = 0
+            }
+        };
+        if (_socket.local_endpoint().address().to_string().size() > 15) {
+            Logger::error("Error: ip too long");
+            return lobby;
+        }
+        std::strcpy(lobby.lobbyInfos.ip, _socket.local_endpoint().address().to_string().data());
+        // do the same for owner infos
+        return lobby;
+    }
+
     bool NitworkServer::startNitworkConfig(int port, const std::string & /* unused */)
     {
         boost::asio::ip::udp::endpoint endpoint =
@@ -35,7 +59,7 @@ namespace Nitwork {
 
         _socket.open(boost::asio::ip::udp::v4());
         if (!_socket.is_open()) {
-            std::cerr << "Error: socket not open" << std::endl;
+            Logger::error("Socket not open");
             return false;
         }
         _socket.bind(endpoint);
@@ -54,11 +78,11 @@ namespace Nitwork {
         auto it = _actionsHandlers.find(action->magick);
 
         if (it == _actionsHandlers.end()) {
-            std::cerr << "Error: action not found" << std::endl;
+            Logger::error("Error: action not found");
             return;
         }
         if (it->second.first == nullptr) {
-            std::cerr << "Error: action handler is null" << std::endl;
+            Logger::error("Error: action handler is null");
             return;
         }
         Logger::debug(
@@ -135,11 +159,11 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         if (_endpoints.size() >= _maxNbPlayer) {
-            std::cerr << "Too many clients, can't add an other one" << std::endl;
+            Logger::error("Too many clients, can't add an other one");
             return;
         }
         if (isClientAlreadyConnected(endpoint)) {
-            std::cerr << "Client already connected" << std::endl;
+            Logger::error("Client already connected");
             return;
         }
         _endpoints.emplace_back(endpoint);

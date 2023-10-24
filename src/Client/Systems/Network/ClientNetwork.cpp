@@ -271,7 +271,7 @@ namespace Systems {
         }
     }
 
-    void handleNewLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &endpoint)
+    void handleNewLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &/* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const struct msgNewLobby_s &newLobby = std::any_cast<struct msgNewLobby_s>(data);

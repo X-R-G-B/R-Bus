@@ -254,7 +254,7 @@ PACK(struct connectionData_s {
 
 PACK(struct lobby_s {
     char name[32];
-    n_id_t maxNbPlayer;
+    unsigned int maxNbPlayer;
     struct connectionData_s lobbyInfos;
     struct connectionData_s ownerInfos;
 });

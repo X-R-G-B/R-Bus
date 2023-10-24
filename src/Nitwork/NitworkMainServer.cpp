@@ -5,6 +5,7 @@
 ** NitworkMainServer
 */
 
+#include "NitworkServer.hpp"
 #include "NitworkMainServer.hpp"
 
 namespace Nitwork {
@@ -26,11 +27,11 @@ namespace Nitwork {
     void NitworkMainServer::handleInitMsg(std::any &/* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
         if (_endpoints.size() >= _maxNbPlayer) {
-            std::cerr << "Too many clients, can't add an other one" << std::endl;
+            Logger::error("Too many clients, can't add an other one");
             return;
         }
         if (isClientAlreadyConnected(endpoint)) {
-            std::cerr << "Client already connected" << std::endl;
+            Logger::error("Client already connected");
             return;
         }
         _endpoints.emplace_back(endpoint);
@@ -47,7 +48,7 @@ namespace Nitwork {
 
         _socket.open(boost::asio::ip::udp::v4());
         if (!_socket.is_open()) {
-            std::cerr << "Error: socket not open" << std::endl;
+            Logger::error("Socket not open");
             return false;
         }
         _socket.bind(endpoint);
@@ -71,11 +72,11 @@ namespace Nitwork {
         auto it = _actionsHandlers.find(action->magick);
 
         if (it == _actionsHandlers.end()) {
-            std::cerr << "Error: action not found" << std::endl;
+            Logger::error("Error: action not found");
             return;
         }
         if (it->second.first == nullptr) {
-            std::cerr << "Error: action handler is null" << std::endl;
+            Logger::error("Error: action handler is null");
             return;
         }
         Logger::debug(
@@ -106,6 +107,39 @@ namespace Nitwork {
                 }
             };
         }
+        Packet packet(
+            msg.actionLobby[0].action.magick,
+            std::make_any<struct packetListLobby_s>(msg),
+            endpoint);
+        addPacketToSend(packet);
+    }
+
+    void NitworkMainServer::createLobby(const struct lobby_s &lobby)
+    {
+        std::thread([&lobby]() {
+            // call ECS::ResourcesManager::init( with argv[0], for the path of the executable
+            NitworkServer::getInstance().startServer(0, lobby.maxNbPlayer, DEFAULT_THREAD_NB, TICKS);
+            auto serverInfos = NitworkServer::getInstance().getServerInfos();
+            Logger::info("Server started on " + std::string(serverInfos.lobbyInfos.ip) + ":" + std::to_string(serverInfos.lobbyInfos.port));
+        }).detach();
+    }
+
+    void NitworkMainServer::sendCreateLobby(const boost::asio::ip::udp::endpoint &endpoint, const struct lobby_s &lobby)
+    {
+        struct packetListLobby_s msg = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .actionLobby = {}
+        };
+
+        //make detached thread
+        createLobby(lobby);
+        msg.actionLobby[0] = {
+            .action = {.magick = LIST_LOBBY},
+            .lobby = {
+                       .magick = MAGICK_LIST_LOBBY,
+                       .lobby = lobby
+            }
+        };
         Packet packet(
             msg.actionLobby[0].action.magick,
             std::make_any<struct packetListLobby_s>(msg),

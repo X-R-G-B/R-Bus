@@ -36,12 +36,34 @@ namespace Nitwork {
          */
         bool startServer(int port, int nbPlayer, int threadNb = DEFAULT_THREAD_NB, int tick = TICKS);
 
+        /**
+         * @brief Send the list of lobbies to the client
+         * @param endpoint The endpoint of the client
+         * @param lobbies The list of lobbies (max 5)
+         */
         void sendListLobby(const boost::asio::ip::udp::endpoint &endpoint, const std::vector<struct lobby_s> &lobbies);
+
+        /**
+         * @brief Send the create lobby message to the client
+         * @param endpoint The endpoint of the client
+         * @param lobby The lobby to send
+         */
+        void sendCreateLobby(const boost::asio::ip::udp::endpoint &endpoint, const struct lobby_s &lobby);
 
     /* Handlers methods of the received actions */
     private:
+        /**
+         * @brief Handle the init message
+         * @param msg The message
+         * @param endpoint The endpoint of the sender
+         */
         void handleInitMsg(std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
-
+        /**
+         * @brief Create a lobby (a detached thread will be created), and send the lobby to the client
+         * @param endpoint The endpoint of the client
+         * @param lobby The lobby to create
+         */
+        void createLobby(const struct lobby_s &lobby);
     private:
         NitworkMainServer() = default;
 
@@ -74,7 +96,6 @@ namespace Nitwork {
         static NitworkMainServer _instance; // instance of the NitworkServer (singleton)
         // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
         unsigned int _maxNbPlayer = 0; // max number of players
-        std::unordered_map<boost::asio::ip::udp::endpoint, n_id_t> _playersIds;
         // clang-format off
 
         std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
@@ -95,13 +116,20 @@ namespace Nitwork {
                     [this](actionHandler &actionHandler, const struct header_s &header) {
                         handleBody<struct msgNewLobby_s>(actionHandler, header);
                     },
-                    [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                    [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                         Systems::handleListLobbyMsg(msg, endpoint);
                     }
                 }
             }
         };
-        std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {};
+        std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
+            {
+                LIST_LOBBY,
+                [this](Packet &packet) {
+                    sendData<struct packetListLobby_s>(packet);
+                }
+            }
+        };
         // clang-format on
     };
 } // namespace Nitwork
