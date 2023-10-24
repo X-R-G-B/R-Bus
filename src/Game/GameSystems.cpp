@@ -260,6 +260,7 @@ namespace Systems {
 
     void addAllies(std::size_t managerId, std::size_t sysId)
     {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         auto &registry = Registry::getInstance();
         registry.addAllie(static_cast<std::size_t>(AlliesType::PLAYERS), typeid(Types::Player));
         registry.addAllie(static_cast<std::size_t>(AlliesType::PLAYERS), typeid(Types::OtherPlayer));
@@ -296,9 +297,10 @@ namespace Systems {
     }
 #endif
 
-    void setupEventsCallback(std::size_t managerId, std::size_t sysId)
+    static void setupEventsCallback(std::size_t managerId, std::size_t sysId)
     {
-        Registry::getInstance().addEventCallback(Events::REMOVE_ENTITY, sendEnemyDeath);
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        Registry::getInstance().addEventCallback(Events::ENTITY_DEATH, sendEnemyDeath);
 #ifdef CLIENT
         Registry::getInstance().addEventCallback(Events::TAKE_DAMAGE, sendLifeUpdateToServer);
 #endif

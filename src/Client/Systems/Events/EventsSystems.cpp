@@ -49,19 +49,19 @@ namespace Systems {
             if (clock_.elapsedMillisecondsSince(clockId) < elapsedBetweenMove || arrHealth[id].hp <= 0) {
                 continue;
             }
-            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
+            if (Raylib::KeyboardInput::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
                 checkAnimRect(id, clock_, clockId);
                 Maths::addNormalIntToDecimalInt(arrPos[id].x, 1);
             }
-            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
+            if (Raylib::KeyboardInput::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
                 checkAnimRect(id, clock_, clockId);
                 Maths::subNormalIntToDecimalInt(arrPos[id].x, 1);
             }
-            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
+            if (Raylib::KeyboardInput::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
                 checkAnimRect(id, clock_, clockId);
                 Maths::subNormalIntToDecimalInt(arrPos[id].y, 1);
             }
-            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
+            if (Raylib::KeyboardInput::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
                 checkAnimRect(id, clock_, clockId);
                 Maths::addNormalIntToDecimalInt(arrPos[id].y, 1);
             }
@@ -82,7 +82,7 @@ namespace Systems {
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
-        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_SPACE) == false
+        if (Raylib::KeyboardInput::isKeyDown(Raylib::KeyboardKey::KB_SPACE) == false
             || clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
             return;
         }
@@ -113,7 +113,7 @@ namespace Systems {
     void EventsSystems::changeScene(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
+        if (Raylib::KeyboardInput::isKeyDown(Raylib::KeyboardKey::KB_J)) {
             auto &sceneManager = Scene::SceneManager::getInstance();
             if (sceneManager.getCurrentScene() == SceneType::MAIN_GAME) {
                 sceneManager.changeScene(SceneType::MENU);
@@ -133,7 +133,7 @@ namespace Systems {
         Registry::components<Raylib::Music> arrMusics = registry.getComponents<Raylib::Music>();
 
         for (auto &music : arrMusics) {
-            if (music.getPath() == musicPath && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_M)) {
+            if (music.getPath() == musicPath && Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_M)) {
                 music.setNeedToPlay(true);
             }
         }

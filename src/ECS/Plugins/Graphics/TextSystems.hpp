@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "TextSystems.hpp"
 #include "GraphicsCustomTypes.hpp"
 #include "Maths.hpp"
 #include "Raylib.hpp"

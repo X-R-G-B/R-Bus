@@ -8,4 +8,4 @@ enum SystemManagers {
     GRAPHICS
 };
 
-void initScenes(bool client);
+void initScenes();

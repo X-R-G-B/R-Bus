@@ -37,7 +37,9 @@ namespace Systems::ParallaxSystems {
         Types::Parallax inst = {
             Maths::intToFloatConservingDecimals(position.x),
             Maths::intToFloatConservingDecimals(position.y)};
+        Types::NoRemoveOutside noRem;
 
+        Registry::getInstance().getComponents<Types::NoRemoveOutside>().insertBack(noRem);
         Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(parralax);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
@@ -47,7 +49,6 @@ namespace Systems::ParallaxSystems {
 
     void initParalax(std::size_t managerId, std::size_t systemId)
     {
-        Logger::fatal("initParalax");
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         std::vector<nlohmann::basic_json<>> parallaxData =
             Json::getInstance().getDataByJsonType("parallax", JsonType::DEFAULT_PARALLAX);
@@ -59,7 +60,6 @@ namespace Systems::ParallaxSystems {
                 initParallaxEntity(elem, maxOutParallaxRight);
             }
         }
-        Logger::fatal("initParalax remove itself");
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 

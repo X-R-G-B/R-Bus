@@ -7,10 +7,10 @@
 
 #pragma once
 
-#include "AudioSystems.hpp"
 #include "GraphicsCustomTypes.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
+#include "IPlugin.hpp"
 
 namespace Systems {
     namespace GraphicsSystems {
@@ -44,11 +44,12 @@ namespace Systems {
             }
         }
 
-        std::vector<std::function<void(std::size_t, std::size_t)>> getAudioSystems()
-        {
-            return {
-                soundEffectPlayer, musicPlayer
-            };
-        }
+        class AudioSystems {
+            public:
+                static std::vector<std::function<void(std::size_t, std::size_t)>> getAudioSystems()
+                {
+                    return { soundEffectPlayer, musicPlayer };
+                }
+        };
     } // namespace GraphicsSystems
 } // namespace Systems

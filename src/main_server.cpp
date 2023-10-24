@@ -1,7 +1,6 @@
 #include <csignal>
 #include "Logger.hpp"
 #include "NitworkServer.hpp"
-#include "Registry.hpp"
 #include "ResourcesManager.hpp"
 #include "init.hpp"
 #include "SceneManager.hpp"
@@ -46,7 +45,7 @@ static bool checkArgs(int ac, const char **av)
 int main(int ac, const char **av)
 {
 #ifndef NDEBUG
-    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
+    Logger::setLogLevel(LogLevel::Debug);
 #endif
     ECS::ResourcesManager::init(av[0]);
     if (!checkArgs(ac, av)) {
@@ -56,7 +55,7 @@ int main(int ac, const char **av)
     if (!Nitwork::NitworkServer::getInstance().startServer(std::stoi(av[1]), std::stoi(av[2]))) {
         return EXIT_EPITECH;
     }
-    initScenes(false);
+    initScenes();
     signal(SIGINT, signalHandler);
     Scene::SceneManager::getInstance().run();
     Nitwork::NitworkServer::getInstance().stop();

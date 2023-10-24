@@ -41,13 +41,13 @@ static bool checkArgs(int ac, const char **av)
 int main(int ac, const char **av)
 {
 #ifndef NDEBUG
-    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
+    Logger::setLogLevel(LogLevel::Debug);
 #endif
     ECS::ResourcesManager::init(av[0]);
     if (!checkArgs(ac, av)) {
         return EXIT_EPITECH;
     }
-    initScenes(true);
+    initScenes();
     if (!Nitwork::NitworkClient::getInstance()
              .startClient(std::stoi(av[2]), av[1], DEFAULT_THREAD_NB, TICKS_PER_SECOND)) {
         return EXIT_EPITECH;

@@ -10,15 +10,42 @@
 #include <vector>
 #include <map>
 #include "SystemManager.hpp"
+#include "SystemManagersDirector.hpp"
+#include "ECSSystems.hpp"
 
 namespace Systems {
     class SystemManagersDirector {
         public:
-            static SystemManagersDirector &getInstance();
-            SystemManager &getSystemManager(std::size_t);
-            void addSystemManager(std::size_t id, std::vector<std::function<void(std::size_t, std::size_t)>> );
-            void removeSystemManager(std::size_t);
-            void resetChanges();
+            static SystemManagersDirector &getInstance()
+            {
+                static SystemManagersDirector instance;
+                return instance;
+            }
+
+            SystemManager &getSystemManager(std::size_t id)
+            {
+                return _systemManagers.at(id);
+            }
+
+            void addSystemManager(std::size_t id, std::vector<std::function<void(std::size_t, std::size_t)>> systems)
+            {
+                if (_systemManagers.find(id) != _systemManagers.end()) {
+                    throw std::runtime_error("System manager already exists, id: " + std::to_string(id));
+                }
+                _systemManagers.insert({id, Systems::SystemManager(id, systems)});
+            }
+
+            void removeSystemManager(std::size_t id)
+            {
+                _systemManagers.erase(id);
+            }
+
+            void resetChanges()
+            {
+                for (auto &manager : _systemManagers) {
+                    manager.second.resetChanges();
+                }
+            }
 
             std::mutex mutex;
 

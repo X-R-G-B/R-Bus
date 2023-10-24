@@ -7,10 +7,11 @@
 
 #pragma once
 
-#include <array>
-#include <cstddef>
-#include <functional>
-#include <vector>
+#include "SceneManager.hpp"
+#include "Logger.hpp"
+#include "Registry.hpp"
+#include "SystemManagersDirector.hpp"
+#include "ECSSystems.hpp"
 
 namespace Scene {
 
@@ -18,24 +19,77 @@ namespace Scene {
 
     class SceneManager {
         public:
-            static SceneManager &getInstance();
-            int run();
-            void changeScene(std::size_t scene);
-            std::size_t getCurrentScene() const;
-            void stop();
-            void setScenes(std::vector<std::vector<std::size_t>> scenes);
-            void addScene(std::vector<std::size_t> scene);
+            static SceneManager &getInstance()
+            {
+                static SceneManager instance;
+                return instance;
+            }
+
+            int run()
+            {
+                try {
+                    Registry::getInstance().callback(Events::BEFORE_LOOP);
+                    while (!_stop) {
+                        Registry::getInstance().callback(Events::START_LOOP);
+                        auto scene = _scenes.at(static_cast<std::size_t>(_currentScene));
+                        updateSystemManagers(scene);
+                        Registry::getInstance().callback(Events::END_LOOP);
+                    }
+                    Registry::getInstance().callback(Events::AFTER_LOOP);
+                } catch (std::exception &e) {
+                    Logger::fatal(e.what());
+                    return static_cast<int>(ReturnValue::RET_ERROR);
+                }
+                return static_cast<int>(ReturnValue::OK);
+            }
+
+            void changeScene(std::size_t scene)
+            {
+                _currentScene = scene;
+                Registry::getInstance().clear();
+                Systems::SystemManagersDirector::getInstance().resetChanges();
+            }
+
+            std::size_t getCurrentScene() const
+            {
+                return _currentScene;
+            }
+
+            void stop()
+            {
+                _stop = true;
+            }
+
+            void setScenes(std::vector<std::vector<std::size_t>> scenes)
+            {
+                _scenes = scenes;
+            }
+
+            void addScene(std::vector<std::size_t> scene)
+            {
+                _scenes.push_back(scene);
+            }
 
         private:
-            SceneManager();
+            SceneManager() : _currentScene(0), _stop(false) {};
+
+            void updateSystemManagers(std::vector<std::size_t> &scene)
+            {
+                auto &director = Systems::SystemManagersDirector::getInstance();
+
+                for (auto &systemManager : scene) {
+                    std::unique_lock<std::mutex> lock(director.mutex);
+                    try {
+                        director.getSystemManager(systemManager).updateSystems();
+                    } catch (std::exception &e) {
+                        Logger::fatal(e.what());
+                    }
+                    lock.unlock();
+                }
+            }
 
             std::size_t _currentScene;
             bool _stop;
             std::vector<std::vector<std::size_t>> _scenes;
-
-            // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
-            static bool _init;
-            static SceneManager _instance;
-            // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
     };
 } // namespace Scene

@@ -10,7 +10,6 @@
 #include <cstddef>
 #include <functional>
 #include <vector>
-#include "SpriteSystems.hpp"
 #include "GraphicsCustomTypes.hpp"
 #include "Logger.hpp"
 #include "Maths.hpp"
@@ -23,8 +22,8 @@ namespace Systems {
         {
             Raylib::Vector2 pos = {0, 0};
 
-            pos.x = (x * static_cast<float>(Raylib::getScreenWidth())) / denominator;
-            pos.y = (y * static_cast<float>(Raylib::getScreenHeight())) / denominator;
+            pos.x = (x * static_cast<float>(Raylib::Window::getScreenWidth())) / denominator;
+            pos.y = (y * static_cast<float>(Raylib::Window::getScreenHeight())) / denominator;
             return (pos);
         }
 
@@ -32,8 +31,8 @@ namespace Systems {
         {
             Raylib::Vector2 size = {0, 0};
 
-            size.x = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator;
-            size.y = (sprite.getHeight() * static_cast<float>(Raylib::getScreenHeight())) / denominator;
+            size.x = (sprite.getWidth() * static_cast<float>(Raylib::Window::getScreenWidth())) / denominator;
+            size.y = (sprite.getHeight() * static_cast<float>(Raylib::Window::getScreenHeight())) / denominator;
             return (size);
         }
 
@@ -115,14 +114,14 @@ namespace Systems {
                 Types::RectangleShape &rectangle = arrRect[id];
 
                 float x = (Maths::intToFloatConservingDecimals(position.x)
-                           * static_cast<float>(Raylib::getScreenWidth()))
+                           * static_cast<float>(Raylib::Window::getScreenWidth()))
                           / denominator;
                 float y = (Maths::intToFloatConservingDecimals(position.y)
-                           * static_cast<float>(Raylib::getScreenHeight()))
+                           * static_cast<float>(Raylib::Window::getScreenHeight()))
                           / denominator;
 
-                float width  = (rectangle.width * static_cast<float>(Raylib::getScreenWidth())) / denominator;
-                float height = (rectangle.height * static_cast<float>(Raylib::getScreenHeight())) / denominator;
+                float width  = (rectangle.width * static_cast<float>(Raylib::Window::getScreenWidth())) / denominator;
+                float height = (rectangle.height * static_cast<float>(Raylib::Window::getScreenHeight())) / denominator;
 
                 DrawRectangle(
                     static_cast<int>(x),
@@ -146,7 +145,7 @@ namespace Systems {
 
             rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
             tint     = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
-            scale    = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator
+            scale    = (sprite.getWidth() * static_cast<float>(Raylib::Window::getScreenWidth())) / denominator
                        / static_cast<float>(sprite.getTextureWidth());
             spritePos = calculatePosition(
                 Maths::intToFloatConservingDecimals(position.x),

@@ -89,4 +89,6 @@ namespace Types {
         NLOHMANN_DEFINE_TYPE_INTRUSIVE(Container, minX, maxX, minY, maxY);
     };
 
+    struct NoRemoveOutside {};
+
 } // namespace Types

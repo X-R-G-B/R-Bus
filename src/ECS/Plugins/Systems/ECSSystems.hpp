@@ -18,9 +18,7 @@
 #include "Maths.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
-#ifdef CLIENT
-    #include "GraphicsCustomTypes.hpp"
-#endif
+#include "IPlugin.hpp"
 
 namespace Systems {
 
@@ -51,7 +49,7 @@ namespace Systems {
         }
     }
 
-    void containerCollision(std::size_t /*unused*/, std::size_t /*unused*/)
+    static void containerCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry           = Registry::getInstance();
@@ -121,7 +119,7 @@ namespace Systems {
         }
     }
 
-    void entitiesCollision(std::size_t /*unused*/, std::size_t /*unused*/)
+    static void entitiesCollision(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
@@ -138,7 +136,7 @@ namespace Systems {
 
     const std::size_t moveTime = 20;
 
-    void moveEntities(std::size_t /*unused*/, std::size_t /*unused*/)
+    static void moveEntities(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::Position> arrPosition =
@@ -163,7 +161,7 @@ namespace Systems {
         }
     }
 
-    void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
+    static void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry   = Registry::getInstance();
@@ -190,17 +188,19 @@ namespace Systems {
         if (arrDead.exist(id) && arrDead[id].deathFunction != std::nullopt) {
             Types::Dead &deadComp = arrDead[id];
             if (!deadComp.launched) {
+                Registry::getInstance().callback(Events::ENTITY_DEATH, id);
                 deadComp.deathFunction.value()(id);
                 deadComp.clockId  = Registry::getInstance().getClock().create();
                 deadComp.launched = true;
             }
         } else {
+            Registry::getInstance().callback(Events::ENTITY_DEATH, id);
             Registry::getInstance().removeEntity(id);
             decrease++;
         }
     }
 
-    void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
+    static void deathChecker(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<struct health_s> arrHealth =
@@ -232,15 +232,13 @@ namespace Systems {
         return (false);
     }
 
-    void destroyOutsideWindow(std::size_t /*unused*/, std::size_t /*unused*/)
+    static void destroyOutsideWindow(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
-#ifdef CLIENT
-        Registry::components<Types::Parallax> arrParallax =
-            Registry::getInstance().getComponents<Types::Parallax>();
-#endif
+
+        auto arrNoRemove = Registry::getInstance().getComponents<Types::NoRemoveOutside>();
         std::vector<std::size_t> ids =
             Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
         std::size_t decrease = 0;
@@ -248,26 +246,27 @@ namespace Systems {
         std::sort(ids.begin(), ids.end());
         for (auto &id : ids) {
             auto tmpId = id - decrease;
-#ifdef CLIENT
-            bool isNotParallax = !arrParallax.exist(tmpId);
-#else
-            bool isNotParallax = true;
-#endif
-            if (isNotParallax && isOutsideWindow(arrPosition[tmpId])) {
+            bool destroyable = !arrNoRemove.exist(tmpId);
+            if (destroyable && isOutsideWindow(arrPosition[tmpId])) {
                 Registry::getInstance().removeEntity(tmpId);
                 decrease++;
             }
         }
     }
 
-    std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems()
-    {
-        return {
-            containerCollision,
-            checkDestroyAfterDeathCallBack,
-            entitiesCollision,
-            destroyOutsideWindow,
-            deathChecker,
-            moveEntities};
-    }
+    class ECSPlugin : public IPlugin {
+        public:
+            void initPlugin() override
+            {}
+            std::vector<std::function<void(std::size_t, std::size_t)>> getSystems() override
+            {
+                return {
+                    containerCollision,
+                    checkDestroyAfterDeathCallBack,
+                    entitiesCollision,
+                    destroyOutsideWindow,
+                    deathChecker,
+                    moveEntities};
+            }
+    };
 } // namespace Systems

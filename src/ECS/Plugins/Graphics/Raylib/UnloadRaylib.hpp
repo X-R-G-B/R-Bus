@@ -8,7 +8,6 @@
 #include "Raylib.hpp"
 #include "Registry.hpp"
 
-#ifdef CLIENT
 static void unloadSounds(std::size_t id)
 {
     Registry::components<Raylib::Sound> arrSound = Registry::getInstance().getComponents<Raylib::Sound>();
@@ -39,7 +38,7 @@ static void unloadSprite(std::size_t id)
 
 static void unloadImage(std::size_t id)
 {
-    Registry::components<Raylib::Image> arrImage = Registry::getInstance().getComponents<Raylib::Image>();
+    Registry::components<Raylib::RayImage> arrImage = Registry::getInstance().getComponents<Raylib::RayImage>();
 
     if (arrImage.exist(id)) {
         arrImage[id].unloadImage();
@@ -47,11 +46,13 @@ static void unloadImage(std::size_t id)
 }
 
 // NOLINTNEXTLINE(readability-convert-member-functions-to-static,-warnings-as-errors)
-void Registry::unloadRaylibComponents(std::size_t id)
-{
-    unloadSounds(id);
-    unloadMusic(id);
-    unloadSprite(id);
-    unloadImage(id);
-}
-#endif
+class UnloadRaylib {
+    public:
+        static void unloadRaylibComponents(std::size_t id)
+        {
+            unloadSounds(id);
+            unloadMusic(id);
+            unloadSprite(id);
+            unloadImage(id);
+        }
+};

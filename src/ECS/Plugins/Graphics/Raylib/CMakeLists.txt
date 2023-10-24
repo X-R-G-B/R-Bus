@@ -6,8 +6,7 @@ target_include_directories(
         .
 )
 
-target_sources(
-    ${PROJECT_NAME_CLIENT}
-    PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/Geometry.cpp
-)
+add_subdirectory(Geometry)
+add_subdirectory(Graphics)
+add_subdirectory(Audio)
+add_subdirectory(Events)
