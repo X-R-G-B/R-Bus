@@ -24,6 +24,9 @@
                 "speedX": -40,
                 "speedY": 0
             },
+            "physics": [
+                "zigzag"
+            ],
             "animRect": [
                 {
                     "direction": "left",

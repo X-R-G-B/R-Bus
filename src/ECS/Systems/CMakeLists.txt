@@ -18,14 +18,16 @@ target_sources(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Systems.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BulletsSystems.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PhysicSystems.cpp
 )
 
 target_sources(
-        ${PROJECT_NAME_SERVER}
-        PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/Systems.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/BulletsSystems.cpp
+    ${PROJECT_NAME_SERVER}
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/Systems.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/BulletsSystems.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/PhysicSystems.cpp
 )
 
 add_subdirectory(Managers)
