@@ -37,6 +37,8 @@ namespace Nitwork {
          */
         bool startServer(int port, int nbPlayer, int threadNb = DEFAULT_THREAD_NB, int tick = TICKS);
 
+        void sendListLobby(const boost::asio::ip::udp::endpoint &endpoint, const std::vector<struct lobby_s> &lobbies);
+
     /* Handlers methods of the received actions */
     private:
         void handleInitMsg(std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
@@ -95,7 +97,7 @@ namespace Nitwork {
                         handleBody<struct msgNewLobby_s>(actionHandler, header);
                     },
                     [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
-                        Systems::handleNewLobbyMsg(msg, endpoint);
+                        Systems::handleListLobbyMsg(msg, endpoint);
                     }
                 }
             }

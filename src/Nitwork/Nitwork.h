@@ -33,6 +33,8 @@
     #define MAGICK_POSITION_ABSOLUTE_BROADCAST '\x10'
     #define MAGICK_NEW_PLAYER '\x0a'
     #define MAGICK_PLAYER_DEATH '\x11'
+    #define MAGICK_LIST_LOBBY '\x12'
+    #define MAGICK_CREATE_LOBBY '\x13'
 
 typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
@@ -231,6 +233,45 @@ PACK(struct packetPlayerDeath_s {
         struct header_s header;
         struct action_s action;
         struct msgPlayerDeath_s msg;
+});
+
+/* Message Request List Lobby */
+PACK(struct msgRequestListLobby_s {
+    n_magick_t magick;
+});
+
+PACK(struct packetRequestListLobby_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgRequestListLobby_s msg;
+});
+
+/* Message List Lobby */
+PACK(struct connectionData_s {
+    char ip[16];
+    n_port_t port;
+});
+
+PACK(struct lobby_s {
+    char name[32];
+    n_id_t maxNbPlayer;
+    struct connectionData_s lobbyInfos;
+    struct connectionData_s ownerInfos;
+});
+
+PACK(struct msgNewLobby_s {
+    n_magick_t magick;
+    struct lobby_s lobby;
+});
+
+PACK(struct actionLobby_s {
+    struct action_s action;
+    struct msgNewLobby_s lobby;
+});
+
+PACK(struct packetListLobby_s {
+    struct header_s header;
+    struct actionLobby_s actionLobby[5];
 });
 
 #endif

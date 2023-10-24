@@ -84,4 +84,22 @@ namespace Nitwork {
             + std::to_string(action->magick));
         it->second.first(it->second.second, header);
     }
+
+    /* Send methods */
+    void NitworkMainServer::sendListLobby(const boost::asio::ip::udp::endpoint &endpoint, const std::vector<struct lobby_s> &lobbies)
+    {
+        struct packetListLobby_s msg = {
+            .header = {0, 0, 0, 0, static_cast<unsigned char>(lobbies.size()), 0},
+        };
+
+        for (std::size_t i = 0; i < lobbies.size(); i++) {
+            msg.actionLobby[i] = {
+                .action = {.magick = LIST_LOBBY},
+                .lobby = {
+                           .magick = MAGICK_LIST_LOBBY,
+                           .lobby = lobbies[i]
+                }
+            };
+        }
+    }
 }

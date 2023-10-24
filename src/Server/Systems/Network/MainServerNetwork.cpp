@@ -5,31 +5,31 @@
 ** MainServerNetwork
 */
 
-#include <string>
+#include "Nitwork.h"
 #include "Registry.hpp"
-#include "MainNitwork.h"
+#include "NitworkMainServer.hpp"
 #include "MainServerNetwork.hpp"
 
 namespace Systems {
-    void handleNewLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &endpoint)
+    void handleListLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &endpoint)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const struct msgNewLobby_s &newLobby = std::any_cast<struct msgNewLobby_s>(data);
-        auto &registry                        = Registry::getInstance();
-        auto &arrLobby                        = registry.getComponents<struct lobby_s>();
-        auto lobbyIds                         = arrLobby.getExistingsId();
-        auto isAlreadyPresent = std::find_if(lobbyIds.begin(), lobbyIds.end(), [&arrLobby, &newLobby](std::size_t id) {
-            return std::string(arrLobby[id].lobbyInfos.ip) == std::string(newLobby.lobby.lobbyInfos.ip)
-                && arrLobby[id].lobbyInfos.port == newLobby.lobby.lobbyInfos.port;
-        });
+        const struct msgRequestListLobby_s &msg = std::any_cast<struct msgRequestListLobby_s>(data);
+        auto &registry = Registry::getInstance();
+        auto &arrLobby = registry.getComponents<struct lobby_s>();
+        auto lobbyIds = arrLobby.getExistingsId();
 
-        if (isAlreadyPresent != lobbyIds.end()) {
+        if (msg.magick != MAGICK_LIST_LOBBY) {
+            Logger::error("MAGICK_LIST_LOBBY is not the same");
             return;
         }
-        registry.addEntity();
-        struct lobby_s lobbyToAdd = {newLobby.lobby};
-        arrLobby.insertBack(lobbyToAdd);
-        Logger::info("New lobby added: " + std::string(newLobby.lobby.lobbyInfos.ip) + ":"
-            + std::to_string(newLobby.lobby.lobbyInfos.port));
+        std::vector<struct lobby_s> lobbies;
+        for (auto &id : lobbyIds) {
+            lobbies.push_back(arrLobby[id]);
+            if (lobbies.size() == 5 || id == lobbyIds.back()) {
+                Nitwork::NitworkMainServer::getInstance().sendListLobby(endpoint, lobbies);
+                lobbies.clear();
+            }
+        }
     }
 } // namespace Systems

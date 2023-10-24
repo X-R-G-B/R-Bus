@@ -11,5 +11,5 @@
 #include <boost/asio.hpp>
 
 namespace Systems {
-    void handleNewLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &endpoint);
+    void handleListLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &endpoint);
 } // namespace Systems

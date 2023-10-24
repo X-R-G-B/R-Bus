@@ -174,7 +174,18 @@ namespace Nitwork {
                             Systems::receivePlayerDeath(any, endpoint);
                         }
                     }
+                },
+                {
+                LIST_LOBBY,
+                {
+                    [this](actionHandler &actionHandler, const struct header_s &header) {
+                        handleBody<struct msgNewLobby_s>(actionHandler, header);
+                    },
+                    [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                        Systems::handleNewLobbyMsg(msg, endpoint);
+                    }
                 }
+            }
             };
             std::map<
                 enum n_actionType_t,
