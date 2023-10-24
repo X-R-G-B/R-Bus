@@ -5,7 +5,15 @@ std::mutex Types::Enemy::_mutex;
 
 namespace Types {
 
-    Physics::Physics(const Types::Position &originPos, unsigned long int timestampDiff, unsigned long int timestamp ,const Types::Velocity &originvVelocity) : _originPos(originPos), _timestampDiff(timestampDiff), _timestamp(timestamp), _originvVelocity(originvVelocity)
+    Physics::Physics(
+        const Types::Position &originPos,
+        unsigned long int timestampDiff,
+        unsigned long int timestamp,
+        const Types::Velocity &originvVelocity)
+        : _originPos(originPos),
+          _timestampDiff(timestampDiff),
+          _timestamp(timestamp),
+          _originvVelocity(originvVelocity)
     {
     }
 

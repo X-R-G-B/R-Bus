@@ -91,7 +91,11 @@ namespace Types {
                 {"bouncing", BOUNCING},
                 {"zigzag",   ZIGZAG  }
             };
-            Physics(const Types::Position &originPos, unsigned long int timestampDiff, unsigned long int timestamp, const Types::Velocity &originvVelocity);
+            Physics(
+                const Types::Position &originPos,
+                unsigned long int timestampDiff,
+                unsigned long int timestamp,
+                const Types::Velocity &originvVelocity);
 
             void addPhysic(physicsType_e type, unsigned long int timestamp);
             void addPhysic(std::string type, unsigned long int timestamp);

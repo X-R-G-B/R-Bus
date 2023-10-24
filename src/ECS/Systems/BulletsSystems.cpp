@@ -95,13 +95,23 @@ namespace Systems {
     }
 #endif
 
-    static void addPhysicsToBullet(nlohmann::json bulletData, Types::Position &position, unsigned long int timestamp, Types::Velocity &velocity)
+    static void addPhysicsToBullet(
+        nlohmann::json bulletData,
+        Types::Position &position,
+        unsigned long int timestamp,
+        Types::Velocity &velocity)
     {
         Json &json = Json::getInstance();
         if (!Json::isDataExist(bulletData, "physics")) {
             return;
         }
-        Types::Physics physicComp(position, static_cast<unsigned long int>(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) - timestamp, timestamp, velocity);
+        Types::Physics physicComp(
+            position,
+            static_cast<unsigned long int>(
+                std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()))
+                - timestamp,
+            timestamp,
+            velocity);
         std::vector<std::string> physics =
             json.getDataFromJson<std::vector<std::string>>(bulletData, "physics");
         for (const auto &it : physics) {
@@ -191,10 +201,14 @@ namespace Systems {
         }
     }
 
-    static void forwardVelocity(Registry::components<Types::Velocity> &velocities, Registry::components<Types::Physics> &physicComps, std::size_t id)
+    static void forwardVelocity(
+        Registry::components<Types::Velocity> &velocities,
+        Registry::components<Types::Physics> &physicComps,
+        std::size_t id)
     {
-        auto now = static_cast<unsigned long int>(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
-        auto timestampDiff = physicComps[id].getTimestampDiff();
+        auto now = static_cast<unsigned long int>(
+            std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
+        auto timestampDiff   = physicComps[id].getTimestampDiff();
         auto timestampOrigin = physicComps[id].getTimestamp();
         if (now - timestampOrigin < timestampDiff * 2) {
             velocities[id].speedX = 2 * physicComps[id].getOriginvVelocity().speedX;
