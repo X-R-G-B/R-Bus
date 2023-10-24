@@ -94,6 +94,7 @@ namespace Nitwork {
         }
         struct packetListLobby_s msg = {
             .header = {0, 0, 0, 0, static_cast<unsigned char>(lobbies.size()), 0},
+            .actionLobby = {}
         };
 
         for (std::size_t i = 0; i < lobbies.size(); i++) {
