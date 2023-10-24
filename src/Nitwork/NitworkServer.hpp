@@ -64,18 +64,12 @@ namespace Nitwork {
 
             bool startNitworkConfig(int port, const std::string &ip) final;
 
-            void sendToAllClients(const Packet &packet);
-
-            void sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint);
-
             void handleBodyAction(
                 const struct header_s &header,
                 const boost::asio::ip::udp::endpoint &endpoint) final;
 
             [[nodiscard]] const std::map<enum n_actionType_t, actionSender> &
             getActionToSendHandlers() const final;
-
-            bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
 
             void sendAlliesAlreadyPresent(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId);
 

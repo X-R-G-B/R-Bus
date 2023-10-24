@@ -17,6 +17,10 @@ namespace Nitwork {
     bool ANitwork::start(int port, int threadNb, int tick, const std::string &ip)
     {
         try {
+            if (_isRunning) {
+                Logger::fatal("NITWORK: Nitwork already started");
+                return false;
+            }
             _isRunning = true;
             if (!startNitworkConfig(port, ip)) {
                 Logger::fatal("NITWORK: Nitwork config failed");
@@ -174,6 +178,18 @@ namespace Nitwork {
             });
     }
 
+    bool ANitwork::isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const
+    {
+        auto endPointIt = std::find_if(
+            _endpoints.begin(),
+            _endpoints.end(),
+            [&endpoint](const boost::asio::ip::udp::endpoint &e) {
+                return e.address() == endpoint.address() && e.port() == endpoint.port();
+            });
+
+        return endPointIt != _endpoints.end();
+    }
+
     void ANitwork::handlePacketIdsReceived(const struct header_s &header)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
@@ -244,6 +260,24 @@ namespace Nitwork {
                 it->second(data);
             } catch (std::exception &e) {
                 Logger::error("NITWORK: catch action: " + std::string(e.what()));
+            }
+        }
+    }
+
+    void ANitwork::sendToAllClients(const Packet &packet)
+    {
+        for (auto &endpoint : _endpoints) {
+            addPacketToSend(Packet(packet, endpoint));
+        }
+    }
+
+    void ANitwork::sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        for (auto &e : _endpoints) {
+            if (e != endpoint) {
+                Logger::debug(
+                    "Package sent to: " + e.address().to_string() + ":" + std::to_string(e.port()));
+                addPacketToSend(Packet(packet, e));
             }
         }
     }

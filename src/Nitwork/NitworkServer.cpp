@@ -42,25 +42,6 @@ namespace Nitwork {
         return true;
     }
 
-    void NitworkServer::sendToAllClients(const Packet &packet)
-    {
-        for (auto &endpoint : _endpoints) {
-            addPacketToSend(Packet(packet, endpoint));
-        }
-    }
-
-    void
-    NitworkServer::sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint)
-    {
-        for (auto &e : _endpoints) {
-            if (e != endpoint) {
-                Logger::debug(
-                    "Package sent to: " + e.address().to_string() + ":" + std::to_string(e.port()));
-                addPacketToSend(Packet(packet, e));
-            }
-        }
-    }
-
     void NitworkServer::handleBodyAction(
         const struct header_s &header,
         const boost::asio::ip::udp::endpoint &endpoint)
@@ -93,20 +74,6 @@ namespace Nitwork {
         return _actionToSendHandlers;
     }
     /* End Getters Section */
-
-    /* Check Methods Section */
-    bool NitworkServer::isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const
-    {
-        auto endPointIt = std::find_if(
-            _endpoints.begin(),
-            _endpoints.end(),
-            [&endpoint](const boost::asio::ip::udp::endpoint &e) {
-                return e.address() == endpoint.address() && e.port() == endpoint.port();
-            });
-
-        return endPointIt != _endpoints.end();
-    }
-    /* End Check Methods Section */
 
     void NitworkServer::sendNewAllie(
         n_id_t playerId,

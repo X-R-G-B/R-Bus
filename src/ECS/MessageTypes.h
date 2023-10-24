@@ -10,6 +10,7 @@
     #endif
 
 typedef unsigned int n_id_t;
+typedef unsigned char n_port_t;
 
 enum enemy_type_e {
     CLASSIC_ENEMY = 0,
