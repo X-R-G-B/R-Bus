@@ -6,6 +6,12 @@
         "deadTime": 1000,
         "width": 500,
         "height" : 500,
+        "container": {
+            "minX": 0.0,
+            "maxX": 100.0,
+            "minY": 0.0,
+            "maxY": 100.0
+        },
         "rect": {
             "x": 101.0,
             "y": 0.0,
