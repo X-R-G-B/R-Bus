@@ -88,6 +88,10 @@ namespace Nitwork {
     /* Send methods */
     void NitworkMainServer::sendListLobby(const boost::asio::ip::udp::endpoint &endpoint, const std::vector<struct lobby_s> &lobbies)
     {
+        if (lobbies.empty()) {
+            Logger::error("Lobbies is empty, can't send it");
+            return;
+        }
         struct packetListLobby_s msg = {
             .header = {0, 0, 0, 0, static_cast<unsigned char>(lobbies.size()), 0},
         };
@@ -101,5 +105,10 @@ namespace Nitwork {
                 }
             };
         }
+        Packet packet(
+            msg.actionLobby[0].action.magick,
+            std::make_any<struct packetListLobby_s>(msg),
+            endpoint);
+        addPacketToSend(packet);
     }
 }
