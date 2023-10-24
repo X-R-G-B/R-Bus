@@ -13,5 +13,5 @@
 #include <vector>
 
 namespace Systems {
-    std::array<std::vector<std::function<void(std::size_t, std::size_t)>>, 4> getSystemsGroups();
+    std::array<std::vector<std::function<void(std::size_t, std::size_t)>>, 5> getSystemsGroups();
 } // namespace Systems

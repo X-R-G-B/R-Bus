@@ -243,6 +243,13 @@ namespace Raylib {
         TakeScreenshot(fileName.c_str());
     }
 
+    // Collision check functions
+
+    bool checkCollisionPointRec(Vector2 point, Rectangle rec)
+    {
+        return (CheckCollisionPointRec({point.x, point.y}, {rec.x, rec.y, rec.width, rec.height}));
+    }
+
     // Input-related functions: keyboard
 
     bool isKeyPressed(KeyboardKey key)
