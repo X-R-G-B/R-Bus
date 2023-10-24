@@ -99,6 +99,22 @@ namespace Systems {
         }
     }
 
+    static Types::Position adjustMissilePosition(Types::Position &pos, missileTypes_e typeOfMissile, std::size_t id)
+    {
+        adjustPlayerBulletPosition(pos, id);
+        Json &json = Json::getInstance();
+        Registry::getInstance().addEntity();
+        nlohmann::json bulletData =
+            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile), "bullets");
+        Types::CollisionRect collisionRect =
+            json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
+        Types::Position newPos = pos;
+        int halfSprite         = Maths::divisionWithTwoIntDecimals(collisionRect.width, 200);
+        newPos.y               = Maths::subtractionWithTwoIntDecimals(newPos.y, halfSprite);
+        newPos.x               = pos.x;
+        return newPos;
+    }
+
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
@@ -119,10 +135,11 @@ namespace Systems {
             if (arrHealth.exist(id) && arrHealth[id].hp <= 0) {
                 continue;
             }
+            Types::Position pos = adjustMissilePosition(arrPosition[id], missile.type, id);
             Nitwork::NitworkClient::getInstance().addNewBulletMsg(
-                {Maths::removeIntDecimals(arrPosition[id].x), Maths::removeIntDecimals(arrPosition[id].y)},
+                {Maths::removeIntDecimals(pos.x), Maths::removeIntDecimals(pos.y)},
                 missile.type);
-            createMissile(adjustPlayerBulletPosition(arrPosition[id], id), missile);
+            createMissile(pos, missile);
             clock_.restart(getClockIdFromMissileType(missile.type));
         }
     }
