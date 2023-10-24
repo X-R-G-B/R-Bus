@@ -82,33 +82,27 @@ namespace Systems {
         return true;
     }
 
-    static Types::Position adjustPlayerBulletPosition(Types::Position &playerPos, std::size_t id)
+    static Types::Position
+    adjustMissilePosition(Types::Position &pos, missileTypes_e typeOfMissile, std::size_t id)
     {
+        Types::Position newPos                            = pos;
+        Json &json                                        = Json::getInstance();
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::CollisionRect> arrCol = registry.getComponents<Types::CollisionRect>();
 
         if (arrCol.exist(id)) {
             Types::CollisionRect &col = arrCol[id];
-            float posX                = Maths::intToFloatConservingDecimals(playerPos.x)
+            float posX                = Maths::intToFloatConservingDecimals(pos.x)
                 + (Maths::intToFloatConservingDecimals(col.width) / 2.F);
-            float posY = Maths::intToFloatConservingDecimals(playerPos.y)
+            float posY = Maths::intToFloatConservingDecimals(pos.y)
                 + (Maths::intToFloatConservingDecimals(col.height) / 2.F);
-            return {Maths::floatToIntConservingDecimals(posX), Maths::floatToIntConservingDecimals(posY)};
-        } else {
-            return {playerPos.x, playerPos.y};
+            newPos.x = Maths::floatToIntConservingDecimals(posX);
+            newPos.y = Maths::floatToIntConservingDecimals(posY);
         }
-    }
-
-    static Types::Position adjustMissilePosition(Types::Position &pos, missileTypes_e typeOfMissile, std::size_t id)
-    {
-        adjustPlayerBulletPosition(pos, id);
-        Json &json = Json::getInstance();
-        Registry::getInstance().addEntity();
         nlohmann::json bulletData =
             json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
-        Types::Position newPos = pos;
         int halfSprite         = Maths::divisionWithTwoIntDecimals(collisionRect.width, 200);
         newPos.y               = Maths::subtractionWithTwoIntDecimals(newPos.y, halfSprite);
         newPos.x               = pos.x;
