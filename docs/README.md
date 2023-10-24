@@ -24,4 +24,37 @@ it is the last arcade title Nintendo distributed.
 
 - 2D
 
+## Installation
+
+Installing R-Bus is easy. Follow the instructions below based on your preferred method and operating system.
+
+There are two ways to install R-Bus:
+- From packaged binary: Prefer this method if you want to avoid downloading dependencies and compiling R-Bus.
+- From source: Choose this method if you're comfortable with handling dependencies and compilation.
+
+### From Packaged Binary:
+
+#### GNU/Linux:
+- [GNU/Linux Binary Installation](https://x-r-g-b.github.io/R-Bus/user-guide/installation/packaged-binary/gnu-linux.html)
+
+#### Windows:
+- [Windows Binary Installation](https://x-r-g-b.github.io/R-Bus/user-guide/installation/packaged-binary/windows.html)
+
+### From Source:
+
+#### GNU/Linux:
+- [GNU/Linux Source Installation](https://x-r-g-b.github.io/R-Bus/user-guide/installation/source/gnu-linux.html)
+
+#### Windows:
+- [Windows Source Installation](https://x-r-g-b.github.io/R-Bus/user-guide/installation/source/windows.html)
+
+#### MacOS:
+- [MacOS Source Installation](https://x-r-g-b.github.io/R-Bus/user-guide/installation/source/macos.html)
+
+## Cross-Platform
+R-Bus is designed to be cross-platform, available on Windows, Linux, and MacOS.
+
+## Created By X-L-R-G-B
+This project is a collaborative effort by Xavier, Leonore, Romain, Guillaume, and Brice.
+
 *if you are on github repo, you can see the mdbook here: [https://x-r-g-b.github.io/R-Bus/](https://x-r-g-b.github.io/R-Bus/)*
