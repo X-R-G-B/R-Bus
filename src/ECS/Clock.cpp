@@ -67,3 +67,8 @@ void Clock::restart(std::size_t id)
 {
     _clocks[id] = std::chrono::high_resolution_clock::now();
 }
+
+void Clock::restart(std::size_t id, std::time_t time)
+{
+    _clocks[id] = std::chrono::high_resolution_clock::from_time_t(time);
+}

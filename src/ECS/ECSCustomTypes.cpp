@@ -5,34 +5,36 @@ std::mutex Types::Enemy::_mutex;
 
 namespace Types {
 
-    Physics::Physics(const Types::Position &originPos) : _originPos(originPos)
+    Physics::Physics(const Types::Position &originPos, unsigned long int timestampDiff, unsigned long int timestamp ,const Types::Velocity &originvVelocity) : _originPos(originPos), _timestampDiff(timestampDiff), _timestamp(timestamp), _originvVelocity(originvVelocity)
     {
     }
 
-    void Physics::addPhysic(physicsType_e type)
+    unsigned long int Physics::getTimestampDiff() const
+    {
+        return _timestampDiff;
+    }
+
+    void Physics::addPhysic(physicsType_e type, unsigned long int timestamp)
     {
         if (_physicsMap.find(type) != _physicsMap.end()) {
             Logger::error("Physics already added");
             return;
         }
-        if (type == ZIGZAG) {
-            _physicsMap[type] = Registry::getInstance().getClock().create(true);
-        } else {
-            _physicsMap[type] = std::nullopt;
-        }
+        _physicsMap[type] = Registry::getInstance().getClock().create(true);
+        Registry::getInstance().getClock().restart(_physicsMap[type], static_cast<std::time_t>(timestamp));
     }
 
-    void Physics::addPhysic(std::string type)
+    void Physics::addPhysic(std::string type, unsigned long int timestamp)
     {
         auto it = physicsTypeMap.find(type);
         if (it == physicsTypeMap.end()) {
             Logger::error("Physics not found");
             return;
         }
-        addPhysic(it->second);
+        addPhysic(it->second, timestamp);
     }
 
-    std::optional<std::size_t> Physics::getClock(physicsType_e type) const
+    std::size_t Physics::getClock(physicsType_e type) const
     {
         if (_physicsMap.find(type) == _physicsMap.end()) {
             Logger::error("Physics not found");
@@ -45,7 +47,7 @@ namespace Types {
     {
         std::vector<physicsType_e> physics;
 
-        for (auto &pair : _physicsMap) {
+        for (const auto &pair : _physicsMap) {
             physics.push_back(pair.first);
         }
         return physics;
@@ -78,12 +80,22 @@ namespace Types {
             throw std::runtime_error(
                 "Physics of type " + std::to_string(type) + " not found in getClockId");
         }
-        return it->second.value();
+        return it->second;
     }
 
     const Types::Position &Physics::getOriginPos() const
     {
         return _originPos;
+    }
+
+    const Types::Velocity &Physics::getOriginvVelocity() const
+    {
+        return _originvVelocity;
+    }
+
+    unsigned long int Physics::getTimestamp() const
+    {
+        return _timestamp;
     }
 
 } // namespace Types

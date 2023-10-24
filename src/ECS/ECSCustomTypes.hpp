@@ -10,7 +10,6 @@
 #include <cstddef>
 #include <functional>
 #include <mutex>
-#include <optional>
 #include <vector>
 #include "Clock.hpp"
 #include "nlohmann/json.hpp"
@@ -92,23 +91,29 @@ namespace Types {
                 {"bouncing", BOUNCING},
                 {"zigzag",   ZIGZAG  }
             };
-            Physics(const Types::Position &originPos);
+            Physics(const Types::Position &originPos, unsigned long int timestampDiff, unsigned long int timestamp, const Types::Velocity &originvVelocity);
 
-            void addPhysic(physicsType_e type);
-            void addPhysic(std::string type);
-            std::optional<std::size_t> getClock(physicsType_e type) const;
+            void addPhysic(physicsType_e type, unsigned long int timestamp);
+            void addPhysic(std::string type, unsigned long int timestamp);
+            std::size_t getClock(physicsType_e type) const;
             std::vector<physicsType_e> getPhysics() const;
             bool hasPhysics(physicsType_e type) const;
             bool hasPhysics() const;
             void removePhysics(physicsType_e type);
             std::size_t getClockId(physicsType_e type) const;
             const Types::Position &getOriginPos() const;
+            unsigned long int getTimestampDiff() const;
+            unsigned long int getTimestamp() const;
+            const Types::Velocity &getOriginvVelocity() const;
 
         private:
             // we have a map with a physic and an optional clock
             // because some physics don't need a clock
-            std::unordered_map<physicsType_e, std::optional<std::size_t>> _physicsMap;
+            std::unordered_map<physicsType_e, std::size_t> _physicsMap;
             Types::Position _originPos;
+            unsigned long int _timestampDiff;
+            unsigned long int _timestamp;
+            Types::Velocity _originvVelocity;
     };
 
     struct PlayerAllies { };

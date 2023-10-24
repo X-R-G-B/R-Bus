@@ -133,7 +133,7 @@ namespace Nitwork {
         addPacketToSend(packet);
     }
 
-    void
+    unsigned long int
     NitworkClient::addNewBulletMsg(const struct position_absolute_s &pos, const missileTypes_e &missileType)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
@@ -156,6 +156,7 @@ namespace Nitwork {
             std::make_any<struct packetNewBullet_s>(packetNewBullet),
             _serverEndpoint);
         addPacketToSend(packet);
+        return packetNewBullet.msg.timestamp;
     };
 
     void NitworkClient::addPositionAbsoluteMsg(struct position_absolute_s pos)

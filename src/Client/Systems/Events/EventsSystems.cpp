@@ -110,7 +110,7 @@ namespace Systems {
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
-        if (checkBulletRequirements(missile)) {
+        if (!checkBulletRequirements(missile)) {
             return;
         }
 
@@ -119,10 +119,10 @@ namespace Systems {
             if (arrHealth.exist(id) && arrHealth[id].hp <= 0) {
                 continue;
             }
-            Nitwork::NitworkClient::getInstance().addNewBulletMsg(
+            unsigned long int timestamp = Nitwork::NitworkClient::getInstance().addNewBulletMsg(
                 {Maths::removeIntDecimals(arrPosition[id].x), Maths::removeIntDecimals(arrPosition[id].y)},
                 missile.type);
-            createMissile(adjustPlayerBulletPosition(arrPosition[id], id), missile);
+            createMissile(adjustPlayerBulletPosition(arrPosition[id], id), missile, timestamp);
             clock_.restart(getClockIdFromMissileType(missile.type));
         }
     }

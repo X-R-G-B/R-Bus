@@ -86,7 +86,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(bulletDatas);
         Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
 
-        if (json.isDataExist(bulletData, "animRect")) {
+        if (Json::isDataExist(bulletData, "animRect")) {
             nlohmann::basic_json<> animRectData =
                 Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(bulletData, "animRect");
             Types::AnimRect animRect(spriteRect, animRectData, Types::RectListType::MOVE);
@@ -95,17 +95,17 @@ namespace Systems {
     }
 #endif
 
-    static void addPhysicsToBullet(nlohmann::json bulletData, Types::Position &position)
+    static void addPhysicsToBullet(nlohmann::json bulletData, Types::Position &position, unsigned long int timestamp, Types::Velocity &velocity)
     {
         Json &json = Json::getInstance();
-        if (!json.isDataExist(bulletData, "physics")) {
+        if (!Json::isDataExist(bulletData, "physics")) {
             return;
         }
-        Types::Physics physicComp(position);
+        Types::Physics physicComp(position, static_cast<unsigned long int>(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) - timestamp, timestamp, velocity);
         std::vector<std::string> physics =
             json.getDataFromJson<std::vector<std::string>>(bulletData, "physics");
         for (const auto &it : physics) {
-            physicComp.addPhysic(it);
+            physicComp.addPhysic(it, timestamp);
         }
         if (physicComp.hasPhysics()) {
             Registry::getInstance().getComponents<Types::Physics>().insertBack(physicComp);
@@ -132,7 +132,7 @@ namespace Systems {
         addSpriteRectsForBullet(bulletData, collisionRect);
         playBulletSound(typeOfMissile);
 #endif
-        addPhysicsToBullet(bulletData, position);
+        addPhysicsToBullet(bulletData, position, timestamp, velocity);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
@@ -179,10 +179,6 @@ namespace Systems {
             std::size_t clockId = physicComps[id].getClockId(ZIGZAG);
             std::size_t elapsedTimeInMs =
                 Registry::getInstance().getClock().elapsedMillisecondsSince(clockId);
-            if (elapsedTimeInMs == static_cast<std::size_t>(-1)) {
-                Registry::getInstance().getClock().restart(clockId);
-                elapsedTimeInMs = 0;
-            }
             // Height of the wave = 10% of the screen
             float amplitude = 10.0F;
             // Time for the complete zigzag cycle 400ms
@@ -195,16 +191,33 @@ namespace Systems {
         }
     }
 
+    static void forwardVelocity(Registry::components<Types::Velocity> &velocities, Registry::components<Types::Physics> &physicComps, std::size_t id)
+    {
+        auto now = static_cast<unsigned long int>(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now()));
+        auto timestampDiff = physicComps[id].getTimestampDiff();
+        auto timestampOrigin = physicComps[id].getTimestamp();
+        if (now - timestampOrigin < timestampDiff * 2) {
+            velocities[id].speedX = 2 * physicComps[id].getOriginvVelocity().speedX;
+            velocities[id].speedY = 2 * physicComps[id].getOriginvVelocity().speedY;
+        } else {
+            velocities[id].speedX = physicComps[id].getOriginvVelocity().speedX;
+            velocities[id].speedY = physicComps[id].getOriginvVelocity().speedY;
+        }
+    }
+
     void updatePhysics(std::size_t /* unused */, std::size_t /* unused */)
     {
         std::vector<std::size_t> bouncingId;
         std::vector<std::size_t> zigzagId;
         Registry::components<Types::Physics> physicComps =
             Registry::getInstance().getComponents<Types::Physics>();
+        Registry::components<Types::Velocity> velocityComps =
+            Registry::getInstance().getComponents<Types::Velocity>();
         std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
             {typeid(Types::Physics), typeid(Types::Position), typeid(Types::Velocity)});
 
         for (std::size_t id : ids) {
+            forwardVelocity(velocityComps, physicComps, id);
             if (physicComps[id].hasPhysics(BOUNCING)) {
                 bouncingId.push_back(id);
             } else if (physicComps[id].hasPhysics(ZIGZAG)) {
