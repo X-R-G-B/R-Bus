@@ -195,9 +195,15 @@ namespace Types {
             enemy_id_s constId;
             enum enemy_type_e type;
 
+            EnnemyAttack &getAttack()
+            {
+                return attack;
+            }
+
         private:
             static unsigned int _enemyNb;
             static std::mutex _mutex;
+            EnnemyAttack attack;
     };
 
     struct Dead {

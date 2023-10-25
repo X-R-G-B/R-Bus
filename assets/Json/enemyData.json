@@ -59,11 +59,13 @@
                     ]
                 }
             ],
-            "bulletId": "classic",
-            "numberOfMissiles": 1,
-            "missileDirection" : {
-                "x": 0,
-                "y": 0
+            "attack" : {
+                "bulletId": "classic",
+                "numberOfMissiles": 1,
+                "missileDirection" : {
+                    "x": 55,
+                    "y": 0
+                }
             }
         }
     ]
