@@ -56,21 +56,28 @@ namespace Systems {
         Registry::components<Types::Position> positionComp =
             Registry::getInstance().getComponents<Types::Position>();
 
-        for (std::size_t id : ids)
-        {
+        for (std::size_t id : ids) {
             const Types::Zigzag &zigzagData = physicComps[id].getPhysicData<Types::Zigzag>(ZIGZAG);
-            std::size_t elapsedTimeInMs = Registry::getInstance().getClock().elapsedMillisecondsSince(zigzagData.clockId);
+            std::size_t elapsedTimeInMs =
+                Registry::getInstance().getClock().elapsedMillisecondsSince(zigzagData.clockId);
             if (elapsedTimeInMs == static_cast<std::size_t>(-1)) {
                 Registry::getInstance().getClock().restart(zigzagData.clockId);
                 elapsedTimeInMs = 0;
             }
-            // Height of the wave = 10% of the screen
+            int maxY = Maths::floatToIntConservingDecimals(zigzagData.maxScreenY);
+            int minY = Maths::floatToIntConservingDecimals(zigzagData.minScreenY);
+            // Height of the wave = ?% of the screen
             float amplitude = zigzagData.amplitude / 2;
-            // Time for the complete zigzag cycle 400ms
+            // Time for the complete zigzag cycle
             float period = zigzagData.period;
             float WavePosY =
                 amplitude * std::sin(2.0F * static_cast<float>(M_PI) * elapsedTimeInMs / period);
             positionComp[id].y = zigzagData.originPos.y + Maths::floatToIntConservingDecimals(WavePosY);
+            if (positionComp[id].y < minY) {
+                positionComp[id].y = minY;
+            } else if (positionComp[id].y > maxY) {
+                positionComp[id].y = maxY;
+            }
             velocities[id].speedY = 0;
         }
     }
@@ -102,8 +109,7 @@ namespace Systems {
             return;
         }
         Types::Physics physicComp;
-        nlohmann::json physics =
-            json.getDataFromJson<nlohmann::json>(jsonObject, "physics");
+        nlohmann::json physics = json.getDataFromJson<nlohmann::json>(jsonObject, "physics");
         for (auto &it : physics) {
             physicComp.addPhysic(it, originPos);
         }

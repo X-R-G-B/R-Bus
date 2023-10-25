@@ -245,7 +245,6 @@ namespace Systems {
                 position = tmpPos;
             }
 
-
 #ifdef CLIENT
             Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
             Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);

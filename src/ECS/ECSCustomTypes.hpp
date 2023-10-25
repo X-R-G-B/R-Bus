@@ -7,13 +7,13 @@
 
 #pragma once
 
+#include <Json.hpp>
+#include <any>
 #include <cstddef>
 #include <functional>
 #include <mutex>
 #include <optional>
 #include <vector>
-#include <Json.hpp>
-#include <any>
 #include "Clock.hpp"
 #include "nlohmann/json.hpp"
 extern "C"
@@ -100,13 +100,14 @@ namespace Types {
             }
             std::size_t clockId;
             Types::Position originPos;
-            float period = 400.0F;
-            float amplitude = 10.0F;
+            float period     = 400.0F;
+            float amplitude  = 10.0F;
+            float maxScreenY = 100.0F;
+            float minScreenY = 0.0F;
     };
 
     struct Bouncing {
-            Bouncing(const Types::Position &originPosition)
-                : originPos(originPosition)
+            Bouncing(const Types::Position &originPosition) : originPos(originPosition)
             {
             }
             Types::Position originPos;
@@ -120,21 +121,7 @@ namespace Types {
             };
             Physics();
 
-            void addPhysic(nlohmann::json &jsonObject, const Types::Position &originPos)
-            {
-                Json &json = Json::getInstance();
-                std::string id = json.getDataFromJson<std::string>(jsonObject, "id");
-                if (id == "zigzag") {
-                    Zigzag zigzag(originPos);
-                    if (json.isDataExist(jsonObject, "amplitude")) {
-                        zigzag.amplitude = json.getDataFromJson<float>(jsonObject, "amplitude");
-                    }
-                    if (json.isDataExist(jsonObject, "period")) {
-                        zigzag.period = json.getDataFromJson<float>(jsonObject, "period");
-                    }
-                    _physicsMap[ZIGZAG] = zigzag;
-                }
-            }
+            void addPhysic(nlohmann::json &jsonObject, const Types::Position &originPos);
 
             void removePhysic(physicsType_e type);
             void removePhysic(std::string type);
@@ -150,6 +137,8 @@ namespace Types {
             }
 
         private:
+            void initBounce(nlohmann::json &jsonObject, const Types::Position &originPos);
+            void initZigzag(nlohmann::json &jsonObject, const Types::Position &originPos);
             std::unordered_map<physicsType_e, std::any> _physicsMap;
     };
 

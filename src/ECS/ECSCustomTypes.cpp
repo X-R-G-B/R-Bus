@@ -53,4 +53,41 @@ namespace Types {
         _physicsMap.clear();
     }
 
+    void Physics::initBounce(nlohmann::json &jsonObject, const Types::Position &originPos)
+    {
+        Bouncing bounce(originPos);
+        _physicsMap[BOUNCING] = bounce;
+    }
+
+    void Physics::initZigzag(nlohmann::json &jsonObject, const Types::Position &originPos)
+    {
+        Json &json = Json::getInstance();
+        Zigzag zigzag(originPos);
+        if (json.isDataExist(jsonObject, "amplitude")) {
+            zigzag.amplitude = json.getDataFromJson<float>(jsonObject, "amplitude");
+        }
+        if (json.isDataExist(jsonObject, "period")) {
+            zigzag.period = json.getDataFromJson<float>(jsonObject, "period");
+        }
+        if (json.isDataExist(jsonObject, "maxScreenY")) {
+            zigzag.maxScreenY = json.getDataFromJson<float>(jsonObject, "maxScreenY");
+        }
+        if (json.isDataExist(jsonObject, "minScreenY")) {
+            zigzag.minScreenY = json.getDataFromJson<float>(jsonObject, "minScreenY");
+        }
+        _physicsMap[ZIGZAG] = zigzag;
+    }
+
+    void Physics::addPhysic(nlohmann::json &jsonObject, const Types::Position &originPos)
+    {
+        Json &json     = Json::getInstance();
+        std::string id = json.getDataFromJson<std::string>(jsonObject, "id");
+        if (id == "zigzag") {
+            initZigzag(jsonObject, originPos);
+        }
+        if (id == "bouncing") {
+            initBounce(jsonObject, originPos);
+        }
+    }
+
 } // namespace Types
