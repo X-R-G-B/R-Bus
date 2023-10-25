@@ -58,7 +58,13 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "bulletId": "classic",
+            "numberOfMissiles": 1,
+            "missileDirection" : {
+                "x": 0,
+                "y": 0
+            }
         }
     ]
 }

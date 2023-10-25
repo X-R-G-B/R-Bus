@@ -23,11 +23,6 @@ enum missileTypes_e {
     PERFORANT
 };
 
-enum physicsType_e {
-    ZIGZAG = 0,
-    BOUNCING
-};
-
 PACK(struct health_s {
     int hp;
 });

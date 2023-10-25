@@ -90,6 +90,11 @@ namespace Types {
             missileTypes_e type;
     };
 
+    enum physicsType_e {
+        ZIGZAG = 0,
+        BOUNCING
+    };
+
     // These structs are used to store physics data
 
     struct Zigzag {
@@ -145,6 +150,12 @@ namespace Types {
     struct PlayerAllies { };
 
     struct EnemyAllies { };
+
+    struct EnnemyAttack {
+            missileTypes_e missileType      = missileTypes_e::CLASSIC;
+            Types::Position launchDirection = {0, 0};
+            std::size_t numberOfMissiles    = 1;
+    };
 
     struct Enemy {
         public:

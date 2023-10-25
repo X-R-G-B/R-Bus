@@ -204,6 +204,24 @@ namespace Systems {
         }
     }
 
+    static void initEnnemyWeapon(JsonType jsonType, Types::EnnemyAttack &attackData)
+    {
+        Json &json               = Json::getInstance();
+        nlohmann::json enemyData = Json::getInstance().getJsonObjectById(jsonType, "enemy", "enemy");
+
+        if (!json.isDataExist(enemyData, "bulletId")) {
+            std::string id         = json.getDataFromJson<std::string>(enemyData, "bulletId");
+            attackData.missileType = getMissileTypeFromId(id);
+        }
+        if (!json.isDataExist(enemyData, "missileDirection")) {
+            attackData.launchDirection =
+                json.getDataFromJson<Types::Position>(enemyData, "missileDirection");
+        }
+        if (!json.isDataExist(enemyData, "numberOfMissiles")) {
+            attackData.numberOfMissiles = json.getDataFromJson<int>(enemyData, "numberOfMissiles");
+        }
+    }
+
     void
     initEnemy(enemy_type_e enemyType, Types::Position position, bool setId, struct ::enemy_id_s enemyId)
     {
@@ -230,6 +248,7 @@ namespace Systems {
 
 #endif
             Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
+
             Types::CollisionRect collisionRect =
                 Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect");
             Types::Damage damageComp   = {Json::getInstance().getDataFromJson<int>(elem, "damage")};

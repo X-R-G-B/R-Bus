@@ -30,7 +30,17 @@ namespace Systems {
         {PERFORANT, "perforant"}
     };
 
-    std::string getMissileId(missileTypes_e type)
+    missileTypes_e getMissileTypeFromId(const std::string &id)
+    {
+        for (auto &it : missileTypeMap) {
+            if (it.second == id) {
+                return it.first;
+            }
+        }
+        throw std::runtime_error("Unknown missile id");
+    }
+
+    std::string getMissileIdFromType(missileTypes_e type)
     {
         auto it = missileTypeMap.find(type);
         if (it != missileTypeMap.end()) {
@@ -46,7 +56,7 @@ namespace Systems {
         Registry::components<Raylib::Sound> arrSounds =
             Registry::getInstance().getComponents<Raylib::Sound>();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
+            json.getJsonObjectById(JsonType::BULLETS, getMissileIdFromType(typeOfMissile.type), "bullets");
 
         const std::string soundPathShoot = json.getDataFromJson<std::string>(bulletData, "soundPath");
 
@@ -89,7 +99,7 @@ namespace Systems {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
+            json.getJsonObjectById(JsonType::BULLETS, getMissileIdFromType(typeOfMissile.type), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");

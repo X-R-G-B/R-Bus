@@ -57,7 +57,7 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Position>();
 
         for (std::size_t id : ids) {
-            const Types::Zigzag &zigzagData = physicComps[id].getPhysicData<Types::Zigzag>(ZIGZAG);
+            const Types::Zigzag &zigzagData = physicComps[id].getPhysicData<Types::Zigzag>(Types::ZIGZAG);
             std::size_t elapsedTimeInMs =
                 Registry::getInstance().getClock().elapsedMillisecondsSince(zigzagData.clockId);
             if (elapsedTimeInMs == static_cast<std::size_t>(-1)) {
@@ -92,9 +92,9 @@ namespace Systems {
             {typeid(Types::Physics), typeid(Types::Position), typeid(Types::Velocity)});
 
         for (std::size_t id : ids) {
-            if (physicComps[id].hasPhysics(BOUNCING)) {
+            if (physicComps[id].hasPhysics(Types::BOUNCING)) {
                 bouncingId.push_back(id);
-            } else if (physicComps[id].hasPhysics(ZIGZAG)) {
+            } else if (physicComps[id].hasPhysics(Types::ZIGZAG)) {
                 zigzagId.push_back(id);
             }
         }
