@@ -35,6 +35,7 @@
     #define MAGICK_PLAYER_DEATH '\x11'
     #define MAGICK_LIST_LOBBY '\x12'
     #define MAGICK_CREATE_LOBBY '\x13'
+    #define MAGICK_MSGCONNECTMAINSERVERRESP '\x14'
 
 typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
@@ -272,6 +273,31 @@ PACK(struct actionLobby_s {
 PACK(struct packetListLobby_s {
     struct header_s header;
     struct actionLobby_s actionLobby[5];
+});
+
+// ---------------------------------------------------------------------------
+// Client Connect to Main Server
+
+PACK(struct msgConnectMainServer_s {
+    n_magick_t magick;
+});
+
+PACK(struct packetConnectMainServer_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgConnectMainServer_s msg;
+});
+
+// Server Respond
+
+PACK(struct msgConnectMainServerResp_s {
+    n_magick_t magick;
+});
+
+PACK(struct packetConnectMainServerResp_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgConnectMainServerResp_s msg;
 });
 
 #endif

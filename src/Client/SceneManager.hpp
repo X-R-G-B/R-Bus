@@ -16,7 +16,7 @@ namespace Scene {
 
     enum class ReturnValue { OK = 0, RET_ERROR = 84 };
 
-    enum class Scene { MENU, MAIN_GAME, SCENE_MAX };
+    enum class Scene { MENU, MAIN_GAME, SELECT_LOBY, SCENE_MAX };
 
     enum class SystemManagers { GAME, EVENTS, DISPLAY, NETWORK };
 

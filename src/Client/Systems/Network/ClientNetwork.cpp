@@ -293,6 +293,19 @@ namespace Systems {
                      + std::to_string(newLobby.lobby.lobbyInfos.port));
     }
 
+    void receiveMsgConnectMainServerResp(bool isOk)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+
+        if (!isOk) {
+            // TODO: Show error on GUI
+            Logger::error("Server Not OK!");
+            return;
+        }
+        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBY);
+        Logger::info("Server OK!");
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()
     {
         return {sendPositionRelative, sendPositionAbsolute};
