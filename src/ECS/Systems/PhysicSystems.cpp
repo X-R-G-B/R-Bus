@@ -56,22 +56,21 @@ namespace Systems {
         Registry::components<Types::Position> positionComp =
             Registry::getInstance().getComponents<Types::Position>();
 
-        for (std::size_t id : ids) {
-            std::size_t clockId = physicComps[id].getClockId(ZIGZAG);
-            std::size_t elapsedTimeInMs =
-                Registry::getInstance().getClock().elapsedMillisecondsSince(clockId);
+        for (std::size_t id : ids)
+        {
+            const Types::Zigzag &zigzagData = physicComps[id].getPhysicData<Types::Zigzag>(ZIGZAG);
+            std::size_t elapsedTimeInMs = Registry::getInstance().getClock().elapsedMillisecondsSince(zigzagData.clockId);
             if (elapsedTimeInMs == static_cast<std::size_t>(-1)) {
-                Registry::getInstance().getClock().restart(clockId);
+                Registry::getInstance().getClock().restart(zigzagData.clockId);
                 elapsedTimeInMs = 0;
             }
             // Height of the wave = 10% of the screen
-            float amplitude = 10.0F;
+            float amplitude = zigzagData.amplitude / 2;
             // Time for the complete zigzag cycle 400ms
-            float period = 400.0F;
+            float period = zigzagData.period;
             float WavePosY =
                 amplitude * std::sin(2.0F * static_cast<float>(M_PI) * elapsedTimeInMs / period);
-            positionComp[id].y =
-                physicComps[id].getOriginPos().y + Maths::floatToIntConservingDecimals(WavePosY);
+            positionComp[id].y = zigzagData.originPos.y + Maths::floatToIntConservingDecimals(WavePosY);
             velocities[id].speedY = 0;
         }
     }
@@ -102,11 +101,11 @@ namespace Systems {
         if (!json.isDataExist(jsonObject, "physics")) {
             return;
         }
-        Types::Physics physicComp(originPos);
-        std::vector<std::string> physics =
-            json.getDataFromJson<std::vector<std::string>>(jsonObject, "physics");
-        for (const auto &it : physics) {
-            physicComp.addPhysic(it);
+        Types::Physics physicComp;
+        nlohmann::json physics =
+            json.getDataFromJson<nlohmann::json>(jsonObject, "physics");
+        for (auto &it : physics) {
+            physicComp.addPhysic(it, originPos);
         }
         if (physicComp.hasPhysics()) {
             Registry::getInstance().getComponents<Types::Physics>().insertBack(physicComp);

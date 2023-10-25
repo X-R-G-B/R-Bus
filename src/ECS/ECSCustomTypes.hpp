@@ -12,6 +12,8 @@
 #include <mutex>
 #include <optional>
 #include <vector>
+#include <json.hpp>
+#include <any>
 #include "Clock.hpp"
 #include "nlohmann/json.hpp"
 extern "C"
@@ -19,6 +21,8 @@ extern "C"
 #include "MessageTypes.h"
 }
 #include "Registry.hpp"
+
+#include <iostream>
 
 // all values are in percentage of the screen
 namespace Types {
@@ -86,29 +90,67 @@ namespace Types {
             missileTypes_e type;
     };
 
+    // These structs are used to store physics data
+
+    struct Zigzag {
+            Zigzag(const Types::Position &originPosition)
+                : clockId(Registry::getInstance().getClock().create(true)),
+                  originPos(originPosition)
+            {
+            }
+            std::size_t clockId;
+            Types::Position originPos;
+            float period = 400.0F;
+            float amplitude = 10.0F;
+    };
+
+    struct Bouncing {
+            Bouncing(const Types::Position &originPosition)
+                : originPos(originPosition)
+            {
+            }
+            Types::Position originPos;
+    };
+
     class Physics {
         public:
             inline static const std::map<std::string, physicsType_e> physicsTypeMap = {
                 {"bouncing", BOUNCING},
                 {"zigzag",   ZIGZAG  }
             };
-            Physics(const Types::Position &originPos);
+            Physics();
 
-            void addPhysic(physicsType_e type);
-            void addPhysic(std::string type);
-            std::optional<std::size_t> getClock(physicsType_e type) const;
+            void addPhysic(nlohmann::json &jsonObject, const Types::Position &originPos)
+            {
+                Json &json = Json::getInstance();
+                std::string id = json.getDataFromJson<std::string>(jsonObject, "id");
+                if (id == "zigzag") {
+                    Zigzag zigzag(originPos);
+                    if (json.isDataExist(jsonObject, "amplitude")) {
+                        zigzag.amplitude = json.getDataFromJson<float>(jsonObject, "amplitude");
+                    }
+                    if (json.isDataExist(jsonObject, "period")) {
+                        zigzag.period = json.getDataFromJson<float>(jsonObject, "period");
+                    }
+                    _physicsMap[ZIGZAG] = zigzag;
+                }
+            }
+
+            void removePhysic(physicsType_e type);
+            void removePhysic(std::string type);
+            void removePhysics();
             std::vector<physicsType_e> getPhysics() const;
             bool hasPhysics(physicsType_e type) const;
             bool hasPhysics() const;
-            void removePhysics(physicsType_e type);
-            std::size_t getClockId(physicsType_e type) const;
-            const Types::Position &getOriginPos() const;
+
+            template <typename T>
+            T &getPhysicData(physicsType_e type)
+            {
+                return std::any_cast<T &>(_physicsMap[type]);
+            }
 
         private:
-            // we have a map with a physic and an optional clock
-            // because some physics don't need a clock
-            std::unordered_map<physicsType_e, std::optional<std::size_t>> _physicsMap;
-            Types::Position _originPos;
+            std::unordered_map<physicsType_e, std::any> _physicsMap;
     };
 
     struct PlayerAllies { };

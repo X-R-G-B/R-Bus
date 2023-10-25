@@ -5,40 +5,8 @@ std::mutex Types::Enemy::_mutex;
 
 namespace Types {
 
-    Physics::Physics(const Types::Position &originPos) : _originPos(originPos)
+    Physics::Physics()
     {
-    }
-
-    void Physics::addPhysic(physicsType_e type)
-    {
-        if (_physicsMap.find(type) != _physicsMap.end()) {
-            Logger::error("Physics already added");
-            return;
-        }
-        if (type == ZIGZAG) {
-            _physicsMap[type] = Registry::getInstance().getClock().create(true);
-        } else {
-            _physicsMap[type] = std::nullopt;
-        }
-    }
-
-    void Physics::addPhysic(std::string type)
-    {
-        auto it = physicsTypeMap.find(type);
-        if (it == physicsTypeMap.end()) {
-            Logger::error("Physics not found");
-            return;
-        }
-        addPhysic(it->second);
-    }
-
-    std::optional<std::size_t> Physics::getClock(physicsType_e type) const
-    {
-        if (_physicsMap.find(type) == _physicsMap.end()) {
-            Logger::error("Physics not found");
-            throw std::runtime_error("Get clock: Physics of type " + std::to_string(type) + " not found");
-        }
-        return _physicsMap.at(type);
     }
 
     std::vector<physicsType_e> Physics::getPhysics() const
@@ -61,7 +29,7 @@ namespace Types {
         return !_physicsMap.empty();
     }
 
-    void Physics::removePhysics(physicsType_e type)
+    void Physics::removePhysic(physicsType_e type)
     {
         if (_physicsMap.find(type) == _physicsMap.end()) {
             Logger::error("Physics not found");
@@ -70,20 +38,19 @@ namespace Types {
         _physicsMap.erase(type);
     }
 
-    std::size_t Physics::getClockId(physicsType_e type) const
+    void Physics::removePhysic(std::string type)
     {
-        auto it = _physicsMap.find(type);
-        if (it == _physicsMap.end()) {
-            Logger::error("Get clock id: Physics not found");
-            throw std::runtime_error(
-                "Physics of type " + std::to_string(type) + " not found in getClockId");
+        auto it = physicsTypeMap.find(type);
+        if (it == physicsTypeMap.end()) {
+            Logger::error("Physics not found");
+            return;
         }
-        return it->second.value();
+        removePhysic(it->second);
     }
 
-    const Types::Position &Physics::getOriginPos() const
+    void Physics::removePhysics()
     {
-        return _originPos;
+        _physicsMap.clear();
     }
 
 } // namespace Types

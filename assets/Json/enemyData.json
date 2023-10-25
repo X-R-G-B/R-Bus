@@ -25,7 +25,11 @@
                 "speedY": 0
             },
             "physics": [
-                "zigzag"
+                {
+                    "id": "zigzag",
+                    "amplitude": 10.0,
+                    "period": 400.0
+                }
             ],
             "animRect": [
                 {
