@@ -179,7 +179,7 @@ namespace Nitwork {
                 LIST_LOBBY,
                 {
                     [this](actionHandler &actionHandler, const struct header_s &header) {
-                        handleBody<struct msgNewLobby_s>(actionHandler, header);
+                        handleBody<struct msgLobbyInfo_s>(actionHandler, header);
                     },
                     [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                         Systems::handleNewLobbyMsg(msg, endpoint);

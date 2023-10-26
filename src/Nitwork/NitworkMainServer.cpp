@@ -5,8 +5,13 @@
 ** NitworkMainServer
 */
 
-#include "NitworkServer.hpp"
+extern "C"
+{
+#include <unistd.h>
+}
 #include "NitworkMainServer.hpp"
+#include "NitworkServer.hpp"
+#include "ResourcesManager.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -23,8 +28,37 @@ namespace Nitwork {
         return ANitwork::start(port, threadNb, tick);
     }
 
+    void NitworkMainServer::stop()
+    {
+        for (auto pid : _lobbyPids) {
+            kill(pid, SIGINT);
+        }
+        ANitwork::stop();
+    }
+
     /* Handlers methods of the received actions */
-    void NitworkMainServer::handleInitMsg(std::any &/* unused */, boost::asio::ip::udp::endpoint &endpoint)
+    void NitworkMainServer::sendOkServer(const boost::asio::ip::udp::endpoint &endpoint)
+    {
+        struct packetConnectMainServerResp_s packetConnectMainServerResp = {
+            .header =
+                {.magick1          = HEADER_CODE1,
+                         .ids_received     = 0,
+                         .last_id_received = 0,
+                         .id               = 0,
+                         .nb_action        = 1,
+                         .magick2          = HEADER_CODE2},
+            .action = {.magick = OK_SERVER},
+            .msg    = {.magick = MAGICK_MSGCONNECTMAINSERVERRESP}
+        };
+
+        Packet packet(
+            packetConnectMainServerResp.action.magick,
+            std::make_any<struct packetConnectMainServerResp_s>(packetConnectMainServerResp),
+            endpoint);
+        addPacketToSend(packet);
+    }
+
+    void NitworkMainServer::handleInitMsg(std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
         if (_endpoints.size() >= _maxNbPlayer) {
             Logger::error("Too many clients, can't add an other one");
@@ -35,13 +69,12 @@ namespace Nitwork {
             return;
         }
         _endpoints.emplace_back(endpoint);
-        // send Init message to the client, in order to let him know his connected
-//        addInitMessage(endpoint);
+        sendOkServer(endpoint);
     }
 
     /* End of handlers methods of the received actions */
 
-    bool NitworkMainServer::startNitworkConfig(int port, const std::string &/* unused */)
+    bool NitworkMainServer::startNitworkConfig(int port, const std::string & /* unused */)
     {
         boost::asio::ip::udp::endpoint endpoint =
             boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), boost::asio::ip::port_type(port));
@@ -87,24 +120,23 @@ namespace Nitwork {
     }
 
     /* Send methods */
-    void NitworkMainServer::sendListLobby(const boost::asio::ip::udp::endpoint &endpoint, const std::vector<struct lobby_s> &lobbies)
+    void NitworkMainServer::sendListLobby(
+        const boost::asio::ip::udp::endpoint &endpoint,
+        const std::vector<struct lobby_s> &lobbies)
     {
         if (lobbies.empty()) {
             Logger::error("Lobbies is empty, can't send it");
             return;
         }
         struct packetListLobby_s msg = {
-            .header = {0, 0, 0, 0, static_cast<unsigned char>(lobbies.size()), 0},
+            .header      = {0, 0, 0, 0, static_cast<unsigned char>(lobbies.size()), 0},
             .actionLobby = {}
         };
 
         for (std::size_t i = 0; i < lobbies.size(); i++) {
             msg.actionLobby[i] = {
                 .action = {.magick = LIST_LOBBY},
-                .lobby = {
-                           .magick = MAGICK_LIST_LOBBY,
-                           .lobby = lobbies[i]
-                }
+                .lobby  = {.magick = MAGICK_LIST_LOBBY, .lobby = lobbies[i]}
             };
         }
         Packet packet(
@@ -114,36 +146,75 @@ namespace Nitwork {
         addPacketToSend(packet);
     }
 
-    void NitworkMainServer::createLobby(const struct lobby_s &lobby)
+    void NitworkMainServer::forkProcessAndCreateLobby(
+        unsigned int maxNbPlayer,
+        const std::string &name,
+        const std::string &ownerIp,
+        int ownerPort)
     {
-        std::thread([&lobby]() {
-            // call ECS::ResourcesManager::init( with argv[0], for the path of the executable
-            NitworkServer::getInstance().startServer(0, lobby.maxNbPlayer, DEFAULT_THREAD_NB, TICKS);
-            auto serverInfos = NitworkServer::getInstance().getServerInfos();
-            Logger::info("Server started on " + std::string(serverInfos.lobbyInfos.ip) + ":" + std::to_string(serverInfos.lobbyInfos.port));
-        }).detach();
-    }
+        pid_t c_pid = fork();
 
-    void NitworkMainServer::sendCreateLobby(const boost::asio::ip::udp::endpoint &endpoint, const struct lobby_s &lobby)
-    {
-        struct packetListLobby_s msg = {
-            .header = {0, 0, 0, 0, 1, 0},
-            .actionLobby = {}
-        };
-
-        //make detached thread
-        createLobby(lobby);
-        msg.actionLobby[0] = {
-            .action = {.magick = LIST_LOBBY},
-            .lobby = {
-                       .magick = MAGICK_LIST_LOBBY,
-                       .lobby = lobby
+        if (c_pid == -1) {
+            Logger::error("Error: fork failed");
+            return;
+        }
+        if (c_pid == 0) {
+            if (execl(
+                    ECS::ResourcesManager::convertPath("./r-type_server").c_str(),
+                    ECS::ResourcesManager::convertPath("./r-type_server").c_str(),
+                    "1",
+                    std::to_string(maxNbPlayer).c_str(),
+                    name.c_str(),
+                    ownerIp.c_str(),
+                    std::to_string(ownerPort).c_str(),
+                    NULL)) {
+                Logger::error("Error: execl failed");
             }
-        };
-        Packet packet(
-            msg.actionLobby[0].action.magick,
-            std::make_any<struct packetListLobby_s>(msg),
-            endpoint);
-        addPacketToSend(packet);
+        } else {
+            _lobbyPids.emplace_back(c_pid);
+        }
     }
-}
+
+    void NitworkMainServer::createLobby(unsigned int maxNbPlayer, const std::string &name)
+    {
+        if (maxNbPlayer < 1) {
+            Logger::error("Invalid number of players: " + std::to_string(maxNbPlayer));
+            return;
+        }
+        if (name.empty()) {
+            Logger::error("Invalid name: " + name);
+            return;
+        }
+        forkProcessAndCreateLobby(
+            maxNbPlayer,
+            name,
+            _endpoints.back().address().to_string(),
+            _endpoints.back().port());
+    }
+
+    const std::vector<struct lobby_s> &NitworkMainServer::getLobbies() const
+    {
+        return _lobbies;
+    }
+
+    void NitworkMainServer::addLobby(const struct lobby_s &lobby)
+    {
+        if (lobby.name[0] == '\0') {
+            Logger::error("Invalid lobby name");
+            return;
+        }
+        if (lobby.maxNbPlayer < 1) {
+            Logger::error("Invalid lobby maxNbPlayer");
+            return;
+        }
+        if (lobby.ownerInfos.ip[0] == '\0') {
+            Logger::error("Invalid lobby owner ip");
+            return;
+        }
+        if (lobby.lobbyInfos.ip[0] == '\0') {
+            Logger::error("Invalid lobby ip");
+            return;
+        }
+        _lobbies.push_back(lobby);
+    }
+} // namespace Nitwork

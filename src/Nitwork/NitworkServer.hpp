@@ -21,11 +21,20 @@ namespace Nitwork {
 
             static NitworkServer &getInstance();
 
-            bool startServer(int port, int nbPlayer, int threadNb = DEFAULT_THREAD_NB, int tick = TICKS);
+            bool startServer(
+                int nbPlayer,
+                const std::string &name,
+                const std::string &ownerIp,
+                int ownerPort,
+                int port     = RANDOM_PORT,
+                int threadNb = DEFAULT_THREAD_NB,
+                int tick     = TICKS);
 
             struct lobby_s getServerInfos() const;
 
             /* Messages creation methods */
+            void addInfoMsg();
+
             void addStarWaveMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t enemyId);
 
             void addLifeUpdateMessage(
@@ -92,7 +101,7 @@ namespace Nitwork {
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static NitworkServer _instance; // instance of the NitworkServer (singleton)
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
-            unsigned int _maxNbPlayer = 0; // max number of players
+            lobby_s _serverInfos;
 
             // maps that will be used to handle the actions, in order to send or receive them
             std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
@@ -194,6 +203,10 @@ namespace Nitwork {
                  [this](Packet &packet) {
                      sendData<struct packetPlayerDeath_s>(packet);
                  }},
+                {INFO_LOBBY,
+                 [this](Packet &packet) {
+                     sendData<struct packetInfoLobby_s>(packet);
+                 }}
             };
     };
 } // namespace Nitwork

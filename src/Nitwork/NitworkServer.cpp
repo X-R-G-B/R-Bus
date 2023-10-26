@@ -22,34 +22,34 @@ namespace Nitwork {
         return _instance;
     }
 
-    bool NitworkServer::startServer(int port, int nbPlayer, int threadNb, int tick)
+    bool NitworkServer::startServer(
+        int nbPlayer,
+        const std::string &name,
+        const std::string &ownerIp,
+        int ownerPort,
+        int port,
+        int threadNb,
+        int tick)
     {
-        _maxNbPlayer = nbPlayer;
-        return ANitwork::start(port, threadNb, tick, "");
+        _serverInfos.maxNbPlayer = nbPlayer;
+        std::strcpy(_serverInfos.name, (name.size() > 31) ? name.substr(0, 31).data() : name.data());
+        std::strcpy(
+            _serverInfos.ownerInfos.ip,
+            (ownerIp.size() > 15) ? ownerIp.substr(0, 15).data() : ownerIp.data());
+        _serverInfos.ownerInfos.port = ownerPort;
+        auto startStatus             = ANitwork::start(port, threadNb, tick, "");
+        _serverInfos.lobbyInfos.port = _socket.local_endpoint().port();
+        std::strcpy(
+            _serverInfos.lobbyInfos.ip,
+            (_socket.local_endpoint().address().to_string().size() > 15)
+                ? _socket.local_endpoint().address().to_string().substr(0, 15).data()
+                : _socket.local_endpoint().address().to_string().data());
+        return startStatus;
     }
 
     struct lobby_s NitworkServer::getServerInfos() const
     {
-        // change this with good infos (like server name, owner infos, etc...)
-        struct lobby_s lobby = {
-            .name = "Main Server",
-            .maxNbPlayer = _maxNbPlayer,
-            .lobbyInfos = {
-                .ip = "",
-                .port = _socket.local_endpoint().port()
-            },
-            .ownerInfos = {
-                .ip = "127.0.0.1",
-                .port = 0
-            }
-        };
-        if (_socket.local_endpoint().address().to_string().size() > 15) {
-            Logger::error("Error: ip too long");
-            return lobby;
-        }
-        std::strcpy(lobby.lobbyInfos.ip, _socket.local_endpoint().address().to_string().data());
-        // do the same for owner infos
-        return lobby;
+        return _serverInfos;
     }
 
     bool NitworkServer::startNitworkConfig(int port, const std::string & /* unused */)
@@ -158,7 +158,7 @@ namespace Nitwork {
     NitworkServer::handleInitMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        if (_endpoints.size() >= _maxNbPlayer) {
+        if (_endpoints.size() >= _serverInfos.maxNbPlayer) {
             Logger::error("Too many clients, can't add an other one");
             return;
         }
@@ -202,7 +202,7 @@ namespace Nitwork {
             Logger::info("Client not connected");
             return;
         }
-        if (_endpoints.size() < _maxNbPlayer) {
+        if (_endpoints.size() < _serverInfos.maxNbPlayer) {
             Logger::info("A new client is ready, waiting for others");
             return;
         }
@@ -243,6 +243,24 @@ namespace Nitwork {
     /* End Handle packet (msg) Section */
 
     /* Message Creation Section */
+    void NitworkServer::addInfoMsg()
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetInfoLobby_s packetInfo = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = INFO_LOBBY},
+            .msg    = {.magick = MAGICK_INFO_LOBBY, .lobby = _serverInfos}
+        };
+        boost::asio::ip::udp::endpoint mainServer = boost::asio::ip::udp::endpoint(
+            boost::asio::ip::address::from_string(_serverInfos.ownerInfos.ip),
+            _serverInfos.ownerInfos.port);
+        Packet packet(
+            packetInfo.action.magick,
+            std::make_any<struct packetInfoLobby_s>(packetInfo),
+            mainServer);
+        addPacketToSend(packet);
+    }
+
     void NitworkServer::addPlayerInitMessage(
         boost::asio::ip::udp::endpoint &endpoint,
         const msgCreatePlayer_s &playerMsg)

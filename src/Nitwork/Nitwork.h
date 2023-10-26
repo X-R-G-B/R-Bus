@@ -16,6 +16,8 @@
     #define TICKS_PER_SECOND(t) (t / TICKS)
     #define TICKS_PER_MILLISECOND(t) (TICKS_PER_SECOND(t) / 1000)
     #define DEFAULT_THREAD_NB 4
+    #define RANDOM_PORT 0
+    #define MAX_MAIN_SERVER_CLIENT 30
     #define MAX_NB_ACTION 16
     #define HEADER_CODE1 '\x01'
     #define HEADER_CODE2 '\x03'
@@ -36,6 +38,7 @@
     #define MAGICK_LIST_LOBBY '\x12'
     #define MAGICK_CREATE_LOBBY '\x13'
     #define MAGICK_MSGCONNECTMAINSERVERRESP '\x14'
+    #define MAGICK_INFO_LOBBY '\x15'
 
 typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
@@ -56,9 +59,10 @@ enum n_actionType_t {
     POSITION_RELATIVE_BROADCAST = 12,
     POSITION_ABSOLUTE_BROADCAST = 13,
     PLAYER_DEATH = 14,
-
-    LIST_LOBBY = 16,
     CREATE_LOBBY = 15,
+    LIST_LOBBY = 16,
+    INFO_LOBBY = 17,
+    OK_SERVER = 18,
     N_ACTION_TYPE_MAX,
 };
 
@@ -260,19 +264,52 @@ PACK(struct lobby_s {
     struct connectionData_s ownerInfos;
 });
 
-PACK(struct msgNewLobby_s {
+PACK(struct msgLobbyInfo_s {
     n_magick_t magick;
     struct lobby_s lobby;
 });
 
 PACK(struct actionLobby_s {
     struct action_s action;
-    struct msgNewLobby_s lobby;
+    struct msgLobbyInfo_s lobby;
 });
 
 PACK(struct packetListLobby_s {
     struct header_s header;
     struct actionLobby_s actionLobby[5];
+});
+
+/* Message Create Lobby */
+PACK(struct msgCreateLobby_s {
+    n_magick_t magick;
+    char name[32];
+    unsigned int maxNbPlayer;
+    struct connectionData_s ownerInfos;
+});
+
+PACK(struct packetCreateLobby_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgCreateLobby_s lobby;
+});
+
+/* Message Hello Lobby */
+
+/**
+ * @brief This message is sent by the lobby to the main server to say that it is ready to receive players
+ * and to be added to the list of lobbies
+ * @param magick The magick of the message in order to check if it is the good message
+ * @param lobby The lobby infos
+ */
+PACK(struct msgInfoLobby_s {
+    n_magick_t magick;
+    struct lobby_s lobby;
+});
+
+PACK(struct packetInfoLobby_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgInfoLobby_s msg;
 });
 
 // ---------------------------------------------------------------------------

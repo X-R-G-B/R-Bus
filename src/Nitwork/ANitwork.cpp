@@ -33,9 +33,10 @@ namespace Nitwork {
                 return false;
             }
             startReceiveHandler();
-            Logger::info("NITWORK: Nitwork started on port " + std::to_string(port));
+            Logger::info(
+                "NITWORK: Nitwork started on port " + std::to_string(_socket.local_endpoint().port()));
         } catch (std::exception &e) {
-            Logger::fatal("NITWORK: Nitwork failed to start" + std::string(e.what()));
+            Logger::fatal("NITWORK: Nitwork failed to start, " + std::string(e.what()));
             return false;
         }
         return true;
