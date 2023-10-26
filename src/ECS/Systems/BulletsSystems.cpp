@@ -94,7 +94,7 @@ namespace Systems {
     }
 #endif
 
-    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
+    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile, bool isPlayerAllied)
     {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
@@ -105,7 +105,6 @@ namespace Systems {
         Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");
         Types::Missiles missileType = typeOfMissile;
         Types::Dead deadComp        = {};
-        Types::PlayerAllies playerAlliesComp = {};
         Types::Position position             = pos;
         struct health_s healthComp           = {json.getDataFromJson<int>(bulletData, "health")};
         Types::Damage damageComp             = {json.getDataFromJson<int>(bulletData, "damage")};
@@ -114,15 +113,60 @@ namespace Systems {
         addSpriteRectsForBullet(bulletData, collisionRect);
         playBulletSound(typeOfMissile);
 #endif
+        if (isPlayerAllied) {
+            Types::PlayerAllies playerAlliesComp = {};
+            Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
+        } else {
+            Types::EnemyAllies enemyAlliesComp = {};
+            Registry::getInstance().getComponents<Types::EnemyAllies>().insertBack(enemyAlliesComp);
+        }
         addPhysicsToEntity(bulletData, position);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
-        Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
+    }
+
+    //     struct EnemyAttack {
+    //         bool isAttacking = true;
+    //         missileTypes_e missileType      = missileTypes_e::CLASSIC;
+    //         Types::Position launchDirection = {0, 0};
+    //         std::size_t numberOfMissiles    = 1;
+    // };
+
+    static void launchEnemyMissile(Types::Enemy &enemy, Types::Position &pos)
+    {
+        Types::Missiles missileType = {enemy.getAttack().missileType};
+        createMissile(pos, missileType, false);
+    }
+
+    void updateEnemiesAttacks(std::size_t, std::size_t)
+    {
+        Registry::components<Types::Enemy> arrEnemies =
+            Registry::getInstance().getComponents<Types::Enemy>();
+        Registry::components<Types::Position> arrPositions =
+            Registry::getInstance().getComponents<Types::Position>();
+        auto ids = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::Enemy)});
+
+        for (auto &id : ids) {
+            auto &attack = arrEnemies[id].getAttack();
+            if (attack.isAttacking) {
+                if (Registry::getInstance().getClock().elapsedMillisecondsSince(attack.clockId) >=
+                    attack.msBetweenMissiles) {
+                    launchEnemyMissile(arrEnemies[id], arrPositions[id]);
+                    Registry::getInstance().getClock().restart(attack.clockId);
+                }
+            }
+        }
+    }
+
+    std::vector<std::function<void(std::size_t, std::size_t)>> getBulletsSystems()
+    {
+        return {updateEnemiesAttacks};
     }
 
 } // namespace Systems

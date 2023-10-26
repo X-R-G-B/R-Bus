@@ -204,10 +204,11 @@ namespace Systems {
         }
     }
 
-    static void initEnnemyWeapon(nlohmann::json jsonData, Types::EnnemyAttack &attackData)
+    static void initEnemyWeapon(nlohmann::json jsonData, Types::EnemyAttack &attackData)
     {
         Json &json               = Json::getInstance();
         if (!json.isDataExist(jsonData, "attack")) {
+            attackData.isAttacking = false;
             return;
         }
         if (json.isDataExist(jsonData["attack"], "bulletId")) {
@@ -258,7 +259,7 @@ namespace Systems {
                 Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
 
             addPhysicsToEntity(elem, position);
-            initEnnemyWeapon(elem, enemyComp.getAttack());
+            initEnemyWeapon(elem, enemyComp.getAttack());
 
             if (position.x == 0 && position.y == 0) {
                 Types::Position tmpPos(
@@ -552,9 +553,11 @@ namespace Systems {
             deathChecker,
             moveEntities};
 
-        std::vector<std::function<void(std::size_t, std::size_t)>> bulletSystems = getBulletSystems();
+        std::vector<std::function<void(std::size_t, std::size_t)>> bulletSystems = getBulletsSystems();
+        std::vector<std::function<void(std::size_t, std::size_t)>> physicSystems = getPhysicSystems();
 
         EcsSystems.insert(EcsSystems.end(), bulletSystems.begin(), bulletSystems.end());
+        EcsSystems.insert(EcsSystems.end(), physicSystems.begin(), physicSystems.end());
         return EcsSystems;
     }
 } // namespace Systems

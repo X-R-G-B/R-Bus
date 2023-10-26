@@ -133,7 +133,7 @@ namespace Systems {
             Nitwork::NitworkClient::getInstance().addNewBulletMsg(
                 {Maths::removeIntDecimals(pos.x), Maths::removeIntDecimals(pos.y)},
                 missile.type);
-            createMissile(pos, missile);
+            createMissile(pos, missile, true);
             clock_.restart(getClockIdFromMissileType(missile.type));
         }
     }

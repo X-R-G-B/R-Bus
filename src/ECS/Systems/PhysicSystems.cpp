@@ -118,7 +118,7 @@ namespace Systems {
         }
     }
 
-    std::vector<std::function<void(std::size_t, std::size_t)>> getBulletSystems()
+    std::vector<std::function<void(std::size_t, std::size_t)>> getPhysicSystems()
     {
         return {updatePhysics};
     }

@@ -151,10 +151,13 @@ namespace Types {
 
     struct EnemyAllies { };
 
-    struct EnnemyAttack {
+    struct EnemyAttack {
+            bool isAttacking = true;
             missileTypes_e missileType      = missileTypes_e::CLASSIC;
             Types::Position launchDirection = {0, 0};
             std::size_t numberOfMissiles    = 1;
+            std::size_t clockId = Registry::getInstance().getClock().create(false);
+            float msBetweenMissiles = 1000.0F;
     };
 
     struct Enemy {
@@ -195,7 +198,7 @@ namespace Types {
             enemy_id_s constId;
             enum enemy_type_e type;
 
-            EnnemyAttack &getAttack()
+            EnemyAttack &getAttack()
             {
                 return attack;
             }
@@ -203,7 +206,7 @@ namespace Types {
         private:
             static unsigned int _enemyNb;
             static std::mutex _mutex;
-            EnnemyAttack attack;
+            EnemyAttack attack;
     };
 
     struct Dead {

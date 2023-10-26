@@ -81,7 +81,7 @@ namespace Systems {
             Maths::addIntDecimals(msgNewBullet.pos.y),
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
-        Systems::createMissile(position, missileType);
+        Systems::createMissile(position, missileType, true);
         //         send bullet to clients but not the sender
         Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg(msgNewBullet, endpoint);
     }
