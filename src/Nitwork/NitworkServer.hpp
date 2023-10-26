@@ -166,7 +166,7 @@ namespace Nitwork {
                 {
                  INIT, [this](Packet &packet) {
                         sendData<struct packetCreatePlayer_s>(packet);
-                    }, },
+                }},
                 {LIFE_UPDATE,
                  [this](Packet &packet) {
                      sendData<struct packetLifeUpdate_s>(packet);
