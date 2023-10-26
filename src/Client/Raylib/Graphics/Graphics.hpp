@@ -195,6 +195,8 @@ namespace Raylib {
             Color getColor() const;
             void setColor(Color color);
             void setCurrentFontSize(float fontSize);
+            std::string &getCurrentText();
+            void setCurrentText(std::string &text);
 
         private:
             std::string _text;
