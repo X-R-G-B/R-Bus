@@ -707,7 +707,7 @@ namespace Raylib {
         return (_text);
     }
 
-    void Text::setCurrentText(std::string &text)
+    void Text::setCurrentText(const std::string &text)
     {
         _text = text;
     }

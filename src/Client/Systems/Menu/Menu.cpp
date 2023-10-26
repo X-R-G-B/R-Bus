@@ -104,7 +104,7 @@ namespace Systems {
                 Types::CollisionRect(Json::getInstance().getDataFromJson(elem, "collisionRect"))};
             Types::Button button(callback);
 
-            Types::RectangleShape rectangle({elem["width"], elem["height"]});
+            Types::RectangleShape rectangle({static_cast<float>(collisionRect.width), static_cast<float>(collisionRect.height)});
             Registry::getInstance().getComponents<Types::RectangleShape>().insertBack(rectangle);
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
             Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
@@ -272,7 +272,6 @@ namespace Systems {
                 {typeid(Types::CollisionRect), typeid(Types::Position), typeid(Types::InputBox)});
 
             for (auto id : ids) {
-                std::cout << "ID : " << id << std::endl;
                 if (checkIsInsideRect(id)) {
                     if (arrAnimRect.exist(id)) {
                         arrAnimRect[id].changeRectList(Types::RectListType::HOVER);
@@ -378,9 +377,14 @@ namespace Systems {
             nlohmann::json inputBoxHost =
                 Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
 
-            checkType(connectButton, connectButton["type"].get<ObjectType>(), toCall);
-            checkType(inputBoxHost, inputBoxHost["type"].get<ObjectType>(), toCall);
-            checkType(inputBoxIp, inputBoxIp["type"].get<ObjectType>(), toCall);
+            try {
+                checkType(connectButton, connectButton["type"].get<ObjectType>(), toCall);
+                checkType(inputBoxHost, inputBoxHost["type"].get<ObjectType>(), toCall);
+                checkType(inputBoxIp, inputBoxIp["type"].get<ObjectType>(), toCall);
+            } catch (std::runtime_error &err) {
+                err.what();
+                Logger::error("Counldn't load menu correctly, verify your json data");
+            }
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
 
