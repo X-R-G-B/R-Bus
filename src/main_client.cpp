@@ -13,7 +13,7 @@
 
 constexpr int EXIT_EPITECH = 84;
 
-int main(int ac /*unused*/, const char **av)
+int main(int /*unused*/, const char **av)
 {
 #ifndef NDEBUG
     Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
