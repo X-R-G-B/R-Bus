@@ -15,14 +15,14 @@ namespace Args {
     constexpr int WRONG_ARGS = -1;
 
     constexpr int MAIN_SERVER                    = 0;
-    static constexpr std::string MAIN_SERVER_ARG = "0";
-    static constexpr int MAX_MAIN_SERVER_ARGS    = 2;
+    constexpr std::string MAIN_SERVER_ARG = "0";
+    constexpr int MAX_MAIN_SERVER_ARGS    = 2;
 
     constexpr int LOBBY_SERVER                    = 1;
-    static constexpr std::string LOBBY_SERVER_ARG = "1";
-    static constexpr int MAX_LOBBY_ARGS           = 5;
-    static constexpr int MAX_LOBBY_NAME_SIZE      = 20;
-    static constexpr int MAX_LOBBY_IP_SIZE        = 15;
+    constexpr std::string LOBBY_SERVER_ARG = "1";
+    constexpr int MAX_LOBBY_ARGS           = 5;
+    constexpr int MAX_LOBBY_NAME_SIZE      = 20;
+    constexpr int MAX_LOBBY_IP_SIZE        = 15;
 
     class ServerArgsHandling {
         public:
