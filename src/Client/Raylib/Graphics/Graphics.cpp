@@ -702,4 +702,15 @@ namespace Raylib {
         _currentFontSize = fontSize;
     }
 
+    std::string &Text::getCurrentText()
+    {
+        return (_text);
+    }
+
+    void Text::setCurrentText(std::string &text)
+    {
+        _text = text;
+    }
+
+
 } // namespace Raylib
