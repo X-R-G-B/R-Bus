@@ -30,7 +30,7 @@ const std::unordered_map<JsonType, std::string> pathToJson = {
     {JsonType::TERMINATOR,       "assets/Json/terminator.json"  },
     {JsonType::WAVE,             "assets/Json/wave.json"        },
     {JsonType::BULLETS,          "assets/Json/bullets.json"     },
-    {JsonType::MENU,          "assets/Json/menu.json"     }
+    {JsonType::MENU,             "assets/Json/menu.json"        }
 };
 
 class Json {

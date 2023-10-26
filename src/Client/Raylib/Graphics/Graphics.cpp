@@ -712,5 +712,4 @@ namespace Raylib {
         _text = text;
     }
 
-
 } // namespace Raylib

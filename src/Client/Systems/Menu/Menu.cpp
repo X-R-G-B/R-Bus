@@ -5,11 +5,11 @@
 ** Menu
 */
 
-#include "Raylib.hpp"
-#include "CustomTypes.hpp"
 #include "Menu.hpp"
+#include "CustomTypes.hpp"
 #include "Maths.hpp"
 #include "NitworkClient.hpp"
+#include "Raylib.hpp"
 #include "SceneManager.hpp"
 
 namespace Systems {
@@ -25,10 +25,8 @@ namespace Systems {
                 Json::getInstance().getDataFromJson(elem, "height"),
                 FRONTLAYER,
                 static_cast<std::size_t>(FRONT));
-            Types::Rect rect = {
-                Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
-            nlohmann::basic_json<> animRectData =
-                Json::getInstance().getDataFromJson(elem, "animRect");
+            Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
+            nlohmann::basic_json<> animRectData = Json::getInstance().getDataFromJson(elem, "animRect");
             Types::AnimRect animRect(rect, animRectData);
             Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
             Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(spriteDatas);
@@ -38,13 +36,18 @@ namespace Systems {
         static void initInputBox(nlohmann::json &elem)
         {
             std::size_t id = Registry::getInstance().addEntity();
-            
+
             Types::Position position(Json::getInstance().getDataFromJson(elem, "position"));
             Types::CollisionRect collisionRect(Json::getInstance().getDataFromJson(elem, "collisionRect"));
             Types::FontSize fsz({Json::getInstance().getDataFromJson(elem, "textSize")});
-            std::string text = Json::getInstance().isDataExist(elem, "text") ? Json::getInstance().getDataFromJson(elem, "text") : "";
-            std::string name = Json::getInstance().isDataExist(elem, "name") ? Json::getInstance().getDataFromJson(elem, "name") : "";
-            Raylib::Color color(Types::colorMatchStrings.at(Json::getInstance().getDataFromJson(elem, "color")));
+            std::string text = Json::getInstance().isDataExist(elem, "text")
+                ? Json::getInstance().getDataFromJson(elem, "text")
+                : "";
+            std::string name = Json::getInstance().isDataExist(elem, "name")
+                ? Json::getInstance().getDataFromJson(elem, "name")
+                : "";
+            Raylib::Color color(
+                Types::colorMatchStrings.at(Json::getInstance().getDataFromJson(elem, "color")));
             Raylib::Text textComp(text);
             std::size_t maxChar(Json::getInstance().getDataFromJson(elem, "maxChar"));
             Types::InputBox inputBox(text, name, maxChar);
@@ -66,8 +69,7 @@ namespace Systems {
 
         static void initButtonFromSprite(nlohmann::json &elem, std::function<void()> &callback)
         {
-            nlohmann::basic_json<> animRectData =
-                Json::getInstance().getDataFromJson(elem, "animRect");
+            nlohmann::basic_json<> animRectData = Json::getInstance().getDataFromJson(elem, "animRect");
             Types::Button button(callback);
 
             Registry::getInstance().addEntity();
@@ -76,13 +78,12 @@ namespace Systems {
                 Json::getInstance().getDataFromJson(elem, "width"),
                 Json::getInstance().getDataFromJson(elem, "height"),
                 FRONTLAYER,
-            static_cast<std::size_t>(FRONT));
-            Types::Rect rect = {
-                Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
+                static_cast<std::size_t>(FRONT));
+            Types::Rect rect         = {Types::Rect(Json::getInstance().getDataFromJson(elem, "rect"))};
             Types::Position position = {
-            Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
-            Types::CollisionRect collisionRect = {Types::CollisionRect(
-                Json::getInstance().getDataFromJson(elem, "collisionRect"))};
+                Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
+            Types::CollisionRect collisionRect = {
+                Types::CollisionRect(Json::getInstance().getDataFromJson(elem, "collisionRect"))};
             Types::AnimRect animRect(rect, animRectData, Types::RectListType::MOVE);
 
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
@@ -98,9 +99,9 @@ namespace Systems {
             std::size_t id = Registry::getInstance().addEntity();
 
             Types::Position position = {
-            Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
-            Types::CollisionRect collisionRect = {Types::CollisionRect(
-                Json::getInstance().getDataFromJson(elem, "collisionRect"))};
+                Types::Position(Json::getInstance().getDataFromJson(elem, "position"))};
+            Types::CollisionRect collisionRect = {
+                Types::CollisionRect(Json::getInstance().getDataFromJson(elem, "collisionRect"))};
             Types::Button button(callback);
 
             Types::RectangleShape rectangle({elem["width"], elem["height"]});
@@ -113,17 +114,10 @@ namespace Systems {
 
         static void initButton(nlohmann::json &elem, Material mat, std::function<void()> &callback)
         {
-            switch (mat)
-            {
-            case Material::RECTANGLE :
-                initButtonFromRectangle(elem, callback);
-                break;
-            case Material::SPRITE :
-                initButtonFromSprite(elem, callback);
-                break;
-            default:
-                initButtonFromRectangle(elem, callback);
-                break;
+            switch (mat) {
+                case Material::RECTANGLE: initButtonFromRectangle(elem, callback); break;
+                case Material::SPRITE: initButtonFromSprite(elem, callback); break;
+                default: initButtonFromRectangle(elem, callback); break;
             }
         }
 
@@ -132,20 +126,14 @@ namespace Systems {
             Logger::debug("Clicked");
         }
 
-        static void checkType(nlohmann::json &elem, ObjectType type, std::function<void()> callback = defaultCallBack)
+        static void
+        checkType(nlohmann::json &elem, ObjectType type, std::function<void()> callback = defaultCallBack)
         {
-            switch (type)
-            {
-                case ObjectType::BUTTON :
-                    initButton(elem, elem["from"].get<Material>(), callback);
-                    break;
-                case ObjectType::TEXT :
-                    break;
-                case ObjectType::INPUT_BOX :
-                    initInputBox(elem);
-                    break;
-                default:
-                    break;
+            switch (type) {
+                case ObjectType::BUTTON: initButton(elem, elem["from"].get<Material>(), callback); break;
+                case ObjectType::TEXT: break;
+                case ObjectType::INPUT_BOX: initInputBox(elem); break;
+                default: break;
             }
         }
 
@@ -158,7 +146,11 @@ namespace Systems {
             if (!arrCollisionRect.exist(id) || !arrPosition.exist(id)) {
                 return (false);
             }
-            Raylib::Rectangle rect(Maths::intToFloatConservingDecimals(arrPosition[id].x), Maths::intToFloatConservingDecimals(arrPosition[id].y), Maths::intToFloatConservingDecimals(arrCollisionRect[id].width), Maths::intToFloatConservingDecimals(arrCollisionRect[id].height));
+            Raylib::Rectangle rect(
+                Maths::intToFloatConservingDecimals(arrPosition[id].x),
+                Maths::intToFloatConservingDecimals(arrPosition[id].y),
+                Maths::intToFloatConservingDecimals(arrCollisionRect[id].width),
+                Maths::intToFloatConservingDecimals(arrCollisionRect[id].height));
             Raylib::Vector2 mousePos(Raylib::getMousePosition().x, Raylib::getMousePosition().y);
 
             mousePos.x = (mousePos.x * maxPercent) / Raylib::getScreenWidth();
@@ -171,9 +163,8 @@ namespace Systems {
         {
             Registry::components<Types::InputBox> arrInputBox =
                 Registry::getInstance().getComponents<Types::InputBox>();
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({
-                typeid(Types::InputBox)
-            });
+            std::vector<std::size_t> ids =
+                Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
 
             for (auto id : ids) {
                 arrInputBox[id].selected = false;
@@ -195,14 +186,14 @@ namespace Systems {
                 Registry::getInstance().getComponents<Types::InputBox>();
             Registry::components<Raylib::Text> arrText =
                 Registry::getInstance().getComponents<Raylib::Text>();
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({
-                typeid(Types::InputBox), typeid(Raylib::Text)
-            });
+            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+                {typeid(Types::InputBox), typeid(Raylib::Text)});
 
             for (auto id : ids) {
                 if (arrInputBox[id].selected == true) {
                     int key = GetCharPressed();
-                    if ((key >= 32) && (key <= 125) && (arrInputBox[id].text.size() < arrInputBox[id].maxChar)) {
+                    if ((key >= 32) && (key <= 125)
+                        && (arrInputBox[id].text.size() < arrInputBox[id].maxChar)) {
                         arrInputBox[id].text += static_cast<char>(key);
                         arrText[id].setCurrentText(arrInputBox[id].text);
                     }
@@ -212,9 +203,8 @@ namespace Systems {
 
         static bool checkClick(std::size_t &idEntity)
         {
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({
-                typeid(Types::CollisionRect), typeid(Types::Position)
-            });
+            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+                {typeid(Types::CollisionRect), typeid(Types::Position)});
 
             for (auto id : ids) {
                 if (checkIsInsideRect(id)) {
@@ -227,9 +217,8 @@ namespace Systems {
 
         static bool checkInputBoxGoodId(const std::size_t &idEntity)
         {
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({
-                typeid(Types::InputBox)
-            });
+            std::vector<std::size_t> ids =
+                Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
 
             for (auto id : ids) {
                 if (id == idEntity) {
@@ -262,9 +251,8 @@ namespace Systems {
                 Registry::getInstance().getComponents<Types::InputBox>();
             Registry::components<Raylib::Text> arrText =
                 Registry::getInstance().getComponents<Raylib::Text>();
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({
-                typeid(Types::InputBox), typeid(Raylib::Text)
-            });
+            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+                {typeid(Types::InputBox), typeid(Raylib::Text)});
 
             for (auto id : ids) {
                 if (arrInputBox[id].selected && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_BACKSPACE)) {
@@ -280,9 +268,8 @@ namespace Systems {
         {
             Registry::components<Types::AnimRect> arrAnimRect =
                 Registry::getInstance().getComponents<Types::AnimRect>();
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({
-                typeid(Types::CollisionRect), typeid(Types::Position), typeid(Types::InputBox)
-            });
+            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+                {typeid(Types::CollisionRect), typeid(Types::Position), typeid(Types::InputBox)});
 
             for (auto id : ids) {
                 std::cout << "ID : " << id << std::endl;
@@ -306,9 +293,11 @@ namespace Systems {
                 Registry::getInstance().getComponents<Types::AnimRect>();
             Registry::components<Types::Button> arrButton =
                 Registry::getInstance().getComponents<Types::Button>();
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({
-                typeid(Types::CollisionRect), typeid(Types::AnimRect), typeid(Types::Position), typeid(Types::Button)
-            });
+            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+                {typeid(Types::CollisionRect),
+                 typeid(Types::AnimRect),
+                 typeid(Types::Position),
+                 typeid(Types::Button)});
 
             for (auto id : ids) {
                 if (checkIsInsideRect(id)) {
@@ -324,8 +313,8 @@ namespace Systems {
             }
         }
 
-        constexpr int PORT_MIN     = 0;
-        constexpr int PORT_MAX     = 65535;
+        constexpr int PORT_MIN = 0;
+        constexpr int PORT_MAX = 65535;
 
         static bool isNumber(const std::string &str)
         {
@@ -349,9 +338,8 @@ namespace Systems {
         {
             Registry::components<Types::InputBox> arrInputBox =
                 Registry::getInstance().getComponents<Types::InputBox>();
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents({
-                typeid(Types::InputBox)
-            });
+            std::vector<std::size_t> ids =
+                Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
 
             for (auto id : ids) {
                 if (arrInputBox[id].name == "ip") {
@@ -373,9 +361,9 @@ namespace Systems {
                 return;
             }
             if (!Nitwork::NitworkClient::getInstance()
-             .startClient(std::stoi(port.c_str()), ip.c_str(), DEFAULT_THREAD_NB, TICKS)) {
+                     .startClient(std::stoi(port.c_str()), ip.c_str(), DEFAULT_THREAD_NB, TICKS)) {
                 Logger::error("Error network couldn't connect");
-               return;
+                return;
             }
             Nitwork::NitworkClient::getInstance().addInitMsg();
             Nitwork::NitworkClient::getInstance().addReadyMsg();
@@ -384,9 +372,11 @@ namespace Systems {
 
         void initMenu(std::size_t managerId, std::size_t systemId)
         {
-            nlohmann::json connectButton = Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU);
+            nlohmann::json connectButton =
+                Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU);
             nlohmann::json inputBoxIp = Json::getInstance().getDataByVector({"menu", "ip"}, JsonType::MENU);
-            nlohmann::json inputBoxHost = Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
+            nlohmann::json inputBoxHost =
+                Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
 
             checkType(connectButton, connectButton["type"].get<ObjectType>(), toCall);
             checkType(inputBoxHost, inputBoxHost["type"].get<ObjectType>(), toCall);
@@ -396,8 +386,13 @@ namespace Systems {
 
         std::vector<std::function<void(std::size_t, std::size_t)>> getMenuSystems()
         {
-            return {initMenu, pressButton, manageInputBox, hoverInputBox, checkTextInput, checkInputDeletion};
+            return {
+                initMenu,
+                pressButton,
+                manageInputBox,
+                hoverInputBox,
+                checkTextInput,
+                checkInputDeletion};
         }
-    }
-}
- 
+    } // namespace Menu
+} // namespace Systems
