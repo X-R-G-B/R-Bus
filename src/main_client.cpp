@@ -13,14 +13,14 @@
 
 constexpr int EXIT_EPITECH = 84;
 
-int main(int ac/*unused*/, const char **av)
+int main(int ac /*unused*/, const char **av)
 {
 #ifndef NDEBUG
     Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
 #endif
     ECS::ResourcesManager::init(av[0]);
     auto &sceneManager = Scene::SceneManager::getInstance();
-    int res = sceneManager.run();
+    int res            = sceneManager.run();
     if (Nitwork::NitworkClient::getInstance().isRunning()) {
         Nitwork::NitworkClient::getInstance().stop();
     }

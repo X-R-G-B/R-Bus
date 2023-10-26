@@ -6,10 +6,10 @@
 */
 
 #include "ClientSystems.hpp"
-#include "Menu.hpp"
 #include "ClientNetwork.hpp"
 #include "EventsSystems.hpp"
 #include "GraphicSystems.hpp"
+#include "Menu.hpp"
 #include "Systems.hpp"
 
 namespace Systems {
@@ -20,7 +20,6 @@ namespace Systems {
             EventsSystems::getEventSystems(),
             GraphicSystems::getGraphicsSystems(),
             getNetworkSystems(),
-            Menu::getMenuSystems()
-        };
-   }
+            Menu::getMenuSystems()};
+    }
 } // namespace Systems
