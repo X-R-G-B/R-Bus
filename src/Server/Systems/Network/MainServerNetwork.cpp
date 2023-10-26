@@ -32,7 +32,7 @@ namespace Systems {
         }
     }
 
-    void handleCreateLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &/* unused */)
+    void handleCreateLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint & /* unused */)
     {
         const struct msgCreateLobby_s &msg = std::any_cast<struct msgCreateLobby_s>(data);
 
@@ -43,7 +43,7 @@ namespace Systems {
         Nitwork::NitworkMainServer::getInstance().createLobby(msg.maxNbPlayer, msg.name);
     }
 
-    void handleInfoLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &/* unused */)
+    void handleInfoLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint & /* unused */)
     {
         const struct msgInfoLobby_s &msg = std::any_cast<struct msgInfoLobby_s>(data);
 

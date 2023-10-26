@@ -163,47 +163,47 @@ namespace Nitwork {
                   }}},
             };
             std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
-                {
-                 INIT, [this](Packet &packet) {
-                        sendData<struct packetCreatePlayer_s>(packet);
-                }},
+                {INIT,
+                 [this](Packet &packet) {
+                     sendData<struct packetCreatePlayer_s>(packet);
+                 }                            },
                 {LIFE_UPDATE,
                  [this](Packet &packet) {
                      sendData<struct packetLifeUpdate_s>(packet);
-                 }},
+                 }                            },
                 {START_WAVE,
                  [this](Packet &packet) {
                      sendData<struct packetMsgStartWave_s>(packet);
-                 }},
+                 }                            },
                 {ENEMY_DEATH,
                  [this](Packet &packet) {
                      sendData<struct packetEnemyDeath_s>(packet);
-                 }},
+                 }                            },
                 {NEW_ENEMY,
                  [this](Packet &packet) {
                      sendData<struct packetNewEnemy_s>(packet);
-                 }},
+                 }                            },
                 {NEW_BULLET,
                  [this](Packet &packet) {
                      sendData<struct packetNewBullet_s>(packet);
-                 }},
+                 }                            },
                 {NEW_PLAYER,
                  [this](Packet &packet) {
                      sendData<struct packetCreatePlayer_s>(packet);
-                 }},
+                 }                            },
                 {POSITION_RELATIVE_BROADCAST,
                  [this](Packet &packet) {
                      sendData<struct packetPositionRelativeBroadcast_s>(packet);
-                 }},
+                 }                            },
                 {POSITION_ABSOLUTE_BROADCAST,
                  [this](Packet &packet) {
                      sendData<struct packetPositionAbsoluteBroadcast_s>(packet);
-                 }},
+                 }                            },
                 {PLAYER_DEATH,
                  [this](Packet &packet) {
                      sendData<struct packetPlayerDeath_s>(packet);
-                 }},
-                {INFO_LOBBY, [this](Packet &packet) {
+                 }                            },
+                {INFO_LOBBY,                  [this](Packet &packet) {
                      sendData<struct packetInfoLobby_s>(packet);
                  }}
             };
