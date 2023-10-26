@@ -104,7 +104,8 @@ namespace Systems {
                 Types::CollisionRect(Json::getInstance().getDataFromJson(elem, "collisionRect"))};
             Types::Button button(callback);
 
-            Types::RectangleShape rectangle({static_cast<float>(collisionRect.width), static_cast<float>(collisionRect.height)});
+            Types::RectangleShape rectangle(
+                {static_cast<float>(collisionRect.width), static_cast<float>(collisionRect.height)});
             Registry::getInstance().getComponents<Types::RectangleShape>().insertBack(rectangle);
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
             Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
