@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include "Menu.hpp"
 #include "CustomTypes.hpp"
 #include "Maths.hpp"
+#include "Menu.hpp"
 #include "SceneManager.hpp"
 
 namespace Systems {

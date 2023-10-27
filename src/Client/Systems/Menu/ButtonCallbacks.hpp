@@ -12,5 +12,5 @@ namespace Menu {
         void initConnection();
 
         void defaultCallBack();
-    }
-}
+    } // namespace Callback
+} // namespace Menu
