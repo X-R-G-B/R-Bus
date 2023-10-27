@@ -189,8 +189,7 @@ namespace Systems {
                 Registry::getInstance().getComponents<Raylib::Text>();
             int key = Raylib::getCharPressed();
 
-            if ((key >= ' ') && (key <= '}')
-                && (arrInputBox[id].text.size() < arrInputBox[id].maxChar)) {
+            if ((key >= ' ') && (key <= '}') && (arrInputBox[id].text.size() < arrInputBox[id].maxChar)) {
                 arrInputBox[id].text += static_cast<char>(key);
                 arrText[id].setCurrentText(arrInputBox[id].text);
             }
