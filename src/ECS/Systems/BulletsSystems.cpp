@@ -127,7 +127,8 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
     }
 
-    void createEnemyMissile(Types::Position position, Types::Missiles &typeOfMissile, Types::Velocity velocity)
+    void
+    createEnemyMissile(Types::Position position, Types::Missiles &typeOfMissile, Types::Velocity velocity)
     {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
@@ -135,11 +136,11 @@ namespace Systems {
             json.getJsonObjectById(JsonType::BULLETS, getMissileIdFromType(typeOfMissile.type), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
-        Types::Missiles missileType = typeOfMissile;
-        Types::Dead deadComp        = {};
+        Types::Missiles missileType        = typeOfMissile;
+        Types::Dead deadComp               = {};
         Types::EnemyAllies enemyAlliesComp = {};
-        struct health_s healthComp           = {json.getDataFromJson<int>(bulletData, "health")};
-        Types::Damage damageComp             = {json.getDataFromJson<int>(bulletData, "damage")};
+        struct health_s healthComp         = {json.getDataFromJson<int>(bulletData, "health")};
+        Types::Damage damageComp           = {json.getDataFromJson<int>(bulletData, "damage")};
 
 #ifdef CLIENT
         addSpriteRectsForBullet(bulletData, collisionRect);
@@ -168,8 +169,8 @@ namespace Systems {
         }
 
         Types::Velocity velocity = {
-            1 * enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.x,
-            1 * enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.y};
+            enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.x,
+            enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.y};
 
         float totalHeight = enemy.getAttack().numberOfMissiles * enemy.getAttack().missileSpawnOffset;
         float firstPos    = Maths::intToFloatConservingDecimals(emitterPosition.y) - totalHeight / 2;
@@ -193,18 +194,18 @@ namespace Systems {
 
         Types::Velocity velocity = {
             enemy.getAttack().launchDirection.x,
-            enemy.getAttack().launchDirection.y
-        };
+            enemy.getAttack().launchDirection.y};
 
-        float angle = Maths::getAngleFromVector(Maths::intToFloatConservingDecimals(velocity.speedX), Maths::intToFloatConservingDecimals(velocity.speedY));
+        float angle = Maths::getAngleFromVector(
+            Maths::intToFloatConservingDecimals(velocity.speedX),
+            Maths::intToFloatConservingDecimals(velocity.speedY));
         float angleOffset = static_cast<float>(360 / enemy.getAttack().numberOfMissiles);
 
         for (std::size_t i = 0; i < enemy.getAttack().numberOfMissiles; i++) {
             Types::Position missilePos = emitterPosition;
-            Types::Velocity velocityy = {
-               static_cast<int>(enemy.getAttack().bulletSpeed * cos(Maths::degreesToRadians(angle))),
-               static_cast<int>(enemy.getAttack().bulletSpeed * sin(Maths::degreesToRadians(angle)))
-            };
+            Types::Velocity velocityy  = {
+                static_cast<int>(enemy.getAttack().bulletSpeed * cos(Maths::degreesToRadians(angle))),
+                static_cast<int>(enemy.getAttack().bulletSpeed * sin(Maths::degreesToRadians(angle)))};
             createEnemyMissile(missilePos, missileType, velocityy);
             angle += angleOffset;
         }
@@ -233,8 +234,8 @@ namespace Systems {
         for (auto &id : ids) {
             auto &attack = arrEnemies[id].getAttack();
             if (attack.isAttacking) {
-                if (Registry::getInstance().getClock().elapsedMillisecondsSince(attack.clockId) >=
-                    attack.msBetweenMissiles) {
+                if (Registry::getInstance().getClock().elapsedMillisecondsSince(attack.clockId)
+                    >= attack.msBetweenMissiles) {
                     launchEnemyMissile(arrEnemies[id], arrPositions[id], id);
                     Registry::getInstance().getClock().restart(attack.clockId);
                 }
