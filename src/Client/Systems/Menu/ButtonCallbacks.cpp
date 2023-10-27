@@ -14,31 +14,6 @@
 namespace Menu {
     namespace Callback {
 
-        constexpr int PORT_MIN = 0;
-        constexpr int PORT_MAX = 65535;
-
-        static bool isNumber(const std::string &str)
-        {
-            return !str.empty() && std::all_of(str.begin(), str.end(), ::isdigit);
-        }
-
-        static bool checkArgs(const std::string &ip, const std::string &port)
-        {
-            if (ip.empty()) {
-                Logger::error("Invalid ip");
-                return false;
-            }
-            if (port.empty()) {
-                Logger::error("Invalid port");
-                return (false);
-            }
-            if (!isNumber(port) || std::stoi(port) < PORT_MIN || std::stoi(port) > PORT_MAX) {
-                Logger::error("Invalid port");
-                return false;
-            }
-            return true;
-        }
-
         static void getIpAndPort(std::string &ip, std::string &port)
         {
             Registry::components<Types::InputBox> arrInputBox =
@@ -66,9 +41,6 @@ namespace Menu {
             std::string port("");
 
             getIpAndPort(ip, port);
-            if (!checkArgs(ip, port)) {
-                return;
-            }
             if (!Nitwork::NitworkClient::getInstance()
                      .startClient(std::stoi(port.c_str()), ip.c_str(), DEFAULT_THREAD_NB, TICKS)) {
                 Logger::error("Error network couldn't connect");
