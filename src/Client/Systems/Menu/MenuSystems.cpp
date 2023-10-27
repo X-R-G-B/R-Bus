@@ -41,8 +41,7 @@ namespace Systems {
                 Registry::getInstance().getComponents<Raylib::Text>();
             int key = Raylib::getCharPressed();
 
-            if ((key >= ' ') && (key <= '}')
-                && (arrInputBox[id].text.size() < arrInputBox[id].maxChar)) {
+            if ((key >= ' ') && (key <= '}') && (arrInputBox[id].text.size() < arrInputBox[id].maxChar)) {
                 arrInputBox[id].text += static_cast<char>(key);
                 arrText[id].setCurrentText(arrInputBox[id].text);
             }
@@ -157,9 +156,16 @@ namespace Systems {
                 Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
 
             try {
-                ::Menu::MenuFactory::getInstance().initMenuEntity(connectButton, connectButton["type"].get<::Menu::ObjectType>(), ::Menu::Callback::initConnection);
-                ::Menu::MenuFactory::getInstance().initMenuEntity(inputBoxHost, inputBoxHost["type"].get<::Menu::ObjectType>());
-                ::Menu::MenuFactory::getInstance().initMenuEntity(inputBoxIp, inputBoxIp["type"].get<::Menu::ObjectType>());
+                ::Menu::MenuFactory::getInstance().initMenuEntity(
+                    connectButton,
+                    connectButton["type"].get<::Menu::ObjectType>(),
+                    ::Menu::Callback::initConnection);
+                ::Menu::MenuFactory::getInstance().initMenuEntity(
+                    inputBoxHost,
+                    inputBoxHost["type"].get<::Menu::ObjectType>());
+                ::Menu::MenuFactory::getInstance().initMenuEntity(
+                    inputBoxIp,
+                    inputBoxIp["type"].get<::Menu::ObjectType>());
             } catch (std::runtime_error &err) {
                 err.what();
                 Logger::error("Counldn't load menu correctly, verify your json data");

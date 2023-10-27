@@ -7,9 +7,9 @@
 
 #pragma once
 
+#include "ButtonCallbacks.hpp"
 #include "Json.hpp"
 #include "Registry.hpp"
-#include "ButtonCallbacks.hpp"
 #include "SystemManagersDirector.hpp"
 
 namespace Menu {
@@ -43,11 +43,14 @@ namespace Menu {
         public:
             static MenuFactory &getInstance();
 
-            void initMenuEntity(nlohmann::json &elem, ObjectType type, std::function<void()> callback = Menu::Callback::defaultCallBack);
+            void initMenuEntity(
+                nlohmann::json &elem,
+                ObjectType type,
+                std::function<void()> callback = Menu::Callback::defaultCallBack);
 
         private:
-            MenuFactory()= default;
-            ~MenuFactory()= default;
+            MenuFactory()  = default;
+            ~MenuFactory() = default;
 
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static MenuFactory _instance;

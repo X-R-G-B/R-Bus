@@ -5,12 +5,11 @@
 ** ButtonCallbacks
 */
 
-#include "Logger.hpp"
 #include "ButtonCallbacks.hpp"
-#include "NitworkClient.hpp"
 #include "CustomTypes.hpp"
+#include "Logger.hpp"
+#include "NitworkClient.hpp"
 #include "SceneManager.hpp"
-
 
 namespace Menu {
     namespace Callback {
@@ -79,5 +78,5 @@ namespace Menu {
             Nitwork::NitworkClient::getInstance().addReadyMsg();
             Scene::SceneManager::getInstance().changeScene(Scene::Scene::MAIN_GAME);
         }
-    }
-}
+    } // namespace Callback
+} // namespace Menu
