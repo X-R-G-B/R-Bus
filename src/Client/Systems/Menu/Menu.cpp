@@ -131,13 +131,13 @@ namespace Systems {
         {
             switch (type) {
                 case ObjectType::BUTTON: initButton(elem, elem["from"].get<Material>(), callback); break;
-                case ObjectType::TEXT: break;
+                case ObjectType::TEXT: break; // no clickable text for now
                 case ObjectType::INPUT_BOX: initInputBox(elem); break;
-                default: break;
+                default: Logger::error("Object type is undefined, check your json data"); break;
             }
         }
 
-        static bool checkIsInsideRect(const std::size_t &id)
+        bool checkIsInsideRect(const std::size_t &id)
         {
             Registry::components<Types::CollisionRect> arrCollisionRect =
                 Registry::getInstance().getComponents<Types::CollisionRect>();
@@ -177,31 +177,39 @@ namespace Systems {
                 Registry::getInstance().getComponents<Types::InputBox>();
 
             setAllInputBoxFalse();
-            arrInputBox[id].selected = true;
+            if (arrInputBox.exist(id)) {
+                arrInputBox[id].selected = true;
+            }
+        }
+
+        static void insertText(std::size_t id, Registry::components<Types::InputBox> &arrInputBox)
+        {
+            Registry::components<Raylib::Text> arrText =
+                Registry::getInstance().getComponents<Raylib::Text>();
+            int key = Raylib::getCharPressed();
+
+            if ((key >= ' ') && (key <= '}')
+                && (arrInputBox[id].text.size() < arrInputBox[id].maxChar)) {
+                arrInputBox[id].text += static_cast<char>(key);
+                arrText[id].setCurrentText(arrInputBox[id].text);
+            }
         }
 
         void checkTextInput(std::size_t, std::size_t)
         {
             Registry::components<Types::InputBox> arrInputBox =
                 Registry::getInstance().getComponents<Types::InputBox>();
-            Registry::components<Raylib::Text> arrText =
-                Registry::getInstance().getComponents<Raylib::Text>();
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
                 {typeid(Types::InputBox), typeid(Raylib::Text)});
 
             for (auto id : ids) {
                 if (arrInputBox[id].selected == true) {
-                    int key = GetCharPressed();
-                    if ((key >= 32) && (key <= 125)
-                        && (arrInputBox[id].text.size() < arrInputBox[id].maxChar)) {
-                        arrInputBox[id].text += static_cast<char>(key);
-                        arrText[id].setCurrentText(arrInputBox[id].text);
-                    }
+                    insertText(id, arrInputBox);
                 }
             }
         }
 
-        static bool checkClick(std::size_t &idEntity)
+        bool checkClick(std::size_t &idEntity)
         {
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
                 {typeid(Types::CollisionRect), typeid(Types::Position)});
@@ -209,20 +217,6 @@ namespace Systems {
             for (auto id : ids) {
                 if (checkIsInsideRect(id)) {
                     idEntity = id;
-                    return (true);
-                }
-            }
-            return (false);
-        }
-
-        static bool checkInputBoxGoodId(const std::size_t &idEntity)
-        {
-            std::vector<std::size_t> ids =
-                Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
-
-            for (auto id : ids) {
-                if (id == idEntity) {
-                    setInputBoxSelected(idEntity);
                     return (true);
                 }
             }
@@ -238,10 +232,18 @@ namespace Systems {
                     setAllInputBoxFalse();
                     return;
                 }
-                if (checkInputBoxGoodId(idEntity)) {
-                    return;
-                }
-                setAllInputBoxFalse();
+                setInputBoxSelected(idEntity);
+            }
+        }
+
+        static void deleteInputBoxChar(std::size_t id, Registry::components<Types::InputBox> &arrInputBox)
+        {
+            Registry::components<Raylib::Text> arrText =
+                Registry::getInstance().getComponents<Raylib::Text>();
+
+            if (arrInputBox[id].text.size() > 0) {
+                arrInputBox[id].text.pop_back();
+                arrText[id].setCurrentText(arrInputBox[id].text);
             }
         }
 
@@ -249,17 +251,12 @@ namespace Systems {
         {
             Registry::components<Types::InputBox> arrInputBox =
                 Registry::getInstance().getComponents<Types::InputBox>();
-            Registry::components<Raylib::Text> arrText =
-                Registry::getInstance().getComponents<Raylib::Text>();
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
                 {typeid(Types::InputBox), typeid(Raylib::Text)});
 
             for (auto id : ids) {
                 if (arrInputBox[id].selected && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_BACKSPACE)) {
-                    if (arrInputBox[id].text.size() > 0) {
-                        arrInputBox[id].text.pop_back();
-                        arrText[id].setCurrentText(arrInputBox[id].text);
-                    }
+                    deleteInputBoxChar(id, arrInputBox);
                 }
             }
         }
@@ -307,9 +304,9 @@ namespace Systems {
                     }
                     return;
                 }
-                Raylib::setMouseCursor(MOUSE_CURSOR_DEFAULT);
                 arrAnimRect[id].changeRectList(Types::RectListType::UNDEFINED);
             }
+            Raylib::setMouseCursor(MOUSE_CURSOR_DEFAULT);
         }
 
         constexpr int PORT_MIN = 0;
@@ -325,6 +322,10 @@ namespace Systems {
             if (ip.empty()) {
                 Logger::error("Invalid ip");
                 return false;
+            }
+            if (port.empty()) {
+                Logger::error("Invalid port");
+                return (false);
             }
             if (!isNumber(port) || std::stoi(port) < PORT_MIN || std::stoi(port) > PORT_MAX) {
                 Logger::error("Invalid port");
