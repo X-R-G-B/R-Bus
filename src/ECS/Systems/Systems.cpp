@@ -206,7 +206,7 @@ namespace Systems {
 
     static void initEnemyWeapon(nlohmann::json jsonData, Types::EnemyAttack &attackData)
     {
-        Json &json               = Json::getInstance();
+        Json &json = Json::getInstance();
         if (!json.isDataExist(jsonData, "attack")) {
             attackData.isAttacking = false;
             return;

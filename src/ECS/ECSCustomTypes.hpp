@@ -90,10 +90,7 @@ namespace Types {
             missileTypes_e type;
     };
 
-    enum physicsType_e {
-        ZIGZAG = 0,
-        BOUNCING
-    };
+    enum physicsType_e { ZIGZAG = 0, BOUNCING };
 
     // These structs are used to store physics data
 
@@ -152,14 +149,14 @@ namespace Types {
     struct EnemyAllies { };
 
     struct EnemyAttack {
-            bool isAttacking = true;
+            bool isAttacking                = true;
             missileTypes_e missileType      = missileTypes_e::CLASSIC;
             Types::Position launchDirection = {-1, 0};
             std::size_t numberOfMissiles    = 1;
-            std::size_t clockId = Registry::getInstance().getClock().create(false);
-            float msBetweenMissiles = 1000.0F;
-            float missileSpawnOffset = 10.0F;
-            float bulletSpeed = 20.0F;
+            std::size_t clockId             = Registry::getInstance().getClock().create(false);
+            float msBetweenMissiles         = 1000.0F;
+            float missileSpawnOffset        = 10.0F;
+            float bulletSpeed               = 20.0F;
             std::string emitterId;
     };
 
