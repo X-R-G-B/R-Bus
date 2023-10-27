@@ -19,7 +19,7 @@ namespace Menu {
 
         static bool isNumber(const std::string &str)
         {
-            return std::all_of(str.begin(), str.end(), ::isdigit);
+            return !str.empty() && std::all_of(str.begin(), str.end(), ::isdigit);
         }
 
         static bool checkArgs(const std::string &ip, const std::string &port)
