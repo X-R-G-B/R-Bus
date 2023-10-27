@@ -39,9 +39,9 @@ namespace Menu {
 
     bool checkIsInsideRect(const std::size_t &idEntity);
 
-    class MenuFactory {
+    class MenuBuilder {
         public:
-            static MenuFactory &getInstance();
+            static MenuBuilder &getInstance();
 
             void initMenuEntity(
                 nlohmann::json &elem,
@@ -49,11 +49,11 @@ namespace Menu {
                 std::function<void()> callback = Menu::Callback::defaultCallBack);
 
         private:
-            MenuFactory()  = default;
-            ~MenuFactory() = default;
+            MenuBuilder()  = default;
+            ~MenuBuilder() = default;
 
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
-            static MenuFactory _instance;
+            static MenuBuilder _instance;
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
     };
 } // namespace Menu

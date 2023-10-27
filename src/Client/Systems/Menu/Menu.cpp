@@ -10,11 +10,12 @@
 #include "Maths.hpp"
 #include "NitworkClient.hpp"
 #include "Raylib.hpp"
+#include "SystemManager.hpp"
 #include "SceneManager.hpp"
 
 namespace Menu {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
-    MenuFactory MenuFactory::_instance = MenuFactory();
+    MenuBuilder MenuBuilder::_instance = MenuBuilder();
     // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
     constexpr float maxPercent = 100.0F;
@@ -48,11 +49,13 @@ namespace Menu {
         std::string name = Json::getInstance().isDataExist(elem, "name")
             ? Json::getInstance().getDataFromJson(elem, "name")
             : "";
-        Raylib::Color color(
-            Types::colorMatchStrings.at(Json::getInstance().getDataFromJson(elem, "color")));
         Raylib::Text textComp(text);
         std::size_t maxChar(Json::getInstance().getDataFromJson(elem, "maxChar"));
         Types::InputBox inputBox(text, name, maxChar);
+        auto search = Types::colorMatchStrings.find(Json::getInstance().getDataFromJson(elem, "color").get<std::string>());
+
+        Raylib::Color color = search != Types::colorMatchStrings.end() ? Types::colorMatchStrings.at(Json::getInstance().getDataFromJson(elem, "color")) : Raylib::White;
+        Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
 
         if (!Json::getInstance().isDataExist(elem, "spritePath")) {
             Types::RectangleShape rectangle({elem["width"], elem["height"]});
@@ -62,7 +65,6 @@ namespace Menu {
             initFromSprite(elem);
         }
         Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
-        Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
         Registry::getInstance().getComponents<Raylib::Text>().insertBack(textComp);
         Registry::getInstance().getComponents<Types::InputBox>().insertBack(inputBox);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
@@ -122,7 +124,7 @@ namespace Menu {
         }
     }
 
-    void MenuFactory::initMenuEntity(nlohmann::json &elem, ObjectType type, std::function<void()> callback)
+    void MenuBuilder::initMenuEntity(nlohmann::json &elem, ObjectType type, std::function<void()> callback)
     {
         switch (type) {
             case ObjectType::BUTTON: initButton(elem, elem["from"].get<Material>(), callback); break;
@@ -152,6 +154,7 @@ namespace Menu {
             Registry::getInstance().getComponents<Types::CollisionRect>();
         Registry::components<Types::Position> arrPosition =
             Registry::getInstance().getComponents<Types::Position>();
+
         if (!arrCollisionRect.exist(id) || !arrPosition.exist(id)) {
             return (false);
         }
@@ -168,7 +171,7 @@ namespace Menu {
         return Raylib::checkCollisionPointRec(mousePos, rect);
     }
 
-    MenuFactory &MenuFactory::getInstance()
+    MenuBuilder &MenuBuilder::getInstance()
     {
         return _instance;
     }

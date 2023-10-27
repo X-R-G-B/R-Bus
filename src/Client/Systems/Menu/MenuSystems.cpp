@@ -149,6 +149,9 @@ namespace Systems {
 
         void initMenu(std::size_t managerId, std::size_t systemId)
         {
+            if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::MENU) {
+                SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+            }
             nlohmann::json connectButton =
                 Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU);
             nlohmann::json inputBoxIp = Json::getInstance().getDataByVector({"menu", "ip"}, JsonType::MENU);
@@ -156,14 +159,14 @@ namespace Systems {
                 Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
 
             try {
-                ::Menu::MenuFactory::getInstance().initMenuEntity(
+                ::Menu::MenuBuilder::getInstance().initMenuEntity(
                     connectButton,
                     connectButton["type"].get<::Menu::ObjectType>(),
                     ::Menu::Callback::initConnection);
-                ::Menu::MenuFactory::getInstance().initMenuEntity(
+                ::Menu::MenuBuilder::getInstance().initMenuEntity(
                     inputBoxHost,
                     inputBoxHost["type"].get<::Menu::ObjectType>());
-                ::Menu::MenuFactory::getInstance().initMenuEntity(
+                ::Menu::MenuBuilder::getInstance().initMenuEntity(
                     inputBoxIp,
                     inputBoxIp["type"].get<::Menu::ObjectType>());
             } catch (std::runtime_error &err) {
