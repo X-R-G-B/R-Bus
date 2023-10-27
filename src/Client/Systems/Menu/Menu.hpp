@@ -9,44 +9,48 @@
 
 #include "Json.hpp"
 #include "Registry.hpp"
+#include "ButtonCallbacks.hpp"
 #include "SystemManagersDirector.hpp"
-
-namespace Systems {
-    namespace Menu {
-        enum ObjectType { UNDEFINED, BUTTON, TEXT, INPUT_BOX };
-
-        NLOHMANN_JSON_SERIALIZE_ENUM(
-            ObjectType,
-            {
-                {UNDEFINED, nullptr },
-                {BUTTON,    "button"},
-                {TEXT,      "text"  },
-                {INPUT_BOX, "input" },
-        });
-
-        enum Material { NONE, RECTANGLE, SPRITE };
-
-        NLOHMANN_JSON_SERIALIZE_ENUM(
-            Material,
-            {
-                {NONE,      nullptr    },
-                {RECTANGLE, "rectangle"},
-                {SPRITE,    "sprite"   },
-        });
-
-        std::vector<std::function<void(std::size_t, std::size_t)>> getMenuSystems();
-
-        void manageInputBox(std::size_t, std::size_t);
-
-        void checkInputDeletion(std::size_t, std::size_t);
-
-    } // namespace Menu
-} // namespace Systems
 
 namespace Menu {
 
+    enum ObjectType { UNDEFINED, BUTTON, TEXT, INPUT_BOX };
+
+    NLOHMANN_JSON_SERIALIZE_ENUM(
+        ObjectType,
+        {
+            {UNDEFINED, nullptr },
+            {BUTTON,    "button"},
+            {TEXT,      "text"  },
+            {INPUT_BOX, "input" },
+    });
+
+    enum Material { NONE, RECTANGLE, SPRITE };
+
+    NLOHMANN_JSON_SERIALIZE_ENUM(
+        Material,
+        {
+            {NONE,      nullptr    },
+            {RECTANGLE, "rectangle"},
+            {SPRITE,    "sprite"   },
+    });
+
     bool checkClick(std::size_t &idEntity);
 
-    bool checkIsInsideRect(const std::size_t &id);
+    bool checkIsInsideRect(const std::size_t &idEntity);
 
+    class MenuFactory {
+        public:
+            static MenuFactory &getInstance();
+
+            void initMenuEntity(nlohmann::json &elem, ObjectType type, std::function<void()> callback = Menu::Callback::defaultCallBack);
+
+        private:
+            MenuFactory()= default;
+            ~MenuFactory()= default;
+
+            // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
+            static MenuFactory _instance;
+            // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
+    };
 } // namespace Menu

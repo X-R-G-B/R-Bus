@@ -11,9 +11,12 @@
 #include "NitworkClient.hpp"
 #include "Raylib.hpp"
 #include "SceneManager.hpp"
+#include "ButtonCallbacks.hpp"
 
-namespace Systems {
-    namespace Menu {
+   namespace Menu {
+        // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
+        MenuFactory MenuFactory::_instance = MenuFactory();
+        // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
 
         constexpr float maxPercent = 100.0F;
 
@@ -122,13 +125,8 @@ namespace Systems {
             }
         }
 
-        static void defaultCallBack()
-        {
-            Logger::debug("Clicked");
-        }
-
-        static void
-        checkType(nlohmann::json &elem, ObjectType type, std::function<void()> callback = defaultCallBack)
+        void
+        MenuFactory::initMenuEntity(nlohmann::json &elem, ObjectType type, std::function<void()> callback)
         {
             switch (type) {
                 case ObjectType::BUTTON: initButton(elem, elem["from"].get<Material>(), callback); break;
@@ -136,6 +134,20 @@ namespace Systems {
                 case ObjectType::INPUT_BOX: initInputBox(elem); break;
                 default: Logger::error("Object type is undefined, check your json data"); break;
             }
+        }
+
+        bool checkClick(std::size_t &idEntity)
+        {
+            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+                {typeid(Types::CollisionRect), typeid(Types::Position)});
+
+            for (auto id : ids) {
+                if (checkIsInsideRect(id)) {
+                    idEntity = id;
+                    return (true);
+                }
+            }
+            return (false);
         }
 
         bool checkIsInsideRect(const std::size_t &id)
@@ -160,245 +172,8 @@ namespace Systems {
             return Raylib::checkCollisionPointRec(mousePos, rect);
         }
 
-        static void setAllInputBoxFalse()
+        MenuFactory &MenuFactory::getInstance()
         {
-            Registry::components<Types::InputBox> arrInputBox =
-                Registry::getInstance().getComponents<Types::InputBox>();
-            std::vector<std::size_t> ids =
-                Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
-
-            for (auto id : ids) {
-                arrInputBox[id].selected = false;
-            }
-        }
-
-        static void setInputBoxSelected(const std::size_t &id)
-        {
-            Registry::components<Types::InputBox> arrInputBox =
-                Registry::getInstance().getComponents<Types::InputBox>();
-
-            setAllInputBoxFalse();
-            if (arrInputBox.exist(id)) {
-                arrInputBox[id].selected = true;
-            }
-        }
-
-        static void insertText(std::size_t id, Registry::components<Types::InputBox> &arrInputBox)
-        {
-            Registry::components<Raylib::Text> arrText =
-                Registry::getInstance().getComponents<Raylib::Text>();
-            int key = Raylib::getCharPressed();
-
-            if ((key >= ' ') && (key <= '}')
-                && (arrInputBox[id].text.size() < arrInputBox[id].maxChar)) {
-                arrInputBox[id].text += static_cast<char>(key);
-                arrText[id].setCurrentText(arrInputBox[id].text);
-            }
-        }
-
-        void checkTextInput(std::size_t, std::size_t)
-        {
-            Registry::components<Types::InputBox> arrInputBox =
-                Registry::getInstance().getComponents<Types::InputBox>();
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-                {typeid(Types::InputBox), typeid(Raylib::Text)});
-
-            for (auto id : ids) {
-                if (arrInputBox[id].selected == true) {
-                    insertText(id, arrInputBox);
-                }
-            }
-        }
-
-        bool checkClick(std::size_t &idEntity)
-        {
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-                {typeid(Types::CollisionRect), typeid(Types::Position)});
-
-            for (auto id : ids) {
-                if (checkIsInsideRect(id)) {
-                    idEntity = id;
-                    return (true);
-                }
-            }
-            return (false);
-        }
-
-        void manageInputBox(std::size_t, std::size_t)
-        {
-            std::size_t idEntity = 0;
-
-            if (Raylib::isMouseButtonPressed(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
-                if (!checkClick(idEntity)) {
-                    setAllInputBoxFalse();
-                    return;
-                }
-                setInputBoxSelected(idEntity);
-            }
-        }
-
-        static void deleteInputBoxChar(std::size_t id, Registry::components<Types::InputBox> &arrInputBox)
-        {
-            Registry::components<Raylib::Text> arrText =
-                Registry::getInstance().getComponents<Raylib::Text>();
-
-            if (arrInputBox[id].text.size() > 0) {
-                arrInputBox[id].text.pop_back();
-                arrText[id].setCurrentText(arrInputBox[id].text);
-            }
-        }
-
-        void checkInputDeletion(std::size_t, std::size_t)
-        {
-            Registry::components<Types::InputBox> arrInputBox =
-                Registry::getInstance().getComponents<Types::InputBox>();
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-                {typeid(Types::InputBox), typeid(Raylib::Text)});
-
-            for (auto id : ids) {
-                if (arrInputBox[id].selected && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_BACKSPACE)) {
-                    deleteInputBoxChar(id, arrInputBox);
-                }
-            }
-        }
-
-        void hoverInputBox(std::size_t, std::size_t)
-        {
-            Registry::components<Types::AnimRect> arrAnimRect =
-                Registry::getInstance().getComponents<Types::AnimRect>();
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-                {typeid(Types::CollisionRect), typeid(Types::Position), typeid(Types::InputBox)});
-
-            for (auto id : ids) {
-                if (checkIsInsideRect(id)) {
-                    if (arrAnimRect.exist(id)) {
-                        arrAnimRect[id].changeRectList(Types::RectListType::HOVER);
-                    }
-                    Raylib::setMouseCursor(MOUSE_CURSOR_IBEAM);
-                    return;
-                }
-                Raylib::setMouseCursor(MOUSE_CURSOR_DEFAULT);
-                if (arrAnimRect.exist(id)) {
-                    arrAnimRect[id].changeRectList(Types::RectListType::UNDEFINED);
-                }
-            }
-        }
-
-        void pressButton(std::size_t, std::size_t)
-        {
-            Registry::components<Types::AnimRect> arrAnimRect =
-                Registry::getInstance().getComponents<Types::AnimRect>();
-            Registry::components<Types::Button> arrButton =
-                Registry::getInstance().getComponents<Types::Button>();
-            std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-                {typeid(Types::CollisionRect),
-                 typeid(Types::AnimRect),
-                 typeid(Types::Position),
-                 typeid(Types::Button)});
-
-            for (auto id : ids) {
-                if (checkIsInsideRect(id)) {
-                    arrAnimRect[id].changeRectList(Types::RectListType::HOVER);
-                    Raylib::setMouseCursor(MOUSE_CURSOR_ARROW);
-                    if (Raylib::isMouseButtonPressed(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
-                        arrButton[id].callback();
-                    }
-                    return;
-                }
-                arrAnimRect[id].changeRectList(Types::RectListType::UNDEFINED);
-            }
-            Raylib::setMouseCursor(MOUSE_CURSOR_DEFAULT);
-        }
-
-        constexpr int PORT_MIN = 0;
-        constexpr int PORT_MAX = 65535;
-
-        static bool isNumber(const std::string &str)
-        {
-            return std::all_of(str.begin(), str.end(), ::isdigit);
-        }
-
-        static bool checkArgs(const std::string &ip, const std::string &port)
-        {
-            if (ip.empty()) {
-                Logger::error("Invalid ip");
-                return false;
-            }
-            if (port.empty()) {
-                Logger::error("Invalid port");
-                return (false);
-            }
-            if (!isNumber(port) || std::stoi(port) < PORT_MIN || std::stoi(port) > PORT_MAX) {
-                Logger::error("Invalid port");
-                return false;
-            }
-            return true;
-        }
-
-        static void getIpAndPort(std::string &ip, std::string &port)
-        {
-            Registry::components<Types::InputBox> arrInputBox =
-                Registry::getInstance().getComponents<Types::InputBox>();
-            std::vector<std::size_t> ids =
-                Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
-
-            for (auto id : ids) {
-                if (arrInputBox[id].name == "ip") {
-                    ip = arrInputBox[id].text;
-                }
-                if (arrInputBox[id].name == "port") {
-                    port = arrInputBox[id].text;
-                }
-            }
-        }
-
-        static void toCall()
-        {
-            std::string ip("");
-            std::string port("");
-
-            getIpAndPort(ip, port);
-            if (!checkArgs(ip, port)) {
-                return;
-            }
-            if (!Nitwork::NitworkClient::getInstance()
-                     .startClient(std::stoi(port.c_str()), ip.c_str(), DEFAULT_THREAD_NB, TICKS)) {
-                Logger::error("Error network couldn't connect");
-                return;
-            }
-            Nitwork::NitworkClient::getInstance().addInitMsg();
-            Nitwork::NitworkClient::getInstance().addReadyMsg();
-            Scene::SceneManager::getInstance().changeScene(Scene::Scene::MAIN_GAME);
-        }
-
-        void initMenu(std::size_t managerId, std::size_t systemId)
-        {
-            nlohmann::json connectButton =
-                Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU);
-            nlohmann::json inputBoxIp = Json::getInstance().getDataByVector({"menu", "ip"}, JsonType::MENU);
-            nlohmann::json inputBoxHost =
-                Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
-
-            try {
-                checkType(connectButton, connectButton["type"].get<ObjectType>(), toCall);
-                checkType(inputBoxHost, inputBoxHost["type"].get<ObjectType>(), toCall);
-                checkType(inputBoxIp, inputBoxIp["type"].get<ObjectType>(), toCall);
-            } catch (std::runtime_error &err) {
-                err.what();
-                Logger::error("Counldn't load menu correctly, verify your json data");
-            }
-            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
-        }
-
-        std::vector<std::function<void(std::size_t, std::size_t)>> getMenuSystems()
-        {
-            return {
-                initMenu,
-                pressButton,
-                manageInputBox,
-                hoverInputBox,
-                checkTextInput,
-                checkInputDeletion};
+            return _instance;
         }
     } // namespace Menu
-} // namespace Systems
