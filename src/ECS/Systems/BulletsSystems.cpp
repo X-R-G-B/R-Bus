@@ -125,7 +125,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
     }
 
-    void createEnemyMissile(Types::Position position, Types::Missiles &typeOfMissile, const Types::Enemy &enemy)
+    void createEnemyMissile(Types::Position position, Types::Missiles &typeOfMissile, const Types::Enemy &enemy, Types::Velocity velocity)
     {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
@@ -133,7 +133,6 @@ namespace Systems {
             json.getJsonObjectById(JsonType::BULLETS, getMissileIdFromType(typeOfMissile.type), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
-        Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");
         Types::Missiles missileType = typeOfMissile;
         Types::Dead deadComp        = {};
         Types::EnemyAllies enemyAlliesComp = {};
@@ -156,8 +155,9 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
     }
 
-    static std::vector<Types::Position> computeMissilesSpawn(Types::Enemy &enemy, Types::Position &pos, std::size_t id)
+    static void launchMissileInLine(Types::Enemy &enemy, Types::Position &pos, std::size_t id)
     {
+        Types::Missiles missileType = {enemy.getAttack().missileType};
         Types::Position emitterPosition = pos;
         Registry::components<Types::CollisionRect> arrCollision = Registry::getInstance().getComponents<Types::CollisionRect>();
         if (arrCollision.exist(id)) {
@@ -165,26 +165,22 @@ namespace Systems {
             emitterPosition.y += Maths::divisionWithTwoIntDecimals(arrCollision[id].height, 200);
         }
         // If the emitor is a vertical line
+        Types::Velocity velocity = {enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.x, 1 * enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.y};
 
         float totalHeight = enemy.getAttack().numberOfMissiles * enemy.getAttack().missileSpawnOffset;
         float firstPos = Maths::intToFloatConservingDecimals(emitterPosition.y) - totalHeight / 2;
-        std::vector<Types::Position> missilesSpawn;
         for (std::size_t i = 0; i < enemy.getAttack().numberOfMissiles; i++) {
             Types::Position missilePos = emitterPosition;
             missilePos.y = Maths::floatToIntConservingDecimals(firstPos + i * enemy.getAttack().missileSpawnOffset);
-            missilesSpawn.push_back(missilePos);
+            createEnemyMissile(missilePos, missileType, enemy, velocity);
         }
-        return missilesSpawn;
     }
 
     static void launchEnemyMissile(Types::Enemy &enemy, Types::Position &pos, std::size_t id)
     {
         Types::Missiles missileType = {enemy.getAttack().missileType};
-        std::vector<Types::Position> missilesSpawn = computeMissilesSpawn(enemy, pos, id);
-
-        for (const auto &spawnPos : missilesSpawn) {
-            createEnemyMissile(spawnPos, missileType, enemy);
-        }
+        //if emittor is a line
+        launchMissileInLine(enemy, pos, id);
     }
 
     void updateEnemiesAttacks(std::size_t, std::size_t)

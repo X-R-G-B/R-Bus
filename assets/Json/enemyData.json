@@ -61,14 +61,14 @@
             ],
             "attack" : {
                 "bulletId": "classic",
-                "numberOfMissiles": 3,
+                "numberOfMissiles": 2,
                 "missileDirection" : {
-                    "x": 55,
+                    "x": -1,
                     "y": 0
                 },
-                "msBetweenMissiles": 1000.0,
+                "msBetweenMissiles": 2000.0,
                 "missileSpawnOffset": 8.0,
-                "bulletSpeed": 40.0
+                "bulletSpeed": 150.0
             }
         }
     ]
