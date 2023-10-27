@@ -61,77 +61,14 @@
             ],
             "attack" : {
                 "bulletId": "classic",
-                "numberOfMissiles": 1,
-                "missileDirection" : {
-                    "x": 55,
-                    "y": 0
-                }
-            }
-        },
-        {
-            "spritePath": "assets/R-TypeSheet/r-typesheet20.gif",
-            "damage": 10,
-            "health": 1.0,
-            "width": 500,
-            "height": 500,
-            "position" : {
-                "x": 11000,
-                "y": 10000
-            },
-            "rect": {
-                "x": 18.0,
-                "y": 67.0,
-                "width": 31.0,
-                "height": 30
-            },
-            "collisionRect": {
-                "width": 500,
-                "height":500
-            },
-            "velocity": {
-                "speedX": -40,
-                "speedY": 60
-            },
-            "physics": [
-                {
-                    "id": "bouncing"
-                }
-            ],
-            "animRect": [
-                {
-                    "direction": "left",
-                    "type": "move",
-                    "time": 400,
-                    "restartIndex": 1,
-                    "list": [
-                        {
-                            "x": 51.0,
-                            "y": 67.0,
-                            "width": 31.0,
-                            "height": 30.0
-                        },
-                        {
-                            "x": 18.0,
-                            "y": 67.0,
-                            "width": 31.0,
-                            "height": 30.0
-                        },
-                        {
-                            "x": 85.0,
-                            "y": 69.0,
-                            "width": 30.0,
-                            "height": 29.0
-                        }
-                    ]
-                }
-            ],
-            "attack" : {
-                "bulletId": "bounce",
                 "numberOfMissiles": 3,
                 "missileDirection" : {
                     "x": 55,
                     "y": 0
-                }
+                },
+                "msBetweenMissiles": 1000.0,
+                "missileSpawnOffset": 8.0,
+                "bulletSpeed": 40.0
             }
         }
     ]

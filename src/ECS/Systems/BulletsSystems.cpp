@@ -94,7 +94,7 @@ namespace Systems {
     }
 #endif
 
-    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile, bool isPlayerAllied)
+    void createPlayerMissile(Types::Position position, Types::Missiles &typeOfMissile)
     {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
@@ -105,7 +105,7 @@ namespace Systems {
         Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");
         Types::Missiles missileType = typeOfMissile;
         Types::Dead deadComp        = {};
-        Types::Position position             = pos;
+        Types::PlayerAllies playerAlliesComp = {};
         struct health_s healthComp           = {json.getDataFromJson<int>(bulletData, "health")};
         Types::Damage damageComp             = {json.getDataFromJson<int>(bulletData, "damage")};
 
@@ -113,13 +113,8 @@ namespace Systems {
         addSpriteRectsForBullet(bulletData, collisionRect);
         playBulletSound(typeOfMissile);
 #endif
-        if (isPlayerAllied) {
-            Types::PlayerAllies playerAlliesComp = {};
-            Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
-        } else {
-            Types::EnemyAllies enemyAlliesComp = {};
-            Registry::getInstance().getComponents<Types::EnemyAllies>().insertBack(enemyAlliesComp);
-        }
+
+        Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
         addPhysicsToEntity(bulletData, position);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
@@ -130,17 +125,66 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
     }
 
-    //     struct EnemyAttack {
-    //         bool isAttacking = true;
-    //         missileTypes_e missileType      = missileTypes_e::CLASSIC;
-    //         Types::Position launchDirection = {0, 0};
-    //         std::size_t numberOfMissiles    = 1;
-    // };
+    void createEnemyMissile(Types::Position position, Types::Missiles &typeOfMissile, const Types::Enemy &enemy)
+    {
+        Json &json = Json::getInstance();
+        Registry::getInstance().addEntity();
+        nlohmann::json bulletData =
+            json.getJsonObjectById(JsonType::BULLETS, getMissileIdFromType(typeOfMissile.type), "bullets");
+        Types::CollisionRect collisionRect =
+            json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
+        Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");
+        Types::Missiles missileType = typeOfMissile;
+        Types::Dead deadComp        = {};
+        Types::EnemyAllies enemyAlliesComp = {};
+        struct health_s healthComp           = {json.getDataFromJson<int>(bulletData, "health")};
+        Types::Damage damageComp             = {json.getDataFromJson<int>(bulletData, "damage")};
 
-    static void launchEnemyMissile(Types::Enemy &enemy, Types::Position &pos)
+#ifdef CLIENT
+        addSpriteRectsForBullet(bulletData, collisionRect);
+        playBulletSound(typeOfMissile);
+#endif
+
+        Registry::getInstance().getComponents<Types::EnemyAllies>().insertBack(enemyAlliesComp);
+        addPhysicsToEntity(bulletData, position);
+        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
+        Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
+        Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
+        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
+        Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
+    }
+
+    static std::vector<Types::Position> computeMissilesSpawn(Types::Enemy &enemy, Types::Position &pos, std::size_t id)
+    {
+        Types::Position emitterPosition = pos;
+        Registry::components<Types::CollisionRect> arrCollision = Registry::getInstance().getComponents<Types::CollisionRect>();
+        if (arrCollision.exist(id)) {
+            emitterPosition.x += Maths::divisionWithTwoIntDecimals(arrCollision[id].width, 200);
+            emitterPosition.y += Maths::divisionWithTwoIntDecimals(arrCollision[id].height, 200);
+        }
+        // If the emitor is a vertical line
+
+        float totalHeight = enemy.getAttack().numberOfMissiles * enemy.getAttack().missileSpawnOffset;
+        float firstPos = Maths::intToFloatConservingDecimals(emitterPosition.y) - totalHeight / 2;
+        std::vector<Types::Position> missilesSpawn;
+        for (std::size_t i = 0; i < enemy.getAttack().numberOfMissiles; i++) {
+            Types::Position missilePos = emitterPosition;
+            missilePos.y = Maths::floatToIntConservingDecimals(firstPos + i * enemy.getAttack().missileSpawnOffset);
+            missilesSpawn.push_back(missilePos);
+        }
+        return missilesSpawn;
+    }
+
+    static void launchEnemyMissile(Types::Enemy &enemy, Types::Position &pos, std::size_t id)
     {
         Types::Missiles missileType = {enemy.getAttack().missileType};
-        createMissile(pos, missileType, false);
+        std::vector<Types::Position> missilesSpawn = computeMissilesSpawn(enemy, pos, id);
+
+        for (const auto &spawnPos : missilesSpawn) {
+            createEnemyMissile(spawnPos, missileType, enemy);
+        }
     }
 
     void updateEnemiesAttacks(std::size_t, std::size_t)
@@ -157,7 +201,7 @@ namespace Systems {
             if (attack.isAttacking) {
                 if (Registry::getInstance().getClock().elapsedMillisecondsSince(attack.clockId) >=
                     attack.msBetweenMissiles) {
-                    launchEnemyMissile(arrEnemies[id], arrPositions[id]);
+                    launchEnemyMissile(arrEnemies[id], arrPositions[id], id);
                     Registry::getInstance().getClock().restart(attack.clockId);
                 }
             }

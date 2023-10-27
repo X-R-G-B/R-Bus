@@ -222,6 +222,17 @@ namespace Systems {
         if (json.isDataExist(jsonData["attack"], "numberOfMissiles")) {
             attackData.numberOfMissiles = json.getDataFromJson<int>(jsonData["attack"], "numberOfMissiles");
         }
+        if (json.isDataExist(jsonData["attack"], "msBetweenMissiles")) {
+            attackData.msBetweenMissiles =
+                json.getDataFromJson<float>(jsonData["attack"], "msBetweenMissiles");
+        }
+        if (json.isDataExist(jsonData["attack"], "missileSpawnOffset")) {
+            attackData.missileSpawnOffset =
+                json.getDataFromJson<float>(jsonData["attack"], "missileSpawnOffset");
+        }
+        if (json.isDataExist(jsonData["attack"], "bulletSpeed")) {
+            attackData.bulletSpeed = json.getDataFromJson<float>(jsonData["attack"], "bulletSpeed");
+        }
     }
 
     void

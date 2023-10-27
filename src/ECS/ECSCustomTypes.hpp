@@ -158,6 +158,8 @@ namespace Types {
             std::size_t numberOfMissiles    = 1;
             std::size_t clockId = Registry::getInstance().getClock().create(false);
             float msBetweenMissiles = 1000.0F;
+            float missileSpawnOffset = 10.0F;
+            float bulletSpeed = 20.0F;
     };
 
     struct Enemy {
