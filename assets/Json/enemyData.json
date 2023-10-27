@@ -68,7 +68,7 @@
                     "y": 0
                 },
                 "msBetweenMissiles": 4000.0,
-                "bulletSpeed": 120.0
+                "bulletSpeed": 1.20
             }
         },
         {
@@ -146,7 +146,7 @@
                 },
                 "msBetweenMissiles": 5000.0,
                 "missileSpawnOffset": 6.0,
-                "bulletSpeed": 90.0
+                "bulletSpeed": 0.9
             }
         }
     ]

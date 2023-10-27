@@ -92,7 +92,7 @@ void Maths::subFloatToDecimalInt(int &decimalInt, const float normalFloat)
 
 float Maths::getAngleFromVector(const float x, const float y)
 {
-    float angle = atan2(y, x) * 180 / M_PI;
+    float angle = atan2(y, x) * 180.0F / static_cast<float>(M_PI);
     if (angle < 0) {
         angle += 360;
     }
@@ -101,5 +101,5 @@ float Maths::getAngleFromVector(const float x, const float y)
 
 float Maths::degreesToRadians(const float degrees)
 {
-    return degrees * M_PI / 180;
+    return degrees * static_cast<float>(M_PI) / 180;
 }

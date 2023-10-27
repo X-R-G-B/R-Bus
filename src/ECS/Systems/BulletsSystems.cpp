@@ -169,8 +169,9 @@ namespace Systems {
         }
 
         Types::Velocity velocity = {
-            enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.x,
-            enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.y};
+            Maths::floatToIntConservingDecimals(enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.x),
+            Maths::floatToIntConservingDecimals(enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.y)
+        };
 
         float totalHeight = enemy.getAttack().numberOfMissiles * enemy.getAttack().missileSpawnOffset;
         float firstPos    = Maths::intToFloatConservingDecimals(emitterPosition.y) - totalHeight / 2;
@@ -204,8 +205,9 @@ namespace Systems {
         for (std::size_t i = 0; i < enemy.getAttack().numberOfMissiles; i++) {
             Types::Position missilePos = emitterPosition;
             Types::Velocity velocityy  = {
-                static_cast<int>(enemy.getAttack().bulletSpeed * cos(Maths::degreesToRadians(angle))),
-                static_cast<int>(enemy.getAttack().bulletSpeed * sin(Maths::degreesToRadians(angle)))};
+                Maths::floatToIntConservingDecimals(enemy.getAttack().bulletSpeed * cos(Maths::degreesToRadians(angle))),
+                Maths::floatToIntConservingDecimals(enemy.getAttack().bulletSpeed * sin(Maths::degreesToRadians(angle)))
+            };
             createEnemyMissile(missilePos, missileType, velocityy);
             angle += angleOffset;
         }
