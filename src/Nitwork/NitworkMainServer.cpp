@@ -5,12 +5,19 @@
 ** NitworkMainServer
 */
 
+#ifdef _WIN32
 extern "C"
 {
-#include <unistd.h>
+    #include <windows.h>
 }
+#include <sstream>
+#else
+extern "C"
+{
+    #include <unistd.h>
+}
+#endif
 #include "NitworkMainServer.hpp"
-#include "NitworkServer.hpp"
 #include "ResourcesManager.hpp"
 
 namespace Nitwork {
@@ -30,9 +37,19 @@ namespace Nitwork {
 
     void NitworkMainServer::stop()
     {
+#ifdef _WIN32
+        for (auto pid : _lobbyPids) {
+            HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
+            if (hProcess != NULL) {
+                TerminateProcess(hProcess, 0);
+                CloseHandle(hProcess);
+            }
+        }
+#else
         for (auto pid : _lobbyPids) {
             kill(pid, SIGINT);
         }
+#endif
         ANitwork::stop();
     }
 
@@ -153,6 +170,30 @@ namespace Nitwork {
         const std::string &ownerIp,
         int ownerPort)
     {
+#ifdef _WIN32
+    std::ostringstream cmdline;
+    cmdline << ECS::ResourcesManager::convertPath("./r-type_server").c_str()
+            << " 1 "
+            << maxNbPlayer << " "
+            << gameType << " "
+            << name.c_str() << " "
+            << ownerIp.c_str() << " "
+            << ownerPort;
+
+    STARTUPINFO si;
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    ZeroMemory(&pi, sizeof(pi));
+
+    if (!CreateProcess(NULL, &cmdline.str()[0], NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+        Logger::error("Error: CreateProcess failed");
+        return;
+    }
+    _lobbyPids.emplace_back(pi.dwProcessId);
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+#else
         pid_t c_pid = fork();
 
         if (c_pid == -1) {
@@ -175,6 +216,7 @@ namespace Nitwork {
         } else {
             _lobbyPids.emplace_back(c_pid);
         }
+#endif
     }
 
     void NitworkMainServer::createLobby(unsigned int maxNbPlayer, const std::string &name, enum gameType_e gameType)
