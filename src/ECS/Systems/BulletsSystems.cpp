@@ -5,6 +5,8 @@
 ** Bullets systems implementation
 */
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <fstream>
 #include "ECSCustomTypes.hpp"
 #include "Logger.hpp"
@@ -125,7 +127,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
     }
 
-    void createEnemyMissile(Types::Position position, Types::Missiles &typeOfMissile, const Types::Enemy &enemy, Types::Velocity velocity)
+    void createEnemyMissile(Types::Position position, Types::Missiles &typeOfMissile, Types::Velocity velocity)
     {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
@@ -155,32 +157,68 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
     }
 
-    static void launchMissileInLine(Types::Enemy &enemy, Types::Position &pos, std::size_t id)
+    static void launchMissileInLine(Types::Enemy &enemy, Types::Position &emitterPosition, std::size_t id)
     {
         Types::Missiles missileType = {enemy.getAttack().missileType};
-        Types::Position emitterPosition = pos;
-        Registry::components<Types::CollisionRect> arrCollision = Registry::getInstance().getComponents<Types::CollisionRect>();
+        Registry::components<Types::CollisionRect> arrCollision =
+            Registry::getInstance().getComponents<Types::CollisionRect>();
         if (arrCollision.exist(id)) {
             emitterPosition.x += Maths::divisionWithTwoIntDecimals(arrCollision[id].width, 200);
             emitterPosition.y += Maths::divisionWithTwoIntDecimals(arrCollision[id].height, 200);
         }
-        // If the emitor is a vertical line
-        Types::Velocity velocity = {enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.x, 1 * enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.y};
+
+        Types::Velocity velocity = {
+            1 * enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.x,
+            1 * enemy.getAttack().bulletSpeed * enemy.getAttack().launchDirection.y};
 
         float totalHeight = enemy.getAttack().numberOfMissiles * enemy.getAttack().missileSpawnOffset;
-        float firstPos = Maths::intToFloatConservingDecimals(emitterPosition.y) - totalHeight / 2;
+        float firstPos    = Maths::intToFloatConservingDecimals(emitterPosition.y) - totalHeight / 2;
         for (std::size_t i = 0; i < enemy.getAttack().numberOfMissiles; i++) {
             Types::Position missilePos = emitterPosition;
-            missilePos.y = Maths::floatToIntConservingDecimals(firstPos + i * enemy.getAttack().missileSpawnOffset);
-            createEnemyMissile(missilePos, missileType, enemy, velocity);
+            missilePos.y =
+                Maths::floatToIntConservingDecimals(firstPos + i * enemy.getAttack().missileSpawnOffset);
+            createEnemyMissile(missilePos, missileType, velocity);
+        }
+    }
+
+    static void launchMissileInCircle(Types::Enemy &enemy, Types::Position &emitterPosition, std::size_t id)
+    {
+        Types::Missiles missileType = {enemy.getAttack().missileType};
+        Registry::components<Types::CollisionRect> arrCollision =
+            Registry::getInstance().getComponents<Types::CollisionRect>();
+        if (arrCollision.exist(id)) {
+            emitterPosition.x += Maths::divisionWithTwoIntDecimals(arrCollision[id].width, 200);
+            emitterPosition.y += Maths::divisionWithTwoIntDecimals(arrCollision[id].height, 200);
+        }
+
+        Types::Velocity velocity = {
+            enemy.getAttack().launchDirection.x,
+            enemy.getAttack().launchDirection.y
+        };
+
+        float angle = Maths::getAngleFromVector(Maths::intToFloatConservingDecimals(velocity.speedX), Maths::intToFloatConservingDecimals(velocity.speedY));
+        float angleOffset = static_cast<float>(360 / enemy.getAttack().numberOfMissiles);
+
+        for (std::size_t i = 0; i < enemy.getAttack().numberOfMissiles; i++) {
+            Types::Position missilePos = emitterPosition;
+            Types::Velocity velocityy = {
+               static_cast<int>(enemy.getAttack().bulletSpeed * cos(Maths::degreesToRadians(angle))),
+               static_cast<int>(enemy.getAttack().bulletSpeed * sin(Maths::degreesToRadians(angle)))
+            };
+            createEnemyMissile(missilePos, missileType, velocityy);
+            angle += angleOffset;
         }
     }
 
     static void launchEnemyMissile(Types::Enemy &enemy, Types::Position &pos, std::size_t id)
     {
         Types::Missiles missileType = {enemy.getAttack().missileType};
-        //if emittor is a line
-        launchMissileInLine(enemy, pos, id);
+        if (enemy.getAttack().emitterId == "circle") {
+            launchMissileInCircle(enemy, pos, id);
+        }
+        if (enemy.getAttack().emitterId == "line") {
+            launchMissileInLine(enemy, pos, id);
+        }
     }
 
     void updateEnemiesAttacks(std::size_t, std::size_t)

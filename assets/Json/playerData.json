@@ -4,8 +4,8 @@
         "damage": 10.0,
         "health": 1.0,
         "deadTime": 1000,
-        "width": 500,
-        "height" : 500,
+        "width": 350,
+        "height" : 350,
         "rect": {
             "x": 101.0,
             "y": 0.0,
@@ -17,8 +17,8 @@
             "y": 1000
         },
         "collisionRect": {
-            "width": 500,
-            "height": 500
+            "width": 350,
+            "height": 350
         },
         "animRect": [
             {

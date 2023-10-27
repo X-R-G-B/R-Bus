@@ -233,6 +233,9 @@ namespace Systems {
         if (json.isDataExist(jsonData["attack"], "bulletSpeed")) {
             attackData.bulletSpeed = json.getDataFromJson<float>(jsonData["attack"], "bulletSpeed");
         }
+        if (json.isDataExist(jsonData["attack"], "emitterId")) {
+            attackData.emitterId = json.getDataFromJson<std::string>(jsonData["attack"], "emitterId");
+        }
     }
 
     void

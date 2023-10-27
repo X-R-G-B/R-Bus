@@ -154,12 +154,13 @@ namespace Types {
     struct EnemyAttack {
             bool isAttacking = true;
             missileTypes_e missileType      = missileTypes_e::CLASSIC;
-            Types::Position launchDirection = {0, 0};
+            Types::Position launchDirection = {-1, 0};
             std::size_t numberOfMissiles    = 1;
             std::size_t clockId = Registry::getInstance().getClock().create(false);
             float msBetweenMissiles = 1000.0F;
             float missileSpawnOffset = 10.0F;
             float bulletSpeed = 20.0F;
+            std::string emitterId;
     };
 
     struct Enemy {

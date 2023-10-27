@@ -142,4 +142,19 @@ namespace Maths {
      */
     void subFloatToDecimalInt(int &decimalInt, const float normalFloat);
 
+    /**
+     * @brief get the angle from a vector
+     * @param x the x of the vector
+     * @param y the y of the vector
+     * @return float
+     */
+    float getAngleFromVector(const float x, const float y);
+
+    /**
+     * @brief convert degrees to radians
+     * @param degrees the degrees to convert
+     * @return float
+     */
+    float degreesToRadians(const float degrees);
+
 } // namespace Maths
