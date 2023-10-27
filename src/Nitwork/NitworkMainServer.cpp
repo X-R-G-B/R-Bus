@@ -5,11 +5,8 @@
 ** NitworkMainServer
 */
 
+#include "Logger.hpp"
 #ifdef _WIN32
-extern "C"
-{
-    #include <windows.h>
-}
 #include <sstream>
 #else
 extern "C"
