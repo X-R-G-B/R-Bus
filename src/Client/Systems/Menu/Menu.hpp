@@ -35,5 +35,18 @@ namespace Systems {
         });
 
         std::vector<std::function<void(std::size_t, std::size_t)>> getMenuSystems();
+
+        void manageInputBox(std::size_t, std::size_t);
+
+        void checkInputDeletion(std::size_t, std::size_t);
+
     } // namespace Menu
 } // namespace Systems
+
+namespace Menu {
+
+    bool checkClick(std::size_t &idEntity);
+
+    bool checkIsInsideRect(const std::size_t &id);
+
+} // namespace Menu
