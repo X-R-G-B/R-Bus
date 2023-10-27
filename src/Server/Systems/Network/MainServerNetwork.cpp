@@ -13,11 +13,11 @@
 constexpr int LIST_LOBBY_SIZE = 5;
 
 namespace Systems {
-    void handleListLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &endpoint)
+    void handleRequestListLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &endpoint)
     {
         const struct msgRequestListLobby_s &msg = std::any_cast<struct msgRequestListLobby_s>(data);
 
-        if (msg.magick != MAGICK_LIST_LOBBY) {
+        if (msg.magick != MAGICK_REQUEST_LIST_LOBBY) {
             Logger::error("MAGICK_LIST_LOBBY is not the same");
             return;
         }
@@ -40,7 +40,7 @@ namespace Systems {
             Logger::error("MAGICK_CREATE_LOBBY is not the same");
             return;
         }
-        Nitwork::NitworkMainServer::getInstance().createLobby(msg.maxNbPlayer, msg.name);
+        Nitwork::NitworkMainServer::getInstance().createLobby(msg.maxNbPlayer, msg.name, msg.gameType);
     }
 
     void handleInfoLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint & /* unused */)

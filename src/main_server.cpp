@@ -33,10 +33,16 @@ int mainLoobyServer(const std::vector<std::string> &av)
 {
     Logger::info("Starting Server...");
     if (!Nitwork::NitworkServer::getInstance()
-             .startServer(std::stoi(av[2]), av[3], av[4], std::stoi(av[5]))) {
+             .startServer(
+                 std::stoi(av[2]),
+                 static_cast<gameType_e>(std::stoi(av[3])),
+                 av[4],
+                 av[5],
+                 std::stoi(av[6]))
+        ) {
         return EXIT_EPITECH;
     }
-    Nitwork::NitworkServer::getInstance().addInfoMsg();
+    Nitwork::NitworkServer::getInstance().addInfoLobbyMsg();
     auto &director = Systems::SystemManagersDirector::getInstance();
     std::unique_lock<std::mutex> lock(director.mutex);
     director.addSystemManager(Systems::getECSSystems());

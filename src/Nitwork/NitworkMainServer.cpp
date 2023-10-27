@@ -37,7 +37,7 @@ namespace Nitwork {
     }
 
     /* Handlers methods of the received actions */
-    void NitworkMainServer::sendOkServer(const boost::asio::ip::udp::endpoint &endpoint)
+    void NitworkMainServer::sendConnectMainServerResp(const boost::asio::ip::udp::endpoint &endpoint)
     {
         struct packetConnectMainServerResp_s packetConnectMainServerResp = {
             .header =
@@ -47,8 +47,8 @@ namespace Nitwork {
                          .id               = 0,
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action = {.magick = OK_SERVER},
-            .msg    = {.magick = MAGICK_MSGCONNECTMAINSERVERRESP}
+            .action = {.magick = CONNECT_MAIN_SERVER_RESP},
+            .msg    = {.magick = MAGICK_CONNECT_MAIN_SERVER_RESP}
         };
 
         Packet packet(
@@ -69,7 +69,7 @@ namespace Nitwork {
             return;
         }
         _endpoints.emplace_back(endpoint);
-        sendOkServer(endpoint);
+        sendConnectMainServerResp(endpoint);
     }
 
     /* End of handlers methods of the received actions */
@@ -148,6 +148,7 @@ namespace Nitwork {
 
     void NitworkMainServer::forkProcessAndCreateLobby(
         unsigned int maxNbPlayer,
+        enum gameType_e gameType,
         const std::string &name,
         const std::string &ownerIp,
         int ownerPort)
@@ -164,6 +165,7 @@ namespace Nitwork {
                     ECS::ResourcesManager::convertPath("./r-type_server").c_str(),
                     "1",
                     std::to_string(maxNbPlayer).c_str(),
+                    std::to_string(gameType).c_str(),
                     name.c_str(),
                     ownerIp.c_str(),
                     std::to_string(ownerPort).c_str(),
@@ -175,7 +177,7 @@ namespace Nitwork {
         }
     }
 
-    void NitworkMainServer::createLobby(unsigned int maxNbPlayer, const std::string &name)
+    void NitworkMainServer::createLobby(unsigned int maxNbPlayer, const std::string &name, enum gameType_e gameType)
     {
         if (maxNbPlayer < 1) {
             Logger::error("Invalid number of players: " + std::to_string(maxNbPlayer));
@@ -187,6 +189,7 @@ namespace Nitwork {
         }
         forkProcessAndCreateLobby(
             maxNbPlayer,
+            gameType,
             name,
             _endpoints.back().address().to_string(),
             _endpoints.back().port());

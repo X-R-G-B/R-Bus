@@ -242,4 +242,67 @@ namespace Nitwork {
             _serverEndpoint);
         addPacketToSend(packet);
     }
+
+    void NitworkClient::addListLobbyMsg()
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetRequestListLobby_s packetListLobby = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                   .magick = LIST_LOBBY,
+                },
+            .msg = {.magick = MAGICK_REQUEST_LIST_LOBBY},
+        };
+        Packet packet(
+            packetListLobby.action.magick,
+            std::make_any<struct packetRequestListLobby_s>(packetListLobby),
+            _serverEndpoint);
+        addPacketToSend(packet);
+    }
+
+    void NitworkClient::addCreateLobbyMsg(const std::string &name, enum gameType_e gameType, unsigned int maxNbPlayer, const std::string &ownerIp, n_port_t ownerPort)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetCreateLobby_s packetCreateLobby = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                   .magick = CREATE_LOBBY,
+                },
+            .msg =
+                {
+                       .magick = MAGICK_CREATE_LOBBY,
+                       .name = "",
+                       .gameType = gameType,
+                       .maxNbPlayer = maxNbPlayer,
+                       .ownerInfos = {.ip = "", .port = ownerPort}
+                }
+        };
+        std::strcpy(packetCreateLobby.msg.name, (name.size() > 32 ? name.substr(0, 32) : name).c_str());
+        std::strcpy(packetCreateLobby.msg.ownerInfos.ip, (name.size() > 16 ? ownerIp.substr(0, 16) : ownerIp).c_str());
+        Packet packet(
+            packetCreateLobby.action.magick,
+            std::make_any<struct packetCreateLobby_s>(packetCreateLobby),
+            _serverEndpoint);
+        addPacketToSend(packet);
+    }
+
+    void NitworkClient::addConnectMainServerMsg()
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetConnectMainServer_s packetConnectMainServer = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                    .magick = CONNECT_MAIN_SERVER,
+                },
+            .msg = {.magick = MAGICK_CONNECT_MAIN_SERVER},
+        };
+        Packet packet(
+            packetConnectMainServer.action.magick,
+            std::make_any<struct packetConnectMainServer_s>(packetConnectMainServer),
+            _serverEndpoint);
+        addPacketToSend(packet);
+    }
 } // namespace Nitwork

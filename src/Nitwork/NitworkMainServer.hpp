@@ -49,7 +49,7 @@ namespace Nitwork {
              * @brief Send a message to the client to let him know he's connected
              * @param endpoint The endpoint of the client
              */
-            void sendOkServer(const boost::asio::ip::udp::endpoint &endpoint);
+            void sendConnectMainServerResp(const boost::asio::ip::udp::endpoint &endpoint);
 
             /**
              * @brief Send the list of lobbies to the client
@@ -66,8 +66,9 @@ namespace Nitwork {
              * @param name The name of the lobby
              * @param ownerIp The ip of the owner
              * @param ownerPort The port of the owner
+             * @param gameType The type of the game (determine which system is active during the game)
              */
-            void createLobby(unsigned int maxNbPlayer, const std::string &name);
+            void createLobby(unsigned int maxNbPlayer, const std::string &name, enum gameType_e gameType);
 
             /**
              * @brief Get the list of lobbies
@@ -100,6 +101,7 @@ namespace Nitwork {
              */
             void forkProcessAndCreateLobby(
                 unsigned int maxNbPlayer,
+                enum gameType_e gameType,
                 const std::string &name,
                 const std::string &ownerIp,
                 int ownerPort);
@@ -143,7 +145,7 @@ namespace Nitwork {
 
             std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
                 {
-                    INIT,
+                    CONNECT_MAIN_SERVER,
                     {
                         [this](actionHandler &actionHandler, const struct header_s &header) {
                             handleBody<struct msgConnectMainServer_s>(actionHandler, header);
@@ -157,10 +159,10 @@ namespace Nitwork {
                     LIST_LOBBY,
                     {
                         [this](actionHandler &actionHandler, const struct header_s &header) {
-                            handleBody<struct msgLobbyInfo_s>(actionHandler, header);
+                            handleBody<struct msgRequestListLobby_s>(actionHandler, header);
                         },
                         [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
-                            Systems::handleListLobbyMsg(msg, endpoint);
+                            Systems::handleRequestListLobbyMsg(msg, endpoint);
                         }
                     }
                 },
@@ -195,7 +197,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    OK_SERVER,
+                    CONNECT_MAIN_SERVER_RESP,
                     [this](Packet &packet) {
                         sendData<struct packetConnectMainServerResp_s>(packet);
                     }

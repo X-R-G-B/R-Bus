@@ -6,6 +6,9 @@
 */
 
 #pragma once
+extern "C" {
+    #include "MessageTypes.h"
+}
 #include "Logger.hpp"
 
 namespace Args {
@@ -20,7 +23,7 @@ namespace Args {
 
     constexpr int LOBBY_SERVER               = 1;
     static constexpr auto LOBBY_SERVER_ARG   = "1";
-    static constexpr int MAX_LOBBY_ARGS      = 5;
+    static constexpr int MAX_LOBBY_ARGS      = 6;
     static constexpr int MAX_LOBBY_NAME_SIZE = 20;
     static constexpr int MAX_LOBBY_IP_SIZE   = 15;
 
@@ -84,16 +87,20 @@ namespace Args {
                     Logger::error("Invalid playerNb: " + args[1]);
                     return WRONG_ARGS;
                 }
-                if (args[2].size() > MAX_LOBBY_NAME_SIZE) {
+                if (!isNumber(args[2]) || std::stoi(args[2]) < 0 || std::stoi(args[2]) >= MAX_GAME_TYPE) {
+                    Logger::error("Invalid game type: " + args[2]);
+                    return WRONG_ARGS;
+                }
+                if (args[3].size() > MAX_LOBBY_NAME_SIZE) {
                     Logger::error("Invalid serverName: " + args[2]);
                     return WRONG_ARGS;
                 }
-                if (args[3].size() > MAX_LOBBY_IP_SIZE) {
+                if (args[4].size() > MAX_LOBBY_IP_SIZE) {
                     Logger::error("Invalid ownerIp: " + args[3]);
                     return WRONG_ARGS;
                 }
-                if (!isNumber(args[4]) || std::stoi(args[4]) < PORT_MIN || std::stoi(args[4]) > PORT_MAX) {
-                    Logger::error("Invalid ownerPort: " + args[4]);
+                if (!isNumber(args[5]) || std::stoi(args[5]) < PORT_MIN || std::stoi(args[5]) > PORT_MAX) {
+                    Logger::error("Invalid ownerPort: " + args[5]);
                     return WRONG_ARGS;
                 }
                 return LOBBY_SERVER;

@@ -29,6 +29,11 @@ enum physicsType_e {
     BOUNCING
 };
 
+enum gameType_e {
+    CLASSIC_GAME = 0,
+    MAX_GAME_TYPE
+};
+
 PACK(struct health_s {
     int hp;
 });

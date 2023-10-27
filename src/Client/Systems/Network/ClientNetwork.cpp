@@ -304,7 +304,20 @@ namespace Systems {
             Logger::error("Server Not OK!");
             return;
         }
-        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBY);
+        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+        Logger::info("Server OK!");
+    }
+
+    void receiveConnectMainServerResp(std::any &data, boost::asio::ip::udp::endpoint &/* unused */)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const struct msgConnectMainServerResp_s &msg = std::any_cast<struct msgConnectMainServerResp_s>(data);
+
+        if (msg.magick != MAGICK_CONNECT_MAIN_SERVER_RESP) {
+            Logger::error("MAGICK_CONNECT_MAIN_SERVER_RESP is not the same");
+            return;
+        }
+        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
         Logger::info("Server OK!");
     }
 

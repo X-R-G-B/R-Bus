@@ -24,6 +24,7 @@ namespace Nitwork {
 
     bool NitworkServer::startServer(
         int nbPlayer,
+        enum gameType_e gameType,
         const std::string &name,
         const std::string &ownerIp,
         int ownerPort,
@@ -32,18 +33,19 @@ namespace Nitwork {
         int tick)
     {
         _serverInfos.maxNbPlayer = nbPlayer;
-        std::strcpy(_serverInfos.name, (name.size() > 31) ? name.substr(0, 31).data() : name.data());
+        std::strcpy(_serverInfos.name, (name.size() > 32) ? name.substr(0, 32).data() : name.data());
         std::strcpy(
             _serverInfos.ownerInfos.ip,
-            (ownerIp.size() > 15) ? ownerIp.substr(0, 15).data() : ownerIp.data());
+            (ownerIp.size() > 16) ? ownerIp.substr(0, 16).data() : ownerIp.data());
         _serverInfos.ownerInfos.port = ownerPort;
         auto startStatus             = ANitwork::start(port, threadNb, tick, "");
         _serverInfos.lobbyInfos.port = _socket.local_endpoint().port();
         std::strcpy(
             _serverInfos.lobbyInfos.ip,
-            (_socket.local_endpoint().address().to_string().size() > 15)
-                ? _socket.local_endpoint().address().to_string().substr(0, 15).data()
+            (_socket.local_endpoint().address().to_string().size() > 16)
+                ? _socket.local_endpoint().address().to_string().substr(0, 16).data()
                 : _socket.local_endpoint().address().to_string().data());
+        // TODO: add gameType to lobby
         return startStatus;
     }
 
@@ -206,7 +208,7 @@ namespace Nitwork {
             Logger::info("A new client is ready, waiting for others");
             return;
         }
-        addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
+        addStarWaveMessage(Types::Enemy::getEnemyNb());
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
         director.getSystemManager(0).addSystem(Systems::initWave);
@@ -243,7 +245,7 @@ namespace Nitwork {
     /* End Handle packet (msg) Section */
 
     /* Message Creation Section */
-    void NitworkServer::addInfoMsg()
+    void NitworkServer::addInfoLobbyMsg()
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetInfoLobby_s packetInfo = {
@@ -279,7 +281,7 @@ namespace Nitwork {
         _playersIds[endpoint] = playerMsg.playerId;
     }
 
-    void NitworkServer::addStarWaveMessage(boost::asio::ip::udp::endpoint & /* unused */, n_id_t enemyId)
+    void NitworkServer::addStarWaveMessage(n_id_t enemyId)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgStartWave_s packetMsgStartWave = {

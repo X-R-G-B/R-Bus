@@ -37,7 +37,9 @@
     #define MAGICK_PLAYER_DEATH '\x11'
     #define MAGICK_LIST_LOBBY '\x12'
     #define MAGICK_CREATE_LOBBY '\x13'
-    #define MAGICK_MSGCONNECTMAINSERVERRESP '\x14'
+    #define MAGICK_REQUEST_LIST_LOBBY '\x16'
+    #define MAGICK_CONNECT_MAIN_SERVER '\x18'
+    #define MAGICK_CONNECT_MAIN_SERVER_RESP '\x14'
     #define MAGICK_INFO_LOBBY '\x15'
 
 typedef unsigned char n_magick_t;
@@ -62,7 +64,8 @@ enum n_actionType_t {
     CREATE_LOBBY = 15,
     LIST_LOBBY = 16,
     INFO_LOBBY = 17,
-    OK_SERVER = 18,
+    CONNECT_MAIN_SERVER = 18,
+    CONNECT_MAIN_SERVER_RESP = 19,
     N_ACTION_TYPE_MAX,
 };
 
@@ -260,6 +263,7 @@ PACK(struct connectionData_s {
 PACK(struct lobby_s {
     char name[32];
     unsigned int maxNbPlayer;
+    enum gameType_e gameType;
     struct connectionData_s lobbyInfos;
     struct connectionData_s ownerInfos;
 });
@@ -283,6 +287,7 @@ PACK(struct packetListLobby_s {
 PACK(struct msgCreateLobby_s {
     n_magick_t magick;
     char name[32];
+    enum gameType_e gameType;
     unsigned int maxNbPlayer;
     struct connectionData_s ownerInfos;
 });
@@ -290,7 +295,7 @@ PACK(struct msgCreateLobby_s {
 PACK(struct packetCreateLobby_s {
     struct header_s header;
     struct action_s action;
-    struct msgCreateLobby_s lobby;
+    struct msgCreateLobby_s msg;
 });
 
 /* Message Hello Lobby */
