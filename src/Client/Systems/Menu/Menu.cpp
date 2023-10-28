@@ -63,7 +63,9 @@ namespace Menu {
         Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
 
         if (!Json::getInstance().isDataExist(elem, "spritePath")) {
-            Types::RectangleShape rectangle({Json::getInstance().getDataFromJson<float>(elem, "width"), Json::getInstance().getDataFromJson<float>(elem, "height")});
+            Types::RectangleShape rectangle(
+                {Json::getInstance().getDataFromJson<float>(elem, "width"),
+                 Json::getInstance().getDataFromJson<float>(elem, "height")});
             Registry::getInstance().getComponents<Types::RectangleShape>().insertBack(rectangle);
             Registry::getInstance().setToFrontLayers(id);
         } else {
