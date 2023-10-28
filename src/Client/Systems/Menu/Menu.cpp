@@ -115,19 +115,19 @@ namespace Menu {
         Registry::getInstance().setToFrontLayers(id);
     }
 
-    static void initButton(nlohmann::json &elem, Material mat, std::function<void()> &callback)
+    static void initButton(nlohmann::json &elem, std::function<void()> &callback)
     {
-        switch (mat) {
-            case Material::RECTANGLE: initButtonFromRectangle(elem, callback); break;
-            case Material::SPRITE: initButtonFromSprite(elem, callback); break;
-            default: initButtonFromRectangle(elem, callback); break;
+        if (Json::isDataExist(elem, "spritePath")) {
+            initButtonFromSprite(elem, callback);
+        } else {
+            initButtonFromRectangle(elem, callback);
         }
     }
 
-    void MenuBuilder::initMenuEntity(nlohmann::json &elem, ObjectType type, std::function<void()> callback)
+    void MenuBuilder::initMenuEntity(nlohmann::json &elem, std::function<void()> callback)
     {
-        switch (type) {
-            case ObjectType::BUTTON: initButton(elem, elem["from"].get<Material>(), callback); break;
+        switch (elem["type"].get<ObjectType>()) {
+            case ObjectType::BUTTON: initButton(elem, callback); break;
             case ObjectType::TEXT: break; // no clickable text for now
             case ObjectType::INPUT_BOX: initInputBox(elem); break;
             default: Logger::error("Object type is undefined, check your json data"); break;
