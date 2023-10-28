@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include <vector>
 #include <functional>
+#include <vector>
 
 namespace Systems {
     namespace Menu {
