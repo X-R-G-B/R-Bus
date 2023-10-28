@@ -97,7 +97,9 @@ namespace Nitwork {
     void ANitwork::stop()
     {
         _isRunning = false;
-        _context.stop();
+        if (!_context.stopped()) {
+            _context.stop();
+        }
         for (auto &thread : _pool) {
             _tickMutex.lock();
             _tickConvVar.notify_all();
@@ -106,7 +108,9 @@ namespace Nitwork {
                 thread.join();
             }
         }
-        _clockThread.join();
+        if (_clockThread.joinable()) {
+            _clockThread.join();
+        }
         _pool.clear();
     }
 
@@ -372,6 +376,10 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_outputQueueMutex);
 
+        if (packet.endpoint.address().to_string() == "0.0.0.0" && packet.endpoint.port() == 0) {
+            Logger::error("NITWORK: Invalid endpoint");
+            return;
+        }
         _outputQueue.emplace_back(packet);
         Logger::trace("NITWORK: Adding packet to send of type: " + std::to_string(packet.action));
     }

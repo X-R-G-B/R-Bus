@@ -22,25 +22,58 @@ namespace Nitwork {
         return _instance;
     }
 
-    bool NitworkClient::startClient(int port, const std::string &ip, int threadNb, int tick)
+    bool NitworkClient::startClient(int threadNb, int tick)
     {
-        return ANitwork::start(port, threadNb, tick, ip);
+        return ANitwork::start(0, threadNb, tick, "0.0.0.0");
     }
 
-    bool NitworkClient::startNitworkConfig(int port, const std::string &ip)
+    bool NitworkClient::startNitworkConfig(int /* unused */, const std::string &/* unused */)
     {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        _endpoints.emplace_back(
-            *_resolver.resolve(boost::asio::ip::udp::v4(), ip, std::to_string(port)).begin());
-        _serverEndpoint = _endpoints.back();
         _socket         = boost::asio::ip::udp::socket(_context);
         _socket.open(boost::asio::ip::udp::v4());
         _socket.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 0));
         if (!_socket.is_open()) {
-            Registry::getInstance().getLogger().error("Socket not open");
+            Logger::error("Socket not open");
             return false;
         }
         return true;
+    }
+
+    void NitworkClient::setMainEndpoint(const std::string &ip, n_port_t port)
+    {
+        if (ip.empty() || port == 0) {
+            Logger::error("NITWORK: invalid main server endpoint");
+            return;
+        }
+        removeEndpoint(_mainServerEndpoint.address().to_string(), _mainServerEndpoint.port());
+        _mainServerEndpoint = addEndpoint(ip, port);
+    }
+
+    void NitworkClient::setLobbyEndpoint(const std::string &ip, n_port_t port)
+    {
+        if (ip.empty() || port == 0) {
+            Logger::error("NITWORK: invalid server endpoint");
+            return;
+        }
+        removeEndpoint(_serverEndpoint.address().to_string(), _serverEndpoint.port());
+        _serverEndpoint = addEndpoint(ip, port);
+    }
+
+    boost::asio::ip::udp::endpoint &NitworkClient::addEndpoint(const std::string &ip, n_port_t port)
+    {
+        _endpoints.emplace_back(
+            *_resolver.resolve(boost::asio::ip::udp::v4(), ip, std::to_string(port)).begin());
+        return _endpoints.back();
+    }
+
+    void NitworkClient::removeEndpoint(const std::string &ip, n_port_t port)
+    {
+        for (auto it = _endpoints.begin(); it != _endpoints.end(); ++it) {
+            if (it->address().to_string() == ip && it->port() == port) {
+                _endpoints.erase(it);
+                return;
+            }
+        }
     }
 
     void NitworkClient::handleBodyAction(
@@ -52,10 +85,11 @@ namespace Nitwork {
         auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + HEADER_SIZE);
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        if (endpoint.address().to_string() != _serverEndpoint.address().to_string()) {
+        if (endpoint.address().to_string() != _serverEndpoint.address().to_string() &&
+            endpoint.address().to_string() != _mainServerEndpoint.address().to_string()) {
             Logger::error(
                 "NITWORK: endpoint " + endpoint.address().to_string() + " is not the server"
-                + _serverEndpoint.address().to_string());
+                + _serverEndpoint.address().to_string() + " or the main server " + _mainServerEndpoint.address().to_string());
             return;
         }
         auto it = _actionsHandlers.find(action->magick);
@@ -76,6 +110,18 @@ namespace Nitwork {
     }
 
     /* Message Creation Section */
+    void NitworkClient::connectMainServer(const std::string &ip, n_port_t port)
+    {
+        setMainEndpoint(ip, port);
+        addConnectMainServerMsg();
+    }
+
+    void NitworkClient::connectLobby(const std::string &ip, n_port_t port)
+    {
+        setLobbyEndpoint(ip, port);
+        addInitMsg();
+    }
+
     void NitworkClient::addInitMsg()
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);

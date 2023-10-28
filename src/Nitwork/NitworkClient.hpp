@@ -30,12 +30,24 @@ namespace Nitwork {
              */
             using ANitwork::start;
             bool startClient(
-                int port,
-                const std::string &ip,
                 int threadNb = DEFAULT_THREAD_NB,
                 int tick     = TICKS);
 
             /* Messages creation methods */
+            /**
+             * @brief Connect the client to the main server
+             * @param ip The ip of the main server
+             * @param port The port of the main server
+             */
+            void connectMainServer(const std::string &ip, n_port_t port);
+
+            /**
+             * @brief Connect the client to the lobby
+             * @param ip
+             * @param port
+             */
+            void connectLobby(const std::string &ip, n_port_t port);
+
             /**
              * @brief Add a new init message to the packet
              * in order to create a new player when the server respond
@@ -102,18 +114,34 @@ namespace Nitwork {
              */
             void addCreateLobbyMsg(const std::string &name, enum gameType_e gameType, unsigned int maxNbPlayer, const std::string &ownerIp, n_port_t ownerPort);
 
-        /* Private send methods */
+        /* Private connection methods */
         private:
+            /**
+             * @brief Set the main endpoint (the main server)
+             * if the client is already connected to a main server, it will be disconnected
+             * @param ip The ip of the main server
+             * @param port The port of the main server
+             */
+            void setMainEndpoint(const std::string &ip, n_port_t port);
+
+            /**
+             * @brief Set the lobby endpoint (the game server)
+             * if the client is already connected to a game server (lobby), it will be disconnected
+             * @param ip The ip of the server
+             * @param port The port of the server
+             */
+            void setLobbyEndpoint(const std::string &ip, n_port_t port);
+
             /**
              * @brief Send a connection msg to connect to the main server
              */
             void addConnectMainServerMsg();
-
         private:
             /**
              * @brief Constructor of the NitworkClient
              */
             NitworkClient();
+
             /**
              * @brief Start the network configuration
              * @param port The port of the client
@@ -139,6 +167,20 @@ namespace Nitwork {
             [[nodiscard]] const std::map<enum n_actionType_t, actionSender> &
             getActionToSendHandlers() const final;
 
+            /**
+             * @brief Add a new endpoint to the client (like a lobby/main server)
+             * @param ip The ip of the endpoint
+             * @param port The port of the endpoint
+             * @return The endpoint
+             */
+            boost::asio::ip::udp::endpoint &addEndpoint(const std::string &ip, n_port_t port);
+
+            /**
+             * @brief Remove an endpoint from the client (like a lobby/main server)
+             * @param ip The ip of the endpoint
+             * @param port The port of the endpoint
+             */
+            void removeEndpoint(const std::string &ip, n_port_t port);
         protected:
 
         private:
@@ -148,14 +190,22 @@ namespace Nitwork {
              */
             static NitworkClient _instance;
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
+
             /**
              * @brief The resolver used to find the server
              */
             boost::asio::ip::udp::resolver _resolver;
+
+            /**
+             * @brief The endpoint of the main server
+             */
+            boost::asio::ip::udp::endpoint _mainServerEndpoint;
+
             /**
              * @brief The endpoint of the server
              */
             boost::asio::ip::udp::endpoint _serverEndpoint;
+
 
             // clang-format off
             /**
