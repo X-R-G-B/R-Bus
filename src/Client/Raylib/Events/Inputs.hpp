@@ -114,4 +114,5 @@ namespace Raylib {
         MOUSE_BTN_FORWARD = MOUSE_BUTTON_FORWARD,
         MOUSE_BTN_BACK    = MOUSE_BUTTON_BACK,
     };
+
 } // namespace Raylib
