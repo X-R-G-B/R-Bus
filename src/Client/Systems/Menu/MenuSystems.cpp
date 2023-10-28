@@ -168,7 +168,8 @@ namespace Systems {
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(inputBoxHost);
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(inputBoxIp);
             } catch (std::runtime_error &err) {
-                Logger::error("Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
+                Logger::error(
+                    "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
             }
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
