@@ -46,8 +46,6 @@ class Json {
         std::vector<nlohmann::json>
         getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType);
 
-        nlohmann::json &getDataFromJson(nlohmann::json jsonData, const std::string &index);
-
         static bool isDataExist(nlohmann::json jsonData, const std::string &index);
 
         std::vector<nlohmann::json>
