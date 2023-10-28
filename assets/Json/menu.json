@@ -2,7 +2,6 @@
     "menu": {
         "connect": {
             "type": "button",
-            "from": "sprite",
             "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
             "width": 500,
             "height" : 500,

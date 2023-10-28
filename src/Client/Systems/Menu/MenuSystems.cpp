@@ -151,6 +151,7 @@ namespace Systems {
         {
             if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::MENU) {
                 SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+                return;
             }
             nlohmann::json connectButton =
                 Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU);
@@ -161,14 +162,11 @@ namespace Systems {
             try {
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(
                     connectButton,
-                    connectButton["type"].get<::Menu::ObjectType>(),
                     ::Menu::Callback::initConnection);
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(
-                    inputBoxHost,
-                    inputBoxHost["type"].get<::Menu::ObjectType>());
+                    inputBoxHost);
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(
-                    inputBoxIp,
-                    inputBoxIp["type"].get<::Menu::ObjectType>());
+                    inputBoxIp);
             } catch (std::runtime_error &err) {
                 err.what();
                 Logger::error("Counldn't load menu correctly, verify your json data");
