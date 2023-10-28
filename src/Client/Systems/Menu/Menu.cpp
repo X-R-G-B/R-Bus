@@ -6,12 +6,12 @@
 */
 
 #include "Menu.hpp"
+#include "ButtonCallbacks.hpp"
 #include "CustomTypes.hpp"
 #include "Maths.hpp"
 #include "NitworkClient.hpp"
 #include "Raylib.hpp"
 #include "SceneManager.hpp"
-#include "ButtonCallbacks.hpp"
 
 namespace Menu {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
