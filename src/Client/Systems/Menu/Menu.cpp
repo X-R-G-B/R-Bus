@@ -10,8 +10,8 @@
 #include "Maths.hpp"
 #include "NitworkClient.hpp"
 #include "Raylib.hpp"
-#include "SystemManager.hpp"
 #include "SceneManager.hpp"
+#include "SystemManager.hpp"
 
 namespace Menu {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -52,9 +52,12 @@ namespace Menu {
         Raylib::Text textComp(text);
         std::size_t maxChar(Json::getInstance().getDataFromJson(elem, "maxChar"));
         Types::InputBox inputBox(text, name, maxChar);
-        auto search = Types::colorMatchStrings.find(Json::getInstance().getDataFromJson(elem, "color").get<std::string>());
+        auto search = Types::colorMatchStrings.find(
+            Json::getInstance().getDataFromJson(elem, "color").get<std::string>());
 
-        Raylib::Color color = search != Types::colorMatchStrings.end() ? Types::colorMatchStrings.at(Json::getInstance().getDataFromJson(elem, "color")) : Raylib::White;
+        Raylib::Color color = search != Types::colorMatchStrings.end()
+            ? Types::colorMatchStrings.at(Json::getInstance().getDataFromJson(elem, "color"))
+            : Raylib::White;
         Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
 
         if (!Json::getInstance().isDataExist(elem, "spritePath")) {
