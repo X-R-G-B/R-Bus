@@ -6,6 +6,10 @@
 */
 
 #include "MenuSystems.hpp"
+#include "Menu.hpp"
+#include "CustomTypes.hpp"
+#include "Maths.hpp"
+#include "SceneManager.hpp"
 
 namespace Systems {
     namespace Menu {
