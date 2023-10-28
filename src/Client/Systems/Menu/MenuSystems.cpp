@@ -20,7 +20,9 @@ namespace Systems {
                 Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
 
             for (auto id : ids) {
-                arrInputBox[id].selected = false;
+                if (arrInputBox[id].selected) {
+                    arrInputBox[id].selected = false;
+                }
             }
         }
 
@@ -168,8 +170,7 @@ namespace Systems {
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(
                     inputBoxIp);
             } catch (std::runtime_error &err) {
-                err.what();
-                Logger::error("Counldn't load menu correctly, verify your json data");
+                Logger::error("Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
             }
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
