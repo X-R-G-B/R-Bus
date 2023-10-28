@@ -7,10 +7,8 @@
 
 #pragma once
 
-#include "CustomTypes.hpp"
-#include "Maths.hpp"
-#include "Menu.hpp"
-#include "SceneManager.hpp"
+#include <vector>
+#include <functional>
 
 namespace Systems {
     namespace Menu {
