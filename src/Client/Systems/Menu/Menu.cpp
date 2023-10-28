@@ -61,7 +61,7 @@ namespace Menu {
         Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
 
         if (!Json::getInstance().isDataExist(elem, "spritePath")) {
-            Types::RectangleShape rectangle({elem["width"], elem["height"]});
+            Types::RectangleShape rectangle({Json::getInstance().getDataFromJson<float>(elem, "width"), Json::getInstance().getDataFromJson<float>(elem, "height")});
             Registry::getInstance().getComponents<Types::RectangleShape>().insertBack(rectangle);
             Registry::getInstance().setToFrontLayers(id);
         } else {
@@ -129,7 +129,7 @@ namespace Menu {
 
     void MenuBuilder::initMenuEntity(nlohmann::json &elem, std::function<void()> callback)
     {
-        switch (elem["type"].get<ObjectType>()) {
+        switch (Json::getInstance().getDataFromJson<ObjectType>(elem, "type")) {
             case ObjectType::BUTTON: initButton(elem, callback); break;
             case ObjectType::TEXT: break; // no clickable text for now
             case ObjectType::INPUT_BOX: initInputBox(elem); break;
