@@ -80,7 +80,8 @@ namespace Menu {
 
     static void initButtonFromSprite(nlohmann::json &elem, std::function<void()> &callback)
     {
-        nlohmann::basic_json<> animRectData = Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(elem, "animRect");
+        nlohmann::basic_json<> animRectData =
+            Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(elem, "animRect");
         Types::Button button(callback);
 
         Registry::getInstance().addEntity();
