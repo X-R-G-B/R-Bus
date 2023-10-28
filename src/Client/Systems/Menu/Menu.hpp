@@ -35,8 +35,8 @@ namespace Menu {
      * @class MenuBuilder
      * @brief Singleton class for building and initializing menu entities.
      *
-     * This class provides functions for initializing menu entities from a JSON element. It's designed as a Singleton,
-     * meaning there should only be one instance of this class in the application.
+     * This class provides functions for initializing menu entities from a JSON element. It's designed as a
+     * Singleton, meaning there should only be one instance of this class in the application.
      */
     class MenuBuilder {
         public:
@@ -53,11 +53,12 @@ namespace Menu {
             /**
              * @brief Initializes a menu entity from a JSON element.
              *
-             * This function sets up a menu entity using the provided JSON element and 
+             * This function sets up a menu entity using the provided JSON element and
              * an optional callback function. If no callback is provided, a default callback is used.
              *
              * @param elem The JSON element from which the menu entity will be initialized.
-             * @param callback Optional callback function for the menu entity. Defaults to Menu::Callback::defaultCallBack.
+             * @param callback Optional callback function for the menu entity. Defaults to
+             * Menu::Callback::defaultCallBack.
              */
             void initMenuEntity(
                 nlohmann::json &elem,

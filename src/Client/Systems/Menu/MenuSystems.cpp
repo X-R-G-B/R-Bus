@@ -163,10 +163,8 @@ namespace Systems {
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(
                     connectButton,
                     ::Menu::Callback::initConnection);
-                ::Menu::MenuBuilder::getInstance().initMenuEntity(
-                    inputBoxHost);
-                ::Menu::MenuBuilder::getInstance().initMenuEntity(
-                    inputBoxIp);
+                ::Menu::MenuBuilder::getInstance().initMenuEntity(inputBoxHost);
+                ::Menu::MenuBuilder::getInstance().initMenuEntity(inputBoxIp);
             } catch (std::runtime_error &err) {
                 err.what();
                 Logger::error("Counldn't load menu correctly, verify your json data");
