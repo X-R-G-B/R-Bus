@@ -9,8 +9,8 @@
 #include "ClientNetwork.hpp"
 #include "EventsSystems.hpp"
 #include "GraphicSystems.hpp"
-#include "SelectLobbySystems.hpp"
 #include "MenuSystems.hpp"
+#include "SelectLobbySystems.hpp"
 #include "Systems.hpp"
 
 namespace Systems {

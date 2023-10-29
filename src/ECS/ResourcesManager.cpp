@@ -76,7 +76,7 @@ namespace ECS {
         }
         if (type == FileType::BINARY) {
             boost::filesystem::path path_tmp = _resourcePath;
-            path_tmp = path_tmp.parent_path();
+            path_tmp                         = path_tmp.parent_path();
 #ifdef PACKAGED
             path_tmp.append("bin");
 #endif

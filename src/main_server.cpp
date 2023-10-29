@@ -30,17 +30,15 @@ int mainMainServer(const std::vector<std::string> &av)
     return EXIT_SUCCESS;
 }
 
-int mainLoobyServer(const std::vector<std::string> &av)
+int mainLobbyServer(const std::vector<std::string> &av)
 {
     Logger::info("Starting Server...");
-    if (!Nitwork::NitworkServer::getInstance()
-             .startServer(
-                 std::stoi(av[2]),
-                 static_cast<gameType_e>(std::stoi(av[3])),
-                 av[4],
-                 av[5],
-                 std::stoi(av[6]))
-        ) {
+    if (!Nitwork::NitworkServer::getInstance().startServer(
+            std::stoi(av[2]),
+            static_cast<gameType_e>(std::stoi(av[3])),
+            av[4],
+            av[5],
+            std::stoi(av[6]))) {
         return EXIT_EPITECH;
     }
     Nitwork::NitworkServer::getInstance().addInfoLobbyMsg();
@@ -70,7 +68,7 @@ int main(int ac, const char **av)
     if (serverType == Args::MAIN_SERVER) {
         return mainMainServer(args);
     } else if (serverType == Args::LOBBY_SERVER) {
-        return mainLoobyServer(args);
+        return mainLobbyServer(args);
     } else {
         Args::ServerArgsHandling::help();
         return (serverType == Args::SHOW_HELP ? EXIT_SUCCESS : EXIT_EPITECH);

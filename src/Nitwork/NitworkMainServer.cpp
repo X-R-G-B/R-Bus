@@ -7,7 +7,7 @@
 
 #include "Logger.hpp"
 #ifdef _WIN32
-#include <sstream>
+    #include <sstream>
 #else
 extern "C"
 {
@@ -168,28 +168,27 @@ namespace Nitwork {
         int ownerPort)
     {
 #ifdef _WIN32
-    std::ostringstream cmdline;
-    cmdline << ECS::ResourcesManager::convertPath("./r-type_server", ECS::ResourcesManager::FileType::BINARY).c_str()
-            << " 1 "
-            << maxNbPlayer << " "
-            << gameType << " "
-            << name.c_str() << " "
-            << ownerIp.c_str() << " "
-            << ownerPort;
+        std::ostringstream cmdline;
+        cmdline << ECS::ResourcesManager::convertPath(
+                       "./r-type_server",
+                       ECS::ResourcesManager::FileType::BINARY)
+                       .c_str()
+                << " 1 " << maxNbPlayer << " " << gameType << " " << name.c_str() << " " << ownerIp.c_str()
+                << " " << ownerPort;
 
-    STARTUPINFO si;
-    PROCESS_INFORMATION pi;
-    ZeroMemory(&si, sizeof(si));
-    si.cb = sizeof(si);
-    ZeroMemory(&pi, sizeof(pi));
+        STARTUPINFO si;
+        PROCESS_INFORMATION pi;
+        ZeroMemory(&si, sizeof(si));
+        si.cb = sizeof(si);
+        ZeroMemory(&pi, sizeof(pi));
 
-    if (!CreateProcess(NULL, &cmdline.str()[0], NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
-        Logger::error("Error: CreateProcess failed");
-        return;
-    }
-    _lobbyPids.emplace_back(pi.dwProcessId);
-    CloseHandle(pi.hProcess);
-    CloseHandle(pi.hThread);
+        if (!CreateProcess(NULL, &cmdline.str()[0], NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+            Logger::error("Error: CreateProcess failed");
+            return;
+        }
+        _lobbyPids.emplace_back(pi.dwProcessId);
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
 #else
         pid_t c_pid = fork();
 
@@ -200,15 +199,22 @@ namespace Nitwork {
         if (c_pid == 0) {
             Logger::info("Lobby " + name + " created");
             if (execl(
-                    ECS::ResourcesManager::convertPath("./r-type_server", ECS::ResourcesManager::FileType::BINARY).c_str(),
-                    ECS::ResourcesManager::convertPath("./r-type_server", ECS::ResourcesManager::FileType::BINARY).c_str(),
+                    ECS::ResourcesManager::convertPath(
+                        "./r-type_server",
+                        ECS::ResourcesManager::FileType::BINARY)
+                        .c_str(),
+                    ECS::ResourcesManager::convertPath(
+                        "./r-type_server",
+                        ECS::ResourcesManager::FileType::BINARY)
+                        .c_str(),
                     "1",
                     std::to_string(maxNbPlayer).c_str(),
                     std::to_string(gameType).c_str(),
                     name.c_str(),
                     ownerIp.c_str(),
                     std::to_string(ownerPort).c_str(),
-                    NULL) == -1) {
+                    NULL)
+                == -1) {
                 Logger::error("Error: execl failed");
             }
         } else {
@@ -217,7 +223,10 @@ namespace Nitwork {
 #endif
     }
 
-    void NitworkMainServer::createLobby(unsigned int maxNbPlayer, const std::string &name, enum gameType_e gameType)
+    void NitworkMainServer::createLobby(
+        unsigned int maxNbPlayer,
+        const std::string &name,
+        enum gameType_e gameType)
     {
         if (maxNbPlayer < 1) {
             Logger::error("Invalid number of players: " + std::to_string(maxNbPlayer));

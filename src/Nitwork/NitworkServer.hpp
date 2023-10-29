@@ -337,8 +337,7 @@ namespace Nitwork {
                  [this](Packet &packet) {
                      sendData<struct packetPlayerDeath_s>(packet);
                  }                            },
-                {INFO_LOBBY,
-                 [this](Packet &packet) {
+                {INFO_LOBBY,                  [this](Packet &packet) {
                      sendData<struct packetInfoLobby_s>(packet);
                  }}
             };

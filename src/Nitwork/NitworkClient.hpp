@@ -29,9 +29,7 @@ namespace Nitwork {
              * @brief Start the client
              */
             using ANitwork::start;
-            bool startClient(
-                int threadNb = DEFAULT_THREAD_NB,
-                int tick     = TICKS);
+            bool startClient(int threadNb = DEFAULT_THREAD_NB, int tick = TICKS);
 
             /* Messages creation methods */
             /**
@@ -110,9 +108,11 @@ namespace Nitwork {
              * @param gameType The type of the game
              * @param maxNbPlayer The max number of player in the lobby
              */
-            void addCreateLobbyMsg(const std::string &name, enum gameType_e gameType, unsigned int maxNbPlayer);
+            void
+            addCreateLobbyMsg(const std::string &name, enum gameType_e gameType, unsigned int maxNbPlayer);
 
-        /* Private connection methods */
+            /* Private connection methods */
+
         private:
             /**
              * @brief Set the main endpoint (the main server)
@@ -134,6 +134,7 @@ namespace Nitwork {
              * @brief Send a connection msg to connect to the main server
              */
             void addConnectMainServerMsg();
+
         private:
             /**
              * @brief Constructor of the NitworkClient
@@ -179,6 +180,7 @@ namespace Nitwork {
              * @param port The port of the endpoint
              */
             void removeEndpoint(const std::string &ip, n_port_t port);
+
         protected:
 
         private:
@@ -203,7 +205,6 @@ namespace Nitwork {
              * @brief The endpoint of the server
              */
             boost::asio::ip::udp::endpoint _serverEndpoint;
-
 
             // clang-format off
             /**

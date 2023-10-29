@@ -32,19 +32,21 @@ namespace Nitwork {
         int threadNb,
         int tick)
     {
+        auto startStatus = ANitwork::start(port, threadNb, tick, "");
+
         _serverInfos.maxNbPlayer = nbPlayer;
         std::strcpy(_serverInfos.name, (name.size() > 32) ? name.substr(0, 32).data() : name.data());
         std::strcpy(
             _serverInfos.ownerInfos.ip,
             (ownerIp.size() > 16) ? ownerIp.substr(0, 16).data() : ownerIp.data());
         _serverInfos.ownerInfos.port = ownerPort;
-        auto startStatus             = ANitwork::start(port, threadNb, tick, "");
         _serverInfos.lobbyInfos.port = _socket.local_endpoint().port();
         std::strcpy(
             _serverInfos.lobbyInfos.ip,
             (_socket.local_endpoint().address().to_string().size() > 16)
                 ? _socket.local_endpoint().address().to_string().substr(0, 16).data()
                 : _socket.local_endpoint().address().to_string().data());
+        _serverInfos.gameType = gameType;
         // TODO: add gameType to lobby
         return startStatus;
     }
@@ -251,8 +253,14 @@ namespace Nitwork {
         struct packetInfoLobby_s packetInfo = {
             .header = {0, 0, 0, 0, 1, 0},
             .action = {.magick = INFO_LOBBY},
-            .msg    = {.magick = MAGICK_INFO_LOBBY, .lobby = _serverInfos}
+            .msg    = {
+                       .magick      = MAGICK_INFO_LOBBY,
+                       .name        = {},
+                       .maxNbPlayer = _serverInfos.maxNbPlayer,
+                       .gameType    = _serverInfos.gameType,
+                       .ownerInfos  = _serverInfos.ownerInfos}
         };
+        std::strcpy(packetInfo.msg.name, _serverInfos.name);
         boost::asio::ip::udp::endpoint mainServer = boost::asio::ip::udp::endpoint(
             boost::asio::ip::address::from_string(_serverInfos.ownerInfos.ip),
             _serverInfos.ownerInfos.port);

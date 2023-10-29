@@ -83,7 +83,9 @@ namespace Systems::SelectLobbySystems {
             Json::getInstance().getDataByVector({"menu", "maxNb"}, JsonType::SELECT_LOBBY);
 
         try {
-            Menu::MenuBuilder::getInstance().initMenuEntity(createLobbyNormalButton, onButtonCreateLobbyNormalClicked);
+            Menu::MenuBuilder::getInstance().initMenuEntity(
+                createLobbyNormalButton,
+                onButtonCreateLobbyNormalClicked);
             Menu::MenuBuilder::getInstance().initMenuEntity(lobbyName);
             Menu::MenuBuilder::getInstance().initMenuEntity(maxNbPlayer);
         } catch (const std::exception &err) {
@@ -159,4 +161,4 @@ namespace Systems::SelectLobbySystems {
     {
         return {initSelectLoby, sendListLobby, createLobbyRow};
     }
-}
+} // namespace Systems::SelectLobbySystems
