@@ -34,7 +34,7 @@ namespace Scene {
             Scene _currentScene;
             bool _stop;
             const std::array<std::vector<SystemManagers>, 3> _scenes = {
-                {{SystemManagers::DISPLAY, SystemManagers::DISPLAY, SystemManagers::MENU},
+                {{SystemManagers::DISPLAY, SystemManagers::MENU},
                  {SystemManagers::EVENTS,
                   SystemManagers::GAME,
                   SystemManagers::DISPLAY,
