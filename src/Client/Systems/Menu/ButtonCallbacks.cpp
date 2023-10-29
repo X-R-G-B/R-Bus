@@ -41,14 +41,7 @@ namespace Menu {
             std::string port;
 
             getIpAndPort(ip, port);
-            if (!Nitwork::NitworkClient::getInstance()
-                     .start(std::stoi(port), DEFAULT_THREAD_NB, TICKS, ip)) {
-                Logger::error("Error network couldn't connect");
-                return;
-            }
-            Nitwork::NitworkClient::getInstance().addInitMsg();
-            Nitwork::NitworkClient::getInstance().addReadyMsg();
-            Scene::SceneManager::getInstance().changeScene(Scene::Scene::MAIN_GAME);
+            Nitwork::NitworkClient::getInstance().connectMainServer(ip, std::stoi(port));
         }
     } // namespace Callback
 } // namespace Menu
