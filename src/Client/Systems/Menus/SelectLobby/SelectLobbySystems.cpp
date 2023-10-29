@@ -92,13 +92,14 @@ namespace Systems::SelectLobbySystems {
 
     void sendListLobby(std::size_t /*unused*/, std::size_t /*unused*/)
     {
-        static bool first = true;
+        static std::size_t clockId = Registry::getInstance().getClock().create();
 
-        if (first) {
-            first = false;
+        if (Registry::getInstance().getClock().elapsedSecondsSince(clockId) > 1) {
+            Registry::getInstance().getClock().decreaseSeconds(clockId, 2);
             Nitwork::NitworkClient::getInstance().addListLobbyMsg();
         }
     }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> getLobbySystems()
     {
         return {initSelectLoby, sendListLobby};
