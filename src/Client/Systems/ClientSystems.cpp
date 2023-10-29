@@ -21,7 +21,7 @@ namespace Systems {
             EventsSystems::getEventSystems(),
             GraphicSystems::getGraphicsSystems(),
             getNetworkSystems(),
-            SelectLobbySystems::getLobbySystems(),
-            Menu::getMenuSystems()};
+            Menu::getMenuSystems(),
+            SelectLobbySystems::getLobbySystems()};
     }
 } // namespace Systems
