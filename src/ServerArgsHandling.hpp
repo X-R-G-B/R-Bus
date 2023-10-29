@@ -53,8 +53,8 @@ namespace Args {
                 Logger::info("Usage: ./r-type_server <serverType> <serverArgs>");
                 Logger::info("serverType: 0 for main server, 1 for lobby server");
                 Logger::info("serverArg:");
-                Logger::info("\t- 1 <port> for main server");
-                Logger::info("\t- 0 <playerNb> <serverName> <ownerIp> <ownerPort> for lobby server");
+                Logger::info("\t- 0 <port> for main server");
+                Logger::info("\t- 1 <playerNb> <serverName> <ownerIp> <ownerPort> for lobby server");
                 Logger::info("Example (main server): ./r-type_server 0 4242");
                 Logger::info("Example (lobby server): ./r-type_server 1 4 serverDeXavier 172.20.10.5 4242");
             }

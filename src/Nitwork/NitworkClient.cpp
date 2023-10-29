@@ -112,6 +112,7 @@ namespace Nitwork {
     /* Message Creation Section */
     void NitworkClient::connectMainServer(const std::string &ip, n_port_t port)
     {
+        Logger::info("NITWORK: connecting to main server");
         setMainEndpoint(ip, port);
         addConnectMainServerMsg();
     }
@@ -303,7 +304,7 @@ namespace Nitwork {
         Packet packet(
             packetListLobby.action.magick,
             std::make_any<struct packetRequestListLobby_s>(packetListLobby),
-            _serverEndpoint);
+            _mainServerEndpoint);
         addPacketToSend(packet);
     }
 
@@ -330,7 +331,7 @@ namespace Nitwork {
         Packet packet(
             packetCreateLobby.action.magick,
             std::make_any<struct packetCreateLobby_s>(packetCreateLobby),
-            _serverEndpoint);
+            _mainServerEndpoint);
         addPacketToSend(packet);
     }
 
@@ -348,7 +349,7 @@ namespace Nitwork {
         Packet packet(
             packetConnectMainServer.action.magick,
             std::make_any<struct packetConnectMainServer_s>(packetConnectMainServer),
-            _serverEndpoint);
+            _mainServerEndpoint);
         addPacketToSend(packet);
     }
 } // namespace Nitwork
