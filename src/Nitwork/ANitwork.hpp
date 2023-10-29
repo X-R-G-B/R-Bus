@@ -95,10 +95,14 @@ namespace Nitwork {
             void handleBody(const actionHandler &handler, const struct header_s &header)
             {
                 // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
-                auto *body =
-                    reinterpret_cast<B *>(_receiveBuffer.data() + HEADER_SIZE + sizeof(struct action_s));
+                auto *body = reinterpret_cast<B *>(_receiveBuffer.data());
                 // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
                 handleBodyDatas<B>(handler, header, *body, boost::system::error_code());
+                std::memmove(
+                    _receiveBuffer.data(),
+                    _receiveBuffer.data() + sizeof(B),
+                    _receiveBuffer.size() - sizeof(B));
+                std::memset(_receiveBuffer.data() + _receiveBuffer.size() - sizeof(B), 0, sizeof(B));
             }
 
             // send package to all clients but not the endpoint

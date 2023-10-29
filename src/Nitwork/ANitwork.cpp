@@ -152,23 +152,32 @@ namespace Nitwork {
         }
         _receiveBuffer = Zstd::decompress(_receiveBuffer, bytes_received);
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
-        auto *header = reinterpret_cast<struct header_s *>(_receiveBuffer.data());
+        auto *header_ptr = reinterpret_cast<struct header_s *>(_receiveBuffer.data());
+        auto header      = *header_ptr;
+        std::memmove(
+            _receiveBuffer.data(),
+            _receiveBuffer.data() + sizeof(struct header_s),
+            _receiveBuffer.size() - sizeof(struct header_s));
+        std::memset(
+            _receiveBuffer.data() + _receiveBuffer.size() - sizeof(struct header_s),
+            0,
+            sizeof(struct header_s));
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
 
-        if (header->magick1 != HEADER_CODE1 || header->magick2 != HEADER_CODE2) {
+        if (header.magick1 != HEADER_CODE1 || header.magick2 != HEADER_CODE2) {
             callReceiveHandler("header magick not valid");
             return;
         }
-        if (header->nb_action > MAX_NB_ACTION || isAlreadyReceived(header->id, _senderEndpoint)) {
+        if (header.nb_action > MAX_NB_ACTION || isAlreadyReceived(header.id, _senderEndpoint)) {
             callReceiveHandler("header nb action not valid or already received");
             return;
         }
         _receivedPacketsIdsMutex.lock();
-        _receivedPacketsIdsMap[_senderEndpoint].push_back(header->id);
+        _receivedPacketsIdsMap[_senderEndpoint].push_back(header.id);
         _receivedPacketsIdsMutex.unlock();
-        handlePacketIdsReceived(*header);
-        for (int i = 0; i < header->nb_action; i++) {
-            handleBodyAction(*header, _senderEndpoint);
+        handlePacketIdsReceived(header);
+        for (int i = 0; i < header.nb_action; i++) {
+            handleBodyAction(header, _senderEndpoint);
         }
         startReceiveHandler();
     }

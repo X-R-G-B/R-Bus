@@ -82,7 +82,7 @@ namespace Nitwork {
     {
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + HEADER_SIZE);
+        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data());
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (endpoint.address().to_string() != _serverEndpoint.address().to_string()
@@ -102,6 +102,14 @@ namespace Nitwork {
             "Received packet from " + endpoint.address().to_string() + ":" + std::to_string(endpoint.port())
             + " with id " + std::to_string(header.id) + " and action of type "
             + std::to_string(action->magick));
+        std::memmove(
+            _receiveBuffer.data(),
+            _receiveBuffer.data() + sizeof(struct action_s),
+            _receiveBuffer.size() - sizeof(struct action_s));
+        std::memset(
+            _receiveBuffer.data() + _receiveBuffer.size() - sizeof(struct action_s),
+            0,
+            sizeof(struct action_s));
         it->second.first(it->second.second, header);
     }
 

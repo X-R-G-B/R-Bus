@@ -92,10 +92,8 @@ namespace Systems::SelectLobbySystems {
     static std::string gameTypeToString(enum gameType_e gameType)
     {
         switch (gameType) {
-            case CLASSIC_GAME:
-                return "CLASSIC_GAME";
-            default:
-                return "Unknow Game Type";
+            case CLASSIC_GAME: return "CLASSIC_GAME";
+            default: return "Unknow Game Type";
         }
     }
 
@@ -108,22 +106,23 @@ namespace Systems::SelectLobbySystems {
         }
         Registry::getInstance().getClock().decreaseSeconds(clockId, 1);
         // already created lobby
-        auto idsLobbyStatus = Registry::getInstance().getEntitiesByComponents({typeid(LobbyStatus), typeid(Raylib::Text)});
+        auto idsLobbyStatus =
+            Registry::getInstance().getEntitiesByComponents({typeid(LobbyStatus), typeid(Raylib::Text)});
         auto &arrLobbyStatus = Registry::getInstance().getComponents<LobbyStatus>();
-        auto &arrLobbyText = Registry::getInstance().getComponents<Raylib::Text>();
+        auto &arrLobbyText   = Registry::getInstance().getComponents<Raylib::Text>();
         // list of all lobby
-        auto ids = Registry::getInstance().getEntitiesByComponents({typeid(struct lobby_s)});
+        auto ids       = Registry::getInstance().getEntitiesByComponents({typeid(struct lobby_s)});
         auto &arrLobby = Registry::getInstance().getComponents<struct lobby_s>();
-        float x = 10;
-        float y = 50;
+        float x        = 10;
+        float y        = 50;
 
         for (auto id : ids) {
             bool found = false;
             for (auto idLobbyStatus : idsLobbyStatus) {
-                if (arrLobby[id].lobbyInfos.port == arrLobbyStatus[idLobbyStatus].port &&
-                    std::string(arrLobby[id].lobbyInfos.ip) == arrLobbyStatus[idLobbyStatus].ip) {
-                    x = arrLobbyText[idLobbyStatus].x();
-                    y = arrLobbyText[idLobbyStatus].y();
+                if (arrLobby[id].lobbyInfos.port == arrLobbyStatus[idLobbyStatus].port
+                    && std::string(arrLobby[id].lobbyInfos.ip) == arrLobbyStatus[idLobbyStatus].ip) {
+                    x     = arrLobbyText[idLobbyStatus].x();
+                    y     = arrLobbyText[idLobbyStatus].y();
                     found = true;
                 }
             }
@@ -131,7 +130,9 @@ namespace Systems::SelectLobbySystems {
                 Registry::getInstance().addEntity();
                 LobbyStatus NewLobby(arrLobby[id].lobbyInfos.ip, arrLobby[id].lobbyInfos.port);
                 arrLobbyStatus.insertBack(NewLobby);
-                std::string text_t = std::string(arrLobby[id].name) + " | " + std::to_string(arrLobby[id].maxNbPlayer) + " | " + gameTypeToString(arrLobby[id].gameType);
+                std::string text_t = std::string(arrLobby[id].name) + " | "
+                    + std::to_string(arrLobby[id].maxNbPlayer) + " | "
+                    + gameTypeToString(arrLobby[id].gameType);
                 y += 5;
                 Raylib::Text text(text_t, Raylib::Vector2(x, y), 2, Raylib::Red);
                 arrLobbyText.insertBack(text);
