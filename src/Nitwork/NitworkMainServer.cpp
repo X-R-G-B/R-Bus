@@ -198,6 +198,7 @@ namespace Nitwork {
             return;
         }
         if (c_pid == 0) {
+            Logger::info("Lobby " + name + " created");
             if (execl(
                     ECS::ResourcesManager::convertPath("./r-type_server", ECS::ResourcesManager::FileType::BINARY).c_str(),
                     ECS::ResourcesManager::convertPath("./r-type_server", ECS::ResourcesManager::FileType::BINARY).c_str(),
@@ -207,7 +208,7 @@ namespace Nitwork {
                     name.c_str(),
                     ownerIp.c_str(),
                     std::to_string(ownerPort).c_str(),
-                    NULL)) {
+                    NULL) == -1) {
                 Logger::error("Error: execl failed");
             }
         } else {
@@ -230,8 +231,8 @@ namespace Nitwork {
             maxNbPlayer,
             gameType,
             name,
-            _endpoints.back().address().to_string(),
-            _endpoints.back().port());
+            _socket.local_endpoint().address().to_string(),
+            _socket.local_endpoint().port());
     }
 
     const std::vector<struct lobby_s> &NitworkMainServer::getLobbies() const
