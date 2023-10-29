@@ -6,7 +6,12 @@
 namespace ECS {
     class ResourcesManager {
         public:
+            enum class FileType {
+                ASSETS,
+                BINARY,
+            };
             static std::string convertPath(const std::string &path_const);
+            static std::string convertPath(const std::string &path_const, FileType type);
             static void init(std::string execPath);
 
         private:

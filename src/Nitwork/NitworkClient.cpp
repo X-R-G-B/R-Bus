@@ -308,7 +308,7 @@ namespace Nitwork {
         addPacketToSend(packet);
     }
 
-    void NitworkClient::addCreateLobbyMsg(const std::string &name, enum gameType_e gameType, unsigned int maxNbPlayer, const std::string &ownerIp, n_port_t ownerPort)
+    void NitworkClient::addCreateLobbyMsg(const std::string &name, enum gameType_e gameType, unsigned int maxNbPlayer)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetCreateLobby_s packetCreateLobby = {
@@ -323,11 +323,11 @@ namespace Nitwork {
                        .name = "",
                        .gameType = gameType,
                        .maxNbPlayer = maxNbPlayer,
-                       .ownerInfos = {.ip = "", .port = ownerPort}
+                       .ownerInfos = {.ip = "", .port = _mainServerEndpoint.port()}
                 }
         };
         std::strcpy(packetCreateLobby.msg.name, (name.size() > 32 ? name.substr(0, 32) : name).c_str());
-        std::strcpy(packetCreateLobby.msg.ownerInfos.ip, (name.size() > 16 ? ownerIp.substr(0, 16) : ownerIp).c_str());
+        std::strcpy(packetCreateLobby.msg.ownerInfos.ip, (_mainServerEndpoint.address().to_string().size() > 16 ? _mainServerEndpoint.address().to_string().substr(0, 16) : _mainServerEndpoint.address().to_string()).c_str());
         Packet packet(
             packetCreateLobby.action.magick,
             std::make_any<struct packetCreateLobby_s>(packetCreateLobby),

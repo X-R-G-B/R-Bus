@@ -41,7 +41,7 @@ namespace Scene {
                   SystemManagers::NETWORK},
                  {SystemManagers::DISPLAY,
                   SystemManagers::NETWORK,
-                  SystemManagers::NETWORK_MENU}}};
+                  SystemManagers::NETWORK_MENU, SystemManagers::MENU}}};
 
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static bool _init;

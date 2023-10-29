@@ -109,10 +109,8 @@ namespace Nitwork {
              * @param name The name of the lobby
              * @param gameType The type of the game
              * @param maxNbPlayer The max number of player in the lobby
-             * @param ownerIp The ip of the owner
-             * @param ownerPort The port of the owner
              */
-            void addCreateLobbyMsg(const std::string &name, enum gameType_e gameType, unsigned int maxNbPlayer, const std::string &ownerIp, n_port_t ownerPort);
+            void addCreateLobbyMsg(const std::string &name, enum gameType_e gameType, unsigned int maxNbPlayer);
 
         /* Private connection methods */
         private:

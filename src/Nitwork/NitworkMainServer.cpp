@@ -169,7 +169,7 @@ namespace Nitwork {
     {
 #ifdef _WIN32
     std::ostringstream cmdline;
-    cmdline << ECS::ResourcesManager::convertPath("./r-type_server").c_str()
+    cmdline << ECS::ResourcesManager::convertPath("./r-type_server", ECS::ResourcesManager::FileType::BINARY).c_str()
             << " 1 "
             << maxNbPlayer << " "
             << gameType << " "
@@ -199,8 +199,8 @@ namespace Nitwork {
         }
         if (c_pid == 0) {
             if (execl(
-                    ECS::ResourcesManager::convertPath("./r-type_server").c_str(),
-                    ECS::ResourcesManager::convertPath("./r-type_server").c_str(),
+                    ECS::ResourcesManager::convertPath("./r-type_server", ECS::ResourcesManager::FileType::BINARY).c_str(),
+                    ECS::ResourcesManager::convertPath("./r-type_server", ECS::ResourcesManager::FileType::BINARY).c_str(),
                     "1",
                     std::to_string(maxNbPlayer).c_str(),
                     std::to_string(gameType).c_str(),
