@@ -16,7 +16,16 @@ extern "C"
 #include "MessageTypes.h"
 }
 
-enum class JsonType { DEFAULT_ENEMY, DEFAULT_PLAYER, DEFAULT_PARALLAX, TERMINATOR, WAVE, BULLETS, MENU, SELECT_LOBBY };
+enum class JsonType {
+    DEFAULT_ENEMY,
+    DEFAULT_PLAYER,
+    DEFAULT_PARALLAX,
+    TERMINATOR,
+    WAVE,
+    BULLETS,
+    MENU,
+    SELECT_LOBBY
+};
 
 const std::unordered_map<enemy_type_e, JsonType> messageTypes = {
     {CLASSIC_ENEMY, JsonType::DEFAULT_ENEMY},

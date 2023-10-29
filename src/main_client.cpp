@@ -23,7 +23,7 @@ int main(int /*unused*/, const char **av)
     if (!Nitwork::NitworkClient::getInstance().startClient()) {
         return EXIT_EPITECH;
     }
-    int res            = sceneManager.run();
+    int res = sceneManager.run();
     if (Nitwork::NitworkClient::getInstance().isRunning()) {
         Nitwork::NitworkClient::getInstance().stop();
     }

@@ -43,15 +43,25 @@ namespace Systems {
         Nitwork::NitworkMainServer::getInstance().createLobby(msg.maxNbPlayer, msg.name, msg.gameType);
     }
 
-    void handleInfoLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint & /* unused */)
+    void handleInfoLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &lobbyEndpoint)
     {
         const struct msgInfoLobby_s &msg = std::any_cast<struct msgInfoLobby_s>(data);
+        struct lobby_s lobby             = {};
 
         if (msg.magick != MAGICK_INFO_LOBBY) {
             Logger::error("MAGICK_HELLO_LOBBY is not the same");
             return;
         }
-        Logger::info("Lobby " + std::string(msg.lobby.name) + " is ready");
-        Nitwork::NitworkMainServer::getInstance().addLobby(msg.lobby);
+        Logger::info(
+            "Lobby " + std::string(msg.name) + " is ready (" + lobbyEndpoint.address().to_string() + ":"
+            + std::to_string(lobbyEndpoint.port()) + ")");
+        std::strcpy(lobby.name, msg.name);
+        lobby.maxNbPlayer = msg.maxNbPlayer;
+        lobby.gameType    = msg.gameType;
+        lobby.gameType    = msg.gameType;
+        std::strcpy(lobby.lobbyInfos.ip, lobbyEndpoint.address().to_string().c_str());
+        lobby.lobbyInfos.port = lobbyEndpoint.port();
+        lobby.ownerInfos      = msg.ownerInfos;
+        Nitwork::NitworkMainServer::getInstance().addLobby(lobby);
     }
 } // namespace Systems

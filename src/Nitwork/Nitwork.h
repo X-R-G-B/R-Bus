@@ -308,7 +308,10 @@ PACK(struct packetCreateLobby_s {
  */
 PACK(struct msgInfoLobby_s {
     n_magick_t magick;
-    struct lobby_s lobby;
+    char name[32];
+    unsigned int maxNbPlayer;
+    enum gameType_e gameType;
+    struct connectionData_s ownerInfos;
 });
 
 PACK(struct packetInfoLobby_s {

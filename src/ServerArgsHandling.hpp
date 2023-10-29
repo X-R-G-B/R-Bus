@@ -7,8 +7,9 @@
 
 #pragma once
 #include <vector>
-extern "C" {
-    #include "MessageTypes.h"
+extern "C"
+{
+#include "MessageTypes.h"
 }
 #include "Logger.hpp"
 
