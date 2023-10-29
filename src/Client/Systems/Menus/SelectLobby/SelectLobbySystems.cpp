@@ -40,23 +40,6 @@ namespace Systems::SelectLobbySystems {
         return !name.empty() && !maxNbPlayer.empty();
     }
 
-    static void setNameAndMaxNbEmpty()
-    {
-        Registry::components<Types::InputBox> arrInputBox =
-            Registry::getInstance().getComponents<Types::InputBox>();
-        std::vector<std::size_t> ids =
-            Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
-
-        for (auto id : ids) {
-            if (arrInputBox[id].name == "name" && !arrInputBox[id].text.empty()) {
-                arrInputBox[id].text = "";
-            }
-            if (arrInputBox[id].name == "maxNb" && !arrInputBox[id].text.empty()) {
-                arrInputBox[id].text = "";
-            }
-        }
-    }
-
     void onButtonCreateLobbyNormalClicked()
     {
         std::string name;
@@ -65,7 +48,6 @@ namespace Systems::SelectLobbySystems {
         if (getNameAndMaxNb(name, maxNvPlayer)) {
             unsigned int nbPlayer = static_cast<unsigned int>(std::stoi(maxNvPlayer));
             Nitwork::NitworkClient::getInstance().addCreateLobbyMsg(name, CLASSIC_GAME, nbPlayer);
-            setNameAndMaxNbEmpty();
         }
     }
 
