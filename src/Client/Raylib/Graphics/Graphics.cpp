@@ -243,6 +243,13 @@ namespace Raylib {
         TakeScreenshot(fileName.c_str());
     }
 
+    // Collision check functions
+
+    bool checkCollisionPointRec(Vector2 point, Rectangle rec)
+    {
+        return (CheckCollisionPointRec({point.x, point.y}, {rec.x, rec.y, rec.width, rec.height}));
+    }
+
     // Input-related functions: keyboard
 
     bool isKeyPressed(KeyboardKey key)
@@ -693,6 +700,16 @@ namespace Raylib {
     void Text::setCurrentFontSize(float fontSize)
     {
         _currentFontSize = fontSize;
+    }
+
+    std::string &Text::getCurrentText()
+    {
+        return (_text);
+    }
+
+    void Text::setCurrentText(const std::string &text)
+    {
+        _text = text;
     }
 
 } // namespace Raylib

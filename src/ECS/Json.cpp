@@ -103,14 +103,6 @@ std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list, c
     return (datas);
 }
 
-nlohmann::json &Json::getDataFromJson(nlohmann::json jsonData, const std::string &index)
-{
-    if (jsonData[index] == nullptr) {
-        throw std::runtime_error("Json error");
-    }
-    return (jsonData[index]);
-}
-
 std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list)
 {
     std::vector<nlohmann::json> datas;

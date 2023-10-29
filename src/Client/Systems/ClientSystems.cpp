@@ -10,16 +10,18 @@
 #include "EventsSystems.hpp"
 #include "GraphicSystems.hpp"
 #include "SelectLobbySystems.hpp"
+#include "MenuSystems.hpp"
 #include "Systems.hpp"
 
 namespace Systems {
-    std::array<std::vector<std::function<void(std::size_t, std::size_t)>>, 5> getSystemsGroups()
+    std::array<std::vector<std::function<void(std::size_t, std::size_t)>>, 6> getSystemsGroups()
     {
         return {
             getECSSystems(),
             EventsSystems::getEventSystems(),
             GraphicSystems::getGraphicsSystems(),
             getNetworkSystems(),
-            SelectLobbySystems::getLobbySystems()};
+            SelectLobbySystems::getLobbySystems(),
+            Menu::getMenuSystems()};
     }
 } // namespace Systems

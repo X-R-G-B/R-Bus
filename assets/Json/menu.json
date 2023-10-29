@@ -1,0 +1,121 @@
+{
+    "menu": {
+        "connect": {
+            "type": "button",
+            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "width": 500,
+            "height" : 500,
+            "rect": {
+                "x": 101.0,
+                "y": 0.0,
+                "width": 32.0,
+                "height": 19.0
+            },
+            "position" : {
+                "x": 1000,
+                "y": 1000
+            },
+            "collisionRect": {
+                "width": 500,
+                "height": 500
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 233.0,
+                            "y": 2.0,
+                            "width": 32.0,
+                            "height": 14.0
+                        }
+                    ]
+                }
+            ]
+        },
+        "ip": {
+            "name": "ip",
+            "type": "input",
+            "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
+            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "text": "localhost",
+            "color": "red",
+            "textSize": 3,
+            "maxChar": 10,
+            "width": 500,
+            "height" : 500,
+            "position" : {
+                "x": 2000,
+                "y": 2000
+            },
+            "rect": {
+                "x": 101.0,
+                "y": 0.0,
+                "width": 32.0,
+                "height": 19.0
+            },
+            "collisionRect": {
+                "width": 2000,
+                "height": 500
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 233.0,
+                            "y": 2.0,
+                            "width": 32.0,
+                            "height": 14.0
+                        }
+                    ]
+                }
+            ]
+        },
+        "host": {
+            "name": "port",
+            "type": "input",
+            "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
+            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "text": "4242",
+            "color": "red",
+            "textSize": 3,
+            "maxChar": 10,
+            "width": 20,
+            "height" : 5,
+            "position" : {
+                "x": 3700,
+                "y": 6000
+            },
+            "collisionRect": {
+                "width": 2000,
+                "height": 500
+            },
+            "rect": {
+                "x": 101.0,
+                "y": 0.0,
+                "width": 32.0,
+                "height": 19.0
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 233.0,
+                            "y": 2.0,
+                            "width": 32.0,
+                            "height": 14.0
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

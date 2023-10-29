@@ -18,14 +18,14 @@ namespace Scene {
 
     enum class Scene { MENU, MAIN_GAME, SELECT_LOBBY, SCENE_MAX };
 
-    enum class SystemManagers { GAME, EVENTS, DISPLAY, NETWORK, NETWORK_MENU };
+    enum class SystemManagers { GAME, EVENTS, DISPLAY, NETWORK, MENU, NETWORK_MENU };
 
     class SceneManager {
         public:
             static SceneManager &getInstance();
             int run();
             void changeScene(Scene scene);
-            Scene getCurrentScene() const;
+            [[nodiscard]] Scene getCurrentScene() const;
             void stop();
 
         private:
@@ -34,10 +34,7 @@ namespace Scene {
             Scene _currentScene;
             bool _stop;
             const std::array<std::vector<SystemManagers>, 3> _scenes = {
-                {{SystemManagers::EVENTS,
-                  SystemManagers::GAME,
-                  SystemManagers::DISPLAY,
-                  SystemManagers::NETWORK},
+                {{SystemManagers::DISPLAY, SystemManagers::DISPLAY, SystemManagers::MENU},
                  {SystemManagers::EVENTS,
                   SystemManagers::GAME,
                   SystemManagers::DISPLAY,
