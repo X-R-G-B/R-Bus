@@ -5,6 +5,9 @@
 ** MainServerNetwork
 */
 
+#if defined(_WIN32)
+    #define _CRT_SECURE_NO_WARNINGS
+#endif
 #include "MainServerNetwork.hpp"
 #include "Nitwork.h"
 #include "NitworkMainServer.hpp"
