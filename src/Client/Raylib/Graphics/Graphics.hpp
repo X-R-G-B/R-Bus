@@ -134,10 +134,10 @@ namespace Raylib {
 
     class TextureManager {
         public:
-            TextureManager(TextureManager const &)  = delete;
-            TextureManager(TextureManager const &&) = delete;
-            void operator=(TextureManager const &)  = delete;
-            void operator=(TextureManager const &&) = delete;
+            TextureManager(const TextureManager &)  = delete;
+            TextureManager(const TextureManager &&) = delete;
+            void operator=(const TextureManager &)  = delete;
+            void operator=(const TextureManager &&) = delete;
 
             static TextureManager &getInstance();
             ~TextureManager();
