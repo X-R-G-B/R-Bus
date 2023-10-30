@@ -6,6 +6,7 @@
 */
 
 #include "Graphics.hpp"
+#include <mutex>
 #include "Inputs.hpp"
 #include "ResourcesManager.hpp"
 
@@ -443,10 +444,47 @@ namespace Raylib {
         return _image.data;
     }
 
+    // TextureManager functions
+
+    // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
+    TextureManager TextureManager::_instance = TextureManager();
+    // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
+
+    TextureManager::~TextureManager()
+    {
+        unloadTextures();
+    }
+
+    TextureManager &TextureManager::getInstance()
+    {
+        return _instance;
+    }
+
+    ::Texture2D &TextureManager::getTexture(const std::string &fileName)
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        auto it = _textures.find(fileName);
+
+        if (it == _textures.end()) {
+            _textures[fileName] = LoadTexture(ECS::ResourcesManager::convertPath(fileName).c_str());
+            it                  = _textures.find(fileName);
+        }
+        return _textures[fileName];
+    }
+
+    void TextureManager::unloadTextures()
+    {
+        std::lock_guard<std::mutex> lock(_mutex);
+        for (auto &it : _textures) {
+            UnloadTexture(it.second);
+        }
+        _textures.clear();
+    }
+
     // Texture functions
 
     Sprite::Sprite(const std::string &fileName, float width, float height, std::size_t id)
-        : _texture(LoadTexture(ECS::ResourcesManager::convertPath(fileName).c_str())),
+        : _texture(TextureManager::getInstance().getTexture(fileName)),
           _width(width),
           _height(height)
     {
@@ -472,11 +510,6 @@ namespace Raylib {
         img.mipmaps = image.getMipmaps();
         img.format  = image.getFormat();
         _texture    = LoadTextureFromImage(img);
-    }
-
-    void Sprite::unloadSprite()
-    {
-        UnloadTexture(_texture);
     }
 
     unsigned int Sprite::getId() const

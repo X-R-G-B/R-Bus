@@ -59,6 +59,7 @@ namespace Scene {
     {
         Raylib::closeAudioDevice();
         Raylib::closeWindow();
+        Raylib::TextureManager::getInstance().unloadTextures();
     }
 
     static void updateSystemManagers(std::vector<SystemManagers> &scene)

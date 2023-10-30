@@ -17,6 +17,10 @@ namespace Nitwork {
     bool ANitwork::start(int port, int threadNb, int tick, const std::string &ip)
     {
         try {
+            if (_isRunning) {
+                Logger::fatal("NITWORK: Nitwork already started");
+                return false;
+            }
             _isRunning = true;
             if (!startNitworkConfig(port, ip)) {
                 Logger::fatal("NITWORK: Nitwork config failed");
@@ -29,9 +33,10 @@ namespace Nitwork {
                 return false;
             }
             startReceiveHandler();
-            Logger::info("NITWORK: Nitwork started on port " + std::to_string(port));
+            Logger::info(
+                "NITWORK: Nitwork started on port " + std::to_string(_socket.local_endpoint().port()));
         } catch (std::exception &e) {
-            Logger::fatal("NITWORK: Nitwork failed to start" + std::string(e.what()));
+            Logger::fatal("NITWORK: Nitwork failed to start, " + std::string(e.what()));
             return false;
         }
         return true;
@@ -92,7 +97,9 @@ namespace Nitwork {
     void ANitwork::stop()
     {
         _isRunning = false;
-        _context.stop();
+        if (!_context.stopped()) {
+            _context.stop();
+        }
         for (auto &thread : _pool) {
             _tickMutex.lock();
             _tickConvVar.notify_all();
@@ -101,7 +108,9 @@ namespace Nitwork {
                 thread.join();
             }
         }
-        _clockThread.join();
+        if (_clockThread.joinable()) {
+            _clockThread.join();
+        }
         _pool.clear();
     }
 
@@ -143,23 +152,32 @@ namespace Nitwork {
         }
         _receiveBuffer = Zstd::decompress(_receiveBuffer, bytes_received);
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
-        auto *header = reinterpret_cast<struct header_s *>(_receiveBuffer.data());
+        auto *header_ptr = reinterpret_cast<struct header_s *>(_receiveBuffer.data());
+        auto header      = *header_ptr;
+        std::memmove(
+            _receiveBuffer.data(),
+            _receiveBuffer.data() + sizeof(struct header_s),
+            _receiveBuffer.size() - sizeof(struct header_s));
+        std::memset(
+            _receiveBuffer.data() + _receiveBuffer.size() - sizeof(struct header_s),
+            0,
+            sizeof(struct header_s));
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
 
-        if (header->magick1 != HEADER_CODE1 || header->magick2 != HEADER_CODE2) {
+        if (header.magick1 != HEADER_CODE1 || header.magick2 != HEADER_CODE2) {
             callReceiveHandler("header magick not valid");
             return;
         }
-        if (header->nb_action > MAX_NB_ACTION || isAlreadyReceived(header->id, _senderEndpoint)) {
+        if (header.nb_action > MAX_NB_ACTION || isAlreadyReceived(header.id, _senderEndpoint)) {
             callReceiveHandler("header nb action not valid or already received");
             return;
         }
         _receivedPacketsIdsMutex.lock();
-        _receivedPacketsIdsMap[_senderEndpoint].push_back(header->id);
+        _receivedPacketsIdsMap[_senderEndpoint].push_back(header.id);
         _receivedPacketsIdsMutex.unlock();
-        handlePacketIdsReceived(*header);
-        for (int i = 0; i < header->nb_action; i++) {
-            handleBodyAction(*header, _senderEndpoint);
+        handlePacketIdsReceived(header);
+        for (int i = 0; i < header.nb_action; i++) {
+            handleBodyAction(header, _senderEndpoint);
         }
         startReceiveHandler();
     }
@@ -172,6 +190,18 @@ namespace Nitwork {
             [id](auto &receivedId) {
                 return receivedId == id;
             });
+    }
+
+    bool ANitwork::isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const
+    {
+        auto endPointIt = std::find_if(
+            _endpoints.begin(),
+            _endpoints.end(),
+            [&endpoint](const boost::asio::ip::udp::endpoint &e) {
+                return e.address() == endpoint.address() && e.port() == endpoint.port();
+            });
+
+        return endPointIt != _endpoints.end();
     }
 
     void ANitwork::handlePacketIdsReceived(const struct header_s &header)
@@ -244,6 +274,24 @@ namespace Nitwork {
                 it->second(data);
             } catch (std::exception &e) {
                 Logger::error("NITWORK: catch action: " + std::string(e.what()));
+            }
+        }
+    }
+
+    void ANitwork::sendToAllClients(const Packet &packet)
+    {
+        for (auto &endpoint : _endpoints) {
+            addPacketToSend(Packet(packet, endpoint));
+        }
+    }
+
+    void ANitwork::sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        for (auto &e : _endpoints) {
+            if (e != endpoint) {
+                Logger::debug(
+                    "Package sent to: " + e.address().to_string() + ":" + std::to_string(e.port()));
+                addPacketToSend(Packet(packet, e));
             }
         }
     }
@@ -337,6 +385,10 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(_outputQueueMutex);
 
+        if (packet.endpoint.address().to_string() == "0.0.0.0" && packet.endpoint.port() == 0) {
+            Logger::error("NITWORK: Invalid endpoint");
+            return;
+        }
         _outputQueue.emplace_back(packet);
         Logger::trace("NITWORK: Adding packet to send of type: " + std::to_string(packet.action));
     }

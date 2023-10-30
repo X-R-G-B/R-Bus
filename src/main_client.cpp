@@ -20,7 +20,10 @@ int main(int /*unused*/, const char **av)
 #endif
     ECS::ResourcesManager::init(av[0]);
     auto &sceneManager = Scene::SceneManager::getInstance();
-    int res            = sceneManager.run();
+    if (!Nitwork::NitworkClient::getInstance().startClient()) {
+        return EXIT_EPITECH;
+    }
+    int res = sceneManager.run();
     if (Nitwork::NitworkClient::getInstance().isRunning()) {
         Nitwork::NitworkClient::getInstance().stop();
     }

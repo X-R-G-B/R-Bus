@@ -117,10 +117,10 @@ namespace Systems {
                     if (arrAnimRect.exist(id)) {
                         arrAnimRect[id].changeRectList(Types::RectListType::HOVER);
                     }
-                    Raylib::setMouseCursor(MOUSE_CURSOR_IBEAM);
+                    // Raylib::setMouseCursor(MOUSE_CURSOR_IBEAM);
                     return;
                 }
-                Raylib::setMouseCursor(MOUSE_CURSOR_DEFAULT);
+                // Raylib::setMouseCursor(MOUSE_CURSOR_DEFAULT);
                 if (arrAnimRect.exist(id)) {
                     arrAnimRect[id].changeRectList(Types::RectListType::UNDEFINED);
                 }
@@ -145,6 +145,7 @@ namespace Systems {
         {
             Registry::components<Types::AnimRect> arrAnimRect =
                 Registry::getInstance().getComponents<Types::AnimRect>();
+
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
                 {typeid(Types::CollisionRect),
                  typeid(Types::AnimRect),
@@ -166,13 +167,12 @@ namespace Systems {
                 SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
                 return;
             }
-            nlohmann::json connectButton =
-                Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU);
-            nlohmann::json inputBoxIp = Json::getInstance().getDataByVector({"menu", "ip"}, JsonType::MENU);
-            nlohmann::json inputBoxHost =
-                Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
-
             try {
+                nlohmann::json connectButton =
+                    Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU);
+                nlohmann::json inputBoxIp = Json::getInstance().getDataByVector({"menu", "ip"}, JsonType::MENU);
+                nlohmann::json inputBoxHost =
+                Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(
                     connectButton,
                     ::Menu::Callback::initConnection);

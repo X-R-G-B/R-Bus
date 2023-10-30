@@ -23,21 +23,21 @@ namespace Raylib {
     // Sounds
     class Sound {
         public:
-            Sound(const std::string& fileName, float volume = 0.5f);
-            bool isReady() const;
+            Sound(const std::string &fileName, float volume = 0.5f);
+            [[nodiscard]] bool isReady() const;
             void unload();
             void play() const;
             void stop() const;
             void pause() const;
             void resume() const;
-            bool isPlaying() const;
+            [[nodiscard]] bool isPlaying() const;
             void setVolume(float volume) const;
             void setPitch(float pitch) const;
             void setPan(float pan) const;
-            bool NeedToPlay() const;
+            [[nodiscard]] bool NeedToPlay() const;
             void setNeedToPlay(bool needToPlay);
-            std::string getPath() const;
-            std::string getRealPath() const;
+            [[nodiscard]] const std::string &getPath() const;
+            [[nodiscard]] const std::string &getRealPath() const;
 
         private:
             std::string _path;
@@ -48,11 +48,11 @@ namespace Raylib {
 
     class Music {
         public:
-            Music(const std::string& fileName, float volume = 0.5f);
+            Music(const std::string &fileName, float volume = 0.5f);
             void unload();
-            bool isReady() const;
+            [[nodiscard]] bool isReady() const;
             void play() const;
-            bool isPlaying() const;
+            [[nodiscard]] bool isPlaying() const;
             void update() const;
             void stop() const;
             void pause() const;
@@ -60,12 +60,12 @@ namespace Raylib {
             void setVolume(float volume) const;
             void setPitch(float pitch) const;
             void setPan(float pan) const;
-            float getTimeLength() const;
-            float getTimePlayed() const;
-            bool NeedToPlay() const;
+            [[nodiscard]] float getTimeLength() const;
+            [[nodiscard]] float getTimePlayed() const;
+            [[nodiscard]] bool NeedToPlay() const;
             void setNeedToPlay(bool needToPlay);
-            std::string getPath() const;
-            std::string getRealPath() const;
+            [[nodiscard]] const std::string &getPath() const;
+            [[nodiscard]] const std::string &getRealPath() const;
 
         private:
             std::string _path;

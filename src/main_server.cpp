@@ -1,14 +1,15 @@
 #include <csignal>
+#include <vector>
 #include "Logger.hpp"
+#include "NitworkMainServer.hpp"
 #include "NitworkServer.hpp"
 #include "Registry.hpp"
 #include "ResourcesManager.hpp"
+#include "ServerArgsHandling.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
 
 constexpr int EXIT_EPITECH = 84;
-constexpr int PORT_MIN     = 0;
-constexpr int PORT_MAX     = 65535;
 static bool isRunning      = true;
 
 static void signalHandler(int signum)
@@ -18,50 +19,35 @@ static void signalHandler(int signum)
     signal(SIGINT, SIG_DFL);
 }
 
-static bool isNumber(const std::string &str)
+int mainMainServer(const std::vector<std::string> &av)
 {
-    return std::all_of(str.begin(), str.end(), ::isdigit);
-}
+    Logger::info("Starting Main Server...");
+    auto port = std::stoi(av[2]);
 
-static bool checkArgs(int ac, const char **av)
-{
-    if (ac != 3) {
-        Logger::error("Usage: ./r-type_server <port> <playerNb>");
-        return false;
-    }
-    const std::vector<std::string> args(av + 1, av + ac);
-    for (const auto &arg : args) {
-        if (!isNumber(arg)) {
-            Logger::error("Invalid argument: " + arg);
-            return false;
-        }
-    }
-    if (std::stoi(args[0]) < PORT_MIN || std::stoi(args[0]) > PORT_MAX || std::stoi(args[1]) < 1) {
-        Logger::error("Invalid port or playerNb");
-        return false;
-    }
-    return true;
-}
-
-int main(int ac, const char **av)
-{
-#ifndef NDEBUG
-    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
-#endif
-    ECS::ResourcesManager::init(av[0]);
-    if (!checkArgs(ac, av)) {
+    if (!Nitwork::NitworkMainServer::getInstance().startServer(port)) {
         return EXIT_EPITECH;
     }
+    while (isRunning && Nitwork::NitworkMainServer::getInstance().isRunning()) { };
+    Nitwork::NitworkMainServer::getInstance().stop();
+    return EXIT_SUCCESS;
+}
+
+int mainLobbyServer(const std::vector<std::string> &av)
+{
     Logger::info("Starting Server...");
-    if (!Nitwork::NitworkServer::getInstance()
-             .startServer(std::stoi(av[1]), std::stoi(av[2]), DEFAULT_THREAD_NB, TICKS)) {
+    auto nbPlayer  = std::stoi(av[2]);
+    auto gameType  = static_cast<gameType_e>(std::stoi(av[3]));
+    auto name      = av[4];
+    auto ownerIp   = av[5];
+    auto ownerPort = std::stoi(av[6]);
+
+    if (!Nitwork::NitworkServer::getInstance().startServer(nbPlayer, gameType, name, ownerIp, ownerPort)) {
         return EXIT_EPITECH;
     }
+    Nitwork::NitworkServer::getInstance().addInfoLobbyMsg();
     auto &director = Systems::SystemManagersDirector::getInstance();
     std::unique_lock<std::mutex> lock(director.mutex);
     director.addSystemManager(Systems::getECSSystems());
-    signal(SIGINT, signalHandler);
-
     lock.unlock();
     while (isRunning && Nitwork::NitworkServer::getInstance().isRunning()) {
         lock.lock();
@@ -69,5 +55,26 @@ int main(int ac, const char **av)
         lock.unlock();
     }
     Nitwork::NitworkServer::getInstance().stop();
-    return 0;
+    return EXIT_SUCCESS;
+}
+
+int main(int ac, const char **av)
+{
+#ifndef NDEBUG
+    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
+#endif
+    std::vector<std::string> args(av, av + ac);
+    auto serverType  = Args::ServerArgsHandling::checkArgs(ac, av);
+    auto programPath = std::string(av[0]);
+
+    signal(SIGINT, signalHandler);
+    ECS::ResourcesManager::init(programPath);
+    if (serverType == Args::MAIN_SERVER) {
+        return mainMainServer(args);
+    } else if (serverType == Args::LOBBY_SERVER) {
+        return mainLobbyServer(args);
+    } else {
+        Args::ServerArgsHandling::help();
+        return (serverType == Args::SHOW_HELP ? EXIT_SUCCESS : EXIT_EPITECH);
+    }
 }

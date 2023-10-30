@@ -23,4 +23,5 @@ target_sources(
     PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/ANitwork.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/NitworkServer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/NitworkMainServer.cpp
 )
