@@ -126,7 +126,6 @@ namespace Nitwork {
             void addPlayerDeathMsg(n_id_t id);
             void addPlayerDeathMsg(n_id_t id, boost::asio::ip::udp::endpoint &endpoint);
 
-
             /**
              * @brief Add a msg packet that contain the new bullet msg to the clients
              * @param endpoint The endpoint of the client that will receive the new player
