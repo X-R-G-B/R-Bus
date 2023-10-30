@@ -53,7 +53,7 @@ namespace Types {
         _physicsMap.clear();
     }
 
-    void Physics::initBounce(nlohmann::json &jsonObject, const Types::Position &originPos)
+    void Physics::initBounce(nlohmann::json &/*unused*/, const Types::Position &originPos)
     {
         Bouncing bounce(originPos);
         _physicsMap[BOUNCING] = bounce;
