@@ -59,6 +59,9 @@ There are two ways to install R-Bus:
 R-Bus is licensed under the [MIT License](https://github.com/X-R-G-B/R-Bus/blob/dev/LICENSE).
 
 ## Created By X-L-R-G-B
+
+![logo](https://raw.githubusercontent.com/X-R-G-B/R-Bus/dev/assets/icons/xlrgb-logo.png)
+
 This project is a collaborative effort by:
 
 - [Xavier](https://github.com/Saverio976)
