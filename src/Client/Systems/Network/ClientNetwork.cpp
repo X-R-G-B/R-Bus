@@ -35,12 +35,17 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto enemyDeath                      = std::any_cast<struct msgEnemyDeath_s>(any);
         Registry::components<Types::Enemy> enemies = Registry::getInstance().getComponents<Types::Enemy>();
-        std::vector<std::size_t> ids               = enemies.getExistingsId();
+        auto &arrHealth              = Registry::getInstance().getComponents<struct health_s>();
+        std::vector<std::size_t> ids = enemies.getExistingsId();
 
         for (auto id : ids) {
             if (enemies[id].getConstId().id == enemyDeath.enemyId.id) {
-                Logger::debug("ROLLBACK REMOVE ENEMY !!!!!");
-                Registry::getInstance().removeEntity(id);
+                if (arrHealth.exist(id)) {
+                    arrHealth[id].hp = 0;
+                } else {
+                    Logger::fatal("\n\n\n!!!! Enemy has no health component, but is alive !!!!\n\n\n");
+                    Registry::getInstance().addToRemove(id);
+                }
                 return;
             }
         }
@@ -57,15 +62,6 @@ namespace Systems {
         Logger::info("Wave started");
     }
 
-    void receivePlayerInit(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
-    {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const auto playerInit = std::any_cast<struct msgPlayerInit_s>(any);
-
-        Logger::info("Your player id is: " + std::to_string(playerInit.playerId));
-        initPlayer(playerInit.playerId);
-    }
-
     void receiveNewEnemy(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
@@ -80,13 +76,49 @@ namespace Systems {
         Registry::getInstance().getComponents<struct health_s>().insertBack(hp);
     }
 
-    void receiveNewAllie(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
+    static void createNewPlayer(const struct msgCreatePlayer_s &newPlayer)
+    {
+        Logger::debug("CREATE NEW PLAYER");
+        Registry &registry   = Registry::getInstance();
+        auto &arrPlayer      = registry.getComponents<Types::Player>();
+        auto &arrOtherPlayer = registry.getComponents<Types::OtherPlayer>();
+        auto idsPlayer       = registry.getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::Player), typeid(struct health_s)});
+        auto idsOtherPlayer = registry.getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct health_s)});
+        Logger::debug("CREATE NEW PLAYER2");
+        auto player =
+            std::find_if(idsPlayer.begin(), idsPlayer.end(), [&arrPlayer, &newPlayer](std::size_t id) {
+                return arrPlayer[id].constId == newPlayer.playerId;
+            });
+        auto otherPlayers = std::find_if(
+            idsOtherPlayer.begin(),
+            idsOtherPlayer.end(),
+            [&arrOtherPlayer, &newPlayer](std::size_t id) {
+                return arrOtherPlayer[id].constId == newPlayer.playerId;
+            });
+
+        Logger::debug("CREATE NEW PLAYER3");
+        if (player != idsPlayer.end() || otherPlayers != idsOtherPlayer.end()) {
+            auto id = player != idsPlayer.end() ? *player : *otherPlayers;
+            Logger::debug("REMOVE already existing player: " + std::to_string(id));
+            Registry::getInstance().addToRemove(id);
+        }
+        Logger::debug("CREATE NEW PLAYER4");
+        initPlayer(newPlayer.playerId, newPlayer.pos, newPlayer.life, newPlayer.isOtherPlayer);
+    }
+
+    void receiveNewPlayer(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const auto newAllie = std::any_cast<struct msgNewAllie_s>(any);
+        const auto newPlayer = std::any_cast<struct msgCreatePlayer_s>(any);
 
-        Logger::info("New Ally created with id: " + std::to_string(newAllie.playerId));
-        initPlayer(newAllie.playerId, true);
+        if (newPlayer.isOtherPlayer) {
+            Logger::info("New Ally created with id: " + std::to_string(newPlayer.playerId));
+        } else {
+            Logger::info("Your player id is: " + std::to_string(newPlayer.playerId));
+        }
+        createNewPlayer(newPlayer);
     }
 
     void receiveRelativePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
@@ -218,6 +250,32 @@ namespace Systems {
             return;
         }
         arrPos[*otherPlayer] = position;
+    }
+
+    void receivePlayerDeath(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const auto playerDeath = std::any_cast<struct msgPlayerDeath_s>(any);
+        auto &arrPlayer        = Registry::getInstance().getComponents<Types::Player>();
+        auto &arrOtherPlayers  = Registry::getInstance().getComponents<Types::OtherPlayer>();
+        auto &arrHealth        = Registry::getInstance().getComponents<struct health_s>();
+        auto playersIds        = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Player), typeid(struct health_s)});
+        auto otherPlayersIds = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::OtherPlayer), typeid(struct health_s)});
+
+        for (auto &id : playersIds) {
+            if (arrPlayer[id].constId == playerDeath.playerId) {
+                arrHealth[id].hp = 0;
+                return;
+            }
+        }
+        for (auto &id : otherPlayersIds) {
+            if (arrOtherPlayers[id].constId == playerDeath.playerId) {
+                arrHealth[id].hp = 0;
+                return;
+            }
+        }
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()

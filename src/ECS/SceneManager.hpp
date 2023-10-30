@@ -33,6 +33,7 @@ namespace Scene {
                         Registry::getInstance().callback(Events::START_LOOP);
                         auto scene = _scenes.at(static_cast<std::size_t>(_currentScene));
                         updateSystemManagers(scene);
+                        Registry::getInstance().removeEntitiesToRemove();
                         Registry::getInstance().callback(Events::END_LOOP);
                     }
                     Registry::getInstance().callback(Events::AFTER_LOOP);

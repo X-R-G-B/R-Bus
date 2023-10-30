@@ -21,7 +21,7 @@ namespace Systems {
                 Registry::getInstance().getComponents<Raylib::Sound>();
 
             for (auto &soundEffect : arrSoundEffect) {
-                if (soundEffect.NeedToPlay()) {
+                if (soundEffect.NeedToPlay() && !soundEffect.isPlaying()) {
                     soundEffect.play();
                     soundEffect.setNeedToPlay(false);
                 }

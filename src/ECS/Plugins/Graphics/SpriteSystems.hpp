@@ -36,56 +36,23 @@ namespace Systems {
             return (size);
         }
 
-        static std::vector<Types::Rect> getCurrentList(Types::AnimRect &animRect)
-        {
-            switch (animRect.currentRectList) {
-                case Types::RectListType::MOVE: return animRect.moveRects;
-                case Types::RectListType::DEAD: return animRect.deadRects;
-                case Types::RectListType::ATTACK: return animRect.attackRects;
-                default: return {animRect.defaultRect};
-            }
-        }
-
-        static void incrementRect(Types::AnimRect &animRect)
-        {
-            if (animRect.currentRectList != Types::RectListType::DEFAULTRECT) {
-                animRect.currentRectInList++;
-                if (animRect.currentRectInList == getCurrentList(animRect).size()) {
-                    animRect.currentRectInList = 0;
-                }
-            }
-        }
-
-        constexpr std::size_t elapsedBetweenAnim = 120;
-
         static void updateAnimRect(std::size_t id, Types::AnimRect &animRect, Types::Rect &rect)
         {
             Clock &clock_ = Registry::getInstance().getClock();
             static std::unordered_map<std::size_t, std::size_t> clockIds;
-            auto clockId = clockIds.find(id);
-            if (clockId == clockIds.end()) {
+
+            if (auto clockId = clockIds.find(id); clockId == clockIds.end()) {
                 clockIds[id] = clock_.create();
             }
-
-            if (clock_.elapsedMillisecondsSince(clockIds[id]) < elapsedBetweenAnim) {
+            if (clock_.elapsedMillisecondsSince(clockIds[id]) < animRect.getActualAnimDelay()) {
                 return;
             }
-            std::vector<Types::Rect> rects = getCurrentList(animRect);
-            if (animRect.currentRectInList < rects.size()) {
-                rect = rects[animRect.currentRectInList];
-            } else {
-                Logger::error(
-                    "Attempt to access id : " + std::to_string(animRect.currentRectInList) + " in list of size "
-                    + std::to_string(getCurrentList(animRect).size()));
-                animRect.currentRectList   = Types::RectListType::DEFAULTRECT;
-                animRect.currentRectInList = 0;
-                return;
-            }
-            incrementRect(animRect);
-            clock_.decreaseMilliseconds(clockIds[id], elapsedBetweenAnim);
+            Types::Rect rectAnim = animRect.getCurrentAnimRect();
+            rect = rectAnim;
+            clock_.decreaseMilliseconds(clockIds[id], animRect.getActualAnimDelay());
         }
 
-        void rectIncrementation(std::size_t /*unused*/, std::size_t /*unused*/)
+        void updateAnimation(std::size_t /*unused*/, std::size_t /*unused*/)
         {
             std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
             Registry &registry                                = Registry::getInstance();
@@ -256,7 +223,7 @@ namespace Systems {
 
         std::vector<std::function<void(std::size_t, std::size_t)>> getSpriteSystems()
         {
-            return {rectIncrementation, rectRenderer, spriteRenderer, createSprite};
+            return {updateAnimation, rectRenderer, spriteRenderer, createSprite};
         }
     } // namespace GraphicsSystems
 } // namespace Systems

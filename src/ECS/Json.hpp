@@ -22,7 +22,7 @@ extern "C"
 #include "MessageTypes.h"
 }
 
-enum class JsonType { DEFAULT_ENEMY, DEFAULT_PLAYER, DEFAULT_PARALLAX, TERMINATOR, WAVE };
+enum class JsonType { DEFAULT_ENEMY, DEFAULT_PLAYER, DEFAULT_PARALLAX, TERMINATOR, WAVE, BULLETS };
 
 const std::unordered_map<enemy_type_e, JsonType> messageTypes = {
     {CLASSIC_ENEMY, JsonType::DEFAULT_ENEMY},
@@ -34,7 +34,8 @@ const std::unordered_map<JsonType, std::string> pathToJson = {
     {JsonType::DEFAULT_PLAYER,   "assets/Json/playerData.json"  },
     {JsonType::DEFAULT_PARALLAX, "assets/Json/parallaxData.json"},
     {JsonType::TERMINATOR,       "assets/Json/terminator.json"  },
-    {JsonType::WAVE,             "assets/Json/wave.json"        }
+    {JsonType::WAVE,             "assets/Json/wave.json"        },
+    {JsonType::BULLETS,          "assets/Json/bullets.json"     }
 };
 
 class Json {
@@ -50,11 +51,27 @@ class Json {
             return instance;
         }
 
-        nlohmann::json getDataByVector(const std::vector<std::string> &indexes, JsonType dataType)
+        nlohmann::json
+        getJsonObjectById(JsonType type, const std::string &id, const std::string &arrayName)
+        {
+            auto objectList = getDataByJsonType(type)[arrayName];
+
+            for (const auto &object : objectList) {
+                auto idField = object.find("id");
+                if (idField != object.end() && idField->is_string() && *idField == id) {
+                    return object;
+                }
+            }
+            Logger::fatal(std::string("(getJsonObject) Key : " + id + " is not valid"));
+            throw std::runtime_error("Json error");
+        }
+
+        template <typename T>
+        T getDataByJsonType(const std::string &index, JsonType dataType)
         {
             nlohmann::json finalData(_jsonDatas[dataType]);
 
-            for (const auto &key : indexes) {
+            for (const auto &key : index) {
                 finalData = finalData[key];
                 if (finalData == nullptr) {
                     Logger::fatal(std::string("(getDataByVector) Key : " + key + " is not valid"));
@@ -121,14 +138,6 @@ class Json {
             return (datas);
         }
 
-        nlohmann::json &getDataFromJson(nlohmann::json jsonData, const std::string &index)
-        {
-            if (jsonData[index] == nullptr) {
-                throw std::runtime_error("Json error");
-            }
-            return (jsonData[index]);
-        }
-
         std::vector<nlohmann::json> getDatasFromList(const nlohmann::json &list)
         {
             std::vector<nlohmann::json> datas;
@@ -154,7 +163,7 @@ class Json {
     std::vector<nlohmann::json>
     getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType)
     {
-        nlohmann::json &finalData(_jsonDatas[dataType]);
+        nlohmann::json finalData = getDataByJsonType(dataType);
         std::vector<nlohmann::json> datas;
 
         for (const auto &key : indexes) {
@@ -163,7 +172,6 @@ class Json {
                 continue;
             }
             if (finalData[key] == nullptr) {
-                Logger::fatal(std::string("(getDatasByJsonType) Key : " + key + " is not valid"));
                 throw std::runtime_error("Json error");
             }
             finalData = finalData[key];
@@ -186,12 +194,6 @@ class Json {
     }
 
     template <typename T>
-    T getDataByJsonType(const std::string &index, JsonType dataType)
-    {
-        return getDataFromJson<T>(_jsonDatas[dataType], index);
-    }
-
-    template <typename T>
     T getDataByVector(const std::vector<std::string> &indexes, JsonType dataType)
     {
         auto datas = getDataByJsonType(dataType);
@@ -209,6 +211,11 @@ class Json {
             datas = datas[*begin];
         }
         return getDataFromJson<T>(datas, *(indexes.end() - 1));
+    }
+
+    nlohmann::json getDataByVector(const std::vector<std::string> &indexes, JsonType dataType)
+    {
+        return getDataByVector<nlohmann::json>(indexes, dataType);
     }
 
 private:

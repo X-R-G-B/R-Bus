@@ -18,6 +18,9 @@ enum enemy_type_e {
 
 enum missileTypes_e {
     CLASSIC = 0,
+    FAST,
+    BOUNCE,
+    PERFORANT
 };
 
 PACK(struct health_s {

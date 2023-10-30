@@ -49,7 +49,7 @@ int main(int ac, const char **av)
     }
     initScenes();
     if (!Nitwork::NitworkClient::getInstance()
-             .startClient(std::stoi(av[2]), av[1], DEFAULT_THREAD_NB, TICKS_PER_SECOND)) {
+             .startClient(std::stoi(av[2]), av[1], DEFAULT_THREAD_NB, TICKS)) {
         return EXIT_EPITECH;
     }
     Nitwork::NitworkClient::getInstance().addInitMsg();

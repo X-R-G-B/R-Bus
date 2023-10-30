@@ -10,7 +10,6 @@
 #include <chrono>
 #include <iostream>
 #include <sstream>
-#include "Registry.hpp"
 #include "date/date.h"
 
 #ifdef _WIN32

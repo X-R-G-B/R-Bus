@@ -7,6 +7,8 @@
 
 #pragma once
 
+#define _USE_MATH_DEFINES
+#include <math.h>
 #include <cstddef>
 #include <functional>
 #include <string>
@@ -165,25 +167,22 @@ namespace Systems {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry   = Registry::getInstance();
-        auto deadList        = registry.getComponents<Types::Dead>();
+        auto &deadList        = registry.getComponents<Types::Dead>();
         auto deadIdList      = deadList.getExistingsId();
         Clock &clock         = registry.getClock();
-        std::size_t decrease = 0;
 
-        std::sort(deadIdList.begin(), deadIdList.end());
         for (auto id : deadIdList) {
-            auto tmpId        = id - decrease;
-            Types::Dead &dead = deadList[tmpId];
+            Types::Dead &dead = deadList[id];
             if (static_cast<int>(dead.clockId) > -1
                 && clock.elapsedMillisecondsSince(dead.clockId) >= dead.timeToWait) {
-                registry.removeEntity(tmpId);
-                decrease++;
+                Logger::debug("destroy after time");
+                registry.addToRemove(id);
             }
         }
     }
 
     static void
-    executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead, std::size_t &decrease)
+    executeDeathFunction(std::size_t id, Registry::components<Types::Dead> arrDead)
     {
         if (arrDead.exist(id) && arrDead[id].deathFunction != std::nullopt) {
             Types::Dead &deadComp = arrDead[id];
@@ -195,8 +194,7 @@ namespace Systems {
             }
         } else {
             Registry::getInstance().callback(Events::ENTITY_DEATH, id);
-            Registry::getInstance().removeEntity(id);
-            decrease++;
+            Registry::getInstance().addToRemove(id);
         }
     }
 
@@ -206,14 +204,12 @@ namespace Systems {
         Registry::components<struct health_s> arrHealth =
             Registry::getInstance().getComponents<struct health_s>();
         Registry::components<Types::Dead> arrDead = Registry::getInstance().getComponents<Types::Dead>();
-        std::size_t decrease                      = 0;
 
         std::vector<std::size_t> ids = arrHealth.getExistingsId();
         std::sort(ids.begin(), ids.end());
         for (auto &id : ids) {
-            auto tmpId = id - decrease;
-            if (arrHealth.exist(tmpId) && arrHealth[tmpId].hp <= 0) {
-                executeDeathFunction(tmpId, arrDead, decrease);
+            if (arrHealth.exist(id) && arrHealth[id].hp <= 0) {
+                executeDeathFunction(id, arrDead);
             }
         }
     }
@@ -241,17 +237,86 @@ namespace Systems {
         auto arrNoRemove = Registry::getInstance().getComponents<Types::NoRemoveOutside>();
         std::vector<std::size_t> ids =
             Registry::getInstance().getEntitiesByComponents({typeid(Types::Position)});
-        std::size_t decrease = 0;
 
         std::sort(ids.begin(), ids.end());
         for (auto &id : ids) {
-            auto tmpId = id - decrease;
-            bool destroyable = !arrNoRemove.exist(tmpId);
-            if (destroyable && isOutsideWindow(arrPosition[tmpId])) {
-                Registry::getInstance().removeEntity(tmpId);
-                decrease++;
+            bool destroyable = !arrNoRemove.exist(id);
+            if (destroyable && isOutsideWindow(arrPosition[id])) {
+                Registry::getInstance().addToRemove(id);
             }
         }
+    }
+
+    static void updateBouncePhysics(std::vector<std::size_t> ids)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        Registry::components<Types::Velocity> velocities =
+            Registry::getInstance().getComponents<Types::Velocity>();
+        Registry::components<Types::CollisionRect> collisionRects =
+            Registry::getInstance().getComponents<Types::CollisionRect>();
+        Registry::components<Types::Position> positions =
+            Registry::getInstance().getComponents<Types::Position>();
+
+        for (std::size_t id : ids) {
+            if (velocities.exist(id) && collisionRects.exist(id) && positions.exist(id)) {
+                if (Maths::intToFloatConservingDecimals(positions[id].y) <= 0
+                    || Maths::intToFloatConservingDecimals(positions[id].y)
+                       + Maths::intToFloatConservingDecimals(collisionRects[id].height)
+                       >= 100) {
+                    velocities[id].speedY = -velocities[id].speedY;
+                }
+            }
+        }
+    }
+
+    static void updateZigzagPhysics(std::vector<std::size_t> ids)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        Registry::components<Types::Velocity> velocities =
+            Registry::getInstance().getComponents<Types::Velocity>();
+        Registry::components<Types::Physics> physicComps =
+            Registry::getInstance().getComponents<Types::Physics>();
+        Registry::components<Types::Position> positionComp =
+            Registry::getInstance().getComponents<Types::Position>();
+
+        for (std::size_t id : ids) {
+            std::size_t clockId = physicComps[id].getClockId(Types::PhysicsType::ZIGZAG);
+            std::size_t elapsedTimeInMs =
+                Registry::getInstance().getClock().elapsedMillisecondsSince(clockId);
+            if (elapsedTimeInMs == static_cast<std::size_t>(-1)) {
+                Registry::getInstance().getClock().restart(clockId);
+                elapsedTimeInMs = 0;
+            }
+            // Height of the wave = 10% of the screen
+            float amplitude = 10.0F;
+            // Time for the complete zigzag cycle 400ms
+            float period = 400.0F;
+            float WavePosY =
+                amplitude * std::sin(2.0F * static_cast<float>(M_PI) * elapsedTimeInMs / period);
+            positionComp[id].y =
+                physicComps[id].getOriginPos().y + Maths::floatToIntConservingDecimals(WavePosY);
+            velocities[id].speedY = 0;
+        }
+    }
+
+    static void updatePhysics(std::size_t, std::size_t)
+    {
+        std::vector<std::size_t> bouncingId;
+        std::vector<std::size_t> zigzagId;
+        Registry::components<Types::Physics> physicComps =
+            Registry::getInstance().getComponents<Types::Physics>();
+        std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Physics), typeid(Types::Position), typeid(Types::Velocity)});
+
+        for (std::size_t id : ids) {
+            if (physicComps[id].hasPhysics(Types::PhysicsType::BOUNCING)) {
+                bouncingId.push_back(id);
+            } else if (physicComps[id].hasPhysics(Types::PhysicsType::ZIGZAG)) {
+                zigzagId.push_back(id);
+            }
+        }
+        updateBouncePhysics(bouncingId);
+        updateZigzagPhysics(zigzagId);
     }
 
     class ECSPlugin : public IPlugin {
@@ -266,7 +331,9 @@ namespace Systems {
                     entitiesCollision,
                     destroyOutsideWindow,
                     deathChecker,
-                    moveEntities};
+                    moveEntities,
+                    updatePhysics
+                };
             }
     };
 } // namespace Systems

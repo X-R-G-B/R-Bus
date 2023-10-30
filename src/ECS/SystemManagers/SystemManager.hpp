@@ -25,7 +25,8 @@ namespace Systems {
                 std::size_t decrease = 0;
 
                 _toRemove.clear();
-                for (auto &system : getSystems()) {
+                auto &currentSystems = getSystems();
+                for (auto &system : currentSystems) {
                     system(_id, i);
                     i++;
                 }

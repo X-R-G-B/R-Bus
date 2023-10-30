@@ -6,17 +6,5 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-target_include_directories(
-        ${PROJECT_NAME_SERVER}
-        PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
-target_sources(
-    ${PROJECT_NAME_CLIENT}
-    PRIVATE
-    # ${CMAKE_CURRENT_SOURCE_DIR}/ClientSystems.cpp
-)
-
 add_subdirectory(Events)
 add_subdirectory(Network)

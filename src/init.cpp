@@ -24,15 +24,16 @@ void initScenes()
 {
     auto &director = Systems::SystemManagersDirector::getInstance();
     auto ecsPlugin = Systems::ECSPlugin();
+    auto gamePlugin = Systems::GamePlugin();
 #ifdef CLIENT
     auto graphicsPlugin = Systems::GraphicsSystems::GraphicsPlugin();
     std::lock_guard<std::mutex> lock(director.mutex);
     PluginHandler::addNewPlugin(graphicsPlugin, SystemManagers::GRAPHICS);
 #endif
     PluginHandler::addNewPlugin(ecsPlugin, SystemManagers::ECSSYSTEMS);
+    PluginHandler::addNewPlugin(gamePlugin, SystemManagers::GAME);
 
     std::map<SystemManagers, std::function<std::vector<std::function<void(std::size_t, std::size_t)>>()>> systems = {
-        {SystemManagers::GAME, &Systems::getGameSystems},
 #ifdef CLIENT
         {SystemManagers::EVENTS, &Systems::EventsSystems::getEventsSystems},
         {SystemManagers::CLIENTNETWORK, &Systems::getNetworkSystems},

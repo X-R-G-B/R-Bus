@@ -91,3 +91,9 @@ void Maths::subNormalIntToDecimalInt(int &decimalInt, const int normalInt)
 void Maths::addFloatToDecimalInt(int &decimalInt, const float normalFloat)
 // For example, `500 + 5.5` results in `555` for `DECIMALS_TO_CONSERVE = 2`
 ```
+
+- Subtracts a floating-point number from a decimal integer, modifying the decimal integer in place.
+```cpp
+void Maths::subFloatToDecimalInt(int &decimalInt, const float normalFloat)
+// For example, `500 - 5.5` results in `445` for `DECIMALS_TO_CONSERVE = 2`
+```

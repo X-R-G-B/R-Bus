@@ -19,7 +19,6 @@
 #include <vector>
 #include <unordered_set>
 #include "Clock.hpp"
-#include "Logger.hpp"
 #include "SparseArray.hpp"
 #include "Logger.hpp"
 
@@ -95,6 +94,25 @@ class Registry {
             }
         }
 
+        void removeEntitiesToRemove()
+        {
+            std::sort(_toRemove.begin(), _toRemove.end());
+            std::size_t decrease = 0;
+            for (auto id : _toRemove) {
+                removeEntity(id - decrease);
+                decrease++;
+            }
+            _toRemove.clear();
+        }
+
+        void addToRemove(std::size_t id)
+        {
+            if (std::find(_toRemove.begin(), _toRemove.end(), id) != _toRemove.end()) {
+                return;
+            }
+            _toRemove.push_back(id);
+        }
+
         void clear()
         {
             for (std::size_t i = 0; i < _entitiesNb; i++) {
@@ -106,8 +124,8 @@ class Registry {
             _removeComponentFunctions.clear();
             _getExistingsId.clear();
             clearAllies();
-            _eventsCallbacks.clear();
             _entitiesNb = 0;
+            _toRemove.clear();
 
             // Clear sprites layers
             for (auto &layer : _backLayers) {
@@ -346,6 +364,8 @@ class Registry {
         std::vector<std::vector<std::size_t>> _frontLayers;
 
         std::unordered_map<std::size_t, std::vector<std::type_index>> _allies;
+
+        std::vector<std::size_t> _toRemove;
 
         std::unordered_map<Events, std::vector<std::function<void(std::size_t)>>> _eventsCallbacks;
 };
