@@ -6,6 +6,7 @@
 */
 
 #include "Graphics.hpp"
+#include <mutex>
 #include "Inputs.hpp"
 #include "ResourcesManager.hpp"
 
@@ -461,6 +462,7 @@ namespace Raylib {
 
     ::Texture2D &TextureManager::getTexture(const std::string &fileName)
     {
+        std::lock_guard<std::mutex> lock(_mutex);
         auto it = _textures.find(fileName);
 
         if (it == _textures.end()) {

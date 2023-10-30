@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <mutex>
 #include <string>
 extern "C"
 {
@@ -146,6 +147,7 @@ namespace Raylib {
         private:
             TextureManager() = default;
             std::map<std::string, ::Texture2D> _textures;
+            std::mutex _mutex;
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
             static TextureManager _instance;
             // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
