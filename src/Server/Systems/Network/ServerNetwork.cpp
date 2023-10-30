@@ -138,15 +138,14 @@ namespace Systems {
                             .playerId      = otherPlayer.constId,
                             .pos           = {pos.x, pos.y},
                             .life          = life,
-                            .isOtherPlayer = (Nitwork::NitworkServer::getInstance().getPlayerId(endpoint)
-                                              != otherPlayer.constId)
-                                ? true
-                                : false,
+                            .isOtherPlayer =
+                                (Nitwork::NitworkServer::getInstance().getPlayerId(endpoint)
+                                 != otherPlayer.constId),
                     });
                 }
                 return;
             }
         }
-        Logger::debug("player not found in receivePlayerDeathMsg");
+        Nitwork::NitworkServer::getInstance().addPlayerDeathMsg(msgPlayerDeath.playerId);
     }
 } // namespace Systems

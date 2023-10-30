@@ -124,6 +124,8 @@ namespace Nitwork {
              * @param id The id of the player that died
              */
             void addPlayerDeathMsg(n_id_t id);
+            void addPlayerDeathMsg(n_id_t id, boost::asio::ip::udp::endpoint &endpoint);
+
 
             /**
              * @brief Add a msg packet that contain the new bullet msg to the clients

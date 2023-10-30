@@ -23,7 +23,6 @@ namespace Systems {
         }
         const auto &arrLobby = Nitwork::NitworkMainServer::getInstance().getLobbies();
         if (arrLobby.empty()) {
-            Logger::info("No lobby available");
             return;
         }
         std::vector<struct lobby_s> lobbies;

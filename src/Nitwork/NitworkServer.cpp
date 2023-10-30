@@ -410,6 +410,21 @@ namespace Nitwork {
         sendToAllClients(packet);
     }
 
+    void NitworkServer::addPlayerDeathMsg(n_id_t id, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetPlayerDeath_s packetPlayerDeath = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = PLAYER_DEATH},
+            .msg    = {.magick = MAGICK_PLAYER_DEATH, .playerId = id}
+        };
+        Packet packet(
+            packetPlayerDeath.action.magick,
+            std::make_any<struct packetPlayerDeath_s>(packetPlayerDeath),
+            endpoint);
+        addPacketToSend(packet);
+    }
+
     void NitworkServer::addNewPlayerMsg(
         boost::asio::ip::udp::endpoint &endpoint,
         const struct msgCreatePlayer_s &playerMsg)
