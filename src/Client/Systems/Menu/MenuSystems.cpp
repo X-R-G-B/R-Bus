@@ -117,10 +117,10 @@ namespace Systems {
                     if (arrAnimRect.exist(id)) {
                         arrAnimRect[id].changeRectList(Types::RectListType::HOVER);
                     }
-                    Raylib::setMouseCursor(MOUSE_CURSOR_IBEAM);
+                    // Raylib::setMouseCursor(MOUSE_CURSOR_IBEAM);
                     return;
                 }
-                Raylib::setMouseCursor(MOUSE_CURSOR_DEFAULT);
+                // Raylib::setMouseCursor(MOUSE_CURSOR_DEFAULT);
                 if (arrAnimRect.exist(id)) {
                     arrAnimRect[id].changeRectList(Types::RectListType::UNDEFINED);
                 }

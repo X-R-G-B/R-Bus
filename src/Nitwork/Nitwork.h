@@ -11,15 +11,21 @@
 
     #include "MessageTypes.h"
 
-    #define HEADER_SIZE sizeof(struct header_s)
-    #define TICKS 128
-    #define TICKS_PER_SECOND(t) (t / TICKS)
-    #define TICKS_PER_MILLISECOND(t) (TICKS_PER_SECOND(t) / 1000)
-    #define DEFAULT_THREAD_NB 4
-    #define MAX_NB_ACTION 16
+/* Configuration */
+    #define HEADER_SIZE sizeof(struct header_s) // The size of the header
+    #define TICKS 128 // The number of ticks per second
+    #define TICKS_PER_SECOND(t) (t / TICKS) // The number of ticks per second
+    #define TICKS_PER_MILLISECOND(t) (TICKS_PER_SECOND(t) / 1000) // The number of ticks per millisecond
+    #define DEFAULT_THREAD_NB 4 // The default number of thread
+    #define RANDOM_PORT 0 // The port to use to get a random port (the first available)
+    #define MAX_MAIN_SERVER_CLIENT 30 // The max number of client for the main server
+    #define MAX_NB_ACTION 16 // The max number of action per packet
+
+/* The header code of the packet (used to check if the packet is valid) */
     #define HEADER_CODE1 '\x01'
     #define HEADER_CODE2 '\x03'
 
+/* The magick number of the packet (used to check if the packet is valid) */
     #define MAGICK_INIT '\x06'
     #define MAGICK_READY '\x17'
     #define MAGICK_START_WAVE '\x07'
@@ -33,11 +39,22 @@
     #define MAGICK_POSITION_ABSOLUTE_BROADCAST '\x10'
     #define MAGICK_NEW_PLAYER '\x0a'
     #define MAGICK_PLAYER_DEATH '\x11'
+    #define MAGICK_LIST_LOBBY '\x12'
+    #define MAGICK_CREATE_LOBBY '\x13'
+    #define MAGICK_REQUEST_LIST_LOBBY '\x16'
+    #define MAGICK_CONNECT_MAIN_SERVER '\x18'
+    #define MAGICK_CONNECT_MAIN_SERVER_RESP '\x14'
+    #define MAGICK_INFO_LOBBY '\x15'
 
 typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
 typedef unsigned char n_nbAction_t;
 
+/**
+ * @brief The types of action
+ * it is used to know what action is in the packet
+ * in order to cast the body of the packet
+ */
 enum n_actionType_t {
     NO_ACTION = 0,
     INIT = 1,
@@ -53,6 +70,11 @@ enum n_actionType_t {
     POSITION_RELATIVE_BROADCAST = 12,
     POSITION_ABSOLUTE_BROADCAST = 13,
     PLAYER_DEATH = 14,
+    CREATE_LOBBY = 15,
+    LIST_LOBBY = 16,
+    INFO_LOBBY = 17,
+    CONNECT_MAIN_SERVER = 18,
+    CONNECT_MAIN_SERVER_RESP = 19,
     N_ACTION_TYPE_MAX,
 };
 
@@ -228,6 +250,108 @@ PACK(struct packetPlayerDeath_s {
         struct header_s header;
         struct action_s action;
         struct msgPlayerDeath_s msg;
+});
+
+/* Message Request List Lobby */
+PACK(struct msgRequestListLobby_s {
+    n_magick_t magick;
+});
+
+PACK(struct packetRequestListLobby_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgRequestListLobby_s msg;
+});
+
+/* Message List Lobby */
+PACK(struct connectionData_s {
+    char ip[16];
+    n_port_t port;
+});
+
+PACK(struct lobby_s {
+    char name[32];
+    unsigned int maxNbPlayer;
+    enum gameType_e gameType;
+    struct connectionData_s lobbyInfos;
+    struct connectionData_s ownerInfos;
+});
+
+PACK(struct msgLobbyInfo_s {
+    n_magick_t magick;
+    struct lobby_s lobby;
+});
+
+PACK(struct actionLobby_s {
+    struct action_s action;
+    struct msgLobbyInfo_s lobby;
+});
+
+PACK(struct packetListLobby_s {
+    struct header_s header;
+    struct actionLobby_s actionLobby[5];
+});
+
+/* Message Create Lobby */
+PACK(struct msgCreateLobby_s {
+    n_magick_t magick;
+    char name[32];
+    enum gameType_e gameType;
+    unsigned int maxNbPlayer;
+    struct connectionData_s ownerInfos;
+});
+
+PACK(struct packetCreateLobby_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgCreateLobby_s msg;
+});
+
+/* Message Hello Lobby */
+
+/**
+ * @brief This message is sent by the lobby to the main server to say that it is ready to receive players
+ * and to be added to the list of lobbies
+ * @param magick The magick of the message in order to check if it is the good message
+ * @param lobby The lobby infos
+ */
+PACK(struct msgInfoLobby_s {
+    n_magick_t magick;
+    char name[32];
+    unsigned int maxNbPlayer;
+    enum gameType_e gameType;
+    struct connectionData_s ownerInfos;
+});
+
+PACK(struct packetInfoLobby_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgInfoLobby_s msg;
+});
+
+// ---------------------------------------------------------------------------
+// Client Connect to Main Server
+
+PACK(struct msgConnectMainServer_s {
+    n_magick_t magick;
+});
+
+PACK(struct packetConnectMainServer_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgConnectMainServer_s msg;
+});
+
+// Server Respond
+
+PACK(struct msgConnectMainServerResp_s {
+    n_magick_t magick;
+});
+
+PACK(struct packetConnectMainServerResp_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgConnectMainServerResp_s msg;
 });
 
 #endif
