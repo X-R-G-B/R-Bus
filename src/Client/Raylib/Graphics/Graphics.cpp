@@ -677,6 +677,11 @@ namespace Raylib {
         _fontSize = fontSize;
     }
 
+    void Text::setPosition(Vector2 &position)
+    {
+        _position = position;
+    }
+
     Vector2 Text::getPosition() const
     {
         return _position;

@@ -2,14 +2,14 @@
     "menu": {
         "connect": {
             "type": "button",
-            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
-            "width": 500,
-            "height" : 500,
+            "spritePath": "assets/Menu/button.png",
+            "width": 3000,
+            "height" : 1500,
             "rect": {
-                "x": 101.0,
+                "x": 0.0,
                 "y": 0.0,
-                "width": 32.0,
-                "height": 19.0
+                "width": 1366.0,
+                "height": 406.0
             },
             "position" : {
                 "x": 1000,
@@ -39,83 +39,61 @@
             "name": "ip",
             "type": "input",
             "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
-            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "spritePath": "assets/Menu/input-box.png",
             "text": "localhost",
             "color": "red",
             "textSize": 3,
-            "maxChar": 10,
-            "width": 500,
-            "height" : 500,
+            "maxChar": 16,
+            "width": 3600,
+            "height" : 800,
+            "textPosition": {
+                "x": 3600,
+                "y": 3150
+            },
             "position" : {
-                "x": 2000,
-                "y": 2000
+                "x": 2900,
+                "y": 3000
             },
             "rect": {
-                "x": 101.0,
+                "x": 0.0,
                 "y": 0.0,
-                "width": 32.0,
-                "height": 19.0
+                "width": 1650.0,
+                "height": 274.0
             },
             "collisionRect": {
                 "width": 2000,
                 "height": 500
-            },
-            "animRect": [
-                {
-                    "type": "hover",
-                    "time": 80,
-                    "noIncr": true,
-                    "list": [
-                        {
-                            "x" : 233.0,
-                            "y": 2.0,
-                            "width": 32.0,
-                            "height": 14.0
-                        }
-                    ]
-                }
-            ]
+            }
         },
         "host": {
             "name": "port",
             "type": "input",
             "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
-            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "spritePath": "assets/Menu/input-box.png",
             "text": "4242",
             "color": "red",
             "textSize": 3,
             "maxChar": 10,
-            "width": 20,
-            "height" : 5,
+            "width": 3600,
+            "height" : 800,
+            "textPosition": {
+                "x": 3600,
+                "y": 3150
+            },
             "position" : {
-                "x": 3700,
-                "y": 6000
+                "x": 2900,
+                "y": 4500
             },
             "collisionRect": {
                 "width": 2000,
                 "height": 500
             },
             "rect": {
-                "x": 101.0,
+                "x": 0.0,
                 "y": 0.0,
-                "width": 32.0,
-                "height": 19.0
-            },
-            "animRect": [
-                {
-                    "type": "hover",
-                    "time": 80,
-                    "noIncr": true,
-                    "list": [
-                        {
-                            "x" : 233.0,
-                            "y": 2.0,
-                            "width": 32.0,
-                            "height": 14.0
-                        }
-                    ]
-                }
-            ]
+                "width": 1650.0,
+                "height": 274.0
+            }
         }
     }
 }

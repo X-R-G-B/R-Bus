@@ -127,12 +127,24 @@ namespace Systems {
             }
         }
 
+        static void manageClick(std::size_t id, Registry::components<Types::AnimRect> &arrAnimRect)
+        {
+            Registry::components<Types::Button> arrButton =
+                Registry::getInstance().getComponents<Types::Button>();
+
+            arrAnimRect[id].changeRectList(Types::RectListType::HOVER);
+            if (Raylib::isMouseButtonDown(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
+                arrAnimRect[id].changeRectList(Types::RectListType::SELECTED);
+            }
+            if (Raylib::isMouseButtonReleased(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
+                arrButton[id].callback();
+            }
+        }
+
         void pressButton(std::size_t /*unused*/, std::size_t /*unused*/)
         {
             Registry::components<Types::AnimRect> arrAnimRect =
                 Registry::getInstance().getComponents<Types::AnimRect>();
-            Registry::components<Types::Button> arrButton =
-                Registry::getInstance().getComponents<Types::Button>();
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
                 {typeid(Types::CollisionRect),
                  typeid(Types::AnimRect),
@@ -141,16 +153,11 @@ namespace Systems {
 
             for (auto id : ids) {
                 if (::Menu::checkIsInsideRect(id)) {
-                    arrAnimRect[id].changeRectList(Types::RectListType::HOVER);
-                    Raylib::setMouseCursor(MOUSE_CURSOR_ARROW);
-                    if (Raylib::isMouseButtonPressed(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
-                        arrButton[id].callback();
-                    }
+                    manageClick(id, arrAnimRect);
                     return;
                 }
                 arrAnimRect[id].changeRectList(Types::RectListType::UNDEFINED);
             }
-            Raylib::setMouseCursor(MOUSE_CURSOR_DEFAULT);
         }
 
         void initMenu(std::size_t managerId, std::size_t systemId)

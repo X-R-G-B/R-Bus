@@ -28,13 +28,46 @@ namespace Menu {
             Json::getInstance().getDataFromJson<int>(elem, "height"),
             FRONTLAYER,
             static_cast<std::size_t>(FRONT));
-        Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect"))};
-        nlohmann::basic_json<> animRectData =
-            Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(elem, "animRect");
-        Types::AnimRect animRect(rect, animRectData);
-        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
-        Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(spriteDatas);
-        Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
+        if (Json::isDataExist(elem, "rect")) {
+            Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect"))};
+            if (Json::isDataExist(elem, "animRect")) {
+                Types::AnimRect animRect(rect, Json::getInstance().getDataFromJson<nlohmann::json>(elem, "animRect"));
+                Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
+            }
+            Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
+            Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(spriteDatas);
+        }
+    }
+
+    static void initText(nlohmann::json &elem)
+    {
+        std::string text = Json::isDataExist(elem, "text")
+            ? Json::getInstance().getDataFromJson<std::string>(elem, "text")
+            : "";
+        std::string name = Json::isDataExist(elem, "name")
+            ? Json::getInstance().getDataFromJson<std::string>(elem, "name")
+            : "";
+        Types::FontSize fsz({Json::getInstance().getDataFromJson<float>(elem, "textSize")});
+        std::size_t maxChar(Json::getInstance().getDataFromJson<std::size_t>(elem, "maxChar"));
+        Types::InputBox inputBox(text, name, maxChar);
+        auto search =
+            Types::colorMatchStrings.find(Json::getInstance().getDataFromJson<std::string>(elem, "color"));
+        Raylib::Color color = search != Types::colorMatchStrings.end()
+            ? Types::colorMatchStrings.at(Json::getInstance().getDataFromJson<std::string>(elem, "color"))
+            : Raylib::White;
+
+        Raylib::Text textComp(text);
+
+        if (Json::isDataExist(elem, "textPosition")) {
+            Types::Position tmpPos(Json::getInstance().getDataFromJson<Types::Position>(elem, "textPosition"));
+            Raylib::Vector2 textPos(Maths::intToFloatConservingDecimals(tmpPos.x), Maths::intToFloatConservingDecimals(tmpPos.y));
+            textComp.setPosition(textPos);
+        }
+        Registry::getInstance().getComponents<Raylib::Text>().insertBack(textComp);
+        Registry::getInstance().getComponents<Types::InputBox>().insertBack(inputBox);
+        Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
+        Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
+
     }
 
     static void initInputBox(nlohmann::json &elem)
@@ -44,24 +77,8 @@ namespace Menu {
         Types::Position position(Json::getInstance().getDataFromJson<Types::Position>(elem, "position"));
         Types::CollisionRect collisionRect(
             Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect"));
-        Types::FontSize fsz({Json::getInstance().getDataFromJson<float>(elem, "textSize")});
-        std::string text = Json::isDataExist(elem, "text")
-            ? Json::getInstance().getDataFromJson<std::string>(elem, "text")
-            : "";
-        std::string name = Json::isDataExist(elem, "name")
-            ? Json::getInstance().getDataFromJson<std::string>(elem, "name")
-            : "";
-        Raylib::Text textComp(text);
-        std::size_t maxChar(Json::getInstance().getDataFromJson<std::size_t>(elem, "maxChar"));
-        Types::InputBox inputBox(text, name, maxChar);
-        auto search =
-            Types::colorMatchStrings.find(Json::getInstance().getDataFromJson<std::string>(elem, "color"));
 
-        Raylib::Color color = search != Types::colorMatchStrings.end()
-            ? Types::colorMatchStrings.at(Json::getInstance().getDataFromJson<std::string>(elem, "color"))
-            : Raylib::White;
-        Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
-
+        initText(elem);
         if (!Json::getInstance().isDataExist(elem, "spritePath")) {
             Types::RectangleShape rectangle(
                 {Json::getInstance().getDataFromJson<float>(elem, "width"),
@@ -71,9 +88,6 @@ namespace Menu {
         } else {
             initFromSprite(elem);
         }
-        Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
-        Registry::getInstance().getComponents<Raylib::Text>().insertBack(textComp);
-        Registry::getInstance().getComponents<Types::InputBox>().insertBack(inputBox);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
     }
@@ -85,24 +99,14 @@ namespace Menu {
         Types::Button button(callback);
 
         Registry::getInstance().addEntity();
-        Types::SpriteDatas spriteDatas(
-            Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
-            Json::getInstance().getDataFromJson<int>(elem, "width"),
-            Json::getInstance().getDataFromJson<int>(elem, "height"),
-            FRONTLAYER,
-            static_cast<std::size_t>(FRONT));
-        Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect"))};
+        initFromSprite(elem);
         Types::Position position = {
             Types::Position(Json::getInstance().getDataFromJson<Types::Position>(elem, "position"))};
         Types::CollisionRect collisionRect = {Types::CollisionRect(
             Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect"))};
-        Types::AnimRect animRect(rect, animRectData, Types::RectListType::MOVE);
 
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
-        Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
-        Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
-        Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(spriteDatas);
         Registry::getInstance().getComponents<Types::Button>().insertBack(button);
     }
 
