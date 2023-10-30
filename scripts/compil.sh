@@ -12,10 +12,15 @@ fi
 if [[ "$1" == "--no-parallel" ]] || [[ "$2" == "--no-parallel" ]]; then
     cmake --build build
 else
-    NB_PROC=$(nproc)
-    NB_THREADS=$(($NB_PROC - 2))
-    if [[ "$NB_PROC" -lt "3" ]]; then
-        NB_THREADS=1
+    # check if nproc is available
+    if ! command -v nproc &> /dev/null; then
+            cmake --build build --parallel 2
+    else
+      NB_PROC=$(nproc)
+      NB_THREADS=$(($NB_PROC - 2))
+      if [[ "$NB_PROC" -lt "3" ]]; then
+          NB_THREADS=1
+      fi
+      cmake --build build --parallel $NB_THREADS
     fi
-    cmake --build build --parallel $NB_THREADS
 fi
