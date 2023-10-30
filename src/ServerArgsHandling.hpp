@@ -96,11 +96,11 @@ namespace Args {
                     return WRONG_ARGS;
                 }
                 if (args[3].size() > MAX_LOBBY_NAME_SIZE) {
-                    Logger::error("Invalid serverName: " + args[2]);
+                    Logger::error("Invalid serverName: " + args[3]);
                     return WRONG_ARGS;
                 }
                 if (args[4].size() > MAX_LOBBY_IP_SIZE) {
-                    Logger::error("Invalid ownerIp: " + args[3]);
+                    Logger::error("Invalid ownerIp: " + args[4]);
                     return WRONG_ARGS;
                 }
                 if (!isNumber(args[5]) || std::stoi(args[5]) < PORT_MIN || std::stoi(args[5]) > PORT_MAX) {
