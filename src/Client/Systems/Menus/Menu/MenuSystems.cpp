@@ -10,6 +10,7 @@
 #include "Maths.hpp"
 #include "Menu.hpp"
 #include "SceneManager.hpp"
+#include <iostream>
 
 namespace Systems {
     namespace Menu {
@@ -20,11 +21,16 @@ namespace Systems {
         {
             Registry::components<Types::InputBox> arrInputBox =
                 Registry::getInstance().getComponents<Types::InputBox>();
+            Registry::components<Types::AnimRect> arrAnimRect =
+                Registry::getInstance().getComponents<Types::AnimRect>();
             std::vector<std::size_t> ids =
                 Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
 
             for (auto id : ids) {
                 if (arrInputBox[id].selected) {
+                    if (arrAnimRect.exist(id)) {
+                        arrAnimRect[id].changeRectList(Types::RectListType::DEFAULT_RECT);
+                    }
                     arrInputBox[id].selected = false;
                 }
             }
@@ -34,10 +40,17 @@ namespace Systems {
         {
             Registry::components<Types::InputBox> arrInputBox =
                 Registry::getInstance().getComponents<Types::InputBox>();
+            Registry::components<Types::AnimRect> arrAnimRect =
+                Registry::getInstance().getComponents<Types::AnimRect>();
 
             setAllInputBoxFalse();
             if (arrInputBox.exist(id)) {
                 arrInputBox[id].selected = true;
+                std::cout << "Ntm" << std::endl;
+                if (arrAnimRect.exist(id)) {
+                    std::cout << "ntm" << std::endl;
+                    arrAnimRect[id].changeRectList(Types::RectListType::SELECTED);
+                }
             }
         }
 
@@ -93,14 +106,20 @@ namespace Systems {
 
         void checkInputDeletion(std::size_t, std::size_t)
         {
+            constexpr std::size_t delay = 150;
             Registry::components<Types::InputBox> arrInputBox =
                 Registry::getInstance().getComponents<Types::InputBox>();
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
                 {typeid(Types::InputBox), typeid(Raylib::Text)});
+            static auto clockId         = Registry::getInstance().getClock().create();
 
             for (auto id : ids) {
-                if (arrInputBox[id].selected && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_BACKSPACE)) {
-                    deleteInputBoxChar(id, arrInputBox);
+                if (arrInputBox[id].selected && Raylib::isKeyDown(Raylib::KeyboardKey::KB_BACKSPACE)) {
+                    if (Registry::getInstance().getClock().elapsedMillisecondsSince(clockId) > delay) {
+                        Registry::getInstance().getClock().restart(clockId);
+                        deleteInputBoxChar(id, arrInputBox);
+                        return;
+                    }
                 }
             }
         }
@@ -109,20 +128,20 @@ namespace Systems {
         {
             Registry::components<Types::AnimRect> arrAnimRect =
                 Registry::getInstance().getComponents<Types::AnimRect>();
+            Registry::components<Types::InputBox> arrInputBox =
+                Registry::getInstance().getComponents<Types::InputBox>();
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
                 {typeid(Types::CollisionRect), typeid(Types::Position), typeid(Types::InputBox)});
 
             for (auto id : ids) {
                 if (::Menu::checkIsInsideRect(id)) {
-                    if (arrAnimRect.exist(id)) {
+                    if (arrAnimRect.exist(id) && !arrInputBox[id].selected) {
                         arrAnimRect[id].changeRectList(Types::RectListType::HOVER);
                     }
-                    // Raylib::setMouseCursor(MOUSE_CURSOR_IBEAM);
                     return;
                 }
-                // Raylib::setMouseCursor(MOUSE_CURSOR_DEFAULT);
-                if (arrAnimRect.exist(id)) {
-                    arrAnimRect[id].changeRectList(Types::RectListType::UNDEFINED);
+                if (arrAnimRect.exist(id) && !arrInputBox[id].selected) {
+                    arrAnimRect[id].changeRectList(Types::RectListType::DEFAULT_RECT);
                 }
             }
         }
@@ -172,12 +191,21 @@ namespace Systems {
                     Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU);
                 nlohmann::json inputBoxIp = Json::getInstance().getDataByVector({"menu", "ip"}, JsonType::MENU);
                 nlohmann::json inputBoxHost =
-                Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
+                    Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
+                nlohmann::json ipText =
+                    Json::getInstance().getDataByVector({"menu", "ip-text"}, JsonType::MENU);
+                nlohmann::json hostText =
+                    Json::getInstance().getDataByVector({"menu", "host-text"}, JsonType::MENU);
+                nlohmann::json connectText =
+                    Json::getInstance().getDataByVector({"menu", "connect-text"}, JsonType::MENU);
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(
                     connectButton,
                     ::Menu::Callback::initConnection);
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(inputBoxHost);
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(inputBoxIp);
+                ::Menu::MenuBuilder::getInstance().initMenuEntity(ipText);
+                ::Menu::MenuBuilder::getInstance().initMenuEntity(hostText);
+                ::Menu::MenuBuilder::getInstance().initMenuEntity(connectText);
             } catch (std::runtime_error &err) {
                 Logger::error(
                     "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));

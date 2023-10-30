@@ -39,7 +39,7 @@ namespace Menu {
         }
     }
 
-    static void initText(nlohmann::json &elem)
+    static void initInputBoxText(nlohmann::json &elem)
     {
         std::string text = Json::isDataExist(elem, "text")
             ? Json::getInstance().getDataFromJson<std::string>(elem, "text")
@@ -78,7 +78,7 @@ namespace Menu {
         Types::CollisionRect collisionRect(
             Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect"));
 
-        initText(elem);
+        initInputBoxText(elem);
         if (!Json::getInstance().isDataExist(elem, "spritePath")) {
             Types::RectangleShape rectangle(
                 {Json::getInstance().getDataFromJson<float>(elem, "width"),
@@ -129,6 +129,33 @@ namespace Menu {
         Registry::getInstance().setToFrontLayers(id);
     }
 
+    static void initText(nlohmann::json &elem)
+    {
+        Registry::getInstance().addEntity();
+        std::string text = Json::isDataExist(elem, "text")
+            ? Json::getInstance().getDataFromJson<std::string>(elem, "text")
+            : "";
+        Raylib::Text textComp(text);
+        if (Json::isDataExist(elem, "size")) {
+            Types::FontSize fsz({Json::getInstance().getDataFromJson<float>(elem, "size")});
+            Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
+        }
+        if (Json::isDataExist(elem, "color")) {
+            auto search =
+                Types::colorMatchStrings.find(Json::getInstance().getDataFromJson<std::string>(elem, "color"));
+            Raylib::Color color = search != Types::colorMatchStrings.end()
+                ? Types::colorMatchStrings.at(Json::getInstance().getDataFromJson<std::string>(elem, "color"))
+                : Raylib::White;
+            Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
+        }
+        if (Json::isDataExist(elem, "position")) {
+            Types::Position position = {
+                Types::Position(Json::getInstance().getDataFromJson<Types::Position>(elem, "position"))};
+            Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+        }
+        Registry::getInstance().getComponents<Raylib::Text>().insertBack(textComp);
+    }
+
     static void initButton(nlohmann::json &elem, std::function<void()> &callback)
     {
         if (Json::isDataExist(elem, "spritePath")) {
@@ -142,7 +169,7 @@ namespace Menu {
     {
         switch (Json::getInstance().getDataFromJson<ObjectType>(elem, "type")) {
             case ObjectType::BUTTON: initButton(elem, callback); break;
-            case ObjectType::TEXT: break; // no clickable text for now
+            case ObjectType::TEXT: initText(elem); break;
             case ObjectType::INPUT_BOX: initInputBox(elem); break;
             default: Logger::error("Object type is undefined, check your json data"); break;
         }
