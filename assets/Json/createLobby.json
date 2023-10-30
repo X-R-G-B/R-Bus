@@ -1,12 +1,67 @@
 {
   "createLobbyMenu": {
+    "goBack": {
+      "type": "button",
+      "spritePath": "assets/Menu/button.png",
+      "width": 800,
+      "height": 500,
+      "rect": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1366.0,
+        "height": 406.0
+      },
+      "position": {
+        "x": 100,
+        "y": 500
+      },
+      "collisionRect": {
+        "width": 800,
+        "height": 500
+      },
+      "animRect": [
+        {
+          "type": "hover",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x": 1366.0,
+              "y": 0.0,
+              "width": 1366.0,
+              "height": 406.0
+            }
+          ]
+        }
+      ]
+    },
+    "goBackText": {
+      "type": "text",
+      "text": "Go Back",
+      "color": "red",
+      "size": 1,
+      "position": {
+        "x": 300,
+        "y": 675
+      }
+    },
+    "name-text" : {
+      "type": "text",
+      "color": "red",
+      "size": 2,
+      "text": "NAME OF THE LOBBY",
+      "position" : {
+        "x": 2670,
+        "y": 1700
+      }
+    },
     "name": {
       "name": "name",
       "type": "input",
       "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
       "spritePath": "assets/Menu/input-box.png",
       "text": "ServerOfSaverio",
-      "color": "red",
+      "color": "white",
       "textSize": 2,
       "maxChar": 30,
       "width": 6000,
@@ -58,24 +113,34 @@
         }
       ]
     },
+    "maxNb-text" : {
+      "type": "text",
+      "color": "red",
+      "size": 2,
+      "text": "NUMBER OF MAX PLAYERS IN THE LOBBY",
+      "position" : {
+        "x": 2670,
+        "y": 3700
+      }
+    },
     "maxNb": {
       "name": "maxNb",
       "type": "input",
       "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
       "spritePath": "assets/Menu/input-box.png",
       "text": "2",
-      "color": "red",
+      "color": "white",
       "textSize": 3,
       "maxChar": 2,
       "width": 6000,
       "height": 800,
       "textPosition": {
         "x": 3050,
-        "y": 3180
+        "y": 4180
       },
       "position" : {
         "x": 2000,
-        "y": 3000
+        "y": 4000
       },
       "rect": {
         "x": 0.0,
@@ -113,14 +178,37 @@
               "height": 252.0
             }
           ]
+        },
+        {
+          "type": "selected",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x": 2732.0,
+              "y": 0.0,
+              "width": 1366.0,
+              "height": 406.0
+            }
+          ]
         }
       ]
+    },
+    "gametype_normal-text" : {
+      "type": "text",
+      "color": "red",
+      "size": 1.25,
+      "text": "CREATE WITH GAME TYPE NORMAL",
+      "position" : {
+        "x": 3875,
+        "y": 6700
+      }
     },
     "gametype_normal": {
       "type": "button",
       "spritePath": "assets/Menu/button.png",
-      "width": 800,
-      "height": 500,
+      "width": 3000,
+      "height" : 1500,
       "rect": {
         "x": 0.0,
         "y": 0.0,
@@ -128,12 +216,12 @@
         "height": 406.0
       },
       "position": {
-        "x": 2000,
-        "y": 4000
+        "x": 3500,
+        "y": 6000
       },
       "collisionRect": {
-        "width": 500,
-        "height": 500
+        "width": 3000,
+        "height": 1500
       },
       "animRect": [
         {
@@ -142,10 +230,36 @@
           "noIncr": true,
           "list": [
             {
-              "x": 233.0,
-              "y": 2.0,
-              "width": 32.0,
-              "height": 14.0
+              "x": 1366.0,
+              "y": 0.0,
+              "width": 1366.0,
+              "height": 406.0
+            }
+          ]
+        },
+        {
+          "type": "selected",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x" : 3348.0,
+              "y": 14.0,
+              "width": 1651.0,
+              "height": 252.0
+            }
+          ]
+        },
+        {
+          "type": "selected",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x": 2732.0,
+              "y": 0.0,
+              "width": 1366.0,
+              "height": 406.0
             }
           ]
         }

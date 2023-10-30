@@ -26,6 +26,11 @@ namespace Systems {
             return std::all_of(str.begin(), str.end(), ::isdigit);
         }
 
+        void onButtonGoBackClicked()
+        {
+            Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+        }
+
         static bool getNameAndMaxNb(std::string &name, std::string &maxNbPlayer)
         {
             Registry::components<Types::InputBox> arrInputBox =
@@ -68,17 +73,34 @@ namespace Systems {
                 return;
             }
             try {
+                nlohmann::json goBackButton =
+                    Json::getInstance().getDataByVector({"createLobbyMenu", "goBack"}, JsonType::CREATE_LOBBY);
+                nlohmann::json goBackText =
+                    Json::getInstance().getDataByVector({"createLobbyMenu", "goBackText"}, JsonType::CREATE_LOBBY);
                 nlohmann::json createLobbyNormalButton =
                     Json::getInstance().getDataByVector({"createLobbyMenu", "gametype_normal"}, JsonType::CREATE_LOBBY);
+                nlohmann::json createLobbyNormalButtonText =
+                    Json::getInstance().getDataByVector({"createLobbyMenu", "gametype_normal-text"},
+                                                        JsonType::CREATE_LOBBY);
                 nlohmann::json lobbyName =
                     Json::getInstance().getDataByVector({"createLobbyMenu", "name"}, JsonType::CREATE_LOBBY);
+                nlohmann::json lobbyNameText =
+                    Json::getInstance().getDataByVector({"createLobbyMenu", "name-text"},
+                                                        JsonType::CREATE_LOBBY);
                 nlohmann::json maxNbPlayer =
                     Json::getInstance().getDataByVector({"createLobbyMenu", "maxNb"}, JsonType::CREATE_LOBBY);
+                nlohmann::json maxNbPlayerText =
+                    Json::getInstance().getDataByVector({"createLobbyMenu", "maxNb-text"}, JsonType::CREATE_LOBBY);
+                Menu::MenuBuilder::getInstance().initMenuEntity(goBackButton, onButtonGoBackClicked);
+                Menu::MenuBuilder::getInstance().initMenuEntity(goBackText);
                 Menu::MenuBuilder::getInstance().initMenuEntity(
                     createLobbyNormalButton,
                     onButtonCreateLobbyNormalClicked);
+                Menu::MenuBuilder::getInstance().initMenuEntity(createLobbyNormalButtonText);
                 Menu::MenuBuilder::getInstance().initMenuEntity(lobbyName);
+                Menu::MenuBuilder::getInstance().initMenuEntity(lobbyNameText);
                 Menu::MenuBuilder::getInstance().initMenuEntity(maxNbPlayer);
+                Menu::MenuBuilder::getInstance().initMenuEntity(maxNbPlayerText);
             } catch (const std::exception &err) {
                 Logger::error(
                     "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
