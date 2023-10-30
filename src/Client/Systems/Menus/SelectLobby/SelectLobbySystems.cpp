@@ -67,15 +67,17 @@ namespace Systems::SelectLobbySystems {
             return;
         }
         try {
+            nlohmann::json bigBox = Json::getInstance().getDataByVector({"lobbyMenu", "bigBox"}, JsonType::SELECT_LOBBY);
             nlohmann::json createLobbyNormalButton =
-                Json::getInstance().getDataByVector({"menu", "gametype_normal"}, JsonType::SELECT_LOBBY);
+                Json::getInstance().getDataByVector({"lobbyMenu", "gametype_normal"}, JsonType::SELECT_LOBBY);
             nlohmann::json lobbyName =
-                Json::getInstance().getDataByVector({"menu", "name"}, JsonType::SELECT_LOBBY);
+                Json::getInstance().getDataByVector({"lobbyMenu", "name"}, JsonType::SELECT_LOBBY);
             nlohmann::json maxNbPlayer =
-                Json::getInstance().getDataByVector({"menu", "maxNb"}, JsonType::SELECT_LOBBY);
+                Json::getInstance().getDataByVector({"lobbyMenu", "maxNb"}, JsonType::SELECT_LOBBY);
             Menu::MenuBuilder::getInstance().initMenuEntity(
                 createLobbyNormalButton,
                 onButtonCreateLobbyNormalClicked);
+            Menu::MenuBuilder::getInstance().initMenuEntity(bigBox);
             Menu::MenuBuilder::getInstance().initMenuEntity(lobbyName);
             Menu::MenuBuilder::getInstance().initMenuEntity(maxNbPlayer);
         } catch (const std::exception &err) {

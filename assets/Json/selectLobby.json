@@ -1,29 +1,49 @@
 {
-    "menu": {
+    "lobbyMenu": {
+        "bigBox": {
+            "type": "box",
+            "spritePath": "assets/Menu/bix-box.png",
+            "width": 5000,
+            "height": 5000,
+            "position": {
+                "x": 2000,
+                "y": 1000
+            },
+            "rect": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 2312.0,
+                "height": 1518.0
+            }
+        },
         "name": {
             "name": "name",
             "type": "input",
             "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
-            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "spritePath": "assets/Menu/input-box.png",
             "text": "ServerOfSaverio",
             "color": "red",
-            "textSize": 3,
+            "textSize": 2,
             "maxChar": 30,
-            "width": 500,
-            "height": 500,
+            "width": 6000,
+            "height": 800,
+            "textPosition": {
+                "x": 3050,
+                "y": 2250
+            },
             "position" : {
                 "x": 2000,
                 "y": 2000
             },
             "rect": {
-                "x": 101.0,
+                "x": 0.0,
                 "y": 0.0,
-                "width": 32.0,
-                "height": 19.0
+                "width": 1670.0,
+                "height": 278.0
             },
             "collisionRect": {
-                "width": 2000,
-                "height": 500
+                "width": 4500,
+                "height": 800
             },
             "animRect": [
                 {
@@ -32,10 +52,10 @@
                     "noIncr": true,
                     "list": [
                         {
-                            "x" : 233.0,
-                            "y": 2.0,
-                            "width": 32.0,
-                            "height": 14.0
+                            "x" : 1670.0,
+                            "y": 0.0,
+                            "width": 1670.0,
+                            "height": 278.0
                         }
                     ]
                 }
@@ -45,26 +65,30 @@
             "name": "maxNb",
             "type": "input",
             "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
-            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "spritePath": "assets/Menu/input-box.png",
             "text": "2",
             "color": "red",
             "textSize": 3,
             "maxChar": 2,
-            "width": 500,
-            "height": 500,
+            "width": 6000,
+            "height": 800,
+            "textPosition": {
+                "x": 3050,
+                "y": 3180
+            },
             "position" : {
                 "x": 2000,
                 "y": 3000
             },
             "rect": {
-                "x": 101.0,
+                "x": 0.0,
                 "y": 0.0,
-                "width": 32.0,
-                "height": 19.0
+                "width": 1670.0,
+                "height": 278.0
             },
             "collisionRect": {
-                "width": 2000,
-                "height": 500
+                "width": 4500,
+                "height": 800
             },
             "animRect": [
                 {
@@ -73,10 +97,10 @@
                     "noIncr": true,
                     "list": [
                         {
-                            "x" : 233.0,
-                            "y": 2.0,
-                            "width": 32.0,
-                            "height": 14.0
+                            "x" : 1670.0,
+                            "y": 0.0,
+                            "width": 1670.0,
+                            "height": 278.0
                         }
                     ]
                 }
@@ -84,14 +108,14 @@
         },
         "gametype_normal": {
             "type": "button",
-            "spritePath": "assets/R-TypeSheet/r-typesheet2.gif",
+            "spritePath": "assets/Menu/button.png",
             "width": 500,
             "height": 500,
             "rect": {
-                "x": 101.0,
+                "x": 0.0,
                 "y": 0.0,
-                "width": 32.0,
-                "height": 19.0
+                "width": 1366.0,
+                "height": 406.0
             },
             "position": {
                 "x": 2000,
