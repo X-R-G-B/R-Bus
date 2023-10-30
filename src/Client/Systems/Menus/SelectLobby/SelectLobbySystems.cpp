@@ -8,10 +8,10 @@
 #include "SelectLobbySystems.hpp"
 #include <algorithm>
 #include <string>
-#include "CustomTypes.hpp"
 #include "ECSCustomTypes.hpp"
 #include "Geometry.hpp"
 #include "Graphics.hpp"
+#include "Systems.hpp"
 #include "Menu.hpp"
 #include "MessageTypes.h"
 #include "NitworkClient.hpp"
@@ -111,6 +111,6 @@ namespace Systems::SelectLobbySystems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getLobbySystems()
     {
-            return {initSelectLoby, sendListLobby, createLobbyRow};
+            return {initSelectLoby, sendListLobby, createLobbyRow, Systems::moveEntities};
     }
 } // namespace Systems::SelectLobbySystems

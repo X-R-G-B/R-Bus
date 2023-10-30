@@ -16,6 +16,7 @@
 #include "NitworkClient.hpp"
 #include "SceneManager.hpp"
 #include "SystemManagersDirector.hpp"
+#include "Systems.hpp"
 #include "CreateLobbySystems.hpp"
 
 namespace Systems {
@@ -77,11 +78,6 @@ namespace Systems {
                     Json::getInstance().getDataByVector({"createLobbyMenu", "goBack"}, JsonType::CREATE_LOBBY);
                 nlohmann::json goBackText =
                     Json::getInstance().getDataByVector({"createLobbyMenu", "goBackText"}, JsonType::CREATE_LOBBY);
-                nlohmann::json createLobbyNormalButton =
-                    Json::getInstance().getDataByVector({"createLobbyMenu", "gametype_normal"}, JsonType::CREATE_LOBBY);
-                nlohmann::json createLobbyNormalButtonText =
-                    Json::getInstance().getDataByVector({"createLobbyMenu", "gametype_normal-text"},
-                                                        JsonType::CREATE_LOBBY);
                 nlohmann::json lobbyName =
                     Json::getInstance().getDataByVector({"createLobbyMenu", "name"}, JsonType::CREATE_LOBBY);
                 nlohmann::json lobbyNameText =
@@ -91,16 +87,24 @@ namespace Systems {
                     Json::getInstance().getDataByVector({"createLobbyMenu", "maxNb"}, JsonType::CREATE_LOBBY);
                 nlohmann::json maxNbPlayerText =
                     Json::getInstance().getDataByVector({"createLobbyMenu", "maxNb-text"}, JsonType::CREATE_LOBBY);
+                nlohmann::json createLobbyText =
+                    Json::getInstance().getDataByVector({"createLobbyMenu", "createLobby-text"}, JsonType::CREATE_LOBBY);
+                nlohmann::json createLobbyNormalButton =
+                    Json::getInstance().getDataByVector({"createLobbyMenu", "gametype_normal"}, JsonType::CREATE_LOBBY);
+                nlohmann::json createLobbyNormalButtonText =
+                    Json::getInstance().getDataByVector({"createLobbyMenu", "gametype_normal-text"},
+                                                        JsonType::CREATE_LOBBY);
                 Menu::MenuBuilder::getInstance().initMenuEntity(goBackButton, onButtonGoBackClicked);
                 Menu::MenuBuilder::getInstance().initMenuEntity(goBackText);
-                Menu::MenuBuilder::getInstance().initMenuEntity(
-                    createLobbyNormalButton,
-                    onButtonCreateLobbyNormalClicked);
-                Menu::MenuBuilder::getInstance().initMenuEntity(createLobbyNormalButtonText);
                 Menu::MenuBuilder::getInstance().initMenuEntity(lobbyName);
                 Menu::MenuBuilder::getInstance().initMenuEntity(lobbyNameText);
                 Menu::MenuBuilder::getInstance().initMenuEntity(maxNbPlayer);
                 Menu::MenuBuilder::getInstance().initMenuEntity(maxNbPlayerText);
+                Menu::MenuBuilder::getInstance().initMenuEntity(createLobbyText);
+                Menu::MenuBuilder::getInstance().initMenuEntity(
+                    createLobbyNormalButton,
+                    onButtonCreateLobbyNormalClicked);
+                Menu::MenuBuilder::getInstance().initMenuEntity(createLobbyNormalButtonText);
             } catch (const std::exception &err) {
                 Logger::error(
                     "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
@@ -111,7 +115,7 @@ namespace Systems {
 
         std::vector<std::function<void(std::size_t /*unused*/, std::size_t /*unused*/)>> getCreateLobbySystems()
         {
-            return {initCreateLobby};
+            return {initCreateLobby, Systems::moveEntities};
         }
 
     } // namespace CreateLobby

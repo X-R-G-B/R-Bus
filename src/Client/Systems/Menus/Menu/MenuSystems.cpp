@@ -6,6 +6,7 @@
 */
 
 #include "MenuSystems.hpp"
+#include "Systems.hpp"
 #include "CustomTypes.hpp"
 #include "Maths.hpp"
 #include "Menu.hpp"
@@ -218,7 +219,9 @@ namespace Systems {
                 manageInputBox,
                 hoverInputBox,
                 checkTextInput,
-                checkInputDeletion};
+                checkInputDeletion,
+                Systems::moveEntities
+            };
         }
     } // namespace Menu
 } // namespace Systems

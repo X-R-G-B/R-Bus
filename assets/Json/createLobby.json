@@ -3,8 +3,8 @@
     "goBack": {
       "type": "button",
       "spritePath": "assets/Menu/button.png",
-      "width": 800,
-      "height": 500,
+      "width": 1600,
+      "height": 1000,
       "rect": {
         "x": 0.0,
         "y": 0.0,
@@ -16,8 +16,8 @@
         "y": 500
       },
       "collisionRect": {
-        "width": 800,
-        "height": 500
+        "width": 1600,
+        "height": 1000
       },
       "animRect": [
         {
@@ -32,6 +32,19 @@
               "height": 406.0
             }
           ]
+        },
+        {
+          "type": "selected",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x" : 2732.0,
+              "y": 0.0,
+              "width": 1366.0,
+              "height": 406.0
+            }
+          ]
         }
       ]
     },
@@ -39,10 +52,10 @@
       "type": "text",
       "text": "Go Back",
       "color": "red",
-      "size": 1,
+      "size": 2,
       "position": {
-        "x": 300,
-        "y": 675
+        "x": 525,
+        "y": 875
       }
     },
     "name-text" : {
@@ -178,37 +191,34 @@
               "height": 252.0
             }
           ]
-        },
-        {
-          "type": "selected",
-          "time": 80,
-          "noIncr": true,
-          "list": [
-            {
-              "x": 2732.0,
-              "y": 0.0,
-              "width": 1366.0,
-              "height": 406.0
-            }
-          ]
         }
       ]
     },
-    "gametype_normal-text" : {
+    "createLobby-text" : {
       "type": "text",
       "color": "red",
-      "size": 1.25,
-      "text": "CREATE WITH GAME TYPE NORMAL",
+      "size": 3,
+      "text": "CREATE WITH GAME TYPE :",
       "position" : {
-        "x": 3875,
-        "y": 6700
+        "x": 3000,
+        "y": 6500
+      }
+    },
+    "gametype_normal-text" : {
+      "type": "text",
+      "color": "white",
+      "size": 2,
+      "text": "NORMAL",
+      "position" : {
+        "x": 4600,
+        "y": 7600
       }
     },
     "gametype_normal": {
       "type": "button",
       "spritePath": "assets/Menu/button.png",
-      "width": 3000,
-      "height" : 1500,
+      "width": 2500,
+      "height" : 1250,
       "rect": {
         "x": 0.0,
         "y": 0.0,
@@ -216,8 +226,8 @@
         "height": 406.0
       },
       "position": {
-        "x": 3500,
-        "y": 6000
+        "x": 3750,
+        "y": 7100
       },
       "collisionRect": {
         "width": 3000,
