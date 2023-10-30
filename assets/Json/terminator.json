@@ -58,14 +58,14 @@
                 }
             ],
             "attack" : {
-                "bulletId": "perforant",
-                "emitterId": "line",
-                "numberOfMissiles": 1,
+                "bulletId": "bounce",
+                "emitterId": "circle",
+                "numberOfMissiles": 6,
                 "missileDirection" : {
                     "x": -1,
                     "y": 0
                 },
-                "msBetweenMissiles": 5000.0,
+                "msBetweenMissiles": 4000.0,
                 "bulletSpeed": 0.9
             }
         }

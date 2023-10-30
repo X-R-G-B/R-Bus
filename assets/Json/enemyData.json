@@ -68,7 +68,7 @@
                     "y": 0
                 },
                 "msBetweenMissiles": 4000.0,
-                "bulletSpeed": 1.20
+                "bulletSpeed": 0.9
             }
         },
         {
