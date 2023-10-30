@@ -2,7 +2,7 @@
 
 A horizontally scrolling shooter multiplayer arcade video game.
 
-## Cross-Platform
+## :airplane: Cross-Platform
 
 [![Release](https://github.com/X-R-G-B/R-Bus/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/X-R-G-B/R-Bus/actions/workflows/release.yml)
 
@@ -10,16 +10,7 @@ A horizontally scrolling shooter multiplayer arcade video game.
 
 R-Bus is designed to be cross-platform, available on **Windows**, **Linux**, and **MacOS**.
 
-## Created By X-L-R-G-B
-This project is a collaborative effort by:
-
-- [Xavier](https://github.com/Saverio976)
-- [Leonore](https://github.com/TTENSHII)
-- [Romain](https://github.com/romainpanno)
-- [Guillaume](https://github.com/guillaumeAbel)
-- [Brice](https://github.com/KitetsuK)
-
-## Installation
+## :arrow_double_down: Installation
 
 Installing R-Bus is easy.
 
@@ -66,3 +57,12 @@ There are two ways to install R-Bus:
 
 ## :bookmark_tabs: License
 R-Bus is licensed under the [MIT License](https://github.com/X-R-G-B/R-Bus/blob/dev/LICENSE).
+
+## Created By X-L-R-G-B
+This project is a collaborative effort by:
+
+- [Xavier](https://github.com/Saverio976)
+- [Leonore](https://github.com/TTENSHII)
+- [Romain](https://github.com/romainpanno)
+- [Guillaume](https://github.com/guillaumeAbel)
+- [Brice](https://github.com/KitetsuK)
