@@ -11,6 +11,7 @@
 
     #include "MessageTypes.h"
 
+/* Configuration */
     #define HEADER_SIZE sizeof(struct header_s) // The size of the header
     #define TICKS 128 // The number of ticks per second
     #define TICKS_PER_SECOND(t) (t / TICKS) // The number of ticks per second
@@ -19,9 +20,12 @@
     #define RANDOM_PORT 0 // The port to use to get a random port (the first available)
     #define MAX_MAIN_SERVER_CLIENT 30 // The max number of client for the main server
     #define MAX_NB_ACTION 16 // The max number of action per packet
+
+/* The header code of the packet (used to check if the packet is valid) */
     #define HEADER_CODE1 '\x01'
     #define HEADER_CODE2 '\x03'
 
+/* The magick number of the packet (used to check if the packet is valid) */
     #define MAGICK_INIT '\x06'
     #define MAGICK_READY '\x17'
     #define MAGICK_START_WAVE '\x07'
@@ -46,6 +50,11 @@ typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
 typedef unsigned char n_nbAction_t;
 
+/**
+ * @brief The types of action
+ * it is used to know what action is in the packet
+ * in order to cast the body of the packet
+ */
 enum n_actionType_t {
     NO_ACTION = 0,
     INIT = 1,

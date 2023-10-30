@@ -22,6 +22,10 @@ namespace Systems {
             return;
         }
         const auto &arrLobby = Nitwork::NitworkMainServer::getInstance().getLobbies();
+        if (arrLobby.empty()) {
+            Logger::info("No lobby available");
+            return;
+        }
         std::vector<struct lobby_s> lobbies;
         for (const auto &lobby : arrLobby) {
             lobbies.push_back(lobby);
@@ -40,6 +44,10 @@ namespace Systems {
             Logger::error("MAGICK_CREATE_LOBBY is not the same");
             return;
         }
+        if (std::strcmp(msg.name, "") == 0) {
+            Logger::error("Lobby name cannot be empty");
+            return;
+        }
         for (const auto &lobby : Nitwork::NitworkMainServer::getInstance().getLobbies()) {
             if (std::strcmp(lobby.name, msg.name) == 0) {
                 Logger::error("Lobby " + std::string(msg.name) + " already exist");
@@ -56,6 +64,14 @@ namespace Systems {
 
         if (msg.magick != MAGICK_INFO_LOBBY) {
             Logger::error("MAGICK_HELLO_LOBBY is not the same");
+            return;
+        }
+        if (std::strcmp(msg.name, "") == 0) {
+            Logger::error("Lobby name cannot be empty");
+            return;
+        }
+        if (msg.maxNbPlayer <= 0) {
+            Logger::error("Maximum number of players must be greater than zero");
             return;
         }
         Logger::info(
