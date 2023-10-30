@@ -22,7 +22,9 @@ static void signalHandler(int signum)
 int mainMainServer(const std::vector<std::string> &av)
 {
     Logger::info("Starting Main Server...");
-    if (!Nitwork::NitworkMainServer::getInstance().startServer(std::stoi(av[2]))) {
+    auto port = std::stoi(av[2]);
+
+    if (!Nitwork::NitworkMainServer::getInstance().startServer(port)) {
         return EXIT_EPITECH;
     }
     while (isRunning && Nitwork::NitworkMainServer::getInstance().isRunning()) { };
@@ -33,12 +35,18 @@ int mainMainServer(const std::vector<std::string> &av)
 int mainLobbyServer(const std::vector<std::string> &av)
 {
     Logger::info("Starting Server...");
+    auto nbPlayer = std::stoi(av[2]);
+    auto gameType = static_cast<gameType_e>(std::stoi(av[3]));
+    auto name     = av[4];
+    auto ownerIp = av[5];
+    auto ownerPort = std::stoi(av[6]);
+
     if (!Nitwork::NitworkServer::getInstance().startServer(
-            std::stoi(av[2]),
-            static_cast<gameType_e>(std::stoi(av[3])),
-            av[4],
-            av[5],
-            std::stoi(av[6]))) {
+            nbPlayer,
+            gameType,
+            name,
+            ownerIp,
+            ownerPort)) {
         return EXIT_EPITECH;
     }
     Nitwork::NitworkServer::getInstance().addInfoLobbyMsg();
@@ -62,9 +70,10 @@ int main(int ac, const char **av)
 #endif
     std::vector<std::string> args(av, av + ac);
     auto serverType = Args::ServerArgsHandling::checkArgs(ac, av);
+    auto programPath = std::string(av[0]);
 
     signal(SIGINT, signalHandler);
-    ECS::ResourcesManager::init(av[0]);
+    ECS::ResourcesManager::init(programPath);
     if (serverType == Args::MAIN_SERVER) {
         return mainMainServer(args);
     } else if (serverType == Args::LOBBY_SERVER) {

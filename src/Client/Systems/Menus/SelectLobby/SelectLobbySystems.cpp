@@ -20,6 +20,11 @@
 
 namespace Systems::SelectLobbySystems {
 
+    static bool isNumber(const std::string &str)
+    {
+        return std::all_of(str.begin(), str.end(), ::isdigit);
+    }
+
     static bool getNameAndMaxNb(std::string &name, std::string &maxNbPlayer)
     {
         Registry::components<Types::InputBox> arrInputBox =
@@ -32,6 +37,10 @@ namespace Systems::SelectLobbySystems {
                 name = arrInputBox[id].text;
             }
             if (arrInputBox[id].name == "maxNb" && maxNbPlayer.empty()) {
+                if (!isNumber(arrInputBox[id].text)) {
+                    Logger::error("Max nb player is not a number (" + arrInputBox[id].text + ")");
+                    return false;
+                }
                 if (std::stoi(arrInputBox[id].text) > 0) {
                     maxNbPlayer = arrInputBox[id].text;
                 }
