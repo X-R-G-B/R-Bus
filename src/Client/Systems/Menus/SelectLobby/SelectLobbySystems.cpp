@@ -20,44 +20,9 @@
 
 namespace Systems::SelectLobbySystems {
 
-    static bool isNumber(const std::string &str)
+    void onButtonGotoCreateLobbyClicked()
     {
-        return std::all_of(str.begin(), str.end(), ::isdigit);
-    }
-
-    static bool getNameAndMaxNb(std::string &name, std::string &maxNbPlayer)
-    {
-        Registry::components<Types::InputBox> arrInputBox =
-            Registry::getInstance().getComponents<Types::InputBox>();
-        std::vector<std::size_t> ids =
-            Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
-
-        for (auto id : ids) {
-            if (arrInputBox[id].name == "name" && name.empty()) {
-                name = arrInputBox[id].text;
-            }
-            if (arrInputBox[id].name == "maxNb" && maxNbPlayer.empty()) {
-                if (!isNumber(arrInputBox[id].text)) {
-                    Logger::error("Max nb player is not a number (" + arrInputBox[id].text + ")");
-                    return false;
-                }
-                if (std::stoi(arrInputBox[id].text) > 0) {
-                    maxNbPlayer = arrInputBox[id].text;
-                }
-            }
-        }
-        return !name.empty() && !maxNbPlayer.empty();
-    }
-
-    void onButtonCreateLobbyNormalClicked()
-    {
-        std::string name;
-        std::string maxNvPlayer;
-
-        if (getNameAndMaxNb(name, maxNvPlayer)) {
-            unsigned int nbPlayer = static_cast<unsigned int>(std::stoi(maxNvPlayer));
-            Nitwork::NitworkClient::getInstance().addCreateLobbyMsg(name, CLASSIC_GAME, nbPlayer);
-        }
+        Scene::SceneManager::getInstance().changeScene(Scene::Scene::CREATE_LOBBY);
     }
 
     void initSelectLoby(std::size_t managerId, std::size_t systemId)
@@ -69,17 +34,11 @@ namespace Systems::SelectLobbySystems {
         try {
             nlohmann::json bigBox = Json::getInstance().getDataByVector({"lobbyMenu", "bigBox"}, JsonType::SELECT_LOBBY);
             nlohmann::json createLobbyNormalButton =
-                Json::getInstance().getDataByVector({"lobbyMenu", "gametype_normal"}, JsonType::SELECT_LOBBY);
-            nlohmann::json lobbyName =
-                Json::getInstance().getDataByVector({"lobbyMenu", "name"}, JsonType::SELECT_LOBBY);
-            nlohmann::json maxNbPlayer =
-                Json::getInstance().getDataByVector({"lobbyMenu", "maxNb"}, JsonType::SELECT_LOBBY);
+                Json::getInstance().getDataByVector({"lobbyMenu", "gotoCreateLobby"}, JsonType::SELECT_LOBBY);
             Menu::MenuBuilder::getInstance().initMenuEntity(
                 createLobbyNormalButton,
-                onButtonCreateLobbyNormalClicked);
+                onButtonGotoCreateLobbyClicked);
             Menu::MenuBuilder::getInstance().initMenuEntity(bigBox);
-            Menu::MenuBuilder::getInstance().initMenuEntity(lobbyName);
-            Menu::MenuBuilder::getInstance().initMenuEntity(maxNbPlayer);
         } catch (const std::exception &err) {
             Logger::error(
                 "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
@@ -152,6 +111,6 @@ namespace Systems::SelectLobbySystems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getLobbySystems()
     {
-        return {initSelectLoby, sendListLobby, createLobbyRow};
+            return {initSelectLoby, sendListLobby, createLobbyRow};
     }
 } // namespace Systems::SelectLobbySystems

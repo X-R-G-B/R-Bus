@@ -37,7 +37,7 @@ namespace Nitwork {
              * @param ip The ip of the main server
              * @param port The port of the main server
              */
-            void connectMainServer(const std::string &ip, n_port_t port);
+            bool connectMainServer(const std::string &ip, n_port_t port);
 
             /**
              * @brief Connect the client to the lobby

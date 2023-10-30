@@ -20,6 +20,30 @@ namespace Menu {
 
     constexpr float maxPercent = 100.0F;
 
+
+    static void initSpriteFromJson(nlohmann::json &elem)
+    {
+        Registry::getInstance().addEntity();
+        Types::SpriteDatas spriteDatas(
+            Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
+            Json::getInstance().getDataFromJson<int>(elem, "width"),
+            Json::getInstance().getDataFromJson<int>(elem, "height"),
+            FRONTLAYER,
+            static_cast<std::size_t>(FRONT));
+        if (Json::isDataExist(elem, "rect")) {
+            Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect"))};
+            if (Json::isDataExist(elem, "animRect")) {
+                Types::AnimRect animRect(rect, Json::getInstance().getDataFromJson<nlohmann::json>(elem, "animRect"));
+                Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
+            }
+            Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
+        }
+        Types::Position position = {
+            Types::Position(Json::getInstance().getDataFromJson<Types::Position>(elem, "position"))};
+        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+        Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(spriteDatas);
+    }
+
     static void initFromSprite(nlohmann::json &elem)
     {
         Types::SpriteDatas spriteDatas(
@@ -35,8 +59,8 @@ namespace Menu {
                 Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
             }
             Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
-            Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(spriteDatas);
         }
+        Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(spriteDatas);
     }
 
     static void initInputBoxText(nlohmann::json &elem)
@@ -94,8 +118,6 @@ namespace Menu {
 
     static void initButtonFromSprite(nlohmann::json &elem, std::function<void()> &callback)
     {
-        nlohmann::basic_json<> animRectData =
-            Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(elem, "animRect");
         Types::Button button(callback);
 
         Registry::getInstance().addEntity();
@@ -171,6 +193,7 @@ namespace Menu {
             case ObjectType::BUTTON: initButton(elem, callback); break;
             case ObjectType::TEXT: initText(elem); break;
             case ObjectType::INPUT_BOX: initInputBox(elem); break;
+            case ObjectType::SPRITE: initSpriteFromJson(elem); break;
             default: Logger::error("Object type is undefined, check your json data"); break;
         }
     }

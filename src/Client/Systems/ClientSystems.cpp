@@ -11,10 +11,11 @@
 #include "GraphicSystems.hpp"
 #include "MenuSystems.hpp"
 #include "SelectLobbySystems.hpp"
+#include "CreateLobbySystems.hpp"
 #include "Systems.hpp"
 
 namespace Systems {
-    std::array<std::vector<std::function<void(std::size_t, std::size_t)>>, 6> getSystemsGroups()
+    std::array<std::vector<std::function<void(std::size_t, std::size_t)>>, 7> getSystemsGroups()
     {
         return {
             getECSSystems(),
@@ -22,6 +23,8 @@ namespace Systems {
             GraphicSystems::getGraphicsSystems(),
             getNetworkSystems(),
             Menu::getMenuSystems(),
-            SelectLobbySystems::getLobbySystems()};
+            SelectLobbySystems::getLobbySystems(),
+            CreateLobby::getCreateLobbySystems()
+        };
     }
 } // namespace Systems

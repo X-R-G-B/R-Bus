@@ -15,7 +15,7 @@
 namespace Menu {
 
     // Enum that defines the type of the object you're creating
-    enum ObjectType { UNDEFINED, BUTTON, TEXT, INPUT_BOX };
+    enum ObjectType { UNDEFINED, BUTTON, TEXT, INPUT_BOX, SPRITE };
 
     // Enum serialization to precise in a json what enum you defined with a string
     NLOHMANN_JSON_SERIALIZE_ENUM(
@@ -25,6 +25,7 @@ namespace Menu {
             {BUTTON,    "button"},
             {TEXT,      "text"  },
             {INPUT_BOX, "input" },
+            {SPRITE,    "sprite"},
     });
 
     bool checkClick(std::size_t &idEntity);

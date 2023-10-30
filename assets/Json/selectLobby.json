@@ -1,12 +1,12 @@
 {
     "lobbyMenu": {
         "bigBox": {
-            "type": "box",
+            "type": "sprite",
             "spritePath": "assets/Menu/bix-box.png",
-            "width": 5000,
-            "height": 5000,
+            "width": 8000,
+            "height": 8000,
             "position": {
-                "x": 2000,
+                "x": 1000,
                 "y": 1000
             },
             "rect": {
@@ -52,10 +52,23 @@
                     "noIncr": true,
                     "list": [
                         {
-                            "x" : 1670.0,
-                            "y": 0.0,
-                            "width": 1670.0,
-                            "height": 278.0
+                            "x" : 1697.0,
+                            "y": 31.0,
+                            "width": 1618.0,
+                            "height": 221.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 3348.0,
+                            "y": 14.0,
+                            "width": 1651.0,
+                            "height": 252.0
                         }
                     ]
                 }
@@ -97,19 +110,32 @@
                     "noIncr": true,
                     "list": [
                         {
-                            "x" : 1670.0,
-                            "y": 0.0,
-                            "width": 1670.0,
-                            "height": 278.0
+                            "x" : 1697.0,
+                            "y": 31.0,
+                            "width": 1618.0,
+                            "height": 221.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 3348.0,
+                            "y": 14.0,
+                            "width": 1651.0,
+                            "height": 252.0
                         }
                     ]
                 }
             ]
         },
-        "gametype_normal": {
+        "gotoCreateLobby": {
             "type": "button",
             "spritePath": "assets/Menu/button.png",
-            "width": 500,
+            "width": 800,
             "height": 500,
             "rect": {
                 "x": 0.0,

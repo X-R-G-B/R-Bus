@@ -1,0 +1,155 @@
+{
+  "createLobbyMenu": {
+    "name": {
+      "name": "name",
+      "type": "input",
+      "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
+      "spritePath": "assets/Menu/input-box.png",
+      "text": "ServerOfSaverio",
+      "color": "red",
+      "textSize": 2,
+      "maxChar": 30,
+      "width": 6000,
+      "height": 800,
+      "textPosition": {
+        "x": 3050,
+        "y": 2250
+      },
+      "position" : {
+        "x": 2000,
+        "y": 2000
+      },
+      "rect": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1670.0,
+        "height": 278.0
+      },
+      "collisionRect": {
+        "width": 4500,
+        "height": 800
+      },
+      "animRect": [
+        {
+          "type": "hover",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x" : 1697.0,
+              "y": 31.0,
+              "width": 1618.0,
+              "height": 221.0
+            }
+          ]
+        },
+        {
+          "type": "selected",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x" : 3348.0,
+              "y": 14.0,
+              "width": 1651.0,
+              "height": 252.0
+            }
+          ]
+        }
+      ]
+    },
+    "maxNb": {
+      "name": "maxNb",
+      "type": "input",
+      "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
+      "spritePath": "assets/Menu/input-box.png",
+      "text": "2",
+      "color": "red",
+      "textSize": 3,
+      "maxChar": 2,
+      "width": 6000,
+      "height": 800,
+      "textPosition": {
+        "x": 3050,
+        "y": 3180
+      },
+      "position" : {
+        "x": 2000,
+        "y": 3000
+      },
+      "rect": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1670.0,
+        "height": 278.0
+      },
+      "collisionRect": {
+        "width": 4500,
+        "height": 800
+      },
+      "animRect": [
+        {
+          "type": "hover",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x" : 1697.0,
+              "y": 31.0,
+              "width": 1618.0,
+              "height": 221.0
+            }
+          ]
+        },
+        {
+          "type": "selected",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x" : 3348.0,
+              "y": 14.0,
+              "width": 1651.0,
+              "height": 252.0
+            }
+          ]
+        }
+      ]
+    },
+    "gametype_normal": {
+      "type": "button",
+      "spritePath": "assets/Menu/button.png",
+      "width": 800,
+      "height": 500,
+      "rect": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1366.0,
+        "height": 406.0
+      },
+      "position": {
+        "x": 2000,
+        "y": 4000
+      },
+      "collisionRect": {
+        "width": 500,
+        "height": 500
+      },
+      "animRect": [
+        {
+          "type": "hover",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x": 233.0,
+              "y": 2.0,
+              "width": 32.0,
+              "height": 14.0
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

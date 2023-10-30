@@ -119,11 +119,15 @@ namespace Nitwork {
     }
 
     /* Message Creation Section */
-    void NitworkClient::connectMainServer(const std::string &ip, n_port_t port)
+    bool NitworkClient::connectMainServer(const std::string &ip, n_port_t port)
     {
-        Logger::info("NITWORK: connecting to main server");
-        setMainEndpoint(ip, port);
-        addConnectMainServerMsg();
+        try {
+            setMainEndpoint(ip, port);
+            addConnectMainServerMsg();
+        } catch (const std::exception &e) {
+            return false;
+        }
+        return true;
     }
 
     void NitworkClient::connectLobby(const std::string &ip, n_port_t port)
