@@ -23,7 +23,7 @@ namespace Raylib {
     // Sounds
     class Sound {
         public:
-            Sound(const std::string& fileName, float volume = 0.5f);
+            Sound(const std::string &fileName, float volume = 0.5f);
             [[nodiscard]] bool isReady() const;
             void unload();
             void play() const;
@@ -48,7 +48,7 @@ namespace Raylib {
 
     class Music {
         public:
-            Music(const std::string& fileName, float volume = 0.5f);
+            Music(const std::string &fileName, float volume = 0.5f);
             void unload();
             [[nodiscard]] bool isReady() const;
             void play() const;
