@@ -21,7 +21,8 @@ enum missileTypes_e {
     CLASSIC = 0,
     FAST,
     BOUNCE,
-    PERFORANT
+    PERFORANT,
+    MAX_MISSILE_TYPE
 };
 
 enum physicsType_e {
