@@ -101,12 +101,12 @@ namespace Raylib {
         _needToPlay = needToPlay;
     }
 
-    std::string Sound::getPath() const
+    const std::string &Sound::getPath() const
     {
         return _path;
     }
 
-    std::string Sound::getRealPath() const
+    const std::string &Sound::getRealPath() const
     {
         return _realPath;
     }
@@ -196,12 +196,12 @@ namespace Raylib {
         _needToPlay = needToPlay;
     }
 
-    std::string Music::getPath() const
+    const std::string &Music::getPath() const
     {
         return _path;
     }
 
-    std::string Music::getRealPath() const
+    const std::string &Music::getRealPath() const
     {
         return _realPath;
     }

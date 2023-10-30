@@ -474,6 +474,7 @@ namespace Raylib {
 
     void TextureManager::unloadTextures()
     {
+        std::lock_guard<std::mutex> lock(_mutex);
         for (auto &it : _textures) {
             UnloadTexture(it.second);
         }
@@ -509,10 +510,6 @@ namespace Raylib {
         img.mipmaps = image.getMipmaps();
         img.format  = image.getFormat();
         _texture    = LoadTextureFromImage(img);
-    }
-
-    void Sprite::unloadSprite()
-    {
     }
 
     unsigned int Sprite::getId() const

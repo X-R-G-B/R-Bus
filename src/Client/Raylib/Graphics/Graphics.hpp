@@ -181,7 +181,6 @@ namespace Raylib {
             [[nodiscard]] int getTextureHeight() const;
             [[nodiscard]] int getMipmaps() const;
             [[nodiscard]] int getFormat() const;
-            void unloadSprite();
 
             // draw texture functions
 
