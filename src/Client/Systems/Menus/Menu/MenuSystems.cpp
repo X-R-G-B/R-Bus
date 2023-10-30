@@ -10,7 +10,6 @@
 #include "Maths.hpp"
 #include "Menu.hpp"
 #include "SceneManager.hpp"
-#include <iostream>
 
 namespace Systems {
     namespace Menu {
@@ -46,9 +45,7 @@ namespace Systems {
             setAllInputBoxFalse();
             if (arrInputBox.exist(id)) {
                 arrInputBox[id].selected = true;
-                std::cout << "Ntm" << std::endl;
                 if (arrAnimRect.exist(id)) {
-                    std::cout << "ntm" << std::endl;
                     arrAnimRect[id].changeRectList(Types::RectListType::SELECTED);
                 }
             }
