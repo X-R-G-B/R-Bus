@@ -134,10 +134,10 @@ namespace Systems {
                     Nitwork::NitworkServer::getInstance().addNewPlayerMsg(
                         endpoint,
                         {
-                            .magick        = MAGICK_NEW_PLAYER,
-                            .playerId      = otherPlayer.constId,
-                            .pos           = {pos.x, pos.y},
-                            .life          = life,
+                            .magick   = MAGICK_NEW_PLAYER,
+                            .playerId = otherPlayer.constId,
+                            .pos      = {pos.x, pos.y},
+                            .life     = life,
                             .isOtherPlayer =
                                 (Nitwork::NitworkServer::getInstance().getPlayerId(endpoint)
                                  != otherPlayer.constId),
