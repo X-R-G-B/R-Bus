@@ -89,6 +89,9 @@ namespace Raylib {
     // Misc. functions
     void takeScreenshot(const std::string &fileName);
 
+    // Collision check functions
+    bool checkCollisionPointRec(Vector2 point, Rectangle rec);
+
     // Input-related functions: keyboard
     bool isKeyPressed(KeyboardKey key);
     bool isKeyDown(KeyboardKey key);
@@ -192,6 +195,8 @@ namespace Raylib {
             Color getColor() const;
             void setColor(Color color);
             void setCurrentFontSize(float fontSize);
+            std::string &getCurrentText();
+            void setCurrentText(const std::string &text);
 
         private:
             std::string _text;
