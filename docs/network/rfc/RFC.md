@@ -24,122 +24,49 @@ Table of Contents
     1. Introduction
     2. Network Packet Global Structure
         2.1. Header
-            2.1.1. Magick1
-            2.1.2. Ids Received
-            2.1.3. Last Id Received
-            2.1.4. Id
-            2.1.5. Nb Action
-            2.1.6. Magick2
         2.2. Body
             2.2.1. Action Header
-                2.2.1.1. Magick
             2.2.2. Action Body
-                2.2.2.1. INIT
-                    2.2.2.1.1. Client
-                        2.2.2.1.1.1. Magick
-                    2.2.2.1.2. Server
-                        2.2.2.1.2.1. Magick
-                        2.2.2.1.2.2. Player ID
-                        2.2.2.1.2.3. Position
-                        2.2.2.1.2.4. Life
-                        2.2.2.1.2.5. Is Other Player
-                2.2.2.2. READY
-                    2.2.2.2.1. Client
-                        2.2.2.2.1.1. Magick
-                2.2.2.3. START_WAVE
-                    2.2.2.3.1. Server
-                        2.2.2.3.1.1. Magick
-                        2.2.2.3.1.2. Enemy ID start
-                2.2.2.4. LIFE_UPDATE
-                    2.2.2.4.1. Client
-                        2.2.2.4.1.1. Magick
-                        2.2.2.4.1.2. Player ID
-                        2.2.2.4.1.3. Life
-                            2.2.2.4.1.3.1. HP
-                    2.2.2.4.1. Server
-                        2.2.2.4.1.1. Magick
-                        2.2.2.4.1.2. Player ID
-                        2.2.2.4.1.3. Life
-                            2.2.2.4.1.3.1. HP
-                2.2.2.5. ENEMY_DEATH
-                    2.2.2.5.1. Client
-                        2.2.2.5.1.1. Magick
-                        2.2.2.5.1.2. Enemy
-                            2.2.2.5.1.2.1. ID
-                    2.2.2.5.2. Server
-                        2.2.2.5.2.1. Magick
-                        2.2.2.5.2.2. Enemy
-                            2.2.2.5.2.2.1. ID
-                2.2.2.6. POSITION_RELATIVE
-                    2.2.2.6.1. Client
-                        2.2.2.6.1.1. Magick
-                        2.2.2.6.1.2. Position
-                            2.2.2.6.1.2.1. X
-                            2.2.2.6.1.2.2. Y
-                2.2.2.7. POSITION_ABSOLUTE
-                    2.2.2.7.1. Client
-                        2.2.2.7.1.1. Magick
-                        2.2.2.7.1.2. Position
-                            2.2.2.7.1.2.1. X
-                            2.2.2.7.1.2.2. Y
-                2.2.2.8. NEW_BULLET
-                    2.2.2.8.1. Client
-                        2.2.2.8.1.1. Magick
-                        2.2.2.8.1.2. Position
-                            2.2.2.8.1.2.1.  X
-                            2.2.2.8.1.2.1.  Y
-                        2.2.2.8.1.3. Bullet Type
-                2.2.2.9. NEW_ENEMY
-                    2.2.2.9.1. Server
-                        2.2.2.9.1.1. Magick
-                        2.2.2.9.1.2. Enemy
-                            2.2.2.9.1.2.1. Enemy ID
-                                2.2.2.9.1.2.1.1. ID
-                            2.2.2.9.1.2.2. Health
-                                2.2.2.9.1.2.2.1. HP
-                            2.2.2.9.1.2.3. Position
-                                2.2.2.9.1.2.3.1. X
-                                2.2.2.9.1.2.3.2. Y
-                            2.2.2.9.1.2.4. Enemy Type
-                2.2.2.10. NEW_PLAYER
-                    2.2.2.10.1. Server
-                        2.2.2.10.1.1. Magick
-                        2.2.2.10.1.2. Player ID
-                        2.2.2.10.1.3. Position
-                        2.2.2.10.1.4. Life
-                        2.2.2.10.1.5. Is Other Player
-                2.2.2.11. POSITION_RELATIVE_BROADCAST
-                    2.2.2.11.1. Server
-                        2.2.2.11.1.1. Magick
-                        2.2.2.11.1.2. Position
-                            2.2.2.11.1.2.1. X
-                            2.2.2.11.1.2.2. Y
-                        2.2.2.11.1.3. Player ID
-                2.2.2.12. POSITION_ABSOLUTE_BROADCAST
-                    2.2.2.12.1. Server
-                        2.2.2.12.1.1. Magick
-                        2.2.2.12.1.2. Position
-                            2.2.2.12.1.2.1. X
-                            2.2.2.12.1.2.2. Y
-                        2.2.2.12.1.3. Player ID
-                2.2.2.13 PLAYER_DEATH
-                    2.2.2.13.1. Client
-                        2.2.2.13.1.1. Magick
-                        2.2.2.13.1.2. Player ID
-                    2.2.2.13.2. Server
-                        2.2.2.13.2.1. Magick
-                        2.2.2.13.2.2. Player ID
-    3. References
+    3. Network Packet Actions
+        3.1. Client -> Main Server
+            3.1.1. CONNECT_MAIN_SERVER
+            3.1.2. LIST_LOBBY
+            3.1.3. CREATE_LOBBY
+        3.2. Client -> Lobby Server
+            3.2.1. INIT
+            3.2.2. READY
+            3.2.3. POSITION_RELATIVE
+            3.2.4. POSITION_ABSOLUTE
+            3.2.5. NEW_BULLET
+            3.2.6. LIFE_UPDATE
+            3.2.7. ENEMY_DEATH
+            3.2.8. PLAYER_DEATH
+        3.3. Main Server -> Client
+            3.3.1. CONNECT_MAIN_SERVER_RESP
+            3.3.2. LIST_LOBBY
+        3.4. Lobby Server -> Client
+            3.4.1. START_WAVE
+            3.4.2. LIFE_UPDATE
+            3.4.3. ENEMY_DEATH
+            3.4.4. NEW_ENEMY
+            3.4.5. NEW_PLAYER
+            3.4.6. NEW_BULLET
+            3.4.7. POSITION_ABSOLUTE_BROADCAST
+            3.4.8. POSITION_RELATIVE_BROADCAST
+            3.4.9. PLAYER_DEATH
+        3.5. Lobby Server -> Main Server
+            3.5.1. INFO_LOBBY
+    4. References
         3.1. R-Bus
         3.2. RFC
-    4. Appendix
-        4.1. Header
-            4.1.1. Message
-            4.1.1. Network
+    5. Appendix
+        5.1. Header
+            5.1.1. Message
+            5.1.1. Network
 
 ------------------------------------------------------------------------------
 
-1.  Introduction
+1. Introduction
 
     The purpose of this document is to facilitate the implementation of custom
     clients and servers for the R-Bus game, as well as for the developers of
@@ -149,7 +76,7 @@ Table of Contents
 
 ------------------------------------------------------------------------------
 
-2.  Network Packet Global Structure
+2. Network Packet Global Structure
 
     The packets are compressed using the zstd library before being sent over
     the network using the UDP protocol. Upon receipt, the packets are
@@ -157,7 +84,7 @@ Table of Contents
     To add some better reliability, each packet sent has a header with some
     information about all the packets received.
 
-2.1.  Header
+2.1. Header
 
     The header is composed of the following fields:
     - `magick1`
@@ -167,7 +94,7 @@ Table of Contents
     - `nb_action`
     - `magick2`
 
-2.1.1.  Magick1
+    *** Magick1
 
     This field is used to know the packet received is a packet sent by and for
     the R-Bus game.
@@ -175,7 +102,7 @@ Table of Contents
     This field must be of size 1 byte.
     This field must be equal to the ascii `\x01`
 
-2.1.2.  Ids Received
+    *** Ids Received
 
     This field is one part of the header that helps to achieve the reliability
     we need to have to ensure all the important packets are received.
@@ -193,7 +120,7 @@ Table of Contents
     to the `ids_received`
     - End the loop
 
-2.1.3.  Last Id Received
+    *** Last Id Received
 
     This field is one part of the header that helps to achieve the reliability
     we need to have to ensure all the important packets are received.
@@ -203,7 +130,7 @@ Table of Contents
 
     This field need to be set to the last id of the packet received.
 
-2.1.4.  Id
+    *** Id
 
     This field is one part of the header that helps to achieve the reliability
     we need to have to ensure all the important packets are received.
@@ -215,14 +142,14 @@ Table of Contents
     packet is sent, it will be incremented by 1.
     When the maximum id is reached, it will be reset to 0.
 
-2.1.5.  Nb Action
+    *** Nb Action
 
     This field is used to know how many action have been sent in the same packet.
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
 
-2.1.6.  Magick2
+    *** Magick2
 
     This field is used to know the packet received is a packet sent by and for
     the R-Bus game.
@@ -240,710 +167,901 @@ Table of Contents
     The action header is composed of the following fields:
     - `magick`
 
-2.2.1.1.    Magick
+    *** Magick
 
     This field describe how to interpret the action body.
 
     This field must be of size 4 byte.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
-    This field must be equal to one of these value:
-    - NO_ACTION = 0,
-    - INIT = 1,
-    - READY = 2,
-    - START_WAVE = 3,
-    - LIFE_UPDATE = 5,
-    - ENEMY_DEATH = 6,
-    - POSITION_RELATIVE = 7,
-    - POSITION_ABSOLUTE = 8,
-    - NEW_BULLET = 9,
-    - NEW_ENEMY = 10,
-    - NEW_PLAYER = 11,
-    - POSITION_RELATIVE_BROADCAST = 12,
-    - POSITION_ABSOLUTE_BROADCAST = 13,
-    - PLAYER_DEATH = 14,
 
 2.2.2.  Action Body
 
-2.2.2.1.    INIT
+    The next bytes in the packet are specified in the list of available
+    actions.
 
-    The Client must send an init action before everything else.
-    The Server respond to this action with an init action.
+------------------------------------------------------------------------------
 
-2.2.2.1.1.  Client
+3. Network Packet Actions
 
-    The Client action contains the following fields:
+    This section specify each action that a Client, Main Server or Lobby Server
+    can send.
+
+3.1. Client -> Main Server
+
+3.1.1. CONNECT_MAIN_SERVER
+
+    To understand this action, the action header `magick` must be equal to `18`
+
+    The action body is composed of the following fields:
     - `magick`
 
-2.2.2.1.1.1.    Magick
+    *** Magick
 
-    This field help to know the packet is realy an init action
+    This field help to know the packet is realy a connect action
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
-    This field must be equal to the ascii `\x06`
+    This field must be equal to the ascii `\x18`
 
-2.2.2.1.2.  Server
+3.1.2. LIST_LOBBY
 
-    The Server action contains the following fields:
+    To understand this action, the action header `magick` must be equal to `16`
+
+    The action body is composed of the following fields:
     - `magick`
-    - `player_id`
-    - `pos`
-    - `life`
-    - `isOtherPlayer`
 
-2.2.2.1.2.1.    Magick
+    *** Magick
 
-    This field help to know the packet is realy an init action
+    This field help to know the packet is realy a list lobby action
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
-    This field must be equal to the ascii `\x06`
+    This field must be equal to the ascii `\x16`
 
-2.2.2.1.2.2.    Player ID
+3.1.3. CREATE_LOBBY
 
-    This field correspond to the ID of the client.
+    To understand this action, the action header `magick` must be equal to `15`
+
+    The action body is composed of the following fields:
+    - `magick`
+    - `name`
+    - `gameType`
+    - `maxNbPlayer`
+    - `ip`
+    - `port`
+
+    *** Magick
+
+    This field help to know the packet is realy a create lobby action
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x13`
+
+    *** Name
+
+    This field correspond to the name of the lobby.
+
+    This field must be of size 32 bytes.
+    Each byte is a signed integer (so starting from -((2^8)/2) to
+    +(((2^8)/2)-1)).
+    Each byte correspond to the ascii character.
+    After the last byte that you set, you must add a null character.
+    The null character is the ascii character `\x00`
+    The null character must be on the range of the 32 bytes.
+
+    *** Game Type
+
+    This field correspond to the type of the game created.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+    This field must be equal to one of this value:
+    - 0 : classic game
+
+    *** Max Nb Player
+
+    This field correspond to the maximum number of player in the lobby.
 
     This field must be of size 4 bytes.
     This field is unsigned (so starting from 0 to 2^32)
-    This field is unique for each client
 
-2.2.2.1.2.3.    Position
+    *** IP
 
-    This field correspond to the position of the client and contains the
-    following fields:
-    - `x`
-    - `y`
+    This field correspond to the ip of the Main Server.
 
-2.2.2.1.2.3.1. X
+    This field must be of size 16 bytes.
+    Each byte is a signed integer (so starting from -((2^8)/2) to
+    +(((2^8)/2)-1)).
+    Each byte correspond to the ascii character.
+    After the last byte that you set, you must add a null character.
+    The null character is the ascii character `\x00`
+    The null character must be on the range of the 16 bytes.
 
-    This field must be of size 4 byte.
+    *** Port
+
+    This field correspond to the port of the Main Server.
+
+    This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-2.2.2.1.2.3.2. Y
+3.2. Client -> Lobby Server
 
-    This field must be of size 4 byte.
-    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+3.2.1. INIT
 
-2.2.2.1.2.4.    Life
+    To understand this action, the action header `magick` must be equal to `1`
 
-    This field correspond to the life of the client and contains the following
-    fields:
-    - `hp` This field must be of size 4 byte. This field is signed (so starting
-    from -((2^32)/2) to +(((2^32)/2)-1))
+    The action body is composed of the following fields:
+    - `magick`
 
-2.2.2.1.2.5.    Is Other Player
+    *** Magick
 
-    This field correspond to the fact that the client is an other player or not.
-    It is used to know if it concern the client player himself or an other
-    player.
+    This field help to know the packet is realy an init action
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
-    This field must be equal to one of these value:
-    - TRUE = 1,
-    - FALSE = 0, 
+    This field must be equal to the ascii `\x06`
 
-2.2.2.2.    READY
+3.2.2. READY
 
-    The Client must send a ready action to enter/start the game.
-    The Server respond to this action by sending a start wave action, only if
-    all the clients are ready
+    To understand this action, the action header `magick` must be equal to `2`
 
-2.2.2.2.1.  Client
-
-    The Client action contains the following fields:
+    The action body is composed of the following fields:
     - `magick`
 
-2.2.2.2.1.1.    Magick
+    *** Magick
 
-    This field help to know the packet is realy an init action
+    This field help to know the packet is realy a ready action
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
     This field must be equal to the ascii `\x17`
 
-2.2.2.3.    START_WAVE
+3.2.3. POSITION_RELATIVE
 
-    The Server must send a start wave action before creating enemies.
+    To understand this action, the action header `magick` must be equal to `7`
 
-2.2.2.3.1.  Server
-
-    The Server action contains the following fields:
+    The action body is composed of the following fields:
     - `magick`
-    - `enemy_id_start`
+    - `x`
+    - `y`
 
-2.2.2.3.1.1.    Magick
+    *** Magick
 
-    This field help to know the packet is realy an init action
-
-    This field must be of size 1 byte.
-    This field is unsigned (so starting from 0 to 2^8)
-    This field must be equal to the ascii `\x07`
-
-2.2.2.3.1.2.    Enemy ID start
-
-    This field correspond to the ID of the first enemy that will be created.
-    After Each enemy created, the ID will be incremented.
-    This give the ability to not send the ID of the created enemy at each
-    creation.
-
-    This field must be of size 4 bytes.
-    This field is unsigned (so starting from 0 to 2^32)
-
-2.2.2.4.    LIFE_UPDATE
-
-    The Client must send a life update action each time its life is modified.
-    The Server must send a life update action each time a life of player is
-    modified.
-
-2.2.2.4.1.  Client
-
-    The Client action contains the following fields:
-    - `magick`
-    - `player_id`
-    - `life`
-
-2.2.2.4.1.1.    Magick
-
-    This field help to know the packet is realy a life update action
-
-    This field must be of size 1 byte.
-    This field is unsigned (so starting from 0 to 2^8)
-    This field must be equal to the ascii `\x0b`
-
-2.2.2.4.1.2.    Player ID
-
-    This field correspond to the ID of the player.
-
-    It will ne be taken into account because the server know the id of the
-    client with its connection.
-
-    This field must be of size 4 bytes.
-    This field is unsigned (so starting from 0 to 2^32)
-
-2.2.2.4.1.3.    Life
-
-    This field correspond to the life of the player and contains the following
-    fields:
-    - `hp`
-
-2.2.2.4.1.3.1.  HP
-
-    This field correspond to the life of the client.
-
-    This field must be of size 4 bytes.
-    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
-
-2.2.2.4.1.  Server
-
-    The Server action contains the following fields:
-    - `magick`
-    - `player_id`
-    - `life`
-
-2.2.2.4.1.1.    Magick
-
-    This field help to know the packet is realy a life update action
-
-    This field must be of size 1 byte.
-    This field is unsigned (so starting from 0 to 2^8)
-    This field must be equal to the ascii `\x0b`
-
-2.2.2.4.1.2.    Player ID
-
-    This field correspond to the ID of the player that has its life modified.
-
-    This field must be of size 4 bytes.
-    This field is unsigned (so starting from 0 to 2^32)
-
-2.2.2.4.1.3.    Life
-
-    This field correspond to the life of the player and contains the following
-    fields:
-    - `hp`
-
-2.2.2.4.1.3.1.  HP
-
-    This field correspond to the life of the client.
-
-    This field must be of size 4 bytes.
-    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
-
-2.2.2.5.    ENEMY_DEATH
-
-    The Client must send a enemy death action each time an enemy is killed.
-    The Server must send a enemy death action each time an enemy is killed.
-
-2.2.2.5.1.  Client
-
-    The Client action contains the following fields:
-    - `magick`
-    - `enemy_id`
-
-2.2.2.5.1.1.    Magick
-
-    This field help to know the packet is realy an enemy death action.
-
-2.2.2.5.1.2.    Enemy
-
-    This field correspond to the ID of the killed enemy and contains the
-    following fields:
-    - `id`
-
-2.2.2.5.1.2.1.  ID
-
-    This field correspond to the ID of the killed enemy.
-
-    This field must be of size 4 bytes.
-    This field is unsigned (so starting from 0 to 2^32)
-
-2.2.2.5.2.  Server
-
-    The Server action contains the following fields:
-    - `magick`
-    - `enemy_id`
-
-2.2.2.5.2.1.    Magick
-
-    This field help to know the packet is realy an enemy death action.
-
-2.2.2.5.2.2.    Enemy
-
-    This field correspond to the ID of the killed enemy and contains the
-    following fields:
-    - `id`
-
-2.2.2.5.2.2.1.  ID
-
-    This field correspond to the ID of the killed enemy.
-
-    This field must be of size 4 bytes.
-    This field is unsigned (so starting from 0 to 2^32)
-
-2.2.2.6.    POSITION_RELATIVE
-
-    The Client must send a position relative action every 10 milliseconds.
-
-    Relative means that it is the difference between the the current position
-    and the previous position send 10 milliseconds before.
-
-2.2.2.6.1.  Client
-
-    The Client action contains the following fields:
-    - `magick`
-    - `position`
-
-2.2.2.6.1.1.    Magick
-
-    This field help to know the packet is realy a position relative action.
+    This field help to know the packet is realy a position relative action
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
     This field must be equal to the ascii `\x08`
 
-2.2.2.6.1.2.    Position
+    *** X
 
     This field correspond to the difference between the current position of
     the client and the position of the client 10 milliseconds before.
 
-    This field contains the following fields:
+    This field must be of size 1 bytes.
+    This field is signed (so starting from -((2^8)/2) to +(((2^8)/2)-1))
+
+    *** Y
+
+    This field correspond to the difference between the current position of
+    the client and the position of the client 10 milliseconds before.
+
+    This field must be of size 1 bytes.
+    This field is signed (so starting from -((2^8)/2) to +(((2^8)/2)-1))
+
+3.2.4. POSITION_ABSOLUTE
+
+    To understand this action, the action header `magick` must be equal to `8`
+
+    The action body is composed of the following fields:
+    - `magick`
     - `x`
     - `y`
 
-2.2.2.6.1.2.1.  X
+    *** Magick
 
-    This field must be of size 1 byte.
-    This field is signed (so starting from -((2^8)/2) to +(((2^8)/2)-1))
-
-2.2.2.6.1.2.2.  Y
-
-    This field must be of size 1 byte.
-    This field is signed (so starting from -((2^8)/2) to +(((2^8)/2)-1))
-
-2.2.2.7.    POSITION_ABSOLUTE
-
-    The Client must send a position absolute action every 1 seconds.
-
-    Absolute means that it is the current position of the client.
-
-2.2.2.7.1.  Client
-
-    The Client action contains the following fields:
-    - `magick`
-    - `position`
-
-2.2.2.7.1.1.    Magick
-
-    This field help to know the packet is realy a position absolute action.
+    This field help to know the packet is realy a position absolute action
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
     This field must be equal to the ascii `\x09`
 
-2.2.2.7.1.2.    Position
+    *** X
 
-    This field correspond to the current position of the client.
+    This field correspond to the absolute position of the client.
 
-    This field contains the following fields:
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+    *** Y
+
+    This field correspond to the absolute position of the client.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+3.2.5. NEW_BULLET
+
+    To understand this action, the action header `magick` must be equal to `9`
+
+    The action body is composed of the following fields:
+    - `magick`
     - `x`
     - `y`
+    - `missileType`
 
-2.2.2.7.1.2.1.  X
+    *** Magick
+
+    This field help to know the packet is realy a new bullet action
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x0d`
+
+    *** X
+
+    This field correspond to the absolute position of the bullet when created.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+    *** Y
+
+    This field correspond to the absolute position of the bullet when created.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+    *** Missile Type
+
+    This field correspond to the type of the missile.
 
     This field must be of size 4 byte.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+    This field must be equal to one of this value:
+    - 0 : classic
+    - 1 : fast
+    - 2 : bounce
+    - 3 : perforant
 
-2.2.2.7.1.2.2.  Y
+3.2.6. LIFE_UPDATE
 
-    This field must be of size 4 byte.
-    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+    To understand this action, the action header `magick` must be equal to `5`
 
-2.2.2.8.    NEW_BULLET
-
-    The Client must send a new bullet action when he launch a bullet.
-
-2.2.2.8.1.  Client
-
-    The Client action contains the following fields:
+    The action body is composed of the following fields:
     - `magick`
-    - `position`
-    - `bullet_type`
+    - `playerId`
+    - `hp`
 
-2.2.2.8.1.1.    Magick
+    *** Magick
 
-    This field help to know the packet is realy a new bullet action.
+    This field help to know the packet is realy a life update action
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x0b`
+
+    *** Player ID
+
+    This field correspond to the ID of the client (the server will verify it).
+
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each client.
+
+    *** HP
+
+    This field correspond to the life of the client.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+3.2.7. ENEMY_DEATH
+
+    To understand this action, the action header `magick` must be equal to `6`
+
+    The action body is composed of the following fields:
+    - `magick`
+    - `ennemyId`
+
+    *** Magick
+
+    This field help to know the packet is realy an enemy death action
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
     This field must be equal to the ascii `\x0c`
 
-2.2.2.8.1.2.    Position
+    *** Ennemy ID
 
-    This field correspond to the absolute creation position of the bullet.
+    This field correspond to the ID of the ennemy that has been killed.
 
-2.2.2.8.1.2.1.  X
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each ennemy.
 
-    This field must be of size 4 byte.
-    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+3.2.8. PLAYER_DEATH
 
-2.2.2.8.1.2.2.  Y
+    To understand this action, the action header `magick` must be equal to `14`
 
-    This field must be of size 4 byte.
-    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
-
-2.2.2.8.1.3.    Bullet Type
-
-    This field correspond to the type of the bullet.
-
-    This field must be of size 4 byte.
-    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
-    This field must be equal to one of these value:
-    - CLASSIC = 0,
-
-2.2.2.9.   NEW_ENEMY
-
-    The Server must send a new enemy action when he create an enemy.
-
-2.2.2.9.1.     Server
-
-    The Server action contains the following fields:
+    The action body is composed of the following fields:
     - `magick`
-    - `enemy`
+    - `playerId`
 
-2.2.2.9.1.1.   Magick
+    *** Magick
 
-    This field help to know the packet is realy a new enemy action.
+    This field help to know the packet is realy a player death action
 
-2.2.2.9.1.2.   Enemy
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x11`
 
-    This field correspond to the new enemy and contains the following fields:
-    - `id`
-    - `position`
-    - `enemy_type`
+    *** Player ID
 
-2.2.2.9.1.2.1.     Enemy ID
+    This field correspond to the ID of the player that has been killed.
 
-    This field correspond to the ID of the new enemy and contains the following
-    fields:
-    - `id`
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each player.
 
-2.2.2.9.1.2.1.1.   ID
+3.3. Main Server -> Client
 
-    This field correspond to the ID of the new enemy.
+3.3.1. CONNECT_MAIN_SERVER_RESP
+
+    To understand this action, the action header `magick` must be equal to `19`
+
+    The action body is composed of the following fields:
+    - `magick`
+
+    *** Magick
+
+    This field help to know the packet is realy a connect main server response
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x14`
+
+3.3.2. LIST_LOBBY
+
+    To understand this action, the action header `magick` must be equal to `20`
+
+    The action body is composed of the following fields:
+    - `magick`
+    - `name`
+    - `maxNbPlayer`
+    - `gameType`
+    - `lobbyIp`
+    - `lobbyPort`
+    - `ownerIp`
+    - `ownerPort`
+
+    *** Magick
+
+    This field help to know the packet is realy a list lobby action
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x12`
+
+    *** Name
+
+    This field correspond to the name of the lobby.
+
+    This field must be of size 32 bytes.
+    Each byte is a signed integer (so starting from -((2^8)/2) to
+    +(((2^8)/2)-1)).
+    Each byte correspond to the ascii character.
+    After the last byte that you set, you must add a null character.
+    The null character is the ascii character `\x00`
+    The null character must be on the range of the 32 bytes.
+
+    *** Max Nb Player
+
+    This field correspond to the maximum number of player in the lobby.
 
     This field must be of size 4 bytes.
     This field is unsigned (so starting from 0 to 2^32)
 
-2.2.2.9.1.2.2.     Health
+    *** Game Type
 
-    This field correspond to the health of the new enemy and contains the
-    following fields:
-    - `health`
+    This field correspond to the type of the game created.
 
-2.2.2.9.1.2.2.1.   HP
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+    This field must be equal to one of this value:
+    - 0 : classic game
 
-    This field correspond to the health of the new enemy.
+    *** Lobby IP
+
+    This field correspond to the ip of the Lobby Server.
+
+    This field must be of size 16 bytes.
+    Each byte is a signed integer (so starting from -((2^8)/2) to
+    +(((2^8)/2)-1)).
+    Each byte correspond to the ascii character.
+    After the last byte that you set, you must add a null character.
+    The null character is the ascii character `\x00`
+    The null character must be on the range of the 16 bytes.
+
+    *** Lobby Port
+
+    This field correspond to the port of the Lobby Server.
 
     This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-2.2.2.9.1.2.3.     Position
+    *** Owner IP
 
-    This field correspond to the absolute position of the new enemy and
-    contains the following fields:
-    - `x`
-    - `y`
+    This field correspond to the ip of the Main Server.
 
-2.2.2.9.1.2.3.1.   X
+    This field must be of size 16 bytes.
+    Each byte is a signed integer (so starting from -((2^8)/2) to
+    +(((2^8)/2)-1)).
+    Each byte correspond to the ascii character.
+    After the last byte that you set, you must add a null character.
+    The null character is the ascii character `\x00`
+    The null character must be on the range of the 16 bytes.
 
-    This field must be of size 4 byte.
+    *** Owner Port
+
+    This field correspond to the port of the Main Server.
+
+    This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-2.2.2.9.1.2.3.2.   Y
+3.4. Lobby Server -> Client
 
-    This field must be of size 4 byte.
-    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+3.4.1. START_WAVE
 
-2.2.2.9.1.2.4.     Enemy Type
+    To understand this action, the action header `magick` must be equal to `3`
 
-    This field correspond to the type of the new enemy.
+    The action body is composed of the following fields:
+    - `magick`
+    - `ennemyId`
 
-    This field must be of size 4 byte.
-    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
-    This field must be equal to one of these value:
-    - CLASSIC_ENEMY = 0
+    *** Magick
 
-2.2.2.10.   NEW_PLAYER
+    This field help to know the packet is realy a start wave action
 
-    The Server must send a new allie action when a new player enter in the
-    game.
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x07`
 
-2.2.2.10.1.     Server
+    *** Ennemy Id
 
-    The Server action contains the following fields:
+    This field correspond to the id of the first ennemy that will spawn and
+    that is part of the wave.
+
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each ennemy.
+
+3.4.2. LIFE_UPDATE
+
+    To understand this action, the action header `magick` must be equal to `5`
+
+    The action body is composed of the following fields:
     - `magick`
     - `playerId`
-    - `pos`
-    - `life`
+    - `hp`
+
+    *** Magick
+
+    This field help to know the packet is realy a life update action
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x0b`
+
+    *** Player ID
+
+    This field correspond to the ID of the client whose life has been updated.
+
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each player.
+
+    *** HP
+
+    This field correspond to the life of the player.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+3.4.3. ENEMY_DEATH
+
+    To understand this action, the action header `magick` must be equal to `6`
+
+    The action body is composed of the following fields:
+    - `magick`
+    - `enemyId`
+
+    *** Magick
+
+    This field help to know the packet is realy an enemy death action
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x0c`
+
+    *** Enemy ID
+
+    This field correspond to the id of the ennemy that has been killed.
+
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each ennemy.
+
+3.4.4. NEW_ENEMY
+
+    To understand this action, the action header `magick` must be equal to `10`
+
+    The action body is composed of the following fields:
+    - `magick`
+    - `ennemyId`
+    - `hp`
+    - `x`
+    - `y`
+    - `ennemyType`
+
+    *** Magick
+
+    This field help to know the packet is realy a new enemy action
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x0e`
+
+    *** Ennemy ID
+
+    This field correspond to the id of the new ennemy.
+
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each ennemy.
+
+    *** HP
+
+    This field correspond to the life of the new ennemy.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+    *** X
+
+    This field correspond to the absolute x position of the new ennemy.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+    *** Y
+
+    This field correspond to the absolute y position of the new ennemy.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+    *** Ennemy Type
+
+    This field correspond to the type of the new ennemy.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+    This field must be equal to one of this value:
+    - 0 : classic
+    - 1 : terminator
+
+3.4.5. NEW_PLAYER
+
+    To understand this action, the action header `magick` must be equal to `11`
+
+    The action body is composed of the following fields:
+    - `magick`
+    - `playerId`
+    - `x`
+    - `y`
+    - `hp`
     - `isOtherPlayer`
 
-2.2.2.10.1.1.    Magick
+    *** Magick
 
-    This field help to know the packet is realy a new allie action.
+    This field help to know the packet is realy an init action
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
     This field must be equal to the ascii `\x0a`
 
-2.2.2.10.1.2.    Player ID
+    *** Player ID
 
-    This field correspond to the ID of the client.
+    This field correspond to the ID of the client that joined.
 
     This field must be of size 4 bytes.
     This field is unsigned (so starting from 0 to 2^32)
-    This field is unique for each client
+    This field is unique for each client.
 
-2.2.2.10.1.3.    Position
+    *** X
 
-    This field correspond to the position of the client and contains the
-    following fields:
-    - `x` This field must be of size 4 byte. This field is signed (so starting
-    from -((2^32)/2) to +(((2^32)/2)-1))
-    - `y` This field must be of size 4 byte. This field is signed (so starting
-    from -((2^32)/2) to +(((2^32)/2)-1))
+    This field correspond to the absolute x position of the client.
 
-2.2.2.10.1.3.1. X
-
-    This field must be of size 4 byte.
+    This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-2.2.2.10.1.3.2. Y
+    *** Y
 
-    This field must be of size 4 byte.
+    This field correspond to the absolute y position of the client.
+
+    This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-2.2.2.10.1.4.    Life
+    *** HP
 
-    This field correspond to the life of the client and contains the following
-    fields:
-    - `hp` This field must be of size 4 byte. This field is signed (so starting
-    from -((2^32)/2) to +(((2^32)/2)-1))
+    This field correspond to the life of the client.
 
-2.2.2.10.1.5.    Is Other Player
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-    This field correspond to the fact that the client is an other player or not.
-    It is used to know if it concern the client player himself or an other
-    player.
+    *** isOtherPlayer
+
+    This field is an information to let you know if this player is you.
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
-    This field must be equal to one of these value:
-    - TRUE = 1,
-    - FALSE = 0, 
+    This field is equal to `1` if it is you
+    This field is equal to `0` if it is not you
 
-2.2.2.11.   POSITION_RELATIVE_BROADCAST
+3.4.6. NEW_BULLET
 
-    The Server can send a position relative broadcast to all the players when a
-    player send a position relative action.
-    It is up to the server to decide if he broadcast or not.
+    To understand this action, the action header `magick` must be equal to `9`
 
-2.2.2.11.1.     Server
-
-    The Server action contains the following fields:
+    The action body is composed of the following fields:
     - `magick`
-    - `position`
-    - `player_id`
-
-2.2.2.11.1.1.   Magick
-
-    This field help to know the packet is realy a position relative broadcast
-    action.
-
-    This field must be of size 1 byte.
-    This field is unsigned (so starting from 0 to 2^8)
-    This field must be equal to the ascii `\x0f`
-
-2.2.2.11.1.2.   Position
-
-    This field correspond to the relative position of the player and contains
-    the following fields:
     - `x`
     - `y`
+    - `missileType`
 
-2.2.2.11.1.2.1.     X
+    *** Magick
 
-    This field must be of size 1 byte.
-    This field is signed (so starting from -((2^8)/2) to +(((2^8)/2)-1))
-
-2.2.2.11.1.2.2.     Y
+    This field help to know the packet is realy a new bullet action
 
     This field must be of size 1 byte.
-    This field is signed (so starting from -((2^8)/2) to +(((2^8)/2)-1))
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x0d`
 
-2.2.2.11.1.3.   Player ID
+    *** X
 
-    This field correspond to the ID of the player that has its position
-    modified.
+    This field correspond to the absolute x position of the bullet.
 
-2.2.2.12.   POSITION_ABSOLUTE_BROADCAST
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-    The Server can send a position absolute broadcast to all the players when a
-    player send a position absolute action.
-    It is up to the server to decide if he broadcast or not.
+    *** Y
 
-2.2.2.12.1.     Server
+    This field correspond to the absolute y position of the bullet.
 
-    The Server action contains the following fields:
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+    *** Missile Type
+
+    This field correspond to the type of the bullet.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+    This field must be equal to one of this value:
+    - 0 : classic
+    - 1 : fast
+    - 2 : bounce
+    - 3 : perforant
+
+3.4.7. POSITION_ABSOLUTE_BROADCAST
+
+    To understand this action, the action header `magick` must be equal to `13`
+
+    The action body is composed of the following fields:
     - `magick`
-    - `position`
-    - `player_id`
+    - `x`
+    - `y`
+    - `playerId`
 
-2.2.2.12.1.1.   Magick
+    *** Magick
 
     This field help to know the packet is realy a position absolute broadcast
-    action.
+    action
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
     This field must be equal to the ascii `\x10`
 
-2.2.2.12.1.2.   Position
+    *** X
 
-    This field correspond to the absolute position of the player and contains
-    the following fields:
+    This field correspond to the absolute x position of the bullet.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+    *** Y
+
+    This field correspond to the absolute y position of the bullet.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+    *** Player Id
+
+    This field correspond to the id of the player.
+
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each player.
+
+3.4.8. POSITION_RELATIVE_BROADCAST
+
+    To understand this action, the action header `magick` must be equal to `12`
+
+    The action body is composed of the following fields:
+    - `magick`
     - `x`
     - `y`
+    - `playerId`
 
-2.2.2.12.1.2.1.     X
+    *** Magick
 
-    This field must be of size 4 byte.
-    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+    This field help to know the packet is realy a position relative broadcast
+    action
 
-2.2.2.12.1.2.2.     Y
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x0f`
 
-    This field must be of size 4 byte.
-    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+    *** X
 
-2.2.2.12.1.3.   Player ID
+    This field correspond to the relative x position of the bullet since last
+    packet send.
 
-    This field correspond to the ID of the player that has its position
-    modified.
+    This field must be of size 1 byte.
+    This field is signed (so starting from -((2^8)/2) to +(((2^8)/2)-1))
 
-2.2.2.13.   PLAYER_DEATH
+    *** Y
 
-    The Client must send a player death action when he die. Or any other player
-    The Server must send a player death action when a player die. And check if 
-    a player is dead when he receive a PLAYER_DEATH action from a client.
+    This field correspond to the relative y position of the bullet since last
+    packet send.
 
-2.2.2.13.1.    Client
+    This field must be of size 1 byte.
+    This field is signed (so starting from -((2^8)/2) to +(((2^8)/2)-1))
 
-    The Client action contains the following fields:
+    *** Player Id
+
+    This field correspond to the id of the player.
+
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each player.
+
+3.4.9. PLAYER_DEATH
+
+    To understand this action, the action header `magick` must be equal to `14`
+
+    The action body is composed of the following fields:
     - `magick`
-    - `player_id`
+    - `playerId`
 
-2.2.2.13.1.1.  Magick
+    *** Magick
 
-    This field help to know the packet is realy a player death action.
+    This field help to know the packet is realy a player death action
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
     This field must be equal to the ascii `\x11`
 
-2.2.2.13.1.2.  Player ID
+    *** Player Id
 
-    This field correspond to the ID of the player that has died.
+    This field correspond to the id of the player.
 
     This field must be of size 4 bytes.
     This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each player.
 
-2.2.2.13.2.    Server
+3.5. Lobby Server -> Main Server
 
-    The Server action contains the following fields:
+3.5.1. INFO_LOBBY
+
+    To understand this action, the action header `magick` must be equal to `17`
+
+    The action body is composed of the following fields:
     - `magick`
-    - `player_id`
+    - `name`
+    - `maxNbPlayer`
+    - `gameType`
+    - `ip`
+    - `port`
 
-2.2.2.13.2.1.  Magick
+    *** Magick
 
-    This field help to know the packet is realy a player death action.
+    This field help to know the packet is realy an info lobby action
 
     This field must be of size 1 byte.
     This field is unsigned (so starting from 0 to 2^8)
-    This field must be equal to the ascii `\x11`
+    This field must be equal to the ascii `\x15`
 
-2.2.2.13.2.2.  Player ID
+    *** Name
 
-    This field correspond to the ID of the player that has died.
+    This field correspond to the name of the lobby.
+
+    This field must be of size 32 bytes.
+    Each byte is a signed integer (so starting from -((2^8)/2) to
+    +(((2^8)/2)-1)).
+    Each byte correspond to the ascii character.
+    After the last byte that you set, you must add a null character.
+    The null character is the ascii character `\x00`
+    The null character must be on the range of the 32 bytes.
+
+    *** Max Nb Player
+
+    This field correspond to the maximum number of player in the lobby.
 
     This field must be of size 4 bytes.
     This field is unsigned (so starting from 0 to 2^32)
 
-3.  References
+    *** Game Type
+
+    This field correspond to the type of the game created.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+    This field must be equal to one of this value:
+    - 0 : classic game
+
+    *** IP
+
+    This field correspond to the ip of the Main Server.
+
+    This field must be of size 16 bytes.
+    Each byte is a signed integer (so starting from -((2^8)/2) to
+    +(((2^8)/2)-1)).
+    Each byte correspond to the ascii character.
+    After the last byte that you set, you must add a null character.
+    The null character is the ascii character `\x00`
+    The null character must be on the range of the 16 bytes.
+
+    *** Port
+
+    This field correspond to the port of the Main Server.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+------------------------------------------------------------------------------
+
+4.  References
 
     Link to some mentioned word
 
-3.1. R-Bus
+4.1. R-Bus
 
     - The R-Bus game project source code <https://github.com/X-R-G-B/R-Bus>
     - The R-Bus game documentation <https://x-r-g-b.github.io/R-Bus/>
 
-3.2. RFC
+4.2. RFC
 
     - How to write an RFC <https://www.rfc-editor.org/rfc/rfc7322>
 
-4. Appendix
+------------------------------------------------------------------------------
+
+5. Appendix
 
     Files that helps understand the RFC
 
-4.1. Header
+5.1. Header
 
     Header files used by the R-Bus game
 
-4.1.1. Message
+5.1.1. Message
 
     Structures used by the R-Bus game inside the ECS
     <https://github.com/X-R-G-B/R-Bus/blob/dev/src/ECS/MessageTypes.h>
 
-4.1.1. Network
+5.1.1. Network
 
     Structures used by the R-Bus game inside the network
     <https://github.com/X-R-G-B/R-Bus/blob/dev/src/Nitwork/Nitwork.h>
