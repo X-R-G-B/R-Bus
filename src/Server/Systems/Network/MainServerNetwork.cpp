@@ -40,6 +40,12 @@ namespace Systems {
             Logger::error("MAGICK_CREATE_LOBBY is not the same");
             return;
         }
+        for (const auto &lobby : Nitwork::NitworkMainServer::getInstance().getLobbies()) {
+            if (std::strcmp(lobby.name, msg.name) == 0) {
+                Logger::error("Lobby " + std::string(msg.name) + " already exist");
+                return;
+            }
+        }
         Nitwork::NitworkMainServer::getInstance().createLobby(msg.maxNbPlayer, msg.name, msg.gameType);
     }
 
@@ -57,7 +63,6 @@ namespace Systems {
             + std::to_string(lobbyEndpoint.port()) + ")");
         std::strcpy(lobby.name, msg.name);
         lobby.maxNbPlayer = msg.maxNbPlayer;
-        lobby.gameType    = msg.gameType;
         lobby.gameType    = msg.gameType;
         std::strcpy(lobby.lobbyInfos.ip, lobbyEndpoint.address().to_string().c_str());
         lobby.lobbyInfos.port = lobbyEndpoint.port();
