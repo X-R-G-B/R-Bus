@@ -66,14 +66,13 @@ namespace Systems::SelectLobbySystems {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
             return;
         }
-        nlohmann::json createLobbyNormalButton =
-            Json::getInstance().getDataByVector({"menu", "gametype_normal"}, JsonType::SELECT_LOBBY);
-        nlohmann::json lobbyName =
-            Json::getInstance().getDataByVector({"menu", "name"}, JsonType::SELECT_LOBBY);
-        nlohmann::json maxNbPlayer =
-            Json::getInstance().getDataByVector({"menu", "maxNb"}, JsonType::SELECT_LOBBY);
-
         try {
+            nlohmann::json createLobbyNormalButton =
+                Json::getInstance().getDataByVector({"menu", "gametype_normal"}, JsonType::SELECT_LOBBY);
+            nlohmann::json lobbyName =
+                Json::getInstance().getDataByVector({"menu", "name"}, JsonType::SELECT_LOBBY);
+            nlohmann::json maxNbPlayer =
+                Json::getInstance().getDataByVector({"menu", "maxNb"}, JsonType::SELECT_LOBBY);
             Menu::MenuBuilder::getInstance().initMenuEntity(
                 createLobbyNormalButton,
                 onButtonCreateLobbyNormalClicked);
