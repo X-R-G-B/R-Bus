@@ -130,12 +130,12 @@ namespace Raylib {
     Color getColor(unsigned int hexValue);
 
     // Graphic classes
- 
+
     class TextureManager {
         public:
-            TextureManager(TextureManager const &) = delete;
+            TextureManager(TextureManager const &)  = delete;
             TextureManager(TextureManager const &&) = delete;
-            void operator=(TextureManager const &) = delete;
+            void operator=(TextureManager const &)  = delete;
             void operator=(TextureManager const &&) = delete;
 
             static TextureManager &getInstance();

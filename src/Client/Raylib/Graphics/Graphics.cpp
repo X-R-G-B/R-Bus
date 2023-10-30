@@ -465,7 +465,7 @@ namespace Raylib {
 
         if (it == _textures.end()) {
             _textures[fileName] = LoadTexture(ECS::ResourcesManager::convertPath(fileName).c_str());
-            it = _textures.find(fileName);
+            it                  = _textures.find(fileName);
         }
         return _textures[fileName];
     }
