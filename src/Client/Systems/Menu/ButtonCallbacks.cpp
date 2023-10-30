@@ -37,18 +37,11 @@ namespace Menu {
 
         void initConnection()
         {
-            std::string ip("");
-            std::string port("");
+            std::string ip;
+            std::string port;
 
             getIpAndPort(ip, port);
-            if (!Nitwork::NitworkClient::getInstance()
-                     .startClient(std::stoi(port.c_str()), ip.c_str(), DEFAULT_THREAD_NB, TICKS)) {
-                Logger::error("Error network couldn't connect");
-                return;
-            }
-            Nitwork::NitworkClient::getInstance().addInitMsg();
-            Nitwork::NitworkClient::getInstance().addReadyMsg();
-            Scene::SceneManager::getInstance().changeScene(Scene::Scene::MAIN_GAME);
+            Nitwork::NitworkClient::getInstance().connectMainServer(ip, std::stoi(port));
         }
     } // namespace Callback
 } // namespace Menu

@@ -3,10 +3,19 @@
 
 set -ex
 
-if [[ "$1" == "--no-tidy" ]]; then
+if [[ "$1" == "--no-tidy" ]] || [[ "$2" == "--no-tidy" ]]; then
     cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug -DNO_USE_CLANG_TIDY=true
 else
     cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug
 fi
 
-cmake --build build --parallel
+if ! command -v nproc &> /dev/null; then
+        cmake --build build --parallel 2
+else
+  NB_PROC=$(nproc)
+  NB_THREADS=$(($NB_PROC - 2))
+  if [[ "$NB_PROC" -lt "3" ]]; then
+      NB_THREADS=1
+  fi
+  cmake --build build --parallel $NB_THREADS
+fi

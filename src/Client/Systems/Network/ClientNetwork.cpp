@@ -271,6 +271,57 @@ namespace Systems {
         }
     }
 
+    void handleNewLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint & /* unused */)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const struct msgLobbyInfo_s &newLobby = std::any_cast<struct msgLobbyInfo_s>(data);
+        auto &registry                        = Registry::getInstance();
+        auto &arrLobby                        = registry.getComponents<struct lobby_s>();
+        auto lobbyIds                         = arrLobby.getExistingsId();
+        auto isAlreadyPresent =
+            std::find_if(lobbyIds.begin(), lobbyIds.end(), [&arrLobby, &newLobby](std::size_t id) {
+                return std::string(arrLobby[id].lobbyInfos.ip) == std::string(newLobby.lobby.lobbyInfos.ip)
+                    && arrLobby[id].lobbyInfos.port == newLobby.lobby.lobbyInfos.port;
+            });
+
+        if (isAlreadyPresent != lobbyIds.end()) {
+            return;
+        }
+        registry.addEntity();
+        struct lobby_s lobbyToAdd = {newLobby.lobby};
+        arrLobby.insertBack(lobbyToAdd);
+        Logger::info(
+            "New lobby added: " + std::string(newLobby.lobby.lobbyInfos.ip) + ":"
+            + std::to_string(newLobby.lobby.lobbyInfos.port));
+    }
+
+    void receiveMsgConnectMainServerResp(bool isOk)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+
+        if (!isOk) {
+            // TODO: Show error on GUI
+            Logger::error("Server Not OK!");
+            return;
+        }
+        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+        Logger::info("Server OK!");
+    }
+
+    void receiveConnectMainServerResp(std::any &data, boost::asio::ip::udp::endpoint & /* unused */)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const struct msgConnectMainServerResp_s &msg =
+            std::any_cast<struct msgConnectMainServerResp_s>(data);
+
+        if (msg.magick != MAGICK_CONNECT_MAIN_SERVER_RESP) {
+            Logger::error("MAGICK_CONNECT_MAIN_SERVER_RESP is not the same");
+            return;
+        }
+        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+        Logger::info("Server OK!");
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()
     {
         return {sendPositionRelative, sendPositionAbsolute};

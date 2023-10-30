@@ -68,4 +68,31 @@ namespace ECS {
         }
         return path_tmp.string();
     }
+
+    std::string ResourcesManager::convertPath(const std::string &path_const, FileType type)
+    {
+        if (type == FileType::ASSETS) {
+            return convertPath(path_const);
+        }
+        if (type == FileType::BINARY) {
+            boost::filesystem::path path_tmp = _resourcePath;
+            path_tmp                         = path_tmp.parent_path();
+#ifdef PACKAGED
+            path_tmp.append("bin");
+#endif
+            if (!boost::filesystem::exists(path_tmp)) {
+                Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
+                return "";
+            }
+            path_tmp.append(path_const);
+            path_tmp = path_tmp.make_preferred();
+            if (!boost::filesystem::exists(path_tmp)) {
+                Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
+                return "";
+            }
+            return path_tmp.string();
+        }
+        Logger::fatal("RESOURCE_MANAGER: Invalid FileType");
+        return "";
+    }
 } // namespace ECS
