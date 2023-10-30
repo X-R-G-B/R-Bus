@@ -11,14 +11,14 @@
 
     #include "MessageTypes.h"
 
-    #define HEADER_SIZE sizeof(struct header_s)
-    #define TICKS 128
-    #define TICKS_PER_SECOND(t) (t / TICKS)
-    #define TICKS_PER_MILLISECOND(t) (TICKS_PER_SECOND(t) / 1000)
-    #define DEFAULT_THREAD_NB 4
-    #define RANDOM_PORT 0
-    #define MAX_MAIN_SERVER_CLIENT 30
-    #define MAX_NB_ACTION 16
+    #define HEADER_SIZE sizeof(struct header_s) // The size of the header
+    #define TICKS 128 // The number of ticks per second
+    #define TICKS_PER_SECOND(t) (t / TICKS) // The number of ticks per second
+    #define TICKS_PER_MILLISECOND(t) (TICKS_PER_SECOND(t) / 1000) // The number of ticks per millisecond
+    #define DEFAULT_THREAD_NB 4 // The default number of thread
+    #define RANDOM_PORT 0 // The port to use to get a random port (the first available)
+    #define MAX_MAIN_SERVER_CLIENT 30 // The max number of client for the main server
+    #define MAX_NB_ACTION 16 // The max number of action per packet
     #define HEADER_CODE1 '\x01'
     #define HEADER_CODE2 '\x03'
 
