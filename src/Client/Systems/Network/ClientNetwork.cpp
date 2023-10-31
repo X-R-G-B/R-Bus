@@ -58,7 +58,7 @@ namespace Systems {
         std::vector<std::size_t> ids = missiles.getExistingsId();
 
         for (auto id : ids) {
-            if (missiles[id].getConstId() == missileDeath.missileId) {
+            if (missiles[id].constId == missileDeath.missileId) {
                 if (arrHealth.exist(id)) {
                     arrHealth[id].hp = 0;
                 } else {
@@ -232,6 +232,8 @@ namespace Systems {
     void receiveNewBullet(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        auto missiles = Registry::getInstance().getComponents<Types::Missiles>();
+        auto health = Registry::getInstance().getComponents<struct health_s>();
 
         const struct msgNewBullet_s &msgNewBullet = std::any_cast<struct msgNewBullet_s>(any);
 
@@ -240,7 +242,9 @@ namespace Systems {
             Maths::addIntDecimals(msgNewBullet.pos.y),
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
-        Systems::createMissile(position, missileType, msgNewBullet.id, msgNewBullet.life);
+        auto id = Systems::createMissile(position, missileType);
+        missiles[id].constId = msgNewBullet.id;
+        health[id].hp       = msgNewBullet.life;
     }
 
     void receiveBroadcastAbsolutePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)

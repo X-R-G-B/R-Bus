@@ -103,7 +103,7 @@ namespace Systems {
         }
     }
 
-    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile, unsigned int id, )
+    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile, unsigned int id, int life)
     {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
