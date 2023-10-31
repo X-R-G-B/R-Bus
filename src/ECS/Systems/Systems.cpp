@@ -204,45 +204,6 @@ namespace Systems {
         }
     }
 
-    void initWave(std::size_t managerId, std::size_t systemId)
-    {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        static std::size_t enemyNumber =
-            Json::getInstance().getDataByVector({"wave", "nbrEnemy"}, JsonType::WAVE);
-        const std::size_t spawnDelay = 2;
-        Clock &clock                 = Registry::getInstance().getClock();
-        static std::size_t clockId   = clock.create(true);
-        static bool fstCall          = true;
-        std::vector<nlohmann::json> jsonVector =
-            Json::getInstance().getDataByVector({"wave", "positions"}, JsonType::WAVE);
-        nlohmann::json jsonPos;
-        Registry::components<Types::Boss> &bossArr = Registry::getInstance().getComponents<Types::Boss>();
-        Registry::components<Types::Enemy> &enemyArr =
-            Registry::getInstance().getComponents<Types::Enemy>();
-
-        if (enemyNumber > 0) {
-            jsonPos = Json::getInstance().getDataFromJson<Types::Position>(
-                jsonVector[enemyNumber - 1],
-                "position");
-        } else {
-            jsonPos = Json::getInstance().getDataFromJson<Types::Position>(jsonVector[0], "position");
-        }
-        Types::Position pos(jsonPos);
-        if (fstCall) {
-            fstCall = false;
-            clock.restart(clockId);
-        }
-        if (clock.elapsedSecondsSince(clockId) >= spawnDelay && enemyNumber > 0) {
-            initEnemy(CLASSIC_ENEMY, pos);
-            enemyNumber--;
-            clock.decreaseSeconds(clockId, spawnDelay);
-        }
-        if (enemyArr.getExistingsId().empty() && enemyNumber <= 0 && bossArr.getExistingsId().empty()) {
-            initEnemy(TERMINATOR, pos);
-            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
-        }
-    }
-
     void checkDestroyAfterDeathCallBack(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
