@@ -28,11 +28,12 @@
     #define MAGICK_LIFE_UPDATE '\x0b'
     #define MAGICK_ENEMY_DEATH '\x0c'
     #define MAGICK_NEW_ENEMY '\x0e'
-    #define MAGICK_NEW_BULLET '\x0d'
+    #define MAGICK_NEW_MISSILE '\x0d'
     #define MAGICK_POSITION_RELATIVE_BROADCAST '\x0f'
     #define MAGICK_POSITION_ABSOLUTE_BROADCAST '\x10'
     #define MAGICK_NEW_PLAYER '\x0a'
     #define MAGICK_PLAYER_DEATH '\x11'
+    #define MAGICK_MISSILE_DEATH '\x12'
 
 typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
@@ -47,12 +48,13 @@ enum n_actionType_t {
     ENEMY_DEATH = 6,
     POSITION_RELATIVE = 7,
     POSITION_ABSOLUTE = 8,
-    NEW_BULLET = 9,
+    NEW_MISSILE = 9,
     NEW_ENEMY = 10,
     NEW_PLAYER = 11,
     POSITION_RELATIVE_BROADCAST = 12,
     POSITION_ABSOLUTE_BROADCAST = 13,
     PLAYER_DEATH = 14,
+    MISSILE_DEATH = 15,
     N_ACTION_TYPE_MAX,
 };
 
@@ -95,6 +97,7 @@ PACK(struct packetMsgReady_s {
 PACK(struct msgStartWave_s {
         n_magick_t magick;
         n_id_t enemyNb;
+        n_id_t missilesNb;
 });
 
 PACK(struct packetMsgStartWave_s {
@@ -156,6 +159,8 @@ PACK(struct packetNewEnemy_s {
 PACK(struct msgNewBullet_s {
         n_magick_t magick;
         struct position_absolute_s pos;
+        n_id_t id;
+        int life;
         missileTypes_e missileType;
 });
 
@@ -228,6 +233,18 @@ PACK(struct packetPlayerDeath_s {
         struct header_s header;
         struct action_s action;
         struct msgPlayerDeath_s msg;
+});
+
+/* Message Missile Death */
+PACK(struct msgMissileDeath_s {
+     n_magick_t magick;
+     n_id_t missileId;
+});
+
+PACK(struct packetMissileDeath_s {
+     struct header_s header;
+     struct action_s action;
+     struct msgMissileDeath_s msgMissileDeath;
 });
 
 #endif

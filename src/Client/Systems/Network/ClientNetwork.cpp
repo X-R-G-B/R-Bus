@@ -49,12 +49,34 @@ namespace Systems {
         }
     }
 
+    void receiveMissileDeath(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const auto missileDeath                      = std::any_cast<struct msgMissileDeath_s>(any);
+        auto &missiles = Registry::getInstance().getComponents<Types::Missiles>();
+        auto &arrHealth              = Registry::getInstance().getComponents<struct health_s>();
+        std::vector<std::size_t> ids = missiles.getExistingsId();
+
+        for (auto id : ids) {
+            if (missiles[id].getConstId() == missileDeath.missileId) {
+                if (arrHealth.exist(id)) {
+                    arrHealth[id].hp = 0;
+                } else {
+                    Logger::fatal("\n\n\n!!!! Missile has no health component, but is alive !!!!\n\n\n");
+                    Registry::getInstance().removeEntity(id);
+                }
+                return;
+            }
+        }
+    }
+
     void handleStartWave(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         auto &director = SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
         Types::Enemy::setEnemyNb(wave.enemyNb);
+        Types::Missiles::setMissileNb(wave.missilesNb);
         director.getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::GAME))
             .addSystem(initWave);
         Logger::info("Wave started");
@@ -218,7 +240,7 @@ namespace Systems {
             Maths::addIntDecimals(msgNewBullet.pos.y),
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
-        Systems::createMissile(position, missileType);
+        Systems::createMissile(position, missileType, msgNewBullet.id, msgNewBullet.life);
     }
 
     void receiveBroadcastAbsolutePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)

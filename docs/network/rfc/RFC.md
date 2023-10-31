@@ -82,7 +82,7 @@ Table of Contents
                         2.2.2.7.1.2. Position
                             2.2.2.7.1.2.1. X
                             2.2.2.7.1.2.2. Y
-                2.2.2.8. NEW_BULLET
+                2.2.2.8. NEW_MISSILE
                     2.2.2.8.1. Client
                         2.2.2.8.1.1. Magick
                         2.2.2.8.1.2. Position
@@ -255,7 +255,7 @@ Table of Contents
     - ENEMY_DEATH = 6,
     - POSITION_RELATIVE = 7,
     - POSITION_ABSOLUTE = 8,
-    - NEW_BULLET = 9,
+    - NEW_MISSILE = 9,
     - NEW_ENEMY = 10,
     - NEW_PLAYER = 11,
     - POSITION_RELATIVE_BROADCAST = 12,
@@ -598,7 +598,7 @@ Table of Contents
     This field must be of size 4 byte.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-2.2.2.8.    NEW_BULLET
+2.2.2.8.    NEW_MISSILE
 
     The Client must send a new bullet action when he launch a bullet.
 

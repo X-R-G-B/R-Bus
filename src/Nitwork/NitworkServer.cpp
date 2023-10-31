@@ -215,7 +215,7 @@ namespace Nitwork {
             Logger::info("A new client is ready, waiting for others");
             return;
         }
-        addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
+        addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb(), Types::Missiles::getMissileNb());
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
         director.getSystemManager(0).addSystem(Systems::initWave);
@@ -270,13 +270,13 @@ namespace Nitwork {
         _playersIds[endpoint] = playerMsg.playerId;
     }
 
-    void NitworkServer::addStarWaveMessage(boost::asio::ip::udp::endpoint & /* unused */, n_id_t enemyId)
+    void NitworkServer::addStarWaveMessage(boost::asio::ip::udp::endpoint & /* unused */, n_id_t enemyNb, n_id_t missilesNb)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgStartWave_s packetMsgStartWave = {
             .header       = {0, 0, 0, 0, 1, 0},
             .action       = {.magick = START_WAVE},
-            .msgStartWave = {.magick = MAGICK_START_WAVE, .enemyNb = enemyId}
+            .msgStartWave = {.magick = MAGICK_START_WAVE, .enemyNb = enemyNb, .missilesNb = missilesNb}
         };
         Packet packet(
             packetMsgStartWave.action.magick,
@@ -334,19 +334,18 @@ namespace Nitwork {
     }
 
     void NitworkServer::broadcastNewBulletMsg(
-        const struct msgNewBullet_s &msg,
-        boost::asio::ip::udp::endpoint &senderEndpoint)
+        const struct msgNewBullet_s &msg)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetNewBullet_s packetNewBullet = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = NEW_BULLET},
+            .action = {.magick = NEW_MISSILE},
             .msg    = msg
         };
         Packet packet(
             packetNewBullet.action.magick,
             std::make_any<struct packetNewBullet_s>(packetNewBullet));
-        sendToAllClientsButNotOne(packet, senderEndpoint);
+        sendToAllClients(packet);
     }
 
     void NitworkServer::broadcastAbsolutePositionMsg(

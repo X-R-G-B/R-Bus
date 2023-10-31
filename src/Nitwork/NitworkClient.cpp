@@ -140,11 +140,11 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = NEW_BULLET,
+                       .magick = NEW_MISSILE,
                        },
             .msg =
                 {
-                       .magick      = MAGICK_NEW_BULLET,
+                       .magick      = MAGICK_NEW_MISSILE,
                        .pos         = pos,
                        .missileType = missileType,
                        },
@@ -239,6 +239,28 @@ namespace Nitwork {
         Packet packet(
             packetPlayerDeath.action.magick,
             std::make_any<struct packetPlayerDeath_s>(packetPlayerDeath),
+            _serverEndpoint);
+        addPacketToSend(packet);
+    }
+
+    void NitworkClient::addMissileDeathMsg(n_id_t id)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetMissileDeath_s packetMissileDeath = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                       .magick = MISSILE_DEATH,
+                       },
+            .msgMissileDeath =
+                {
+                       .magick  = MAGICK_MISSILE_DEATH,
+                       .missileId = id,
+                       },
+        };
+        Packet packet(
+            packetMissileDeath.action.magick,
+            std::make_any<struct packetMissileDeath_s>(packetMissileDeath),
             _serverEndpoint);
         addPacketToSend(packet);
     }

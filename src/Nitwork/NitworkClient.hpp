@@ -37,6 +37,7 @@ namespace Nitwork {
             void addLifeUpdateMsg(n_id_t playerId, const struct health_s &life);
             void addEnemyDeathMsg(n_id_t id);
             void addPlayerDeathMsg(n_id_t id);
+            void addMissileDeathMsg(n_id_t id);
 
         private:
             NitworkClient();
@@ -132,7 +133,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    NEW_BULLET,
+                    NEW_MISSILE,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgNewBullet_s>(handler, header);
@@ -174,6 +175,17 @@ namespace Nitwork {
                             Systems::receivePlayerDeath(any, endpoint);
                         }
                     }
+                },
+                {
+                    MISSILE_DEATH,
+                    {
+                         [this](actionHandler &handler, const struct header_s &header) {
+                           handleBody<struct msgMissileDeath_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveMissileDeath(any, endpoint);
+                        }
+                    }
                 }
             };
             std::map<
@@ -205,7 +217,7 @@ namespace Nitwork {
                         }
                 },
                 {
-                    NEW_BULLET,
+                    NEW_MISSILE,
                         [this](Packet &packet) {
                             sendData<struct packetNewBullet_s>(packet);
                         }

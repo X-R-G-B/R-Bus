@@ -83,7 +83,7 @@ namespace Systems {
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
         Systems::createMissile(position, missileType);
         //         send bullet to clients but not the sender
-        Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg(msgNewBullet, endpoint);
+        Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg(msgNewBullet);
     }
 
     void receiveAbsolutePositionMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
@@ -149,4 +149,38 @@ namespace Systems {
         }
         Logger::debug("player not found in receivePlayerDeathMsg");
     }
+
+    void handleClientMissileDeath(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const struct msgMissileDeath_s &msgMissileDeath = std::any_cast<struct msgMissileDeath_s>(msg);
+        auto &registry                              = Registry::getInstance();
+
+        if (msgMissileDeath.magick != MAGICK_MISSILE_DEATH) {
+            Logger::error("Error: magick is not CLIENT_MISSILE_DEATH");
+            return;
+        }
+        auto &arrMissiles = registry.getComponents<Types::Missiles>();
+        auto arrHealth   = registry.getComponents<struct health_s>();
+        auto arrPos      = registry.getComponents<Types::Position>();
+        auto ids         = arrMissiles.getExistingsId();
+
+        for (auto &id : ids) {
+            if (arrMissiles[id].getConstId() == msgMissileDeath.missileId) {
+                if (arrHealth.exist(id) && arrPos.exist(id)) {
+                    Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg(
+                        {
+                            .pos =
+                                {static_cast<char>(Maths::removeIntDecimals(arrPos[id].x)),
+                                      static_cast<char>(Maths::removeIntDecimals(arrPos[id].y))},
+                            .life = arrHealth[id].hp,
+                            .id   = msgMissileDeath.missileId,
+                            .missileType = arrMissiles[id].type,
+                    });
+                }
+                return;
+            }
+        }
+    }
+
 } // namespace Systems

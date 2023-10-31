@@ -24,7 +24,7 @@ namespace Nitwork {
             bool startServer(int port, int nbPlayer, int threadNb = DEFAULT_THREAD_NB, int tick = TICKS);
 
             /* Messages creation methods */
-            void addStarWaveMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t enemyId);
+            void addStarWaveMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t enemyNb, n_id_t missilesNb);
 
             void addLifeUpdateMessage(
                 boost::asio::ip::udp::endpoint &endpoint,
@@ -42,8 +42,7 @@ namespace Nitwork {
                 const msgCreatePlayer_s &playerMsg);
 
             void broadcastNewBulletMsg(
-                const struct msgNewBullet_s &msg,
-                boost::asio::ip::udp::endpoint &senderEndpoint);
+                const struct msgNewBullet_s &msg);
 
             void broadcastAbsolutePositionMsg(
                 const struct position_absolute_s &pos,
@@ -135,7 +134,7 @@ namespace Nitwork {
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::handleClientEnemyDeath(msg, endpoint);
                   }}},
-                {NEW_BULLET,
+                {NEW_MISSILE,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgNewBullet_s>(actionHandler, header);
                   },
@@ -156,6 +155,13 @@ namespace Nitwork {
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::receivePlayerDeathMsg(msg, endpoint);
                   }}},
+                {MISSILE_DEATH,
+                {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgMissileDeath_s>(actionHandler, header);
+                },
+                [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                  Systems::handleClientMissileDeath(msg, endpoint);
+                }}},
             };
             std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
                 {
@@ -178,7 +184,7 @@ namespace Nitwork {
                  [this](Packet &packet) {
                      sendData<struct packetNewEnemy_s>(packet);
                  }},
-                {NEW_BULLET,
+                {NEW_MISSILE,
                  [this](Packet &packet) {
                      sendData<struct packetNewBullet_s>(packet);
                  }},
