@@ -204,40 +204,6 @@ namespace Systems {
         }
     }
 
-    void manageBoss(std::size_t managerId, std::size_t systemId)
-    {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const float posToGo   = 65.0;
-        const float bossSpeed = 0.2F;
-        Registry::components<Types::Position> &arrPosition =
-            Registry::getInstance().getComponents<Types::Position>();
-        Registry::components<Types::Velocity> &arrVelocity =
-            Registry::getInstance().getComponents<Types::Velocity>();
-        Registry::components<Types::CollisionRect> &arrCollisonRect =
-            Registry::getInstance().getComponents<Types::CollisionRect>();
-        std::vector<std::size_t> ids =
-            Registry::getInstance().getEntitiesByComponents({typeid(Types::Boss)});
-
-        if (ids.empty()) {
-            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
-        }
-        for (auto &id : ids) {
-            if (Maths::intToFloatConservingDecimals(arrPosition[id].x) <= posToGo
-                && Maths::intToFloatConservingDecimals(arrVelocity[id].speedY) == 0) {
-                arrVelocity[id].speedX = 0;
-                arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(bossSpeed);
-            }
-            if (arrPosition[id].y < 0) {
-                arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(bossSpeed);
-            }
-            if (Maths::intToFloatConservingDecimals(arrPosition[id].y)
-                    + Maths::intToFloatConservingDecimals(arrCollisonRect[id].height)
-                > maxPercent) {
-                arrVelocity[id].speedY = Maths::floatToIntConservingDecimals(-bossSpeed);
-            }
-        }
-    }
-
     void initWave(std::size_t managerId, std::size_t systemId)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
@@ -273,7 +239,6 @@ namespace Systems {
         }
         if (enemyArr.getExistingsId().empty() && enemyNumber <= 0 && bossArr.getExistingsId().empty()) {
             initEnemy(TERMINATOR, pos);
-            SystemManagersDirector::getInstance().getSystemManager(managerId).addSystem(manageBoss);
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
     }
