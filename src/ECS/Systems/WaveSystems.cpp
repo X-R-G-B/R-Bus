@@ -67,6 +67,14 @@ namespace Systems {
             Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(enemyData, "animRect");
         Types::AnimRect animRect(rect, animRectData, Types::RectListType::MOVE, Types::Direction::LEFT);
 
+        constexpr float musicVolume = 0.80F;
+        if (Json::isDataExist(enemyData, "musicPath")) {
+            std::string musicPath = Json::getInstance().getDataFromJson<std::string>(enemyData, "musicPath");
+            Raylib::Music music(musicPath, musicVolume);
+            music.setNeedToPlay(true);
+            Registry::getInstance().getComponents<Raylib::Music>().insertBack(music);
+        }
+
 #endif
         Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
         Types::CollisionRect collisionRect =

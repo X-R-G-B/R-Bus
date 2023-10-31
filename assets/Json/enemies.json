@@ -57,6 +57,7 @@
         {
             "id": "terminator",
             "spritePath": "assets/R-TypeSheet/r-typesheet30.gif",
+            "musicPath": "assets/Audio/Musics/Papyrus.mp3",
             "damage": 20,
             "health": 80.0,
             "width": 2000,
@@ -76,7 +77,7 @@
                 "height": 2000
             },
             "velocity": {
-                "speedX": -20,
+                "speedX": -5,
                 "speedY": 0
             },
             "animRect": [
