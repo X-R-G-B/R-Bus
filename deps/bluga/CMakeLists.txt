@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.15)
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -13,9 +15,19 @@ target_link_libraries(
         PRIVATE
         b-luga
 )
+target_link_libraries(
+        ${PROJECT_NAME_CLIENT}
+    INTERFACE
+    b-luga
+)
 
 target_link_libraries(
         ${PROJECT_NAME_SERVER}
         PRIVATE
         b-luga
+)
+target_link_libraries(
+    ${PROJECT_NAME_SERVER}
+    INTERFACE
+    b-luga
 )
