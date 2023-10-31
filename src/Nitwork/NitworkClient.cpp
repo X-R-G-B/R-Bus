@@ -22,25 +22,58 @@ namespace Nitwork {
         return _instance;
     }
 
-    bool NitworkClient::startClient(int port, const std::string &ip, int threadNb, int tick)
+    bool NitworkClient::startClient(int threadNb, int tick)
     {
-        return ANitwork::start(port, threadNb, tick, ip);
+        return ANitwork::start(0, threadNb, tick, "0.0.0.0");
     }
 
-    bool NitworkClient::startNitworkConfig(int port, const std::string &ip)
+    bool NitworkClient::startNitworkConfig(int /* unused */, const std::string & /* unused */)
     {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        _endpoints.emplace_back(
-            *_resolver.resolve(boost::asio::ip::udp::v4(), ip, std::to_string(port)).begin());
-        _serverEndpoint = _endpoints.back();
-        _socket         = boost::asio::ip::udp::socket(_context);
+        _socket = boost::asio::ip::udp::socket(_context);
         _socket.open(boost::asio::ip::udp::v4());
         _socket.bind(boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), 0));
         if (!_socket.is_open()) {
-            Registry::getInstance().getLogger().error("Socket not open");
+            Logger::error("Socket not open");
             return false;
         }
         return true;
+    }
+
+    void NitworkClient::setMainEndpoint(const std::string &ip, n_port_t port)
+    {
+        if (ip.empty() || port == 0) {
+            Logger::error("NITWORK: invalid main server endpoint");
+            return;
+        }
+        removeEndpoint(_mainServerEndpoint.address().to_string(), _mainServerEndpoint.port());
+        _mainServerEndpoint = addEndpoint(ip, port);
+    }
+
+    void NitworkClient::setLobbyEndpoint(const std::string &ip, n_port_t port)
+    {
+        if (ip.empty() || port == 0) {
+            Logger::error("NITWORK: invalid server endpoint");
+            return;
+        }
+        removeEndpoint(_serverEndpoint.address().to_string(), _serverEndpoint.port());
+        _serverEndpoint = addEndpoint(ip, port);
+    }
+
+    boost::asio::ip::udp::endpoint &NitworkClient::addEndpoint(const std::string &ip, n_port_t port)
+    {
+        _endpoints.emplace_back(
+            *_resolver.resolve(boost::asio::ip::udp::v4(), ip, std::to_string(port)).begin());
+        return _endpoints.back();
+    }
+
+    void NitworkClient::removeEndpoint(const std::string &ip, n_port_t port)
+    {
+        for (auto it = _endpoints.begin(); it != _endpoints.end(); ++it) {
+            if (it->address().to_string() == ip && it->port() == port) {
+                _endpoints.erase(it);
+                return;
+            }
+        }
     }
 
     void NitworkClient::handleBodyAction(
@@ -49,13 +82,15 @@ namespace Nitwork {
     {
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + HEADER_SIZE);
+        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data());
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        if (endpoint.address().to_string() != _serverEndpoint.address().to_string()) {
+        if (endpoint.address().to_string() != _serverEndpoint.address().to_string()
+            && endpoint.address().to_string() != _mainServerEndpoint.address().to_string()) {
             Logger::error(
                 "NITWORK: endpoint " + endpoint.address().to_string() + " is not the server"
-                + _serverEndpoint.address().to_string());
+                + _serverEndpoint.address().to_string() + " or the main server "
+                + _mainServerEndpoint.address().to_string());
             return;
         }
         auto it = _actionsHandlers.find(action->magick);
@@ -67,6 +102,14 @@ namespace Nitwork {
             "Received packet from " + endpoint.address().to_string() + ":" + std::to_string(endpoint.port())
             + " with id " + std::to_string(header.id) + " and action of type "
             + std::to_string(action->magick));
+        std::memmove(
+            _receiveBuffer.data(),
+            _receiveBuffer.data() + sizeof(struct action_s),
+            _receiveBuffer.size() - sizeof(struct action_s));
+        std::memset(
+            _receiveBuffer.data() + _receiveBuffer.size() - sizeof(struct action_s),
+            0,
+            sizeof(struct action_s));
         it->second.first(it->second.second, header);
     }
 
@@ -76,6 +119,19 @@ namespace Nitwork {
     }
 
     /* Message Creation Section */
+    void NitworkClient::connectMainServer(const std::string &ip, n_port_t port)
+    {
+        Logger::info("NITWORK: connecting to main server");
+        setMainEndpoint(ip, port);
+        addConnectMainServerMsg();
+    }
+
+    void NitworkClient::connectLobby(const std::string &ip, n_port_t port)
+    {
+        setLobbyEndpoint(ip, port);
+        addInitMsg();
+    }
+
     void NitworkClient::addInitMsg()
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
@@ -256,7 +312,7 @@ namespace Nitwork {
                        },
             .msgMissileDeath =
                 {
-                       .magick  = MAGICK_MISSILE_DEATH,
+                       .magick    = MAGICK_MISSILE_DEATH,
                        .missileId = id,
                        },
         };
@@ -264,6 +320,74 @@ namespace Nitwork {
             packetMissileDeath.action.magick,
             std::make_any<struct packetMissileDeath_s>(packetMissileDeath),
             _serverEndpoint);
+    }
+
+    void NitworkClient::addListLobbyMsg()
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetRequestListLobby_s packetListLobby = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                       .magick = LIST_LOBBY,
+                       },
+            .msg = {.magick = MAGICK_REQUEST_LIST_LOBBY},
+        };
+        Packet packet(
+            packetListLobby.action.magick,
+            std::make_any<struct packetRequestListLobby_s>(packetListLobby),
+            _mainServerEndpoint);
+        addPacketToSend(packet);
+    }
+
+    void NitworkClient::addCreateLobbyMsg(
+        const std::string &name,
+        enum gameType_e gameType,
+        unsigned int maxNbPlayer)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetCreateLobby_s packetCreateLobby = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                       .magick = CREATE_LOBBY,
+                       },
+            .msg = {
+                       .magick      = MAGICK_CREATE_LOBBY,
+                       .name        = "",
+                       .gameType    = gameType,
+                       .maxNbPlayer = maxNbPlayer,
+                       .ownerInfos  = {.ip = "", .port = _mainServerEndpoint.port()}}
+        };
+        std::strcpy(packetCreateLobby.msg.name, (name.size() > 32 ? name.substr(0, 32) : name).c_str());
+        std::strcpy(
+            packetCreateLobby.msg.ownerInfos.ip,
+            (_mainServerEndpoint.address().to_string().size() > 16
+                 ? _mainServerEndpoint.address().to_string().substr(0, 16)
+                 : _mainServerEndpoint.address().to_string())
+                .c_str());
+        Packet packet(
+            packetCreateLobby.action.magick,
+            std::make_any<struct packetCreateLobby_s>(packetCreateLobby),
+            _mainServerEndpoint);
+        addPacketToSend(packet);
+    }
+
+    void NitworkClient::addConnectMainServerMsg()
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetConnectMainServer_s packetConnectMainServer = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                       .magick = CONNECT_MAIN_SERVER,
+                       },
+            .msg = {.magick = MAGICK_CONNECT_MAIN_SERVER},
+        };
+        Packet packet(
+            packetConnectMainServer.action.magick,
+            std::make_any<struct packetConnectMainServer_s>(packetConnectMainServer),
+            _mainServerEndpoint);
         addPacketToSend(packet);
     }
 } // namespace Nitwork

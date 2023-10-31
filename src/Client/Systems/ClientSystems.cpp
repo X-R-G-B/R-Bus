@@ -9,15 +9,19 @@
 #include "ClientNetwork.hpp"
 #include "EventsSystems.hpp"
 #include "GraphicSystems.hpp"
+#include "MenuSystems.hpp"
+#include "SelectLobbySystems.hpp"
 #include "Systems.hpp"
 
 namespace Systems {
-    std::array<std::vector<std::function<void(std::size_t, std::size_t)>>, 4> getSystemsGroups()
+    std::array<std::vector<std::function<void(std::size_t, std::size_t)>>, 6> getSystemsGroups()
     {
         return {
             getECSSystems(),
             EventsSystems::getEventSystems(),
             GraphicSystems::getGraphicsSystems(),
-            getNetworkSystems()};
+            getNetworkSystems(),
+            Menu::getMenuSystems(),
+            SelectLobbySystems::getLobbySystems()};
     }
 } // namespace Systems

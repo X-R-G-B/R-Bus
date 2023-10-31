@@ -1,0 +1,121 @@
+{
+    "menu": {
+        "name": {
+            "name": "name",
+            "type": "input",
+            "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
+            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "text": "ServerOfSaverio",
+            "color": "red",
+            "textSize": 3,
+            "maxChar": 30,
+            "width": 500,
+            "height": 500,
+            "position" : {
+                "x": 2000,
+                "y": 2000
+            },
+            "rect": {
+                "x": 101.0,
+                "y": 0.0,
+                "width": 32.0,
+                "height": 19.0
+            },
+            "collisionRect": {
+                "width": 2000,
+                "height": 500
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 233.0,
+                            "y": 2.0,
+                            "width": 32.0,
+                            "height": 14.0
+                        }
+                    ]
+                }
+            ]
+        },
+        "maxNb": {
+            "name": "maxNb",
+            "type": "input",
+            "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
+            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "text": "2",
+            "color": "red",
+            "textSize": 3,
+            "maxChar": 2,
+            "width": 500,
+            "height": 500,
+            "position" : {
+                "x": 2000,
+                "y": 3000
+            },
+            "rect": {
+                "x": 101.0,
+                "y": 0.0,
+                "width": 32.0,
+                "height": 19.0
+            },
+            "collisionRect": {
+                "width": 2000,
+                "height": 500
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 233.0,
+                            "y": 2.0,
+                            "width": 32.0,
+                            "height": 14.0
+                        }
+                    ]
+                }
+            ]
+        },
+        "gametype_normal": {
+            "type": "button",
+            "spritePath": "assets/R-TypeSheet/r-typesheet2.gif",
+            "width": 500,
+            "height": 500,
+            "rect": {
+                "x": 101.0,
+                "y": 0.0,
+                "width": 32.0,
+                "height": 19.0
+            },
+            "position": {
+                "x": 2000,
+                "y": 4000
+            },
+            "collisionRect": {
+                "width": 500,
+                "height": 500
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x": 233.0,
+                            "y": 2.0,
+                            "width": 32.0,
+                            "height": 14.0
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

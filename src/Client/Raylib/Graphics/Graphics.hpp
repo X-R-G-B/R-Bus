@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <mutex>
 #include <string>
 extern "C"
 {
@@ -89,6 +90,9 @@ namespace Raylib {
     // Misc. functions
     void takeScreenshot(const std::string &fileName);
 
+    // Collision check functions
+    bool checkCollisionPointRec(Vector2 point, Rectangle rec);
+
     // Input-related functions: keyboard
     bool isKeyPressed(KeyboardKey key);
     bool isKeyDown(KeyboardKey key);
@@ -128,6 +132,27 @@ namespace Raylib {
 
     // Graphic classes
 
+    class TextureManager {
+        public:
+            TextureManager(const TextureManager &) = delete;
+            TextureManager(TextureManager &&)      = delete;
+            void operator=(const TextureManager &) = delete;
+            void operator=(TextureManager &&)      = delete;
+
+            static TextureManager &getInstance();
+            ~TextureManager();
+            ::Texture2D &getTexture(const std::string &fileName);
+            void unloadTextures();
+
+        private:
+            TextureManager() = default;
+            std::map<std::string, ::Texture2D> _textures;
+            std::mutex _mutex;
+            // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
+            static TextureManager _instance;
+            // NOLINTEND(cppcoreguidelines-avoid-non-const-global-variables)
+    };
+
     class Image {
         public:
             Image(const std::string &fileName);
@@ -135,11 +160,11 @@ namespace Raylib {
             ~Image();
             bool isImageReady();
             void unloadImage();
-            int getWidth() const;
-            int getHeight() const;
-            int getMipmaps() const;
-            int getFormat() const;
-            void *getData() const;
+            [[nodiscard]] int getWidth() const;
+            [[nodiscard]] int getHeight() const;
+            [[nodiscard]] int getMipmaps() const;
+            [[nodiscard]] int getFormat() const;
+            [[nodiscard]] void *getData() const;
 
         private:
             ::Image _image;
@@ -149,14 +174,13 @@ namespace Raylib {
         public:
             Sprite(const std::string &fileName, float width, float height, std::size_t id);
             Sprite(Image image, float width, float height);
-            unsigned int getId() const;
-            float getWidth() const;
-            float getHeight() const;
-            int getTextureWidth() const;
-            int getTextureHeight() const;
-            int getMipmaps() const;
-            int getFormat() const;
-            void unloadSprite();
+            [[nodiscard]] unsigned int getId() const;
+            [[nodiscard]] float getWidth() const;
+            [[nodiscard]] float getHeight() const;
+            [[nodiscard]] int getTextureWidth() const;
+            [[nodiscard]] int getTextureHeight() const;
+            [[nodiscard]] int getMipmaps() const;
+            [[nodiscard]] int getFormat() const;
 
             // draw texture functions
 
@@ -183,15 +207,17 @@ namespace Raylib {
             void drawEx(float spacing);
             void drawPro(Vector2 origin, float rotation, float spacing);
 
-            float x() const;
-            float y() const;
-            float getFontSize() const;
+            [[nodiscard]] float x() const;
+            [[nodiscard]] float y() const;
+            [[nodiscard]] float getFontSize() const;
             void setFontSize(float fontSize);
-            Vector2 getPosition() const;
+            [[nodiscard]] Vector2 getPosition() const;
             void setPixelPosition(Vector2 position);
-            Color getColor() const;
+            [[nodiscard]] Color getColor() const;
             void setColor(Color color);
             void setCurrentFontSize(float fontSize);
+            std::string &getCurrentText();
+            void setCurrentText(const std::string &text);
 
         private:
             std::string _text;

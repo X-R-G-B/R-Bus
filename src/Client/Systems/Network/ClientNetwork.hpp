@@ -16,5 +16,7 @@ namespace Systems {
     void receiveBroadcastAbsolutePosition(std::any &any, boost::asio::ip::udp::endpoint &endpoint);
     void receivePlayerDeath(std::any &any, boost::asio::ip::udp::endpoint &endpoint);
     void receiveMissileDeath(std::any &any, boost::asio::ip::udp::endpoint & /* unused */);
+    void handleNewLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &endpoint);
+    void receiveConnectMainServerResp(std::any &data, boost::asio::ip::udp::endpoint &endpoint);
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems();
 } // namespace Systems

@@ -33,7 +33,7 @@ namespace Raylib {
     }
 
     // Sounds
-    Sound::Sound(const std::string& fileName, float volume)
+    Sound::Sound(const std::string &fileName, float volume)
         : _path(fileName),
           _realPath(ECS::ResourcesManager::convertPath(fileName)),
           _sound(LoadSound(_realPath.c_str()))
@@ -101,19 +101,19 @@ namespace Raylib {
         _needToPlay = needToPlay;
     }
 
-    std::string Sound::getPath() const
+    const std::string &Sound::getPath() const
     {
         return _path;
     }
 
-    std::string Sound::getRealPath() const
+    const std::string &Sound::getRealPath() const
     {
         return _realPath;
     }
 
     // Music
 
-    Music::Music(const std::string& fileName, float volume)
+    Music::Music(const std::string &fileName, float volume)
         : _path(fileName),
           _realPath(ECS::ResourcesManager::convertPath(fileName)),
           _music(LoadMusicStream(_realPath.c_str()))
@@ -196,12 +196,12 @@ namespace Raylib {
         _needToPlay = needToPlay;
     }
 
-    std::string Music::getPath() const
+    const std::string &Music::getPath() const
     {
         return _path;
     }
 
-    std::string Music::getRealPath() const
+    const std::string &Music::getRealPath() const
     {
         return _realPath;
     }

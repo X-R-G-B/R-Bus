@@ -203,11 +203,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
             auto &sceneManager = Scene::SceneManager::getInstance();
-            if (sceneManager.getCurrentScene() == Scene::Scene::MAIN_GAME) {
-                sceneManager.changeScene(Scene::Scene::MENU);
-            } else {
-                sceneManager.changeScene(Scene::Scene::MAIN_GAME);
-            }
+            sceneManager.changeScene(Scene::Scene::MENU);
         }
     }
 

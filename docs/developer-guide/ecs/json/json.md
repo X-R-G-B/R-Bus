@@ -34,11 +34,6 @@ This function is useful when you want to take a json list inside your json becau
 std::vector<nlohmann::json> Json::getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType);
 ```
 
-- Get a data from an existing json data :
-```cpp
-nlohmann::json &Json::getDataFromJson(nlohmann::json jsonData, const std::string &index);
-```
-
 - Get a data but precise the type of what you want with template :
 ```cpp
 template <typename T>
@@ -133,7 +128,7 @@ std::vector<nlohmann::json> enemyData =
 And now you can iterate on your datas :
 ```cpp
 for (auto &data : enemyData) {
-    std::cout << Json::getInstance().getDataFromJson(elem, "spritePath") <<  
+    std::cout << Json::getInstance().getDataFromJson<std::string>(elem, "spritePath") <<
         std::endl;
 }
 ```
