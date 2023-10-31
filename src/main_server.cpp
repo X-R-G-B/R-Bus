@@ -1,9 +1,10 @@
 #include <csignal>
-#include "Logger.hpp"
+#include <boost/asio.hpp>
+#include "B-luga/Logger.hpp"
 #include "NitworkServer.hpp"
 #include "ResourcesManager.hpp"
 #include "init.hpp"
-#include "SceneManager.hpp"
+#include "B-luga/SceneManager.hpp"
 
 constexpr int EXIT_EPITECH = 84;
 constexpr int PORT_MIN     = 0;
@@ -47,12 +48,13 @@ int main(int ac, const char **av)
 #ifndef NDEBUG
     Logger::setLogLevel(LogLevel::Debug);
 #endif
-    ECS::ResourcesManager::init(av[0]);
+    ResourcesManager::init(av[0]);
     if (!checkArgs(ac, av)) {
         return EXIT_EPITECH;
     }
     Logger::info("Starting Server...");
-    if (!Nitwork::NitworkServer::getInstance().startServer(std::stoi(av[1]), std::stoi(av[2]))) {
+    if (!Nitwork::NitworkServer::getInstance()
+             .startServer(std::stoi(av[1]), std::stoi(av[2]), DEFAULT_THREAD_NB, TICKS)) {
         return EXIT_EPITECH;
     }
     initScenes();

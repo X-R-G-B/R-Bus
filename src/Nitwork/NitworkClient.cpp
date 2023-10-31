@@ -6,7 +6,7 @@
 */
 
 #include "NitworkClient.hpp"
-#include "Registry.hpp"
+#include "B-luga/Registry.hpp"
 
 namespace Nitwork {
     NitworkClient::NitworkClient() : _resolver(_context)
@@ -49,7 +49,7 @@ namespace Nitwork {
     {
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
+        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + HEADER_SIZE);
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
         if (endpoint.address().to_string() != _serverEndpoint.address().to_string()) {
@@ -221,6 +221,24 @@ namespace Nitwork {
         Packet packet(
             packetEnemyDeath.action.magick,
             std::make_any<struct packetEnemyDeath_s>(packetEnemyDeath),
+            _serverEndpoint);
+        addPacketToSend(packet);
+    }
+
+    void NitworkClient::addPlayerDeathMsg(n_id_t id)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetPlayerDeath_s packetPlayerDeath = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                       .magick = PLAYER_DEATH,
+                       },
+            .msg = {.magick = MAGICK_PLAYER_DEATH, .playerId = id},
+        };
+        Packet packet(
+            packetPlayerDeath.action.magick,
+            std::make_any<struct packetPlayerDeath_s>(packetPlayerDeath),
             _serverEndpoint);
         addPacketToSend(packet);
     }

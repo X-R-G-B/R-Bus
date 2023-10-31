@@ -5,12 +5,13 @@
 ** main
 */
 
-#include "Logger.hpp"
+#include <boost/asio.hpp>
+#include "B-luga/Logger.hpp"
 #include "NitworkClient.hpp"
-#include "Registry.hpp"
+#include "B-luga/Registry.hpp"
 #include "ResourcesManager.hpp"
-#include "SystemManagersDirector.hpp"
-#include "SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "B-luga/SceneManager.hpp"
 #include "init.hpp"
 
 constexpr int EXIT_EPITECH = 84;
@@ -43,13 +44,13 @@ int main(int ac, const char **av)
 #ifndef NDEBUG
     Logger::setLogLevel(LogLevel::Debug);
 #endif
-    ECS::ResourcesManager::init(av[0]);
+    ResourcesManager::init(av[0]);
     if (!checkArgs(ac, av)) {
         return EXIT_EPITECH;
     }
     initScenes();
     if (!Nitwork::NitworkClient::getInstance()
-             .startClient(std::stoi(av[2]), av[1], DEFAULT_THREAD_NB, TICKS_PER_SECOND)) {
+             .startClient(std::stoi(av[2]), av[1], DEFAULT_THREAD_NB, TICKS)) {
         return EXIT_EPITECH;
     }
     Nitwork::NitworkClient::getInstance().addInitMsg();

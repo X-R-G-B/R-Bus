@@ -12,8 +12,9 @@
     #include "MessageTypes.h"
 
     #define HEADER_SIZE sizeof(struct header_s)
-    #define TICKS_PER_SECOND 60
-    #define ONE_SECOND 1000
+    #define TICKS 128
+    #define TICKS_PER_SECOND(t) (t / TICKS)
+    #define TICKS_PER_MILLISECOND(t) (TICKS_PER_SECOND(t) / 1000)
     #define DEFAULT_THREAD_NB 4
     #define MAX_NB_ACTION 16
     #define HEADER_CODE1 '\x01'
@@ -30,7 +31,8 @@
     #define MAGICK_NEW_BULLET '\x0d'
     #define MAGICK_POSITION_RELATIVE_BROADCAST '\x0f'
     #define MAGICK_POSITION_ABSOLUTE_BROADCAST '\x10'
-    #define MAGICK_NEW_ALLIE '\x0a'
+    #define MAGICK_NEW_PLAYER '\x0a'
+    #define MAGICK_PLAYER_DEATH '\x11'
 
 typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
@@ -47,9 +49,10 @@ enum n_actionType_t {
     POSITION_ABSOLUTE = 8,
     NEW_BULLET = 9,
     NEW_ENEMY = 10,
-    NEW_ALLIE = 11,
+    NEW_PLAYER = 11,
     POSITION_RELATIVE_BROADCAST = 12,
     POSITION_ABSOLUTE_BROADCAST = 13,
+    PLAYER_DEATH = 14,
     N_ACTION_TYPE_MAX,
 };
 
@@ -66,7 +69,6 @@ PACK(struct action_s {
         enum n_actionType_t magick;
 });
 
-
 /* Message Init */
 PACK(struct msgInit_s {
         n_magick_t magick;
@@ -78,7 +80,6 @@ PACK(struct packetMsgInit_s {
         struct msgInit_s msgInit;
 });
 
-
 /* Message ready */
 PACK(struct msgReady_s {
         n_magick_t magick;
@@ -88,18 +89,6 @@ PACK(struct packetMsgReady_s {
         struct header_s header;
         struct action_s action;
         struct msgReady_s msgReady;
-});
-
-/* Message Position Relative */
-PACK(struct msgPlayerInit_s {
-        n_magick_t magick;
-        n_id_t playerId;
-});
-
-PACK(struct packetMsgPlayerInit_s {
-        struct header_s header;
-        struct action_s action;
-        struct msgPlayerInit_s msg;
 });
 
 /* Message Start Game */
@@ -188,15 +177,19 @@ PACK(struct packetPositionAbsolute_s {
         struct msgPositionAbsolute_s msg;
 });
 
-PACK(struct msgNewAllie_s {
+/* Message New Allie */
+PACK(struct msgCreatePlayer_s {
         n_magick_t magick;
         n_id_t playerId;
+        struct position_absolute_s pos;
+        struct health_s life;
+        bool isOtherPlayer;
 });
 
-PACK(struct packetNewAllie_s {
+PACK(struct packetCreatePlayer_s {
     struct header_s header;
     struct action_s action;
-    struct msgNewAllie_s msg;
+    struct msgCreatePlayer_s msg;
 });
 
 /* Message broadcast position relative */
@@ -223,6 +216,18 @@ PACK(struct packetPositionAbsoluteBroadcast_s {
         struct header_s header;
         struct action_s action;
         struct msgPositionAbsoluteBroadcast_s msg;
+});
+
+/* Message Player death */
+PACK(struct msgPlayerDeath_s {
+        n_magick_t magick;
+        n_id_t playerId;
+});
+
+PACK(struct packetPlayerDeath_s {
+        struct header_s header;
+        struct action_s action;
+        struct msgPlayerDeath_s msg;
 });
 
 #endif

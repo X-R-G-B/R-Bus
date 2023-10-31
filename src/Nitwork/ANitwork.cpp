@@ -10,7 +10,7 @@
 #include <thread>
 
 namespace Nitwork {
-    ANitwork::ANitwork() : _socket(_context), _packetId(0)
+    ANitwork::ANitwork() : _socket(_context)
     {
     }
 
@@ -60,7 +60,7 @@ namespace Nitwork {
         _clockThread = std::thread([this, tick]() {
             try {
                 while (_isRunning) {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(tick));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(TICKS_PER_MILLISECOND(tick)));
                     _tickMutex.lock();
                     _tickConvVar.notify_all();
                     _tickMutex.unlock();
@@ -126,6 +126,7 @@ namespace Nitwork {
 
     void ANitwork::callReceiveHandler(const std::string &message)
     {
+        Logger::error("NITWORK: " + message);
         startReceiveHandler();
     }
 
@@ -135,10 +136,12 @@ namespace Nitwork {
             callReceiveHandler(error.message());
             return;
         }
-        if (bytes_received < sizeof(struct header_s)) {
+        const auto packetSize = Zstd::getFrameContentSize(_receiveBuffer);
+        if (packetSize > MAX_PACKET_SIZE || packetSize < HEADER_SIZE) {
             callReceiveHandler("header not received");
             return;
         }
+        _receiveBuffer = Zstd::decompress(_receiveBuffer, bytes_received);
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
         auto *header = reinterpret_cast<struct header_s *>(_receiveBuffer.data());
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
@@ -233,7 +236,7 @@ namespace Nitwork {
         for (auto &data : _outputQueue) {
             auto it = actionToSendHandlers.find(data.action);
             if (it == actionToSendHandlers.end()) {
-                Logger::error("NITWORK: action not found");
+                Logger::error("NITWORK: action not found: " + std::to_string(data.action));
                 continue;
             }
             addPacketToSentPackages(data);

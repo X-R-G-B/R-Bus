@@ -9,34 +9,34 @@
 #include <optional>
 #include <unordered_map>
 #include "GameCustomTypes.hpp"
-#include "Registry.hpp"
+#include "B-luga/Registry.hpp"
 #ifdef CLIENT
-    #include "GraphicsCustomTypes.hpp"
+    #include "B-luga-graphics/GraphicsCustomTypes.hpp"
 #else
-    #include "ECSCustomTypes.hpp"
+    #include "B-luga-physics/ECSCustomTypes.hpp"
 #endif
 
 namespace Systems {
 
 #ifdef CLIENT
-    const std::function<void(std::size_t)> setPlayerAnimRectDeath = [](std::size_t id) {
+    void setPlayerAnimRectDeath(std::size_t id)
+    {
         Registry::components<Types::AnimRect> arrAnimRect =
             Registry::getInstance().getComponents<Types::AnimRect>();
 
         if (arrAnimRect.exist(id)) {
             Types::AnimRect& anim = arrAnimRect[id];
-            if (anim.currentRectList != Types::RectListType::DEAD) {
-                anim.changeRectList(Types::RectListType::DEAD);
-            }
+            anim.changeRectList(Types::RectListType::DEAD);
         }
-#else
-    const std::function<void(std::size_t)> setPlayerAnimRectDeath = [](std::size_t /*unused*/) {
-#endif
     };
+#endif
 
     // MAP FOR DEATH FUNCTIONS FOR EACH ENTITY
     const std::unordered_map<std::type_index, std::function<void(std::size_t)>> deathFunctions = {
-        {std::type_index(typeid(Types::Player)), setPlayerAnimRectDeath},
+#ifdef CLIENT
+        {std::type_index(typeid(Types::Player)),      setPlayerAnimRectDeath},
+        {std::type_index(typeid(Types::OtherPlayer)), setPlayerAnimRectDeath}
+#endif
     };
 
     void DeathSystems::setEntityDeathFunction(std::size_t /*unused*/, std::size_t /*unused*/)

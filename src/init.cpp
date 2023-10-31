@@ -1,12 +1,12 @@
 #include "init.hpp"
-#include "SceneManager.hpp"
-#include "SystemManagersDirector.hpp"
-#include "ECSSystems.hpp"
-#include "GameSystems.hpp"
-#include "PluginHandler.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "B-luga-physics/ECSSystems.hpp"
+#include "B-luga/GameSystems.hpp"
+#include "B-luga/PluginHandler.hpp"
 
 #ifdef CLIENT
-    #include "GraphicsSystems.hpp"
+    #include "B-luga-graphics/GraphicsSystems.hpp"
     #include "ClientNetwork.hpp"
     #include "EventsSystems.hpp"
 #endif
@@ -24,15 +24,16 @@ void initScenes()
 {
     auto &director = Systems::SystemManagersDirector::getInstance();
     auto ecsPlugin = Systems::ECSPlugin();
+    auto gamePlugin = Systems::GamePlugin();
 #ifdef CLIENT
     auto graphicsPlugin = Systems::GraphicsSystems::GraphicsPlugin();
     std::lock_guard<std::mutex> lock(director.mutex);
     PluginHandler::addNewPlugin(graphicsPlugin, SystemManagers::GRAPHICS);
 #endif
     PluginHandler::addNewPlugin(ecsPlugin, SystemManagers::ECSSYSTEMS);
+    PluginHandler::addNewPlugin(gamePlugin, SystemManagers::GAME);
 
     std::map<SystemManagers, std::function<std::vector<std::function<void(std::size_t, std::size_t)>>()>> systems = {
-        {SystemManagers::GAME, &Systems::getGameSystems},
 #ifdef CLIENT
         {SystemManagers::EVENTS, &Systems::EventsSystems::getEventsSystems},
         {SystemManagers::CLIENTNETWORK, &Systems::getNetworkSystems},
