@@ -84,13 +84,8 @@ namespace Types {
 
     struct Missiles {
         public:
-            Missiles(unsigned int constId, enum missileTypes_e _type = missileTypes_e::CLASSIC) : type(_type), _constId(constId)
+            Missiles(enum missileTypes_e _type = missileTypes_e::CLASSIC) : type(_type), constId(0)
             {
-            }
-
-            unsigned int getConstId()
-            {
-                return _constId;
             }
 
             static void setMissileNb(unsigned int nb)
@@ -107,8 +102,8 @@ namespace Types {
             }
 
             missileTypes_e type;
+            unsigned int constId;
         private:
-            unsigned int _constId;
             static unsigned int _missileNb;
             static std::mutex _mutex;
     };

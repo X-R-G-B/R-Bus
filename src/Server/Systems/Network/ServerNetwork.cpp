@@ -88,7 +88,7 @@ namespace Systems {
             Logger::error("Error: missile not created");
             return;
         }
-        msgNewBullet.id = arrMissiles[id].getConstId();
+        msgNewBullet.id = arrMissiles[id].constId;
         msgNewBullet.life = arrHealth[id].hp;
         Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg(msgNewBullet);
     }
@@ -157,7 +157,7 @@ namespace Systems {
         Logger::debug("player not found in receivePlayerDeathMsg");
     }
 
-    void handleClientMissileDeath(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    void handleClientMissileDeath(const std::any &msg, boost::asio::ip::udp::endpoint &/* us=nused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const struct msgMissileDeath_s &msgMissileDeath = std::any_cast<struct msgMissileDeath_s>(msg);
@@ -173,15 +173,16 @@ namespace Systems {
         auto ids         = arrMissiles.getExistingsId();
 
         for (auto &id : ids) {
-            if (arrMissiles[id].getConstId() == msgMissileDeath.missileId) {
+            if (arrMissiles[id].constId == msgMissileDeath.missileId) {
                 if (arrHealth.exist(id) && arrPos.exist(id)) {
                     Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg(
                         {
+                            .magick = MAGICK_NEW_MISSILE,
                             .pos =
                                 {static_cast<char>(Maths::removeIntDecimals(arrPos[id].x)),
                                       static_cast<char>(Maths::removeIntDecimals(arrPos[id].y))},
-                            .life = arrHealth[id].hp,
                             .id   = msgMissileDeath.missileId,
+                            .life = arrHealth[id].hp,
                             .missileType = arrMissiles[id].type,
                     });
                 }

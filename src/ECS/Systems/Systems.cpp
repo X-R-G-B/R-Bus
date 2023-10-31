@@ -397,9 +397,9 @@ namespace Systems {
 
         if (arrMissiles.exist(arrId)) {
 #ifdef CLIENT
-            Nitwork::NitworkClient::getInstance().addMissileDeathMsg(arrMissiles[arrId].getConstId());
+            Nitwork::NitworkClient::getInstance().addMissileDeathMsg(arrMissiles[arrId].constId);
 #else
-            Nitwork::NitworkServer::getInstance().addMissileDeathMsg(arrMissiles[arrId].getConstId());
+            Nitwork::NitworkServer::getInstance().addMissileDeathMsg(arrMissiles[arrId].constId);
 #endif
         }
 

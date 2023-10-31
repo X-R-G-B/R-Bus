@@ -9,4 +9,4 @@ else
     cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug
 fi
 
-cmake --build build --parallel
+cmake --build build --parallel 6
