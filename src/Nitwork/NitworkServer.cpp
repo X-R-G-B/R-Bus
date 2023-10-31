@@ -361,8 +361,7 @@ namespace Nitwork {
         addPacketToSend(packet);
     }
 
-    void NitworkServer::broadcastNewBulletMsg(
-        const struct msgNewBullet_s &msg)
+    void NitworkServer::broadcastNewBulletMsg(const struct msgNewBullet_s &msg)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetNewBullet_s packetNewBullet = {
@@ -449,12 +448,12 @@ namespace Nitwork {
             .action =
                 {
                        .magick = MISSILE_DEATH,
-                },
+                       },
             .msgMissileDeath =
                 {
-                       .magick  = MAGICK_MISSILE_DEATH,
+                       .magick    = MAGICK_MISSILE_DEATH,
                        .missileId = id,
-                },
+                       },
         };
         Packet packet(
             packetMissileDeath.action.magick,

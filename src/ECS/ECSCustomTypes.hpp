@@ -103,6 +103,7 @@ namespace Types {
 
             missileTypes_e type;
             unsigned int constId;
+
         private:
             static unsigned int _missileNb;
             static std::mutex _mutex;

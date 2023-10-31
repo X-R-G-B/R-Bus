@@ -205,7 +205,7 @@ namespace Nitwork {
                        .id          = 0,
                        .life        = 0,
                        .missileType = missileType,
-               },
+                       },
         };
         Packet packet(
             packetNewBullet.action.magick,

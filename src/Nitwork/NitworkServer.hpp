@@ -107,8 +107,7 @@ namespace Nitwork {
              * @param msg The infos of the bullet that will be created
              * @param senderEndpoint The endpoint of the client that sent the msg of hie new bullet
              */
-            void broadcastNewBulletMsg(
-                const struct msgNewBullet_s &msg);
+            void broadcastNewBulletMsg(const struct msgNewBullet_s &msg);
 
             /**
              * @brief Add a msg packet that contain the new bullet msg to the clients
@@ -300,12 +299,12 @@ namespace Nitwork {
                       Systems::receivePlayerDeathMsg(msg, endpoint);
                   }}},
                 {MISSILE_DEATH,
-                {[this](actionHandler &actionHandler, const struct header_s &header) {
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgMissileDeath_s>(actionHandler, header);
-                },
-                [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
-                  Systems::handleClientMissileDeath(msg, endpoint);
-                }}},
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::handleClientMissileDeath(msg, endpoint);
+                  }}},
             };
             /**
              * @brief a map that will be used to handle the actions, in order to send them
@@ -330,7 +329,7 @@ namespace Nitwork {
                 {NEW_ENEMY,
                  [this](Packet &packet) {
                      sendData<struct packetNewEnemy_s>(packet);
-                 }},
+                 }                            },
                 {NEW_MISSILE,
                  [this](Packet &packet) {
                      sendData<struct packetNewBullet_s>(packet);
@@ -350,11 +349,11 @@ namespace Nitwork {
                 {PLAYER_DEATH,
                  [this](Packet &packet) {
                      sendData<struct packetPlayerDeath_s>(packet);
-                 }},
+                 }                            },
                 {MISSILE_DEATH,
-                    [this](Packet &packet) {
-                        sendData<struct packetMissileDeath_s>(packet);
-                }},
+                 [this](Packet &packet) {
+                     sendData<struct packetMissileDeath_s>(packet);
+                 }                            },
                 {INFO_LOBBY,                  [this](Packet &packet) {
                      sendData<struct packetInfoLobby_s>(packet);
                  }}

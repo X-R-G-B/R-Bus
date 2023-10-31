@@ -385,7 +385,7 @@ namespace Systems {
 
     static void sendDeathMsg(std::size_t arrId)
     {
-        auto &arrEnemies = Registry::getInstance().getComponents<Types::Enemy>();
+        auto &arrEnemies  = Registry::getInstance().getComponents<Types::Enemy>();
         auto &arrMissiles = Registry::getInstance().getComponents<Types::Missiles>();
 
 #ifndef CLIENT

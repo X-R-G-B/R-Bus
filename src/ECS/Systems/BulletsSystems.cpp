@@ -105,7 +105,7 @@ namespace Systems {
 
     std::size_t createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
     {
-        Json &json = Json::getInstance();
+        Json &json     = Json::getInstance();
         std::size_t id = Registry::getInstance().addEntity();
         nlohmann::json bulletData =
             json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");

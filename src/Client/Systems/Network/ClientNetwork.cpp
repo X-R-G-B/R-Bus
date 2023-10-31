@@ -52,8 +52,8 @@ namespace Systems {
     void receiveMissileDeath(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const auto missileDeath                      = std::any_cast<struct msgMissileDeath_s>(any);
-        auto &missiles = Registry::getInstance().getComponents<Types::Missiles>();
+        const auto missileDeath      = std::any_cast<struct msgMissileDeath_s>(any);
+        auto &missiles               = Registry::getInstance().getComponents<Types::Missiles>();
         auto &arrHealth              = Registry::getInstance().getComponents<struct health_s>();
         std::vector<std::size_t> ids = missiles.getExistingsId();
 
@@ -233,7 +233,7 @@ namespace Systems {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         auto missiles = Registry::getInstance().getComponents<Types::Missiles>();
-        auto health = Registry::getInstance().getComponents<struct health_s>();
+        auto health   = Registry::getInstance().getComponents<struct health_s>();
 
         const struct msgNewBullet_s &msgNewBullet = std::any_cast<struct msgNewBullet_s>(any);
 
@@ -242,9 +242,9 @@ namespace Systems {
             Maths::addIntDecimals(msgNewBullet.pos.y),
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
-        auto id = Systems::createMissile(position, missileType);
-        missiles[id].constId = msgNewBullet.id;
-        health[id].hp       = msgNewBullet.life;
+        auto id                            = Systems::createMissile(position, missileType);
+        missiles[id].constId               = msgNewBullet.id;
+        health[id].hp                      = msgNewBullet.life;
     }
 
     void receiveBroadcastAbsolutePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)
