@@ -16,20 +16,14 @@ extern "C"
 #include "MessageTypes.h"
 }
 
-enum class JsonType { DEFAULT_ENEMY, DEFAULT_PLAYER, DEFAULT_PARALLAX, TERMINATOR, WAVE, BULLETS };
-
-const std::unordered_map<enemy_type_e, JsonType> messageTypes = {
-    {CLASSIC_ENEMY, JsonType::DEFAULT_ENEMY},
-    {TERMINATOR,    JsonType::TERMINATOR   }
-};
+enum class JsonType { DEFAULT_PLAYER, DEFAULT_PARALLAX, WAVE, BULLETS, ENEMIES };
 
 const std::unordered_map<JsonType, std::string> pathToJson = {
-    {JsonType::DEFAULT_ENEMY,    "assets/Json/enemyData.json"   },
     {JsonType::DEFAULT_PLAYER,   "assets/Json/playerData.json"  },
     {JsonType::DEFAULT_PARALLAX, "assets/Json/parallaxData.json"},
-    {JsonType::TERMINATOR,       "assets/Json/terminator.json"  },
     {JsonType::WAVE,             "assets/Json/wave.json"        },
-    {JsonType::BULLETS,          "assets/Json/bullets.json"     }
+    {JsonType::BULLETS,          "assets/Json/bullets.json"     },
+    {JsonType::ENEMIES,          "assets/Json/enemies.json"     },
 };
 
 class Json {

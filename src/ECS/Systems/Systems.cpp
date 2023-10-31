@@ -204,62 +204,6 @@ namespace Systems {
         }
     }
 
-    void
-    initEnemy(enemy_type_e enemyType, Types::Position position, bool setId, struct ::enemy_id_s enemyId)
-    {
-        JsonType jsonType = messageTypes.at(enemyType);
-        std::vector<nlohmann::basic_json<>> enemyData =
-            Json::getInstance().getDataByJsonType("enemy", jsonType);
-
-        for (auto &elem : enemyData) {
-            Registry::getInstance().addEntity();
-
-#ifdef CLIENT
-            Types::SpriteDatas enemy = {
-                Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
-                Json::getInstance().getDataFromJson<int>(elem, "width"),
-                Json::getInstance().getDataFromJson<int>(elem, "height"),
-                LayerType::DEFAULTLAYER,
-                0};
-
-            auto rect = Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect");
-
-            nlohmann::basic_json<> animRectData =
-                Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(elem, "animRect");
-            Types::AnimRect animRect(rect, animRectData, Types::RectListType::MOVE, Types::Direction::LEFT);
-
-#endif
-            Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
-            Types::CollisionRect collisionRect =
-                Json::getInstance().getDataFromJson<Types::CollisionRect>(elem, "collisionRect");
-            Types::Damage damageComp   = {Json::getInstance().getDataFromJson<int>(elem, "damage")};
-            struct health_s healthComp = {Json::getInstance().getDataFromJson<int>(elem, "health")};
-            Types::Velocity velocity =
-                Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
-
-            if (position.x == 0 && position.y == 0) {
-                Types::Position tmpPos(
-                    Json::getInstance().getDataFromJson<Types::Position>(elem, "position"));
-                position = tmpPos;
-            }
-#ifdef CLIENT
-            Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
-            Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
-            Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(enemy);
-#endif
-            if (jsonType == JsonType::TERMINATOR) {
-                Types::Boss boss = {};
-                Registry::getInstance().getComponents<Types::Boss>().insertBack(boss);
-            }
-            Registry::getInstance().getComponents<Types::Position>().insertBack(position);
-            Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
-            Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
-            Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
-            Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
-            Registry::getInstance().getComponents<Types::Enemy>().insertBack(enemyComp);
-        }
-    }
-
     void manageBoss(std::size_t managerId, std::size_t systemId)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);

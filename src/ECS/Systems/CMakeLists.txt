@@ -18,6 +18,7 @@ target_sources(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/Systems.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/BulletsSystems.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/WaveSystems.cpp
 )
 
 target_sources(
@@ -26,6 +27,7 @@ target_sources(
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/Systems.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/BulletsSystems.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/WaveSystems.cpp
 )
 
 add_subdirectory(Managers)
