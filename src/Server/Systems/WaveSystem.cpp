@@ -50,6 +50,7 @@ void Wave::startNextWave(bool isFirstWave)
         _msBeforeNextWave =
             Json::getInstance().getDataFromJson<std::size_t>(waveData, "msBeforeNextWave");
         _enemiesRemaining = Json::getInstance().getDataFromJson<std::size_t>(waveData, "nbrEnemies");
+        Types::WaveInfos::getInstance().setWaveId(id);
         server.addStarWaveMessage(static_cast<n_id_t>(_wavesId.at(_waveIndex)));
     } catch (const std::exception &e) {
         Logger::fatal("WaveInit: " + std::string(e.what()));

@@ -39,6 +39,17 @@ namespace Systems {
         return enemiesTypes.at(enemyType);
     }
 
+    static const enemy_type_e getEnemyType(const std::string &enemyId)
+    {
+        for (const auto &pair : enemiesTypes) {
+            if (pair.second == enemyId) {
+                return pair.first;
+            }
+        }
+        Logger::error("Enemy type not found");
+        throw std::runtime_error("Enemy type not found");
+    }
+
     nlohmann::json getEnemieData(enemy_type_e enemyType)
     {
         Json &json = Json::getInstance();
@@ -80,7 +91,7 @@ namespace Systems {
         }
 
 #endif
-        Types::Enemy enemyComp = (setId ? Types::Enemy {enemyId} : Types::Enemy {});
+        Types::Enemy enemyComp = (setId ? Types::Enemy(enemyType, enemyId) : Types::Enemy(enemyType));
         Types::CollisionRect collisionRect =
             Json::getInstance().getDataFromJson<Types::CollisionRect>(enemyData, "collisionRect");
         Types::Damage damageComp   = {Json::getInstance().getDataFromJson<int>(enemyData, "damage")};
@@ -105,44 +116,57 @@ namespace Systems {
 
     void initWave(std::size_t managerId, std::size_t systemId)
     {
-        std::cout << "init wave is called" << std::endl;
-        // std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        // static std::size_t enemyNumber =
-        //     Json::getInstance().getDataByVector({"wave", "nbrEnemy"}, JsonType::WAVE);
-        // const std::size_t spawnDelay = 2;
-        // Clock &clock                 = Registry::getInstance().getClock();
-        // static std::size_t clockId   = clock.create(true);
-        // static bool fstCall          = true;
-        // std::vector<nlohmann::json> jsonVector =
-        //     Json::getInstance().getDataByVector({"wave", "positions"}, JsonType::WAVE);
-        // nlohmann::json jsonPos;
-        // Registry::components<Types::Boss> &bossArr = Registry::getInstance().getComponents<Types::Boss>();
-        // Registry::components<Types::Enemy> &enemyArr =
-        //     Registry::getInstance().getComponents<Types::Enemy>();
+        Types::WaveInfos &waveInfos = Types::WaveInfos::getInstance();
+        Registry &registry          = Registry::getInstance();
+        std::lock_guard<std::mutex> lock(registry.mutex);
 
-        // if (enemyNumber > 0) {
-        //     jsonPos = Json::getInstance().getDataFromJson<Types::Position>(
-        //         jsonVector[enemyNumber - 1],
-        //         "position");
-        // } else {
-        //     jsonPos = Json::getInstance().getDataFromJson<Types::Position>(jsonVector[0], "position");
-        // }
-        // Types::Position pos(jsonPos);
-        // if (fstCall) {
-        //     fstCall = false;
-        //     clock.restart(clockId);
-        // }
-        // if (clock.elapsedSecondsSince(clockId) >= spawnDelay && enemyNumber > 0) {
-        //     initEnemy(CLASSIC_ENEMY, pos);
-        //     enemyNumber--;
-        //     clock.decreaseSeconds(clockId, spawnDelay);
-        // }
-        // if (enemyArr.getExistingsId().empty() && enemyNumber <= 0 && bossArr.getExistingsId().empty()) {
-        //     initEnemy(TERMINATOR, pos);
-        //     SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
-        // }
+        std::cout << waveInfos.getWaveId() << std::endl;
+        nlohmann::json enemiesData = Json::getInstance().getJsonObjectById<std::size_t>(
+            JsonType::WAVE,
+            waveInfos.getWaveId(),
+            "waves");
+        std::vector<nlohmann::json> enemies =
+            Json::getInstance().getDataFromJson<std::vector<nlohmann::json>>(enemiesData, "enemies");
+        for (const auto &enemy : enemies) {
+            if (Json::isDataExist(enemy, "position") && Json::isDataExist(enemy, "id")
+                && Json::isDataExist(enemy, "msBeforeNext")) {
+                waveInfos.addEnemy(
+                    enemy,
+                    Json::getInstance().getDataFromJson<std::size_t>(enemy, "msBeforeNext"));
+            }
+        }
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+    }
+
+    void updateWave(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        Types::WaveInfos &waveInfos = Types::WaveInfos::getInstance();
+
+        if (waveInfos.isEnemyRemaining() == false) {
+            return;
+        }
+        if (waveInfos.isFirstWaveStarted() == true && Types::Enemy::isEnemyAlive() == false) {
+            Logger::fatal("Wave ended");
+            exit(0);
+        }
+        auto &enemy = waveInfos.getRemainingEnemies().front();
+        if (Registry::getInstance().getClock().elapsedMillisecondsSince(waveInfos.getClockId()) <
+            enemy.second) {
+            return;
+        }
+        Registry::getInstance().getClock().restart(waveInfos.getClockId());
+        std::string enemyId = Json::getInstance().getDataFromJson<std::string>(enemy.first, "id");
+        Types::Position position =
+            Json::getInstance().getDataFromJson<Types::Position>(enemy.first, "position");
+        initEnemy(getEnemyType(enemyId), position, false, {0});
+        waveInfos.removeFirstEnemy();
     }
 
     //////////////////////////////// END WAVES ////////////////////////////////
+
+    std::vector<std::function<void(std::size_t, std::size_t)>> getWaveSystems()
+    {
+        return {updateWave};
+    }
 
 } // namespace Systems

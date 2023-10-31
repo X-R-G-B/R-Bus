@@ -115,9 +115,82 @@ namespace Types {
 
     struct EnemyAllies { };
 
+    class WaveInfos {
+        public:
+            WaveInfos()
+                : _clockId(Registry::getInstance().getClock().create(false)), _isFistWaveStarted(false)
+            {
+            }
+
+            static WaveInfos &getInstance()
+			{
+				static WaveInfos instance;
+				return instance;
+			}
+
+			WaveInfos(const WaveInfos &) = delete;
+			WaveInfos(const WaveInfos &&) = delete;
+			WaveInfos &operator=(const WaveInfos &) = delete;
+			WaveInfos &operator=(const WaveInfos &&) = delete;
+
+            void setWaveId(unsigned int id)
+            {
+                _waveId = id;
+            }
+
+            unsigned int getWaveId()
+            {
+                return _waveId;
+            }
+
+            void addEnemy(const nlohmann::json &data, std::size_t msBeforeNext)
+            {
+                _remainingEnemies.emplace_back(data, msBeforeNext);
+            }
+
+            const std::vector<std::pair<nlohmann::json, std::size_t>> &getRemainingEnemies() const
+            {
+                return _remainingEnemies;
+            }
+
+            bool isEnemyRemaining() const
+            {
+                return !_remainingEnemies.empty();
+            }
+
+            std::size_t getClockId() const
+            {
+                return _clockId;
+            }
+
+            void removeFirstEnemy()
+            {
+                if (_isFistWaveStarted == false) {
+                    _isFistWaveStarted = true;
+                }
+                _remainingEnemies.erase(_remainingEnemies.begin());
+            }
+
+            void setFirstWaveStarted(bool value)
+            {
+                _isFistWaveStarted = value;
+            }
+
+            bool isFirstWaveStarted() const
+            {
+                return _isFistWaveStarted;
+            }
+
+        private:
+            std::vector<std::pair<nlohmann::json, std::size_t>> _remainingEnemies;
+            unsigned int _waveId;
+            std::size_t _clockId;
+            bool _isFistWaveStarted;
+    };
+
     struct Enemy {
         public:
-            Enemy(enum enemy_type_e _type = enemy_type_e::CLASSIC_ENEMY) : type(_type)
+            Enemy(enum enemy_type_e _type) : type(_type)
             {
                 std::lock_guard<std::mutex> lock(_mutex);
 
@@ -125,7 +198,12 @@ namespace Types {
                 _enemyNb++;
             }
 
-            Enemy(struct enemy_id_s _constId, enum enemy_type_e _type = enemy_type_e::CLASSIC_ENEMY)
+            Enemy(enum enemy_type_e _type, enemy_id_s enemyId) : type(_type), constId(enemyId)
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+            }
+
+            Enemy(struct enemy_id_s _constId, enum enemy_type_e _type)
                 : constId(_constId),
                   type(_type)
             {
@@ -134,6 +212,13 @@ namespace Types {
             [[nodiscard]] enemy_id_s getConstId() const
             {
                 return constId;
+            }
+
+            static bool isEnemyAlive()
+            {
+                Registry &registry           = Registry::getInstance();
+                std::vector<std::size_t> ids = registry.getEntitiesByComponents({typeid(Types::Enemy)});
+                return ids.empty() == false;
             }
 
             static void setEnemyNb(unsigned int nb)
@@ -150,19 +235,11 @@ namespace Types {
                 return _enemyNb;
             }
 
-            static void setWaveId(unsigned int id)
-            {
-                std::lock_guard<std::mutex> lock(_mutex);
-
-                _waveId = id;
-            }
-
             enemy_id_s constId;
             enum enemy_type_e type;
 
         private:
             static unsigned int _enemyNb;
-            static unsigned int _waveId;
             static std::mutex _mutex;
     };
 

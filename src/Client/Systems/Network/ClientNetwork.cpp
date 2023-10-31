@@ -54,7 +54,7 @@ namespace Systems {
         auto &director = SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
-        Types::Enemy::setWaveId(wave.waveId);
+        Types::WaveInfos::getInstance().setWaveId(wave.waveId);
         director.getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::GAME))
             .addSystem(initWave);
         Logger::info("Wave started");
