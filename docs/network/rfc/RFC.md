@@ -291,6 +291,12 @@ Table of Contents
 
     To understand this action, the action header `magick` must be equal to `1`
 
+    This packet initialize the connection to the lobby, and by extension,
+    register to the game that will be created in that lobby.
+
+    The Lobby Server will respond to this packet with a `NEW_PLAYER` (3.4.5.)
+    action.
+
     The action body is composed of the following fields:
     - `magick`
 
@@ -305,6 +311,10 @@ Table of Contents
 3.2.2. READY
 
     To understand this action, the action header `magick` must be equal to `2`
+
+    This packet tell the Lobby Server that the client is ready to play.
+    The Lobby Server will wait that all players connected are ready to start
+    the game.
 
     The action body is composed of the following fields:
     - `magick`
@@ -967,6 +977,9 @@ Table of Contents
 3.5.1. INFO_LOBBY
 
     To understand this action, the action header `magick` must be equal to `17`
+
+    This action is used to let the Main Server know the current Lobby Server
+    exists.
 
     The action body is composed of the following fields:
     - `magick`
