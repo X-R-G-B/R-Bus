@@ -63,6 +63,7 @@ namespace Systems {
                     arrHealth[id].hp = 0;
                 } else {
                     Logger::fatal("\n\n\n!!!! Missile has no health component, but is alive !!!!\n\n\n");
+                    // TODO : remove missile
                     Registry::getInstance().removeEntity(id);
                 }
                 return;
@@ -240,7 +241,7 @@ namespace Systems {
             Maths::addIntDecimals(msgNewBullet.pos.y),
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
-        Systems::createMissile(position, missileType, msgNewBullet.id, msgNewBullet.life);
+        Systems::createMissile(position, missileType);
     }
 
     void receiveBroadcastAbsolutePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)

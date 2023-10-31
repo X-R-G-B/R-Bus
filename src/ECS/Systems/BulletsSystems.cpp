@@ -103,10 +103,10 @@ namespace Systems {
         }
     }
 
-    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile, unsigned int id, )
+    std::size_t createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
     {
         Json &json = Json::getInstance();
-        Registry::getInstance().addEntity();
+        std::size_t id = Registry::getInstance().addEntity();
         nlohmann::json bulletData =
             json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
         Types::CollisionRect collisionRect =
@@ -132,6 +132,7 @@ namespace Systems {
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
+        return id;
     }
 
     static void updateBouncePhysics(std::vector<std::size_t> ids)

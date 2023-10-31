@@ -70,19 +70,26 @@ namespace Systems {
         }
     }
 
-    void receiveNewBulletMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    void receiveNewBulletMsg(const std::any &msg, boost::asio::ip::udp::endpoint &/* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        auto &arrMissiles = Registry::getInstance().getComponents<Types::Missiles>();
+        auto &arrHealth   = Registry::getInstance().getComponents<struct health_s>();
 
-        const struct msgNewBullet_s &msgNewBullet = std::any_cast<struct msgNewBullet_s>(msg);
+        struct msgNewBullet_s msgNewBullet = std::any_cast<struct msgNewBullet_s>(msg);
 
         struct Types::Position position = {
             Maths::addIntDecimals(msgNewBullet.pos.x),
             Maths::addIntDecimals(msgNewBullet.pos.y),
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
-        Systems::createMissile(position, missileType);
-        //         send bullet to clients but not the sender
+        auto id = Systems::createMissile(position, missileType);
+        if (!arrMissiles.exist(id) || !arrHealth.exist(id)) {
+            Logger::error("Error: missile not created");
+            return;
+        }
+        msgNewBullet.id = arrMissiles[id].getConstId();
+        msgNewBullet.life = arrHealth[id].hp;
         Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg(msgNewBullet);
     }
 

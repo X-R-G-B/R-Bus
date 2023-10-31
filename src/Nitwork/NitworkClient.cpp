@@ -146,8 +146,10 @@ namespace Nitwork {
                 {
                        .magick      = MAGICK_NEW_MISSILE,
                        .pos         = pos,
+                       .id          = 0,
+                       .life        = 0,
                        .missileType = missileType,
-                       },
+               },
         };
         Packet packet(
             packetNewBullet.action.magick,
