@@ -1,10 +1,11 @@
 
 #include "GameSystems.hpp"
-#include "Json.hpp"
-#include "Maths.hpp"
-#include "SystemManagersDirector.hpp"
+#include "B-luga/Json.hpp"
+#include "B-luga/Maths.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "GameCustomTypes.hpp"
 #include "DeathSystems.hpp"
+#include "ResourcesManager.hpp"
 #ifdef CLIENT
     #include "AnimRect.hpp"
     #include "NitworkClient.hpp"
@@ -13,12 +14,21 @@
 #endif
 
 namespace Systems {
+    const std::vector<JsonType> enemyPaths {
+        JsonType::DEFAULT_ENEMY,
+        JsonType::TERMINATORBOSS
+    };
+
+    void getPathFromEnemyType(enemy_type_e enemyType)
+    {
+        ResourcesManager::getPathByJsonType(enemyPaths[enemyType]);
+    }
+
     void
     initEnemy(enemy_type_e enemyType, Types::Position position, bool setId, struct ::enemy_id_s enemyId)
     {
-        JsonType jsonType = messageTypes.at(enemyType);
         std::vector<nlohmann::basic_json<>> enemyData =
-                Json::getInstance().getDataByJsonType("enemy", jsonType);
+                Json::getInstance().getDataByJsonType(getPathFromEnemyType(enemyType), "enemy");
 
         for (auto &elem : enemyData) {
             Registry::getInstance().addEntity();
@@ -107,12 +117,12 @@ namespace Systems {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         static auto enemyNumber =
-                Json::getInstance().getDataByVector<std::size_t>({"wave", "nbrEnemy"}, JsonType::WAVE);
+                Json::getInstance().getDataByVector<std::size_t>(ResourcesManager::getPathByJsonType(JsonType::WAVE), {"wave", "nbrEnemy"});
         const std::size_t spawnDelay = 500;
         Clock &clock                 = Registry::getInstance().getClock();
         static std::size_t clockId   = clock.create(true);
         static bool fstCall          = true;
-        auto jsonVector = Json::getInstance().getDatasByJsonType({"wave", "positions"}, JsonType::WAVE);
+        auto jsonVector = Json::getInstance().getDatasByJsonType(ResourcesManager::getPathByJsonType(JsonType::WAVE), {"wave", "positions"});
         Types::Position jsonPos;
         Registry::components<Types::Boss> &bossArr = Registry::getInstance().getComponents<Types::Boss>();
         Registry::components<Types::Enemy> &enemyArr =
@@ -150,16 +160,16 @@ namespace Systems {
         const struct health_s &life,
         bool otherPlayer)
     {
-        JsonType playerType = JsonType::DEFAULT_PLAYER;
+        std::string playerPath = ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER);
 
         Registry::getInstance().addEntity();
 
         Types::Dead deadComp = {
-                Json::getInstance().getDataByVector<std::size_t>({"player", "deadTime"}, playerType)};
-        Types::Damage damageComp = {Json::getInstance().getDataByVector<int>({"player", "damage"}, playerType)};
-        Types::Container container(Json::getInstance().getDataByVector({"player", "container"}, playerType));
+                Json::getInstance().getDataByVector<std::size_t>(playerPath, {"player", "deadTime"})};
+        Types::Damage damageComp = {Json::getInstance().getDataByVector<int>(playerPath, {"player", "damage"})};
+        Types::Container container(Json::getInstance().getDataByVector(playerPath, {"player", "container"}));
         Types::CollisionRect collisionRect = {Types::CollisionRect(
-            Json::getInstance().getDataByVector({"player", "collisionRect"}, playerType))};
+            Json::getInstance().getDataByVector(playerPath, {"player", "collisionRect"}))};
         Types::Position position = {pos.x, pos.y};
         struct health_s healthComp = life;
     #ifdef CLIENT
@@ -171,9 +181,9 @@ namespace Systems {
                 static_cast<std::size_t>(FRONT));
 
             Types::Rect rect = {
-                Types::Rect(Json::getInstance().getDataByVector({"player", "rect"}, playerType))};
+                Types::Rect(Json::getInstance().getDataByVector(playerPath, {"player", "rect"}))};
             nlohmann::basic_json<> animRectData =
-                Json::getInstance().getDataByVector({"player", "animRect"}, playerType);
+                Json::getInstance().getDataByVector(playerPath, {"player", "animRect"});
             Types::AnimRect animRect(rect, animRectData);
     #endif
 
@@ -229,7 +239,7 @@ namespace Systems {
             Maths::floatToIntConservingDecimals(bulletHeight),
             FRONTLAYER,
             static_cast<std::size_t>(FRONT));
-        Types::AnimRect animRect(spriteRect, Json::getInstance().getDataByVector({"bullet", "animRect"}, JsonType::BULLETS), Types::RectListType::MOVE, Types::Direction::RIGHT);
+        Types::AnimRect animRect(spriteRect, Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::BULLETS), {"bullet", "animRect"}), Types::RectListType::MOVE, Types::Direction::RIGHT);
     #endif
         struct health_s healthComp = {1};
         Types::Damage damageComp   = {10};

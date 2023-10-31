@@ -5,14 +5,15 @@
 ** Bullets systems implementation
 */
 
-#include "ECSCustomTypes.hpp"
-#include "Maths.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga/Maths.hpp"
 #include "MessageTypes.h"
-#include "Registry.hpp"
+#include "B-luga/Registry.hpp"
+#include "ResourcesManager.hpp"
 #include "CreateMissiles.hpp"
-#include "Json.hpp"
+#include "B-luga/Json.hpp"
 #ifdef CLIENT
-    #include "GraphicsCustomTypes.hpp"
+    #include "B-luga-graphics/GraphicsCustomTypes.hpp"
     #include "NitworkClient.hpp"
 #endif
 
@@ -41,7 +42,7 @@ namespace Systems {
         Registry::components<Raylib::Sound> arrSounds =
             Registry::getInstance().getComponents<Raylib::Sound>();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
+            json.getJsonObjectById(Resource, getMissileId(typeOfMissile.type), "bullets");
 
         const std::string soundPathShoot = json.getDataFromJson<std::string>(bulletData, "soundPath");
 
@@ -110,7 +111,7 @@ namespace Systems {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
+            json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileId(typeOfMissile.type), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");

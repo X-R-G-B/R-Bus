@@ -2,7 +2,7 @@
     "player": {
         "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
         "damage": 10.0,
-        "health": 1.0,
+        "health": 1000.0,
         "deadTime": 1000,
         "width": 500,
         "height" : 500,

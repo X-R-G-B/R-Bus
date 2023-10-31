@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <boost/asio.hpp>
 #include "EventsSystems.hpp"
 #include "GraphicsCustomTypes.hpp"
 #include "GameSystems.hpp"

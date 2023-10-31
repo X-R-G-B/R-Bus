@@ -10,7 +10,7 @@
 #include <cstddef>
 #include <functional>
 #include <vector>
-#include "ECSCustomTypes.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
 
 enum SceneType {
     MENU,

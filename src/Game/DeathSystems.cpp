@@ -9,11 +9,11 @@
 #include <optional>
 #include <unordered_map>
 #include "GameCustomTypes.hpp"
-#include "Registry.hpp"
+#include "B-luga/Registry.hpp"
 #ifdef CLIENT
-    #include "GraphicsCustomTypes.hpp"
+    #include "B-luga-graphics/GraphicsCustomTypes.hpp"
 #else
-    #include "ECSCustomTypes.hpp"
+    #include "B-luga-physics/ECSCustomTypes.hpp"
 #endif
 
 namespace Systems {

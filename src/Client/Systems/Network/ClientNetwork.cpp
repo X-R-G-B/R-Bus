@@ -1,14 +1,14 @@
 #include "ClientNetwork.hpp"
 #include <algorithm>
-#include "ECSCustomTypes.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
 #include "GameSystems.hpp"
-#include "Json.hpp"
-#include "Maths.hpp"
+#include "B-luga/Json.hpp"
+#include "B-luga/Maths.hpp"
 #include "NitworkClient.hpp"
-#include "Registry.hpp"
-#include "SceneManager.hpp"
-#include "SystemManagersDirector.hpp"
-#include "ECSSystems.hpp"
+#include "B-luga/Registry.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "B-luga/ECSSystems.hpp"
 #include "init.hpp"
 
 namespace Systems {

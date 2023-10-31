@@ -7,7 +7,6 @@ on:
 env:
   BRANCH: "main"
   RAYLIB_TAG: "4.5.0"
-  DATE_TAG: "v3.0.1"
   ZSTD_TAG: "v1.5.5"
 
 jobs:
@@ -39,7 +38,7 @@ jobs:
 
   release-windows:
     runs-on: windows-latest
-    needs: [release-create, raylib-to-tar, date-to-tar, zstd-to-tar]
+    needs: [release-create, raylib-to-tar, zstd-to-tar]
 
     steps:
       - name: Checkout
@@ -80,7 +79,7 @@ jobs:
 
   release-linux:
     runs-on: ubuntu-latest
-    needs: [release-create, raylib-to-tar, date-to-tar, zstd-to-tar]
+    needs: [release-create, raylib-to-tar, zstd-to-tar]
 
     steps:
       - name: Checkout
@@ -116,7 +115,7 @@ jobs:
 
   release-macos:
     runs-on: macos-latest
-    needs: [release-create, raylib-to-tar, date-to-tar, zstd-to-tar]
+    needs: [release-create, raylib-to-tar, zstd-to-tar]
 
     steps:
       - name: Checkout
@@ -179,6 +178,7 @@ jobs:
         run: |
           gh release upload ${{ needs.release-create.outputs.release }} ./raylib.tar
 
+<<<<<<< HEAD
       - name: Upload To Artifact
         if: github.ref != 'refs/heads/main'
         uses: actions/upload-artifact@v3
@@ -257,3 +257,11 @@ jobs:
         with:
           name: zstd.tar
           path: ./zstd.tar
+=======
+    - name: Upload To Artifact
+      if: github.ref != 'refs/heads/main'
+      uses: actions/upload-artifact@v3
+      with:
+        name: raylib.tar
+        path: ./raylib.tar
+>>>>>>> 15d93eeb9e0bde946201310b21c301d907fab25b

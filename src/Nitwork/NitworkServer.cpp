@@ -7,10 +7,11 @@
 
 #include "NitworkServer.hpp"
 #include "GameSystems.hpp"
-#include "Logger.hpp"
-#include "Registry.hpp"
-#include "SystemManagersDirector.hpp"
-#include "ECSSystems.hpp"
+#include <boost/asio.hpp>
+#include "B-luga/Logger.hpp"
+#include "B-luga/Registry.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "B-luga-physics/ECSSystems.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)

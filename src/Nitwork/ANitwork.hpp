@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <boost/asio.hpp>
 #include <condition_variable>
 #include <iostream>
 #include <list>
@@ -14,7 +15,7 @@
 #include <mutex>
 #include <unordered_map>
 #include "INitwork.hpp"
-#include "Logger.hpp"
+#include "B-luga/Logger.hpp"
 #include "Zstd.hpp"
 
 namespace Nitwork {

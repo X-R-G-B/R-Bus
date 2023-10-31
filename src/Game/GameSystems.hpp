@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ECSCustomTypes.hpp"
+#include "B-luga/Plugins/Systems/ECSCustomTypes.hpp"
 #include "GameCustomTypes.hpp"
-#include "IPlugin.hpp"
+#include "B-luga/IPlugin.hpp"
 extern "C"
 {
 #include "MessageTypes.h"

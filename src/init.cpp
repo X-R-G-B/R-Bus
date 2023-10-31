@@ -1,12 +1,12 @@
 #include "init.hpp"
-#include "SceneManager.hpp"
-#include "SystemManagersDirector.hpp"
-#include "ECSSystems.hpp"
-#include "GameSystems.hpp"
-#include "PluginHandler.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "B-luga-physics/ECSSystems.hpp"
+#include "B-luga/GameSystems.hpp"
+#include "B-luga/PluginHandler.hpp"
 
 #ifdef CLIENT
-    #include "GraphicsSystems.hpp"
+    #include "B-luga-graphics/GraphicsSystems.hpp"
     #include "ClientNetwork.hpp"
     #include "EventsSystems.hpp"
 #endif
