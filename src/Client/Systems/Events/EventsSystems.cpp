@@ -55,7 +55,7 @@ namespace Systems {
         } else if (clockId == getClockIdFromMissileType(PERFORANT)) {
             bulletType = "perforant";
         }
-        nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, bulletType, "bullets");
+        nlohmann::json bulletData = json.getJsonObjectById<std::string>(JsonType::BULLETS, bulletType, "bullets");
         float waitTimeBullet      = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
 
         if (clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
@@ -100,7 +100,7 @@ namespace Systems {
             newPos.y = Maths::floatToIntConservingDecimals(posY);
         }
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile), "bullets");
+            json.getJsonObjectById<std::string>(JsonType::BULLETS, getMissileId(typeOfMissile), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         int halfSprite = Maths::divisionWithTwoIntDecimals(collisionRect.width, 200);

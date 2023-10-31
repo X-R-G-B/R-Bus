@@ -9,30 +9,28 @@
 
 #include <cstddef>
 #include <vector>
+#include <mutex>
+#include "NitworkServer.hpp"
 
 class Wave {
     public:
-        Wave()
-        {
-        }
 
-        void StartNextWave()
-        {
-            n_id_t waveid                  = 0;
-            Nitwork::NitworkServer &server = Nitwork::NitworkServer::getInstance();
-            server.addStarWaveMessage(waveid);
-        }
-        ////director.getSystemManager(0).addSystem(Systems::initWave); dont forget to call this after first
-        ///wave
+        Wave();
+        void startNextWave(bool isFirstWave = false);
+        std::size_t getEnemiesRemaining() const;
+        std::size_t getMsBeforeNextWave() const;
+        bool isGameEnded() const;
+        static std::size_t _clockId;
 
     private:
-        std::size_t getTimeBeforeNextWave() const;
-        void init();
 
+        void decreaseEnemiesRemaining();
         std::vector<std::size_t> _wavesId;
-        std::size_t _currentWave;
-        static std::size_t _clockId;
+        std::size_t _enemiesRemaining;
         std::size_t _msBeforeNextWave;
+        int _waveIndex;
+        bool _isGameEnded;
+        static std::mutex _mutex;
 };
 
 namespace Systems {

@@ -7,7 +7,6 @@
 
 #include "Json.hpp"
 #include <fstream>
-#include <iostream>
 #include <sstream>
 #include <utility>
 #include "ResourcesManager.hpp"
@@ -123,20 +122,6 @@ std::vector<nlohmann::json> Json::getDatasFromList(const nlohmann::json &list)
         datas.push_back(elem);
     }
     return (datas);
-}
-
-nlohmann::json Json::getJsonObjectById(JsonType type, const std::string &id, const std::string &arrayName)
-{
-    auto objectList = getDataByJsonType(type)[arrayName];
-
-    for (const auto &object : objectList) {
-        auto idField = object.find("id");
-        if (idField != object.end() && idField->is_string() && *idField == id) {
-            return object;
-        }
-    }
-    Logger::fatal(std::string("(getJsonObject) Key : " + id + " is not valid"));
-    throw std::runtime_error("Json error");
 }
 
 std::vector<nlohmann::json> &

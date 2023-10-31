@@ -21,7 +21,7 @@ enum class JsonType { DEFAULT_PLAYER, DEFAULT_PARALLAX, WAVE, BULLETS, ENEMIES }
 const std::unordered_map<JsonType, std::string> pathToJson = {
     {JsonType::DEFAULT_PLAYER,   "assets/Json/playerData.json"  },
     {JsonType::DEFAULT_PARALLAX, "assets/Json/parallaxData.json"},
-    {JsonType::WAVE,             "assets/Json/wave.json"        },
+    {JsonType::WAVE,             "assets/Json/waves.json"        },
     {JsonType::BULLETS,          "assets/Json/bullets.json"     },
     {JsonType::ENEMIES,          "assets/Json/enemies.json"     },
 };
@@ -60,8 +60,34 @@ class Json {
             return jsonData[index].get<T>();
         }
 
-        nlohmann::json
-        getJsonObjectById(JsonType type, const std::string &id, const std::string &arrayName);
+        template <typename T>
+        std::vector<T> getObjectsIdInArray(JsonType type, const std::string &arrayName)
+        {
+            std::vector<T> ids;
+            auto data = getDataByJsonType(type)[arrayName];
+
+            for (const auto &object : data) {
+                if (isDataExist(object, "id")) {
+                    ids.push_back(object["id"].get<T>());
+                }
+            }
+            return ids;
+        }
+
+        template <typename T>
+        nlohmann::json getJsonObjectById(JsonType type, const T &id, const std::string &arrayName)
+        {
+            auto objectList = getDataByJsonType(type)[arrayName];
+
+            for (const auto &object : objectList) {
+                auto idField = object.find("id");
+                if (idField != object.end() && idField->get<T>() == id) {
+                    return object;
+                }
+            }
+            Logger::fatal(std::string("(getJsonObject) Key : is not valid for array : " + arrayName));
+            throw std::runtime_error("Json error");
+        }
 
         template <typename T>
         T getDataByJsonType(const std::string &index, JsonType dataType)

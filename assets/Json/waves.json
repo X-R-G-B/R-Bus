@@ -3,6 +3,7 @@
         {
             "id": 1,
             "msBeforeNextWave" : 10000,
+            "nbrEnemies" : 3,
             "enemies" : [
                 {
                     "id": "default",
@@ -33,6 +34,7 @@
         {
             "id": 2,
             "msBeforeNextWave" : 10000,
+            "nbrEnemies" : 2,
             "enemies" : [
                 {
                     "id": "default",

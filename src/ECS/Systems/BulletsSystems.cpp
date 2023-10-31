@@ -48,7 +48,7 @@ namespace Systems {
         Registry::components<Raylib::Sound> arrSounds =
             Registry::getInstance().getComponents<Raylib::Sound>();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
+            json.getJsonObjectById<std::string>(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
 
         const std::string soundPathShoot = json.getDataFromJson<std::string>(bulletData, "soundPath");
 
@@ -108,7 +108,7 @@ namespace Systems {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
+            json.getJsonObjectById<std::string>(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");

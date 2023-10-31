@@ -150,11 +150,19 @@ namespace Types {
                 return _enemyNb;
             }
 
+            static void setWaveId(unsigned int id)
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+
+                _waveId = id;
+            }
+
             enemy_id_s constId;
             enum enemy_type_e type;
 
         private:
             static unsigned int _enemyNb;
+            static unsigned int _waveId;
             static std::mutex _mutex;
     };
 

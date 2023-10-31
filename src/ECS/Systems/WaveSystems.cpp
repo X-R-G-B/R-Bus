@@ -13,6 +13,8 @@
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
 
+#include <iostream>
+
 #ifdef CLIENT
     #include "CustomTypes.hpp"
     #include "NitworkClient.hpp"
@@ -42,7 +44,7 @@ namespace Systems {
         Json &json = Json::getInstance();
 
         const std::string enemyId = getEnemyId(enemyType);
-        nlohmann::json data = json.getJsonObjectById(JsonType::ENEMIES, enemyId, "enemies");
+        nlohmann::json data = json.getJsonObjectById<std::string>(JsonType::ENEMIES, enemyId, "enemies");
         return data;
     }
 
@@ -103,6 +105,7 @@ namespace Systems {
 
     void initWave(std::size_t managerId, std::size_t systemId)
     {
+        std::cout << "init wave is called" << std::endl;
         // std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         // static std::size_t enemyNumber =
         //     Json::getInstance().getDataByVector({"wave", "nbrEnemy"}, JsonType::WAVE);

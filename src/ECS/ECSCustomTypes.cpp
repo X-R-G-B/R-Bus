@@ -1,6 +1,7 @@
 #include "ECSCustomTypes.hpp"
 
 unsigned int Types::Enemy::_enemyNb = 0;
+unsigned int Types::Enemy::_waveId = 0;
 std::mutex Types::Enemy::_mutex;
 
 namespace Types {
