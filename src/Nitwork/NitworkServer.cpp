@@ -11,6 +11,7 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
+#include "WaveSystem.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -215,10 +216,9 @@ namespace Nitwork {
             Logger::info("A new client is ready, waiting for others");
             return;
         }
-        addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
-        director.getSystemManager(0).addSystem(Systems::initWave);
+        director.getSystemManager(0).addSystem(Systems::waveHandler);
     }
 
     void
@@ -270,13 +270,13 @@ namespace Nitwork {
         _playersIds[endpoint] = playerMsg.playerId;
     }
 
-    void NitworkServer::addStarWaveMessage(boost::asio::ip::udp::endpoint & /* unused */, n_id_t enemyId)
+    void NitworkServer::addStarWaveMessage(n_id_t waveId)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgStartWave_s packetMsgStartWave = {
             .header       = {0, 0, 0, 0, 1, 0},
             .action       = {.magick = START_WAVE},
-            .msgStartWave = {.magick = MAGICK_START_WAVE, .enemyNb = enemyId}
+            .msgStartWave = {.magick = MAGICK_START_WAVE, .waveId = waveId}
         };
         Packet packet(
             packetMsgStartWave.action.magick,

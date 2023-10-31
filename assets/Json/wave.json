@@ -1,37 +1,56 @@
 {
-    "wave" : {
-        "nbrEnemy" : 5,
-        "positions": [
-            {
-                "position" : {
-                    "x": 11000,
-                    "y": 2000
+    "waves" : [
+        {
+            "id": 1,
+            "msBeforeNextWave" : 10000,
+            "enemies" : [
+                {
+                    "id": "default",
+                    "position" : {
+                        "x": 11000,
+                        "y": 1500
+                    },
+                    "msBeforeNext" : 1000
+                },
+                {
+                    "id": "default",
+                    "position" : {
+                        "x": 11000,
+                        "y": 8500
+                    },
+                    "msBeforeNext" : 1000
+                },
+                {
+                    "id": "terminator",
+                    "position" : {
+                        "x": 11000,
+                        "y": 2500
+                    },
+                    "msBeforeNext" : 1000
                 }
-            },
-            {
-                "position" : {
-                    "x": 11000,
-                    "y": 3000
+            ]
+        },
+        {
+            "id": 2,
+            "msBeforeNextWave" : 10000,
+            "enemies" : [
+                {
+                    "id": "default",
+                    "position" : {
+                        "x": 11000,
+                        "y": 8500
+                    },
+                    "msBeforeNext" : 1000
+                },
+                {
+                    "id": "default",
+                    "position" : {
+                        "x": 11000,
+                        "y": 8500
+                    },
+                    "msBeforeNext" : 1000
                 }
-            },
-            {
-                "position" : {
-                    "x": 11000,
-                    "y": 8500
-                }
-            },
-            {
-                "position" : {
-                    "x": 11000,
-                    "y": 2800
-                }
-            },
-            {
-                "position" : {
-                    "x": 11000,
-                    "y": 1500
-                }
-            }
-        ]
-    }
+            ]
+        }
+    ]
 }

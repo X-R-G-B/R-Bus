@@ -94,7 +94,7 @@ PACK(struct packetMsgReady_s {
 /* Message Start Game */
 PACK(struct msgStartWave_s {
         n_magick_t magick;
-        n_id_t enemyNb;
+        n_id_t waveId;
 });
 
 PACK(struct packetMsgStartWave_s {
