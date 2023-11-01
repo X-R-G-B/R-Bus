@@ -153,6 +153,11 @@ namespace Types {
                 return _remainingEnemies;
             }
 
+            std::size_t getEnemiesRemaining() const
+            {
+                return _remainingEnemies.size();
+            }
+
             bool isEnemyRemaining() const
             {
                 return !_remainingEnemies.empty();
@@ -179,6 +184,12 @@ namespace Types {
             bool isFirstEnemyCreated() const
             {
                 return _isFirstEnemyCreated;
+            }
+
+            void prepareNextWave()
+            {
+                setFirstEnemyCreated(false);
+                _remainingEnemies.clear();
             }
 
         private:

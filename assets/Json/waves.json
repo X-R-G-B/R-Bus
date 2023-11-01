@@ -3,7 +3,6 @@
         {
             "id": 1,
             "msBeforeNextWave" : 10000,
-            "nbrEnemies" : 3,
             "enemies" : [
                 {
                     "id": "default",
@@ -22,7 +21,7 @@
                     "msBeforeNext" : 1000
                 },
                 {
-                    "id": "terminator",
+                    "id": "papyrus",
                     "position" : {
                         "x": 11000,
                         "y": 2500
@@ -34,7 +33,6 @@
         {
             "id": 2,
             "msBeforeNextWave" : 10000,
-            "nbrEnemies" : 2,
             "enemies" : [
                 {
                     "id": "default",
@@ -49,6 +47,36 @@
                     "position" : {
                         "x": 11000,
                         "y": 8500
+                    },
+                    "msBeforeNext" : 1000
+                },
+                {
+                    "id": "papyrus",
+                    "position" : {
+                        "x": 11000,
+                        "y": 2500
+                    },
+                    "msBeforeNext" : 1000
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "msBeforeNextWave" : 40000,
+            "enemies" : [
+                {
+                    "id": "default",
+                    "position" : {
+                        "x": 11000,
+                        "y": 8500
+                    },
+                    "msBeforeNext" : 1000
+                },
+                {
+                    "id": "papyrus",
+                    "position" : {
+                        "x": 11000,
+                        "y": 2500
                     },
                     "msBeforeNext" : 1000
                 }

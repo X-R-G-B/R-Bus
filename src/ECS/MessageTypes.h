@@ -13,7 +13,7 @@ typedef unsigned int n_id_t;
 
 enum enemy_type_e {
     CLASSIC_ENEMY = 0,
-    TERMINATOR
+    PAPYRUS
 };
 
 enum missileTypes_e {

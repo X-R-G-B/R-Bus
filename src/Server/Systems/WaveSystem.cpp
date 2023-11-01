@@ -10,11 +10,12 @@
 #include "Systems.hpp"
 #include "WaveSystem.hpp"
 #include "SystemManagersDirector.hpp"
+#include "ECSCustomTypes.hpp"
 
 std::size_t Wave::_clockId = 0;
 std::mutex Wave::_mutex;
 
-Wave::Wave() : _waveIndex(0), _msBeforeNextWave(0), _isGameEnded(false), _enemiesRemaining(0)
+Wave::Wave() : _waveIndex(0), _msBeforeNextWave(0), _isGameEnded(false), _isTimeBetweenWaves(false)
 {
     try {
         _wavesId = Json::getInstance().getObjectsIdInArray<std::size_t>(JsonType::WAVE, "waves");
@@ -49,8 +50,7 @@ void Wave::startNextWave(bool isFirstWave)
         nlohmann::json waveData = Json::getInstance().getJsonObjectById<std::size_t>(JsonType::WAVE, id, "waves");
         _msBeforeNextWave =
             Json::getInstance().getDataFromJson<std::size_t>(waveData, "msBeforeNextWave");
-        _enemiesRemaining = Json::getInstance().getDataFromJson<std::size_t>(waveData, "nbrEnemies");
-        Types::WaveInfos::getInstance().setWaveId(id);
+        Types::WaveInfos::getInstance().setWaveId(static_cast<unsigned int>(id));
         server.addStarWaveMessage(static_cast<n_id_t>(_wavesId.at(_waveIndex)));
     } catch (const std::exception &e) {
         Logger::fatal("WaveInit: " + std::string(e.what()));
@@ -60,21 +60,12 @@ void Wave::startNextWave(bool isFirstWave)
     director.getSystemManager(0).addSystem(Systems::initWave);
 }
 
-void Wave::decreaseEnemiesRemaining()
+bool Wave::isWaveEnded() const
 {
-    std::lock_guard<std::mutex> lock(_mutex);
-    if (_enemiesRemaining > 0) {
-        _enemiesRemaining--;
+    if (Types::WaveInfos::getInstance().getEnemiesRemaining() > 0 || Types::Enemy::isEnemyAlive()) {
+        return false;
     }
-    if (_enemiesRemaining == 0) {
-        Registry::getInstance().getClock().restart(Wave::_clockId);
-    }
-}
-
-std::size_t Wave::getEnemiesRemaining() const
-{
-    std::lock_guard<std::mutex> lock(_mutex);
-    return _enemiesRemaining;
+    return true;
 }
 
 bool Wave::isGameEnded() const
@@ -89,16 +80,33 @@ std::size_t Wave::getMsBeforeNextWave() const
     return _msBeforeNextWave;
 }
 
+bool Wave::isTimeBetweenWaves() const
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    return _isTimeBetweenWaves;
+}
+
+void Wave::setTimeBetweenWaves(bool isTimeBetweenWaves)
+{
+    std::lock_guard<std::mutex> lock(_mutex);
+    _isTimeBetweenWaves = isTimeBetweenWaves;
+}
+
 namespace Systems {
 
     void waveHandler(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         static Wave waveHandler;
 
-        if (waveHandler.getEnemiesRemaining() == 0 && waveHandler.isGameEnded() == false
-            && Registry::getInstance().getClock().elapsedMillisecondsSince(Wave::_clockId)
+        if (waveHandler.isWaveEnded() && waveHandler.isGameEnded() == false) {
+            if (waveHandler.isTimeBetweenWaves() == false) {
+                waveHandler.setTimeBetweenWaves(true);
+                Registry::getInstance().getClock().restart(Wave::_clockId);
+            } else if (Registry::getInstance().getClock().elapsedMillisecondsSince(Wave::_clockId)
                 >= waveHandler.getMsBeforeNextWave()) {
-            waveHandler.startNextWave();
+                waveHandler.startNextWave();
+                waveHandler.setTimeBetweenWaves(false);
+            }
         }
     }
 

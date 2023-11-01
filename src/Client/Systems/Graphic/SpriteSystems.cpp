@@ -220,6 +220,6 @@ namespace Systems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> GraphicSystems::getSpriteSystems()
     {
-        return {updateAnimation, spriteRenderer, createSprite, rectRenderer};
+        return {updateAnimation, rectRenderer, spriteRenderer, createSprite};
     }
 } // namespace Systems

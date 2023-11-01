@@ -17,19 +17,20 @@ class Wave {
 
         Wave();
         void startNextWave(bool isFirstWave = false);
-        std::size_t getEnemiesRemaining() const;
+        bool isWaveEnded() const;
         std::size_t getMsBeforeNextWave() const;
         bool isGameEnded() const;
+        bool isTimeBetweenWaves() const;
+        void setTimeBetweenWaves(bool isTimeBetweenWaves);
         static std::size_t _clockId;
 
     private:
 
-        void decreaseEnemiesRemaining();
         std::vector<std::size_t> _wavesId;
-        std::size_t _enemiesRemaining;
         std::size_t _msBeforeNextWave;
         int _waveIndex;
         bool _isGameEnded;
+        bool _isTimeBetweenWaves;
         static std::mutex _mutex;
 };
 
