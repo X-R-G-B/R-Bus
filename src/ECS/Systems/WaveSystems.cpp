@@ -26,6 +26,7 @@ namespace Systems {
     static const std::unordered_map<enemy_type_e, std::string> enemiesTypes = {
         {enemy_type_e::CLASSIC_ENEMY, "default"},
         {enemy_type_e::PAPYRUS, "papyrus"},
+        {enemy_type_e::NAPSTABLOOK, "napstablook"},
     };
 
     static const std::string &getEnemyId(enemy_type_e enemyType)
@@ -142,6 +143,7 @@ namespace Systems {
         // Handle the end of the wave
         if (waveInfos.isFirstEnemyCreated() == true && Types::Enemy::isEnemyAlive() == false) {
             waveInfos.prepareNextWave();
+            return;
         }
         // If no enemy remaining, no need to continue
         if (waveInfos.isEnemyRemaining() == false) {

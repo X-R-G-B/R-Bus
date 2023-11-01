@@ -118,20 +118,22 @@ namespace Types {
     class WaveInfos {
         public:
             WaveInfos()
-                : _clockId(Registry::getInstance().getClock().create(false)), _isFirstEnemyCreated(false)
+                : _clockId(Registry::getInstance().getClock().create(false)),
+                  _isFirstEnemyCreated(false),
+                  _waitingForNextWave(false)
             {
             }
 
             static WaveInfos &getInstance()
-			{
-				static WaveInfos instance;
-				return instance;
-			}
+            {
+                static WaveInfos instance;
+                return instance;
+            }
 
-			WaveInfos(const WaveInfos &) = delete;
-			WaveInfos(const WaveInfos &&) = delete;
-			WaveInfos &operator=(const WaveInfos &) = delete;
-			WaveInfos &operator=(const WaveInfos &&) = delete;
+            WaveInfos(const WaveInfos &)             = delete;
+            WaveInfos(const WaveInfos &&)            = delete;
+            WaveInfos &operator=(const WaveInfos &)  = delete;
+            WaveInfos &operator=(const WaveInfos &&) = delete;
 
             void setWaveId(unsigned int id)
             {
@@ -186,10 +188,21 @@ namespace Types {
                 return _isFirstEnemyCreated;
             }
 
+            bool getWaitingForNextWave() const
+            {
+                return _waitingForNextWave;
+            }
+
+            void setWaitingForNextWave(bool value)
+            {
+                _waitingForNextWave = value;
+            }
+
             void prepareNextWave()
             {
                 setFirstEnemyCreated(false);
                 _remainingEnemies.clear();
+                setWaitingForNextWave(true);
             }
 
         private:
@@ -197,6 +210,7 @@ namespace Types {
             unsigned int _waveId;
             std::size_t _clockId;
             bool _isFirstEnemyCreated;
+            bool _waitingForNextWave;
     };
 
     struct Enemy {
@@ -214,9 +228,7 @@ namespace Types {
                 std::lock_guard<std::mutex> lock(_mutex);
             }
 
-            Enemy(struct enemy_id_s _constId, enum enemy_type_e _type)
-                : constId(_constId),
-                  type(_type)
+            Enemy(struct enemy_id_s _constId, enum enemy_type_e _type) : constId(_constId), type(_type)
             {
             }
 

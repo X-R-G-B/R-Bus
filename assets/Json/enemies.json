@@ -111,6 +111,74 @@
                     ]
                 }
             ]
+        },
+        {
+            "id": "napstablook",
+            "spritePath": "assets/Boss/napstablook.png",
+            "musicPath": "assets/Audio/Musics/Napstablook.mp3",
+            "damage": 20,
+            "health": 80.0,
+            "width": 480,
+            "height": 932,
+            "rect": {
+                "x": 17.0,
+                "y": 0.0,
+                "width": 17.0,
+                "height": 33
+            },
+            "collisionRect": {
+                "width": 480,
+                "height": 932
+            },
+            "velocity": {
+                "speedX": -10,
+                "speedY": 0
+            },
+            "animRect": [
+                {
+                    "direction": "left",
+                    "type": "move",
+                    "time": 200,
+                    "restartIndex": 0,
+                    "list": [
+                        {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "width": 17.0,
+                            "height": 33
+                        },
+                        {
+                            "x": 17.0,
+                            "y": 0.0,
+                            "width": 17.0,
+                            "height": 33
+                        },
+                        {
+                            "x": 34.0,
+                            "y": 0.0,
+                            "width": 17.0,
+                            "height": 33
+                        },
+                        {
+                            "x": 51.0,
+                            "y": 0.0,
+                            "width": 17.0,
+                            "height": 33
+                        }
+                    ]
+                },
+                {
+                    "type": "attack",
+                    "list": [
+                        {
+                            "x": 68.0,
+                            "y": 0.0,
+                            "width": 22.0,
+                            "height": 33
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

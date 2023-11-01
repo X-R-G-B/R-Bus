@@ -2,12 +2,12 @@
     "waves" : [
         {
             "id": 1,
-            "msBeforeNextWave" : 10000,
+            "msBeforeNextWave" : 3000,
             "enemies" : [
                 {
                     "id": "default",
                     "position" : {
-                        "x": 11000,
+                        "x": 10500,
                         "y": 1500
                     },
                     "msBeforeNext" : 1000
@@ -15,7 +15,7 @@
                 {
                     "id": "default",
                     "position" : {
-                        "x": 11000,
+                        "x": 10500,
                         "y": 8500
                     },
                     "msBeforeNext" : 1000
@@ -23,7 +23,7 @@
                 {
                     "id": "papyrus",
                     "position" : {
-                        "x": 11000,
+                        "x": 10500,
                         "y": 2500
                     },
                     "msBeforeNext" : 1000
@@ -32,28 +32,28 @@
         },
         {
             "id": 2,
-            "msBeforeNextWave" : 10000,
+            "msBeforeNextWave" : 5000,
             "enemies" : [
                 {
                     "id": "default",
                     "position" : {
-                        "x": 11000,
-                        "y": 8500
+                        "x": 10500,
+                        "y": 500
                     },
                     "msBeforeNext" : 1000
                 },
                 {
                     "id": "default",
                     "position" : {
-                        "x": 11000,
+                        "x": 10500,
                         "y": 8500
                     },
                     "msBeforeNext" : 1000
                 },
                 {
-                    "id": "papyrus",
+                    "id": "napstablook",
                     "position" : {
-                        "x": 11000,
+                        "x": 10500,
                         "y": 2500
                     },
                     "msBeforeNext" : 1000
@@ -61,21 +61,21 @@
             ]
         },
         {
-            "id": 2,
-            "msBeforeNextWave" : 40000,
+            "id": 3,
+            "msBeforeNextWave" : 0,
             "enemies" : [
                 {
                     "id": "default",
                     "position" : {
-                        "x": 11000,
+                        "x": 10500,
                         "y": 8500
                     },
-                    "msBeforeNext" : 1000
+                    "msBeforeNext" : 10000
                 },
                 {
                     "id": "papyrus",
                     "position" : {
-                        "x": 11000,
+                        "x": 10500,
                         "y": 2500
                     },
                     "msBeforeNext" : 1000
