@@ -58,10 +58,10 @@
             "width": 1000,
             "height": 1000,
             "rect": {
-                "x": 18.0,
-                "y": 67.0,
-                "width": 31.0,
-                "height": 30
+                "x": 0.0,
+                "y": 0.0,
+                "width": 128.0,
+                "height": 126
             },
             "collisionRect": {
                 "width": 1000,
@@ -71,6 +71,64 @@
                 "speedX": -40,
                 "speedY": 0
             },
+            "animRect": [
+                {
+                    "direction": "left",
+                    "type": "move",
+                    "time": 80,
+                    "restartIndex": 1,
+                    "list": [
+                        {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "width": 126.0,
+                            "height": 127
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 127.0,
+                            "width": 127.0,
+                            "height": 129
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 256.0,
+                            "width": 126.0,
+                            "height": 129
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 384.0,
+                            "width": 126.0,
+                            "height": 128
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 512.0,
+                            "width": 126.0,
+                            "height": 128
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 640.0,
+                            "width": 126.0,
+                            "height": 129
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 769.0,
+                            "width": 126.0,
+                            "height": 129
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 895.0,
+                            "width": 126.0,
+                            "height": 129
+                        }
+                    ]
+                }
+            ]
         },
         {
             "id": "papyrus",
