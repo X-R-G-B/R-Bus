@@ -123,7 +123,7 @@ namespace Systems {
         static std::size_t clockId   = clock.create(true);
         static bool fstCall          = true;
         auto jsonVector = Json::getInstance().getDatasByJsonType(ResourcesManager::getPathByJsonType(JsonType::WAVE), {"wave", "positions"});
-        Types::Position jsonPos(0, 0);
+        Types::Position jsonPos = {0, 0};
         Registry::components<Types::Boss> &bossArr = Registry::getInstance().getComponents<Types::Boss>();
         Registry::components<Types::Enemy> &enemyArr =
                 Registry::getInstance().getComponents<Types::Enemy>();
