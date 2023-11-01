@@ -51,6 +51,28 @@
             ]
         },
         {
+            "id": "default2",
+            "spritePath": "assets/R-TypeSheet/dragon.png",
+            "damage": 10,
+            "health": 2.0,
+            "width": 1000,
+            "height": 1000,
+            "rect": {
+                "x": 18.0,
+                "y": 67.0,
+                "width": 31.0,
+                "height": 30
+            },
+            "collisionRect": {
+                "width": 1000,
+                "height":1000
+            },
+            "velocity": {
+                "speedX": -40,
+                "speedY": 0
+            },
+        },
+        {
             "id": "papyrus",
             "spritePath": "assets/Boss/papyrus.png",
             "musicPath": "assets/Audio/Musics/Papyrus.mp3",
@@ -175,6 +197,378 @@
                             "y": 0.0,
                             "width": 22.0,
                             "height": 33
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "le-jutteur",
+            "spritePath": "assets/Boss/le-jutteur-boss.png",
+            "musicPath": "assets/Audio/Musics/Napstablook.mp3",
+            "damage": 20,
+            "health": 80.0,
+            "width": 2320,
+            "height": 3400,
+            "rect": {
+                "x": 18.0,
+                "y": 41.0,
+                "width": 464.0,
+                "height": 460
+            },
+            "collisionRect": {
+                "width": 2320,
+                "height": 3400
+            },
+            "velocity": {
+                "speedX": -20,
+                "speedY": 0
+            },
+            "animRect": [
+                {
+                    "direction": "left",
+                    "type": "move",
+                    "time": 100,
+                    "restartIndex": 0,
+                    "list": [
+                        {
+                            "x": 18.0,
+                            "y": 41.0,
+                            "width": 464.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 530.0,
+                            "y": 41.0,
+                            "width": 466.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 1042.0,
+                            "y": 42.0,
+                            "width": 471.0,
+                            "height": 459
+                        },
+                        {
+                            "x": 1555.0,
+                            "y": 43.0,
+                            "width": 472.0,
+                            "height": 458
+                        },
+                        {
+                            "x": 2066.0,
+                            "y": 43.0,
+                            "width": 483.0,
+                            "height": 458
+                        },
+                        {
+                            "x": 18.0,
+                            "y": 555.0,
+                            "width": 486.0,
+                            "height": 458
+                        },
+                        {
+                            "x": 530.0,
+                            "y": 556.0,
+                            "width": 488.0,
+                            "height": 457
+                        },
+                        {
+                            "x": 1042.0,
+                            "y": 557.0,
+                            "width": 478.0,
+                            "height": 456
+                        },
+                        {
+                            "x": 1554.0,
+                            "y": 557.0,
+                            "width": 474.0,
+                            "height": 456
+                        },
+                        {
+                            "x": 2066.0,
+                            "y": 556.0,
+                            "width": 470.0,
+                            "height": 457
+                        },
+                        {
+                            "x": 18.0,
+                            "y": 1068.0,
+                            "width": 474.0,
+                            "height": 457
+                        },
+                        {
+                            "x": 530.0,
+                            "y": 1068.0,
+                            "width": 481.0,
+                            "height": 457
+                        },
+                        {
+                            "x": 1042.0,
+                            "y": 1066.0,
+                            "width": 483.0,
+                            "height": 459
+                        },
+                        {
+                            "x": 1554.0,
+                            "y": 1065.0,
+                            "width": 488.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 2066.0,
+                            "y": 1065.0,
+                            "width": 491.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 18.0,
+                            "y": 1577.0,
+                            "width": 488.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 530.0,
+                            "y": 1577.0,
+                            "width": 479.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 1034.0,
+                            "y": 1577.0,
+                            "width": 476.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 1543.0,
+                            "y": 1577.0,
+                            "width": 475.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 2051.0,
+                            "y": 1577.0,
+                            "width": 479.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 3.0,
+                            "y": 2089.0,
+                            "width": 479.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 518.0,
+                            "y": 2089.0,
+                            "width": 476.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 1031.0,
+                            "y": 2089.0,
+                            "width": 475.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 1540.0,
+                            "y": 2089.0,
+                            "width": 478.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 2049.0,
+                            "y": 2089.0,
+                            "width": 481.0,
+                            "height": 460
+                        },
+                        {
+                            "x": 18.0,
+                            "y": 2601.0,
+                            "width": 464.0,
+                            "height": 460
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "green-head",
+            "spritePath": "assets/Boss/green-head-boss.png",
+            "musicPath": "assets/Audio/Musics/Napstablook.mp3",
+            "damage": 20,
+            "health": 80.0,
+            "width": 2320,
+            "height": 3400,
+            "rect": {
+                "x": 1704.0,
+                "y": 15.0,
+                "width": 382.0,
+                "height": 381
+            },
+            "collisionRect": {
+                "width": 2320,
+                "height": 3400
+            },
+            "velocity": {
+                "speedX": -20,
+                "speedY": 0
+            },
+            "animRect": [
+                {
+                    "direction": "left",
+                    "type": "move",
+                    "time": 100,
+                    "restartIndex": 0,
+                    "list": [
+                        {
+                            "x": 1600.0,
+                            "y": 0.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 1600.0,
+                            "y": 400.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 1600.0,
+                            "y": 800.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 1600.0,
+                            "y": 1200.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 1600.0,
+                            "y": 1600.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 1200.0,
+                            "y": 0.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 1200.0,
+                            "y": 400.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 1200.0,
+                            "y": 800.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 1200.0,
+                            "y": 1200.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 1200.0,
+                            "y": 1600.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 800.0,
+                            "y": 0.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 800.0,
+                            "y": 400.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 800.0,
+                            "y": 800.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 800.0,
+                            "y": 1200.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 800.0,
+                            "y": 1600.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 400.0,
+                            "y": 0.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 400.0,
+                            "y": 400.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 400.0,
+                            "y": 800.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 400.0,
+                            "y": 1200.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 400.0,
+                            "y": 1600.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 400.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 800.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 1200.0,
+                            "width": 400.0,
+                            "height": 400
+                        },
+                        {
+                            "x": 0.0,
+                            "y": 1600.0,
+                            "width": 400.0,
+                            "height": 400
                         }
                     ]
                 }

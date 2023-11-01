@@ -27,6 +27,8 @@ namespace Systems {
         {enemy_type_e::CLASSIC_ENEMY, "default"},
         {enemy_type_e::PAPYRUS, "papyrus"},
         {enemy_type_e::NAPSTABLOOK, "napstablook"},
+        {enemy_type_e::LEJUTTER, "le-jutteur"},
+        {enemy_type_e::GREEN_HEAD, "green-head"},
     };
 
     static const std::string &getEnemyId(enemy_type_e enemyType)
