@@ -26,6 +26,7 @@ namespace Systems {
     static const std::unordered_map<enemy_type_e, std::string> enemiesTypes = {
         {enemy_type_e::CLASSIC_ENEMY, "default"},
         {enemy_type_e::CLASSIC_ENEMY_2, "default2"},
+        {enemy_type_e::DAEMON, "daemon"},
         {enemy_type_e::PAPYRUS, "papyrus"},
         {enemy_type_e::NAPSTABLOOK, "napstablook"},
         {enemy_type_e::LEJUTTER, "le-jutteur"},

@@ -21,6 +21,14 @@
                     "msBeforeNext" : 1000
                 },
                 {
+                    "id": "daemon",
+                    "position" : {
+                        "x": 10500,
+                        "y": 6500
+                    },
+                    "msBeforeNext" : 1000
+                },
+                {
                     "id": "green-head",
                     "position" : {
                         "x": 10500,

@@ -131,6 +131,74 @@
             ]
         },
         {
+            "id": "daemon",
+            "spritePath": "assets/R-TypeSheet/daemon.png",
+            "damage": 10,
+            "health": 2.0,
+            "width": 1000,
+            "height": 1000,
+            "rect": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 62.0,
+                "height": 41
+            },
+            "collisionRect": {
+                "width": 1000,
+                "height":1000
+            },
+            "velocity": {
+                "speedX": -40,
+                "speedY": 0
+            },
+            "animRect": [
+                {
+                    "direction": "left",
+                    "type": "move",
+                    "time": 120,
+                    "restartIndex": 1,
+                    "list": [
+                        {
+                            "x": 442.0,
+                            "y": 15.0,
+                            "width": 62.0,
+                            "height": 41
+                        },
+                        {
+                            "x": 380.0,
+                            "y": 15.0,
+                            "width": 62.0,
+                            "height": 41
+                        },
+                        {
+                            "x": 318.0,
+                            "y": 15.0,
+                            "width": 62.0,
+                            "height": 41
+                        },
+                        {
+                            "x": 256.0,
+                            "y": 15.0,
+                            "width": 62.0,
+                            "height": 41
+                        },
+                        {
+                            "x": 194.0,
+                            "y": 15.0,
+                            "width": 62.0,
+                            "height": 41
+                        },
+                        {
+                            "x": 132.0,
+                            "y": 15.0,
+                            "width": 62.0,
+                            "height": 41
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "id": "papyrus",
             "spritePath": "assets/Boss/papyrus.png",
             "musicPath": "assets/Audio/Musics/Papyrus.mp3",
