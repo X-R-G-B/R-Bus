@@ -15,6 +15,7 @@
 #include "Registry.hpp"
 #include "SceneManager.hpp"
 #include "Systems.hpp"
+#include "SystemManagersDirector.hpp"
 
 namespace Systems {
 
@@ -107,6 +108,14 @@ namespace Systems {
         newPos.y       = Maths::subtractionWithTwoIntDecimals(newPos.y, halfSprite);
         newPos.x       = pos.x;
         return newPos;
+    }
+
+    void sendReadyPacket(std::size_t managerId, std::size_t systemId)
+    {
+        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_R)) {
+            Nitwork::NitworkClient::getInstance().addReadyMsg();
+            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+        }
     }
 
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -210,6 +219,6 @@ namespace Systems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> EventsSystems::getEventSystems()
     {
-        return {playerMovement, changeScene, playerShootBullet};
+        return {playerMovement, changeScene, playerShootBullet, sendReadyPacket};
     }
 } // namespace Systems

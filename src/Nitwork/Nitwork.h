@@ -18,7 +18,7 @@
     #define TICKS_PER_MILLISECOND(t) (TICKS_PER_SECOND(t) / 1000) // The number of ticks per millisecond
     #define DEFAULT_THREAD_NB 4 // The default number of thread
     #define RANDOM_PORT 0 // The port to use to get a random port (the first available)
-    #define MAX_MAIN_SERVER_CLIENT 30 // The max number of client for the main server
+    #define MAX_MAIN_SERVER_CLIENT 300 // The max number of client for the main server
     #define MAX_NB_ACTION 16 // The max number of action per packet
 
 /* The header code of the packet (used to check if the packet is valid) */

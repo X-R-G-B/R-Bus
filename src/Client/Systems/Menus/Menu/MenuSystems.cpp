@@ -44,11 +44,11 @@ namespace Systems {
             Registry::components<Types::AnimRect> arrAnimRect =
                 Registry::getInstance().getComponents<Types::AnimRect>();
 
-            setAllInputBoxFalse();
             if (arrInputBox.exist(id)) {
                 arrInputBox[id].selected = true;
                 if (arrAnimRect.exist(id)) {
                     arrAnimRect[id].changeRectList(Types::RectListType::SELECTED);
+                    Logger::info(arrInputBox[id].text);
                 }
             }
         }
@@ -82,9 +82,11 @@ namespace Systems {
         void manageInputBox(std::size_t, std::size_t)
         {
             std::size_t idEntity = 0;
+            Registry::components<Types::Button> arrButton =
+                Registry::getInstance().getComponents<Types::Button>();
 
             if (Raylib::isMouseButtonPressed(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
-                if (!::Menu::checkClick(idEntity)) {
+                if (!::Menu::checkClick(idEntity) && !arrButton.exist(idEntity)) {
                     setAllInputBoxFalse();
                     return;
                 }

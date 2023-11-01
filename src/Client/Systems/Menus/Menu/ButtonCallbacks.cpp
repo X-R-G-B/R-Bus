@@ -10,6 +10,7 @@
 #include "Logger.hpp"
 #include "NitworkClient.hpp"
 #include "SceneManager.hpp"
+#include "SelectLobbySystems.hpp"
 
 namespace Menu {
     namespace Callback {
@@ -42,6 +43,27 @@ namespace Menu {
 
             getIpAndPort(ip, port);
             Nitwork::NitworkClient::getInstance().connectMainServer(ip, std::stoi(port));
+        }
+
+        void connectLobbySelected()
+        {
+            auto arrInputBox = Registry::getInstance().getComponents<Types::InputBox>();
+            auto arrLobbyStatus = Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
+            auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox), typeid(::Systems::SelectLobbySystems::LobbyStatus)});
+
+            Logger::info("Calling callback");
+            for (auto id : ids) {
+                Logger::info(std::string(std::to_string(arrInputBox[id].selected)));
+                if (arrInputBox[id].selected) {
+                    Logger::info("Someone is selected !");
+                    if (arrLobbyStatus[id].port > 0 && arrLobbyStatus[id].ip != "") {
+                        Scene::SceneManager::getInstance().changeScene(Scene::Scene::MAIN_GAME);
+                        Logger::info("IP TO CONNECT : " + arrLobbyStatus[id].ip);
+                        Logger::info("IP TO CONNECT : " + std::to_string(arrLobbyStatus[id].port));
+                        Nitwork::NitworkClient::getInstance().connectLobby(arrLobbyStatus[id].ip, arrLobbyStatus[id].port);
+                    }
+                }
+            }
         }
     } // namespace Callback
 } // namespace Menu
