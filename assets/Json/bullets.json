@@ -274,6 +274,63 @@
             ]
         },
         {
+            "id": "perforant",
+            "damage": 500,
+            "health": 200,
+            "velocity": {
+                "speedX": 90,
+                "speedY": 0
+            },
+            "physics": [
+                "zigzag"
+            ],
+            "waitTimeBullet": 1000,
+            "collisionRect": {
+                "width": 500,
+                "height": 500
+            },
+            "spritePath": "assets/R-TypeSheet/PurpleBullets.png",
+            "soundPath": "assets/Audio/Sounds/forceField.ogg",
+            "spriteRect": {
+                "x": 224,
+                "y": 64,
+                "width": 16,
+                "height": 16
+            },
+            "animRect": [
+                {
+                    "type": "move",
+                    "time": 60,
+                    "list": [
+                        {
+                            "x": 224,
+                            "y": 64,
+                            "width": 16,
+                            "height": 16
+                        },
+                        {
+                            "x": 241,
+                            "y": 64,
+                            "width": 16,
+                            "height": 16
+                        },
+                        {
+                            "x": 256,
+                            "y": 64,
+                            "width": 16,
+                            "height": 16
+                        },
+                        {
+                            "x": 272,
+                            "y": 64,
+                            "width": 16,
+                            "height": 16
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "id": "jutteur-eye",
             "damage": 10,
             "health": 1,
