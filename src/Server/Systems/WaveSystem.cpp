@@ -12,6 +12,8 @@
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
 
+#include <iostream>
+
 std::size_t Wave::_clockId = 0;
 std::mutex Wave::_mutex;
 
@@ -99,6 +101,10 @@ namespace Systems {
         static Wave waveHandler;
         Registry &registry = Registry::getInstance();
         std::lock_guard<std::mutex> lock(registry.mutex);
+
+        if (waveHandler.isGameEnded()) {
+            std::cout << "------------------ GAME ENDED ------------------" << std::endl;
+        }
 
         if (waveHandler.isWaveEnded() && waveHandler.isGameEnded() == false) {
             if (waveHandler.isTimeBetweenWaves() == false) {

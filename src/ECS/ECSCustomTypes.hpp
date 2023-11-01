@@ -193,17 +193,9 @@ namespace Types {
                 return _waitingForNextWave;
             }
 
-            void setWaitingForNextWave(bool value)
-            {
-                _waitingForNextWave = value;
-            }
+            void setWaitingForNextWave(bool value);
 
-            void prepareNextWave()
-            {
-                setFirstEnemyCreated(false);
-                _remainingEnemies.clear();
-                setWaitingForNextWave(true);
-            }
+            void prepareNextWave();
 
         private:
             std::vector<std::pair<nlohmann::json, std::size_t>> _remainingEnemies;

@@ -178,7 +178,7 @@ namespace Raylib {
 
     class Text {
         public:
-            Text(std::string text, Vector2 position = {0, 0}, float fontSize = 5.0F, Color color = BLACK);
+            Text(std::string text, Vector2 position = {0, 0}, float fontSize = 5.0F, Color color = BLACK, const std::string &keyword = "");
             void draw();
             void drawEx(float spacing);
             void drawPro(Vector2 origin, float rotation, float spacing);
@@ -192,6 +192,9 @@ namespace Raylib {
             Color getColor() const;
             void setColor(Color color);
             void setCurrentFontSize(float fontSize);
+            const std::string &getText() const;
+            const std::string &getKeyword() const;
+            void setText(const std::string &text);
 
         private:
             std::string _text;
@@ -200,8 +203,10 @@ namespace Raylib {
             Color _color;
             Vector2 _position;
             Vector2 _pixelPosition;
+            std::string _keyword;
     };
 
+    void drawText(const std::string &text, int posX, int posY, int fontSize, Color color);
     void drawFPS(int posX, int posY);
-
+    int measureText(const std::string text, int fontSize);
 } // namespace Raylib

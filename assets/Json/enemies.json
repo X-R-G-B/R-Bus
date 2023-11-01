@@ -69,7 +69,7 @@
                 "height": 1287
             },
             "velocity": {
-                "speedX": -10,
+                "speedX": -20,
                 "speedY": 0
             },
             "animRect": [
@@ -131,7 +131,7 @@
                 "height": 932
             },
             "velocity": {
-                "speedX": -10,
+                "speedX": -20,
                 "speedY": 0
             },
             "animRect": [
