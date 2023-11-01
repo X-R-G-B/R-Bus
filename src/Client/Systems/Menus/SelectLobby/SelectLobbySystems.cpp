@@ -8,7 +8,7 @@
 #include "SelectLobbySystems.hpp"
 #include <algorithm>
 #include <string>
-#include "ECSCustomTypes.hpp"
+#include "CustomTypes.hpp"
 #include "Geometry.hpp"
 #include "Graphics.hpp"
 #include "Systems.hpp"
@@ -19,6 +19,12 @@
 #include "SystemManagersDirector.hpp"
 
 namespace Systems::SelectLobbySystems {
+    
+    std::size_t LobbyStatus::pageNbr = 1;
+
+    LobbyStatus::LobbyStatus(const std::string &ip, n_port_t port): ip(ip), port(port)
+    {
+    }
 
     void onButtonGotoCreateLobbyClicked()
     {
@@ -35,9 +41,11 @@ namespace Systems::SelectLobbySystems {
             nlohmann::json bigBox = Json::getInstance().getDataByVector({"lobbyMenu", "bigBox"}, JsonType::SELECT_LOBBY);
             nlohmann::json createLobbyNormalButton =
                 Json::getInstance().getDataByVector({"lobbyMenu", "gotoCreateLobby"}, JsonType::SELECT_LOBBY);
+            // nlohmann::json lobbyButton = Json::getInstance().getDataByVector({"menu", "lobbyBox"}, JsonType::SELECT_LOBBY);
             Menu::MenuBuilder::getInstance().initMenuEntity(
                 createLobbyNormalButton,
                 onButtonGotoCreateLobbyClicked);
+            // Menu::MenuBuilder::getInstance().initMenuEntity(lobbyButton);
             Menu::MenuBuilder::getInstance().initMenuEntity(bigBox);
         } catch (const std::exception &err) {
             Logger::error(
@@ -66,7 +74,7 @@ namespace Systems::SelectLobbySystems {
         }
     }
 
-    void createLobbyRow(std::size_t /*unused*/, std::size_t /*unused*/)
+    void createLobbyRow(std::size_t managerId, std::size_t systemId)
     {
         static std::size_t clockId = Registry::getInstance().getClock().create();
 
@@ -74,38 +82,62 @@ namespace Systems::SelectLobbySystems {
             return;
         }
         Registry::getInstance().getClock().decreaseSeconds(clockId, 1);
-        // already created lobby
-        auto idsLobbyStatus =
-            Registry::getInstance().getEntitiesByComponents({typeid(LobbyStatus), typeid(Raylib::Text)});
-        auto &arrLobbyStatus = Registry::getInstance().getComponents<LobbyStatus>();
-        auto &arrLobbyText   = Registry::getInstance().getComponents<Raylib::Text>();
         // list of all lobby
+        auto idsLobbyStatus = Registry::getInstance().getEntitiesByComponents({typeid(LobbyStatus), typeid(Raylib::Text), typeid(Types::InputBox)});
         auto ids       = Registry::getInstance().getEntitiesByComponents({typeid(struct lobby_s)});
+        auto &arrLobbyText = Registry::getInstance().getComponents<Raylib::Text>();
+        auto &arrLobbyStatus = Registry::getInstance().getComponents<LobbyStatus>();
         auto &arrLobby = Registry::getInstance().getComponents<struct lobby_s>();
-        float x        = 10;
-        float y        = 50;
+        static std::size_t nbrOfIt = 0;
+        std::size_t pageNbr = 1;
+        bool firstInit = false;
 
-        for (auto id : ids) {
-            bool found = false;
-            for (auto idLobbyStatus : idsLobbyStatus) {
-                if (arrLobby[id].lobbyInfos.port == arrLobbyStatus[idLobbyStatus].port
-                    && std::string(arrLobby[id].lobbyInfos.ip) == arrLobbyStatus[idLobbyStatus].ip) {
-                    x     = arrLobbyText[idLobbyStatus].x();
-                    y     = arrLobbyText[idLobbyStatus].y();
-                    found = true;
+        if (idsLobbyStatus.size() != 0) {
+            pageNbr = arrLobbyStatus[idsLobbyStatus[0]].pageNbr;
+            std::cout << "Oui oui baguette" << std::endl;
+        } else {
+            std::cout << "Enchanté" << std::endl;
+            firstInit = true;
+        }
+        std::cout << "nbrOfIt nbr : " << nbrOfIt << std::endl;
+        std::cout << "page nbr : " << pageNbr * 5 << std::endl;
+        std::cout << "FYUBZAIUYFBAZUYFBAUYOZFBIOAZBYHFOIUAZFBOO" << std::endl;
+        std::cout << "nbrOfIt nbr : " << nbrOfIt << std::endl;
+        std::cout << "size nbr : " << ids.size() << std::endl;
+
+        for (auto it = idsLobbyStatus.begin(); nbrOfIt < pageNbr * 5 && nbrOfIt < ids.size();) {
+            if (firstInit) {
+                try {
+                    for (std::size_t i = 0; i < pageNbr * 5; i++) {
+                        nlohmann::json lobbyBox = Json::getInstance().getDataByVector({"lobbyMenu", "lobbyBox"}, JsonType::SELECT_LOBBY);
+                        std::size_t id = ::Menu::MenuBuilder::getInstance().initMenuEntity(lobbyBox);
+
+                        if (arrLobby.exist(id)) {
+                            std::string text_t = std::string(arrLobby[nbrOfIt].name) + " | "
+                                + std::to_string(arrLobby[nbrOfIt].maxNbPlayer) + " | "
+                                + gameTypeToString(arrLobby[nbrOfIt].gameType);
+                            if (arrLobbyText.exist(id)) {
+                                arrLobbyText[id].setCurrentText(text_t);
+                            }
+                        }
+                    }
+                    return;
+                } catch (std::runtime_error &err) {
+                    Logger::error(
+                        "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
                 }
-            }
-            if (!found) {
-                Registry::getInstance().addEntity();
-                LobbyStatus NewLobby(arrLobby[id].lobbyInfos.ip, arrLobby[id].lobbyInfos.port);
-                arrLobbyStatus.insertBack(NewLobby);
-                std::string text_t = std::string(arrLobby[id].name) + " | "
-                    + std::to_string(arrLobby[id].maxNbPlayer) + " | "
-                    + gameTypeToString(arrLobby[id].gameType);
-                y += 5;
-                Raylib::Text text(text_t, Raylib::Vector2(x, y), 2, Raylib::Red);
-                arrLobbyText.insertBack(text);
-            }
+                LobbyStatus newLobby(std::string(arrLobby[nbrOfIt].lobbyInfos.ip), arrLobby[nbrOfIt].lobbyInfos.port);
+                Registry::getInstance().getComponents<LobbyStatus>().insertBack(newLobby);
+            } else {
+                if (it != idsLobbyStatus.end()) {
+                    std::string text_t = std::string(arrLobby[nbrOfIt].name) + " | "
+                        + std::to_string(arrLobby[nbrOfIt].maxNbPlayer) + " | "
+                        + gameTypeToString(arrLobby[nbrOfIt].gameType);
+                    Raylib::Text text(text_t);
+                    // arrLobbyText.insert();
+                    *it++;
+                }
+            } 
         }
     }
 

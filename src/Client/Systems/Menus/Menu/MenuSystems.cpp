@@ -11,6 +11,7 @@
 #include "Maths.hpp"
 #include "Menu.hpp"
 #include "SceneManager.hpp"
+#include <iostream>
 
 namespace Systems {
     namespace Menu {
@@ -211,6 +212,19 @@ namespace Systems {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
 
+        void quitScene(std::size_t /*unused*/, std::size_t /*unused*/)
+        {
+            if (Raylib::isKeyPressed(Raylib::KeyboardKey::KB_ESCAPE)) {
+                switch (Scene::SceneManager::getInstance().getCurrentScene()) {
+                    case Scene::Scene::MENU : Scene::SceneManager::getInstance().stop(); break;
+                    case Scene::Scene::CREATE_LOBBY : Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY); break;
+                    case Scene::Scene::SELECT_LOBBY : Scene::SceneManager::getInstance().changeScene(Scene::Scene::MENU); break;
+                    case Scene::Scene::MAIN_GAME : Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY); break;
+                    case Scene::Scene::SCENE_MAX: break;
+                }
+            }
+        }
+
         std::vector<std::function<void(std::size_t, std::size_t)>> getMenuSystems()
         {
             return {
@@ -220,8 +234,8 @@ namespace Systems {
                 hoverInputBox,
                 checkTextInput,
                 checkInputDeletion,
-                Systems::moveEntities
-            };
+                Systems::moveEntities,
+                quitScene};
         }
     } // namespace Menu
 } // namespace Systems

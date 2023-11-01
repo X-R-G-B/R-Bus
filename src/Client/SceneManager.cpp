@@ -76,7 +76,7 @@ namespace Scene {
     int SceneManager::run()
     {
         try {
-            while (!_stop && !Raylib::windowShouldClose()) {
+            while (!_stop) {
                 Raylib::beginDrawing();
                 Raylib::clearBackground(Raylib::DarkGray);
                 auto scene = _scenes.at(static_cast<std::size_t>(_currentScene));

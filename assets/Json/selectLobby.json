@@ -16,7 +16,7 @@
                 "height": 1518.0
             }
         },
-        "name": {
+        "lobbyBox": {
             "name": "name",
             "type": "input",
             "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",

@@ -12,5 +12,7 @@ namespace Menu {
         void initConnection();
 
         void defaultCallBack();
+
+        void connectLobbySelected();
     } // namespace Callback
 } // namespace Menu

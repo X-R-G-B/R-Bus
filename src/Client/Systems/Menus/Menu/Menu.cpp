@@ -21,9 +21,9 @@ namespace Menu {
     constexpr float maxPercent = 100.0F;
 
 
-    static void initSpriteFromJson(nlohmann::json &elem)
+    static std::size_t initSpriteFromJson(nlohmann::json &elem)
     {
-        Registry::getInstance().addEntity();
+        std::size_t id = Registry::getInstance().addEntity();
         Types::SpriteDatas spriteDatas(
             Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
             Json::getInstance().getDataFromJson<int>(elem, "width"),
@@ -42,6 +42,7 @@ namespace Menu {
             Types::Position(Json::getInstance().getDataFromJson<Types::Position>(elem, "position"))};
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(spriteDatas);
+        return (id);
     }
 
     static void initFromSprite(nlohmann::json &elem)
@@ -91,10 +92,9 @@ namespace Menu {
         Registry::getInstance().getComponents<Types::InputBox>().insertBack(inputBox);
         Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
         Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
-
     }
 
-    static void initInputBox(nlohmann::json &elem)
+    static std::size_t initInputBox(nlohmann::json &elem)
     {
         std::size_t id = Registry::getInstance().addEntity();
 
@@ -114,13 +114,14 @@ namespace Menu {
         }
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
+        return (id);
     }
 
-    static void initButtonFromSprite(nlohmann::json &elem, std::function<void()> &callback)
+    static std::size_t initButtonFromSprite(nlohmann::json &elem, std::function<void()> &callback)
     {
         Types::Button button(callback);
 
-        Registry::getInstance().addEntity();
+        std::size_t id = Registry::getInstance().addEntity();
         initFromSprite(elem);
         Types::Position position = {
             Types::Position(Json::getInstance().getDataFromJson<Types::Position>(elem, "position"))};
@@ -130,9 +131,10 @@ namespace Menu {
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Button>().insertBack(button);
+        return (id);
     }
 
-    static void initButtonFromRectangle(nlohmann::json &elem, std::function<void()> &callback)
+    static std::size_t initButtonFromRectangle(nlohmann::json &elem, std::function<void()> &callback)
     {
         std::size_t id = Registry::getInstance().addEntity();
 
@@ -149,11 +151,12 @@ namespace Menu {
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Button>().insertBack(button);
         Registry::getInstance().setToFrontLayers(id);
+        return (id);
     }
 
-    static void initText(nlohmann::json &elem)
+    static std::size_t initText(nlohmann::json &elem)
     {
-        Registry::getInstance().addEntity();
+        std::size_t id = Registry::getInstance().addEntity();
         std::string text = Json::isDataExist(elem, "text")
             ? Json::getInstance().getDataFromJson<std::string>(elem, "text")
             : "";
@@ -176,24 +179,25 @@ namespace Menu {
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         }
         Registry::getInstance().getComponents<Raylib::Text>().insertBack(textComp);
+        return (id);
     }
 
-    static void initButton(nlohmann::json &elem, std::function<void()> &callback)
+    static std::size_t initButton(nlohmann::json &elem, std::function<void()> &callback)
     {
         if (Json::isDataExist(elem, "spritePath")) {
-            initButtonFromSprite(elem, callback);
+            return (initButtonFromSprite(elem, callback));
         } else {
-            initButtonFromRectangle(elem, callback);
+            return (initButtonFromRectangle(elem, callback));
         }
     }
 
-    void MenuBuilder::initMenuEntity(nlohmann::json &elem, std::function<void()> callback)
+    std::size_t MenuBuilder::initMenuEntity(nlohmann::json &elem, std::function<void()> callback)
     {
         switch (Json::getInstance().getDataFromJson<ObjectType>(elem, "type")) {
-            case ObjectType::BUTTON: initButton(elem, callback); break;
-            case ObjectType::TEXT: initText(elem); break;
-            case ObjectType::INPUT_BOX: initInputBox(elem); break;
-            case ObjectType::SPRITE: initSpriteFromJson(elem); break;
+            case ObjectType::BUTTON: return (initButton(elem, callback));
+            case ObjectType::TEXT: return (initText(elem));
+            case ObjectType::INPUT_BOX: return (initInputBox(elem));
+            case ObjectType::SPRITE: return (initSpriteFromJson(elem)); break;
             default: Logger::error("Object type is undefined, check your json data"); break;
         }
     }
