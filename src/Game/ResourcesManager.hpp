@@ -6,7 +6,7 @@
 #include "ResourcesManager.hpp"
 #include "boost/filesystem.hpp"
 
-enum class JsonType {
+enum class JsonType : std::size_t {
     DEFAULT_PLAYER = 0,
     DEFAULT_ENEMY,
     TERMINATORBOSS,
@@ -27,7 +27,7 @@ class ResourcesManager {
     public:
         static std::string getPathByJsonType(JsonType type)
         {
-            if (paths.size() >= static_cast<std::size_t>(type)) {
+            if (paths.size() <= static_cast<std::size_t>(type)) {
                 return "";
             }
             return ResourcesManager::convertPath(paths[static_cast<std::size_t>(type)]);
