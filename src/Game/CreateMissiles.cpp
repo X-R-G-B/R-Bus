@@ -15,6 +15,7 @@
 #ifdef CLIENT
     #include "B-luga-graphics/GraphicsCustomTypes.hpp"
     #include "NitworkClient.hpp"
+    #include "B-luga-graphics/AnimRect.hpp"
 #endif
 
 namespace Systems {
@@ -42,7 +43,7 @@ namespace Systems {
         Registry::components<Raylib::Sound> arrSounds =
             Registry::getInstance().getComponents<Raylib::Sound>();
         nlohmann::json bulletData =
-            json.getJsonObjectById(Resource, getMissileId(typeOfMissile.type), "bullets");
+            json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileId(typeOfMissile.type), "bullets");
 
         const std::string soundPathShoot = json.getDataFromJson<std::string>(bulletData, "soundPath");
 

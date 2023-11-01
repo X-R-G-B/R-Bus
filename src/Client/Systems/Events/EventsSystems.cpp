@@ -5,9 +5,8 @@
 ** EventsSystems implementation
 */
 
-#pragma once
-
 #include "EventsSystems.hpp"
+#include "B-luga-graphics/AnimRect.hpp"
 #include "B-luga-graphics/GraphicsCustomTypes.hpp"
 #include "GameSystems.hpp"
 #include "B-luga/Json.hpp"
@@ -16,8 +15,9 @@
 #include "NitworkClient.hpp"
 #include "B-luga/Registry.hpp"
 #include "B-luga/SceneManager.hpp"
-#include "B-luga/SystemManagersDirector.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "CreateMissiles.hpp"
+#include "ResourcesManager.hpp"
 
 namespace Systems {
 
@@ -58,31 +58,25 @@ namespace Systems {
         } else if (clockId == getClockIdFromMissileType(PERFORANT)) {
             bulletType = "perforant";
         }
-        nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, bulletType, "bullets");
+        nlohmann::json bulletData = json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), bulletType, "bullets");
         float waitTimeBullet      = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
 
-        if (clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
-            return false;
-        }
-        return true;
+        return clock_.elapsedMillisecondsSince(clockId) >= static_cast<std::size_t>(waitTimeBullet);
     }
 
     static bool checkBulletRequirements(struct Types::Missiles &missile)
     {
         bool isKeyPressed = false;
 
-        for (auto &key : bulletKeyMap) {
+        for (const auto &key : bulletKeyMap) {
             if (Raylib::KeyboardInput::isKeyDown(key.second)) {
                 missile.type = key.first;
                 isKeyPressed = true;
                 break;
             }
         }
-        if (isKeyPressed == false
-            || isBulletTimeElapsed(getClockIdFromMissileType(missile.type)) == false) {
-            return false;
-        }
-        return true;
+        return isKeyPressed
+            && isBulletTimeElapsed(getClockIdFromMissileType(missile.type));
     }
 
     static Types::Position adjustPlayerBulletPosition(Types::Position &playerPos, std::size_t id)
@@ -97,9 +91,8 @@ namespace Systems {
             float posY = Maths::intToFloatConservingDecimals(playerPos.y)
                 + (Maths::intToFloatConservingDecimals(col.height) / 2.F);
             return {Maths::floatToIntConservingDecimals(posX), Maths::floatToIntConservingDecimals(posY)};
-        } else {
-            return {playerPos.x, playerPos.y};
         }
+        return {playerPos.x, playerPos.y};
     }
 
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
@@ -113,7 +106,7 @@ namespace Systems {
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
-        if (checkBulletRequirements(missile) == false) {
+        if (!checkBulletRequirements(missile)) {
             return;
         }
 
@@ -185,7 +178,7 @@ namespace Systems {
                 Maths::addFloatToDecimalInt(arrPos[id].y, 1.F);
                 isKeyPressed = true;
             }
-            if (isKeyPressed == false) {
+            if (!isKeyPressed) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::NONE);
             }
         }

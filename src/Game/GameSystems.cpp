@@ -7,7 +7,7 @@
 #include "DeathSystems.hpp"
 #include "ResourcesManager.hpp"
 #ifdef CLIENT
-    #include "AnimRect.hpp"
+    #include "B-luga-graphics/AnimRect.hpp"
     #include "NitworkClient.hpp"
 #else
     #include "NitworkServer.hpp"
@@ -19,9 +19,9 @@ namespace Systems {
         JsonType::TERMINATORBOSS
     };
 
-    void getPathFromEnemyType(enemy_type_e enemyType)
+    std::string getPathFromEnemyType(enemy_type_e enemyType)
     {
-        ResourcesManager::getPathByJsonType(enemyPaths[enemyType]);
+        return ResourcesManager::getPathByJsonType(enemyPaths[enemyType]);
     }
 
     void
@@ -64,7 +64,7 @@ namespace Systems {
                 Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
                 Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(enemy);
     #endif
-            if (jsonType == JsonType::TERMINATOR) {
+            if (enemyType == TERMINATOR) {
                 Types::Boss boss = {};
                 Registry::getInstance().getComponents<Types::Boss>().insertBack(boss);
             }
@@ -123,7 +123,7 @@ namespace Systems {
         static std::size_t clockId   = clock.create(true);
         static bool fstCall          = true;
         auto jsonVector = Json::getInstance().getDatasByJsonType(ResourcesManager::getPathByJsonType(JsonType::WAVE), {"wave", "positions"});
-        Types::Position jsonPos;
+        Types::Position jsonPos(0, 0);
         Registry::components<Types::Boss> &bossArr = Registry::getInstance().getComponents<Types::Boss>();
         Registry::components<Types::Enemy> &enemyArr =
                 Registry::getInstance().getComponents<Types::Enemy>();
@@ -174,9 +174,9 @@ namespace Systems {
         struct health_s healthComp = life;
     #ifdef CLIENT
         Types::SpriteDatas playerDatas(
-                Json::getInstance().getDataByVector({"player", "spritePath"}, playerType),
-                Json::getInstance().getDataByVector({"player", "width"}, playerType),
-                Json::getInstance().getDataByVector({"player", "height"}, playerType),
+                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER), {"player", "spritePath"}),
+                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER), {"player", "width"}),
+                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER), {"player", "height"}),
                 FRONTLAYER,
                 static_cast<std::size_t>(FRONT));
 
