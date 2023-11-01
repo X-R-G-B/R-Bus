@@ -2,6 +2,7 @@
 
 #include <string>
 #include <boost/asio.hpp>
+#include "B-luga/Json.hpp"
 #include "B-luga/Logger.hpp"
 #include "ResourcesManager.hpp"
 #include "boost/filesystem.hpp"
@@ -27,6 +28,14 @@ class ResourcesManager {
     public:
         static std::string getPathByJsonType(JsonType type)
         {
+            static bool init = false;
+
+            if (!init) {
+                for (const auto &path : paths) {
+                    Json::getInstance().registerJsonFile(ResourcesManager::convertPath(path));
+                }
+                init = true;
+            }
             if (paths.size() <= static_cast<std::size_t>(type)) {
                 return "";
             }
