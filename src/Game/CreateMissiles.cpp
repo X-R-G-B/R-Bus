@@ -6,7 +6,7 @@
 */
 
 #include "B-luga-physics/ECSCustomTypes.hpp"
-#include "B-luga/Maths.hpp"
+#include "B-luga/Maths/Maths.hpp"
 #include "MessageTypes.h"
 #include "B-luga/Registry.hpp"
 #include "ResourcesManager.hpp"

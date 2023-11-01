@@ -11,6 +11,7 @@
 #include "B-luga/Logger.hpp"
 #include "B-luga/Registry.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "ResourcesManager.hpp"
 #include "B-luga-physics/ECSSystems.hpp"
 
 namespace Nitwork {
@@ -188,10 +189,10 @@ namespace Nitwork {
                        .playerId = playerId,
                        .pos =
                     {jsonInstance
-                            .getDataByVector<int>({"player", "position", "x"}, JsonType::DEFAULT_PLAYER),
+                            .getDataByVector<int>(ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER), {"player", "position", "x"}),
                         jsonInstance
-                            .getDataByVector<int>({"player", "position", "y"}, JsonType::DEFAULT_PLAYER)},
-                       .life = {jsonInstance.getDataByVector<int>({"player", "health"}, JsonType::DEFAULT_PLAYER)},
+                            .getDataByVector<int>(ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER), {"player", "position", "y"})},
+                       .life = {jsonInstance.getDataByVector<int>(ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER), {"player", "health"})},
                        .isOtherPlayer = false}
         };
         addPlayerInitMessage(endpoint, packetMsgCreatePlayer.msg);

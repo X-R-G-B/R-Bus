@@ -7,17 +7,16 @@
 
 #pragma once
 
-#include <boost/asio.hpp>
 #include "EventsSystems.hpp"
-#include "GraphicsCustomTypes.hpp"
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
 #include "GameSystems.hpp"
-#include "Json.hpp"
-#include "Logger.hpp"
-#include "Maths.hpp"
+#include "B-luga/Json.hpp"
+#include "B-luga/Logger.hpp"
+#include "B-luga/Maths/Maths.hpp"
 #include "NitworkClient.hpp"
-#include "Registry.hpp"
-#include "SceneManager.hpp"
-#include "SystemManagersDirector.hpp"
+#include "B-luga/Registry.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagersDirector.hpp"
 #include "CreateMissiles.hpp"
 
 namespace Systems {

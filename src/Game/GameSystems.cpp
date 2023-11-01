@@ -1,7 +1,7 @@
 
 #include "GameSystems.hpp"
 #include "B-luga/Json.hpp"
-#include "B-luga/Maths.hpp"
+#include "B-luga/Maths/Maths.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "GameCustomTypes.hpp"
 #include "DeathSystems.hpp"

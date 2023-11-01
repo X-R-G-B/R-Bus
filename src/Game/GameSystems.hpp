@@ -1,6 +1,6 @@
 #pragma once
 
-#include "B-luga/Plugins/Systems/ECSCustomTypes.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
 #include "GameCustomTypes.hpp"
 #include "B-luga/IPlugin.hpp"
 extern "C"

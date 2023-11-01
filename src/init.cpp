@@ -2,7 +2,7 @@
 #include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "B-luga-physics/ECSSystems.hpp"
-#include "B-luga/GameSystems.hpp"
+#include "GameSystems.hpp"
 #include "B-luga/PluginHandler.hpp"
 
 #ifdef CLIENT

@@ -3,12 +3,12 @@
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "GameSystems.hpp"
 #include "B-luga/Json.hpp"
-#include "B-luga/Maths.hpp"
+#include "B-luga/Maths/Maths.hpp"
 #include "NitworkClient.hpp"
 #include "B-luga/Registry.hpp"
 #include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
-#include "B-luga/ECSSystems.hpp"
+#include "B-luga-physics/ECSSystems.hpp"
 #include "init.hpp"
 
 namespace Systems {

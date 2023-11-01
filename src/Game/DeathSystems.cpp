@@ -10,10 +10,10 @@
 #include <unordered_map>
 #include "GameCustomTypes.hpp"
 #include "B-luga/Registry.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
 #ifdef CLIENT
+    #include "B-luga-graphics/AnimRect.hpp"
     #include "B-luga-graphics/GraphicsCustomTypes.hpp"
-#else
-    #include "B-luga-physics/ECSCustomTypes.hpp"
 #endif
 
 namespace Systems {
