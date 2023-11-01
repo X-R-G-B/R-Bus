@@ -118,7 +118,7 @@ namespace Types {
     class WaveInfos {
         public:
             WaveInfos()
-                : _clockId(Registry::getInstance().getClock().create(false)), _isFistWaveStarted(false)
+                : _clockId(Registry::getInstance().getClock().create(false)), _isFirstEnemyCreated(false)
             {
             }
 
@@ -165,27 +165,27 @@ namespace Types {
 
             void removeFirstEnemy()
             {
-                if (_isFistWaveStarted == false) {
-                    _isFistWaveStarted = true;
+                if (_isFirstEnemyCreated == false) {
+                    _isFirstEnemyCreated = true;
                 }
                 _remainingEnemies.erase(_remainingEnemies.begin());
             }
 
-            void setFirstWaveStarted(bool value)
+            void setFirstEnemyCreated(bool value)
             {
-                _isFistWaveStarted = value;
+                _isFirstEnemyCreated = value;
             }
 
-            bool isFirstWaveStarted() const
+            bool isFirstEnemyCreated() const
             {
-                return _isFistWaveStarted;
+                return _isFirstEnemyCreated;
             }
 
         private:
             std::vector<std::pair<nlohmann::json, std::size_t>> _remainingEnemies;
             unsigned int _waveId;
             std::size_t _clockId;
-            bool _isFistWaveStarted;
+            bool _isFirstEnemyCreated;
     };
 
     struct Enemy {

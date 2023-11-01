@@ -13,8 +13,6 @@
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
 
-#include <iostream>
-
 #ifdef CLIENT
     #include "CustomTypes.hpp"
     #include "NitworkClient.hpp"
@@ -120,7 +118,6 @@ namespace Systems {
         Registry &registry          = Registry::getInstance();
         std::lock_guard<std::mutex> lock(registry.mutex);
 
-        std::cout << waveInfos.getWaveId() << std::endl;
         nlohmann::json enemiesData = Json::getInstance().getJsonObjectById<std::size_t>(
             JsonType::WAVE,
             waveInfos.getWaveId(),
@@ -142,16 +139,21 @@ namespace Systems {
     {
         Types::WaveInfos &waveInfos = Types::WaveInfos::getInstance();
 
+        // If no enemy remaining, no need to continue
         if (waveInfos.isEnemyRemaining() == false) {
             return;
         }
-        if (waveInfos.isFirstWaveStarted() == true && Types::Enemy::isEnemyAlive() == false) {
+        // Handle the end of the wave
+        if (waveInfos.isFirstEnemyCreated() == true && Types::Enemy::isEnemyAlive() == false) {
             Logger::fatal("Wave ended");
-            exit(0);
+            exit(0); // For now to test many waves
         }
+        // Handle the creation of the enemies
         auto &enemy = waveInfos.getRemainingEnemies().front();
-        if (Registry::getInstance().getClock().elapsedMillisecondsSince(waveInfos.getClockId()) <
-            enemy.second) {
+        if (waveInfos.isFirstEnemyCreated() == false)
+        {
+            waveInfos.setFirstEnemyCreated(true);
+        } else if (Registry::getInstance().getClock().elapsedMillisecondsSince(waveInfos.getClockId()) < enemy.second) {
             return;
         }
         Registry::getInstance().getClock().restart(waveInfos.getClockId());
