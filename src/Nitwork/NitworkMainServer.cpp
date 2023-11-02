@@ -292,8 +292,7 @@ namespace Nitwork {
         boost::asio::ip::tcp::resolver::iterator iter = resolver.resolve(query);
         boost::asio::ip::tcp::resolver::iterator end;
 
-        while (iter != end)
-        {
+        while (iter != end) {
             boost::asio::ip::tcp::endpoint ep = *iter;
             if (ep.address().is_v4()) {
                 ips.emplace_back(ep.address().to_string());

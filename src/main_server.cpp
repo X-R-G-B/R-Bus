@@ -21,7 +21,7 @@ static void signalHandler(int signum)
 
 static void displayAvailableIps()
 {
-    auto ips     = Nitwork::NitworkMainServer::getInstance().getAvailableIps();
+    auto ips = Nitwork::NitworkMainServer::getInstance().getAvailableIps();
 
     Logger::info("Available IPs:");
     for (const auto &ip : ips) {
