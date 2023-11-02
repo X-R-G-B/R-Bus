@@ -442,6 +442,7 @@ Table of Contents
     missile.
     
     This field must be of size 4 byte.
+    This field must be equal to `0`
 
     *** Missile Type
 
