@@ -62,7 +62,8 @@ void Wave::startNextWave()
 
 bool Wave::isWaveEnded() const
 {
-    if (Types::WaveInfos::getInstance().getWaitingForNextWave() == false || Types::Enemy::isEnemyAlive()) {
+    if (Types::WaveInfos::getInstance().getWaitingForNextWave() == false
+        || Types::WaveInfos::getInstance().isEnemyRemaining() == true || Types::Enemy::isEnemyAlive()) {
         return false;
     }
     return true;

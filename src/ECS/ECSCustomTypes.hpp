@@ -145,9 +145,9 @@ namespace Types {
                 return _waveId;
             }
 
-            void addEnemy(const nlohmann::json &data, std::size_t msBeforeNext)
+            void addEnemy(const nlohmann::json &data, std::size_t msBeforeSpwan)
             {
-                _remainingEnemies.emplace_back(data, msBeforeNext);
+                _remainingEnemies.emplace_back(data, msBeforeSpwan);
             }
 
             const std::vector<std::pair<nlohmann::json, std::size_t>> &getRemainingEnemies() const

@@ -10,8 +10,6 @@
     #include "Raylib.hpp"
 #endif
 
-#include <iostream>
-
 unsigned int Types::Enemy::_enemyNb = 0;
 std::mutex Types::Enemy::_mutex;
 
@@ -121,7 +119,6 @@ namespace Types {
                     break;
                 }
             }
-            std::cout << "------------------ ADDING TEXT ------------------" << std::endl;
         } else {
             unsigned int previousWave = getWaveId();
             const std::string text    = "Wave " + std::to_string(previousWave) + " survived";
@@ -135,7 +132,6 @@ namespace Types {
             Registry::getInstance().addEntity();
             Raylib::Text test = Raylib::Text(text, {20, 10}, fontSize, Raylib::WHITE, textKeyword);
             Registry::getInstance().getComponents<Raylib::Text>().insertBack(test);
-            std::cout << "------------------ ADDING TEXT ------------------" << std::endl;
         }
 #endif
         _waitingForNextWave = value;

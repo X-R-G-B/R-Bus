@@ -130,11 +130,12 @@ namespace Systems {
         std::vector<nlohmann::json> enemies =
             Json::getInstance().getDataFromJson<std::vector<nlohmann::json>>(enemiesData, "enemies");
         for (const auto &enemy : enemies) {
-            if (Json::isDataExist(enemy, "position") && Json::isDataExist(enemy, "id")
-                && Json::isDataExist(enemy, "msBeforeNext")) {
-                waveInfos.addEnemy(
-                    enemy,
-                    Json::getInstance().getDataFromJson<std::size_t>(enemy, "msBeforeNext"));
+            if (Json::isDataExist(enemy, "position") && Json::isDataExist(enemy, "id")) {
+                std::size_t msBeforeSpawn = 0;
+                if (Json::isDataExist(enemy, "msBeforeSpawn")) {
+                    msBeforeSpawn = Json::getInstance().getDataFromJson<std::size_t>(enemy, "msBeforeSpawn");
+                }
+                waveInfos.addEnemy(enemy, msBeforeSpawn);
             }
         }
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
@@ -145,7 +146,8 @@ namespace Systems {
         Types::WaveInfos &waveInfos = Types::WaveInfos::getInstance();
 
         // Handle the end of the wave
-        if (waveInfos.isFirstEnemyCreated() == true && Types::Enemy::isEnemyAlive() == false) {
+        if (waveInfos.isFirstEnemyCreated() == true && Types::Enemy::isEnemyAlive() == false
+            && waveInfos.isEnemyRemaining() == false) {
             waveInfos.prepareNextWave();
             return;
         }
