@@ -6,7 +6,6 @@
 */
 
 #include "MenuSystems.hpp"
-#include <iostream>
 #include "CustomTypes.hpp"
 #include "Maths.hpp"
 #include "Menu.hpp"
