@@ -82,7 +82,6 @@ namespace Nitwork {
              */
             void addLobby(const struct lobby_s &lobby);
 
-
             /**
              * @brief Set the ip of the MainServer
              * @param ip The ip of the MainServer
