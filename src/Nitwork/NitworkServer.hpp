@@ -105,7 +105,6 @@ namespace Nitwork {
             /**
              * @brief Add a msg packet that contain the new bullet msg to the clients
              * @param msg The infos of the bullet that will be created
-             * @param senderEndpoint The endpoint of the client that sent the msg of hie new bullet
              */
             void broadcastNewBulletMsg(const struct msgNewBullet_s &msg);
 
