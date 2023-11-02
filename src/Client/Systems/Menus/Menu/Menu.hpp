@@ -62,8 +62,8 @@ namespace Menu {
              * Menu::Callback::defaultCallBack.
              */
             std::size_t initMenuEntity(
-                nlohmann::json &elem,
-                std::function<void()> callback = Menu::Callback::defaultCallBack);
+                nlohmann::json &elem);
+            void initMenuSceneEntity(nlohmann::json sceneMenuData);
 
         private:
             MenuBuilder()  = default;

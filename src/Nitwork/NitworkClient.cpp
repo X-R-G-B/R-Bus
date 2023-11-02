@@ -125,6 +125,7 @@ namespace Nitwork {
             setMainEndpoint(ip, port);
             addConnectMainServerMsg();
         } catch (const std::exception &e) {
+            Logger::error("Failed to connect to main server: " + std::string(e.what()));
             return false;
         }
         return true;

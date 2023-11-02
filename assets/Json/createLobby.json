@@ -1,10 +1,11 @@
 {
-  "createLobbyMenu": {
-    "goBack": {
+  "createLobbyMenu": [
+    {
       "type": "button",
       "spritePath": "assets/Menu/button.png",
       "width": 1600,
       "height": 1000,
+      "callback": "goToSelectLobby",
       "rect": {
         "x": 0.0,
         "y": 0.0,
@@ -48,7 +49,7 @@
         }
       ]
     },
-    "goBackText": {
+    {
       "type": "text",
       "text": "Go Back",
       "color": "red",
@@ -58,7 +59,7 @@
         "y": 875
       }
     },
-    "name-text" : {
+    {
       "type": "text",
       "color": "red",
       "size": 2,
@@ -68,7 +69,7 @@
         "y": 1700
       }
     },
-    "name": {
+    {
       "name": "name",
       "type": "input",
       "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
@@ -126,7 +127,7 @@
         }
       ]
     },
-    "maxNb-text" : {
+    {
       "type": "text",
       "color": "red",
       "size": 2,
@@ -136,7 +137,7 @@
         "y": 3700
       }
     },
-    "maxNb": {
+    {
       "name": "maxNb",
       "type": "input",
       "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
@@ -194,7 +195,7 @@
         }
       ]
     },
-    "createLobby-text" : {
+    {
       "type": "text",
       "color": "red",
       "size": 3,
@@ -204,7 +205,7 @@
         "y": 6500
       }
     },
-    "gametype_normal-text" : {
+    {
       "type": "text",
       "color": "white",
       "size": 2,
@@ -214,9 +215,10 @@
         "y": 7600
       }
     },
-    "gametype_normal": {
+    {
       "type": "button",
       "spritePath": "assets/Menu/button.png",
+      "callback": "onButtonCreateLobbyNormalClicked",
       "width": 2500,
       "height" : 1250,
       "rect": {
@@ -275,5 +277,5 @@
         }
       ]
     }
-  }
+  ]
 }

@@ -30,11 +30,6 @@ namespace Systems::SelectLobbySystems {
     {
     }
 
-    void onButtonGotoCreateLobbyClicked()
-    {
-        Scene::SceneManager::getInstance().changeScene(Scene::Scene::CREATE_LOBBY);
-    }
-
     void initSelectLoby(std::size_t managerId, std::size_t systemId)
     {
         if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::SELECT_LOBBY) {
@@ -42,38 +37,8 @@ namespace Systems::SelectLobbySystems {
             return;
         }
         try {
-            nlohmann::json bigBox =
-                Json::getInstance().getDataByVector({"lobbyMenu", "bigBox"}, JsonType::SELECT_LOBBY);
-            nlohmann::json createLobbyNormalButton = Json::getInstance().getDataByVector(
-                {"lobbyMenu", "gotoCreateLobby"},
-                JsonType::SELECT_LOBBY);
-            nlohmann::json joinLobbyButton =
-                Json::getInstance().getDataByVector({"lobbyMenu", "joinLobby"}, JsonType::SELECT_LOBBY);
-            nlohmann::json goBackPage =
-                Json::getInstance().getDataByVector({"lobbyMenu", "goBackPage"}, JsonType::SELECT_LOBBY);
-            nlohmann::json goNextPage =
-                Json::getInstance().getDataByVector({"lobbyMenu", "goNextPage"}, JsonType::SELECT_LOBBY);
-            nlohmann::json backText =
-                Json::getInstance().getDataByVector({"lobbyMenu", "backText"}, JsonType::SELECT_LOBBY);
-            nlohmann::json nextText =
-                Json::getInstance().getDataByVector({"lobbyMenu", "nextText"}, JsonType::SELECT_LOBBY);
-            nlohmann::json createText =
-                Json::getInstance().getDataByVector({"lobbyMenu", "createText"}, JsonType::SELECT_LOBBY);
-            nlohmann::json joinText =
-                Json::getInstance().getDataByVector({"lobbyMenu", "connectText"}, JsonType::SELECT_LOBBY);
-            Menu::MenuBuilder::getInstance().initMenuEntity(
-                joinLobbyButton,
-                Menu::Callback::connectLobbySelected);
-            Menu::MenuBuilder::getInstance().initMenuEntity(backText);
-            Menu::MenuBuilder::getInstance().initMenuEntity(nextText);
-            Menu::MenuBuilder::getInstance().initMenuEntity(createText);
-            Menu::MenuBuilder::getInstance().initMenuEntity(joinText),
-                Menu::MenuBuilder::getInstance().initMenuEntity(goBackPage, Menu::Callback::goBackPage);
-            Menu::MenuBuilder::getInstance().initMenuEntity(goNextPage, Menu::Callback::goNextPage);
-            Menu::MenuBuilder::getInstance().initMenuEntity(
-                createLobbyNormalButton,
-                onButtonGotoCreateLobbyClicked);
-            Menu::MenuBuilder::getInstance().initMenuEntity(bigBox);
+            nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>("lobbyMenu", JsonType::SELECT_LOBBY);
+            ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(Json::getInstance().getDatasFromList(jsonData));
         } catch (const std::exception &err) {
             Logger::error(
                 "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
@@ -109,8 +74,8 @@ namespace Systems::SelectLobbySystems {
 
         try {
             for (std::size_t i = 0; i < 5; i++) {
-                nlohmann::json lobbyBox =
-                    Json::getInstance().getDataByVector({"lobbyMenu", "lobbyBox"}, JsonType::SELECT_LOBBY);
+                nlohmann::json lobbyBox = Json::getInstance().getDataByJsonType<nlohmann::json>("inputBoxes", JsonType::SELECT_LOBBY);
+
                 std::size_t id = ::Menu::MenuBuilder::getInstance().initMenuEntity(lobbyBox);
                 if (arrPosition.exist(id)) {
                     arrPosition[id].y += offset * i;

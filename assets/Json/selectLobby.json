@@ -1,6 +1,6 @@
 {
-    "lobbyMenu": {
-        "bigBox": {
+    "lobbyMenu": [
+        {
             "type": "sprite",
             "spritePath": "assets/Menu/bix-box.png",
             "width": 8000,
@@ -16,125 +16,10 @@
                 "height": 1518.0
             }
         },
-        "lobbyBox": {
-            "name": "name",
-            "type": "input",
-            "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
-            "spritePath": "assets/Menu/input-box.png",
-            "text": "",
-            "color": "red",
-            "textSize": 2,
-            "maxChar": 30,
-            "width": 6000,
-            "height": 800,
-            "textPosition": {
-                "x": 3100,
-                "y": 1950
-            },
-            "position" : {
-                "x": 2000,
-                "y": 1700
-            },
-            "rect": {
-                "x": 0.0,
-                "y": 0.0,
-                "width": 1670.0,
-                "height": 278.0
-            },
-            "collisionRect": {
-                "width": 6000,
-                "height": 800
-            },
-            "animRect": [
-                {
-                    "type": "hover",
-                    "time": 80,
-                    "noIncr": true,
-                    "list": [
-                        {
-                            "x" : 1697.0,
-                            "y": 31.0,
-                            "width": 1618.0,
-                            "height": 221.0
-                        }
-                    ]
-                },
-                {
-                    "type": "selected",
-                    "time": 80,
-                    "noIncr": true,
-                    "list": [
-                        {
-                            "x" : 3348.0,
-                            "y": 14.0,
-                            "width": 1651.0,
-                            "height": 252.0
-                        }
-                    ]
-                }
-            ]
-        },
-        "maxNb": {
-            "name": "maxNb",
-            "type": "input",
-            "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
-            "spritePath": "assets/Menu/input-box.png",
-            "text": "2",
-            "color": "red",
-            "textSize": 3,
-            "maxChar": 2,
-            "width": 6000,
-            "height": 800,
-            "textPosition": {
-                "x": 3050,
-                "y": 3180
-            },
-            "position" : {
-                "x": 2000,
-                "y": 3000
-            },
-            "rect": {
-                "x": 0.0,
-                "y": 0.0,
-                "width": 1670.0,
-                "height": 278.0
-            },
-            "collisionRect": {
-                "width": 4500,
-                "height": 800
-            },
-            "animRect": [
-                {
-                    "type": "hover",
-                    "time": 80,
-                    "noIncr": true,
-                    "list": [
-                        {
-                            "x" : 1697.0,
-                            "y": 31.0,
-                            "width": 1618.0,
-                            "height": 221.0
-                        }
-                    ]
-                },
-                {
-                    "type": "selected",
-                    "time": 80,
-                    "noIncr": true,
-                    "list": [
-                        {
-                            "x" : 3348.0,
-                            "y": 14.0,
-                            "width": 1651.0,
-                            "height": 252.0
-                        }
-                    ]
-                }
-            ]
-        },
-        "gotoCreateLobby": {
+        {
             "type": "button",
             "spritePath": "assets/Menu/button.png",
+            "callback": "onButtonGoToCreateLobbyClicked",
             "width": 1000,
             "height": 800,
             "rect": {
@@ -180,9 +65,10 @@
                 }
             ]
         },
-        "joinLobby": {
+        {
             "type": "button",
             "spritePath": "assets/Menu/button.png",
+            "callback": "connectLobbySelected",
             "width": 1000,
             "height": 800,
             "rect": {
@@ -228,11 +114,12 @@
                 }
             ]
         },
-        "goBackPage": {
+        {
             "type": "button",
             "spritePath": "assets/Menu/button.png",
             "width": 1000,
             "height": 800,
+            "callback": "goBackPage",
             "rect": {
                 "x": 0.0,
                 "y": 0.0,
@@ -276,11 +163,12 @@
                 }
             ]
         },
-        "goNextPage": {
+        {
             "type": "button",
             "spritePath": "assets/Menu/button.png",
             "width": 1000,
             "height": 800,
+            "callback": "goNextPage",
             "rect": {
                 "x": 0.0,
                 "y": 0.0,
@@ -324,7 +212,7 @@
                 }
             ]
         },
-        "backText" : {
+        {
             "type": "text",
             "color": "red",
             "size": 2,
@@ -334,7 +222,7 @@
                 "y": 7250
             }
         },
-        "createText" : {
+        {
             "type": "text",
             "color": "red",
             "size": 1.5,
@@ -344,7 +232,7 @@
                 "y": 7300
             }
         },
-        "connectText" : {
+        {
             "type": "text",
             "color": "red",
             "size": 1.5,
@@ -354,7 +242,7 @@
                 "y": 7300
             }
         },
-        "nextText" : {
+        {
             "type": "text",
             "color": "red",
             "size": 2,
@@ -364,5 +252,63 @@
                 "y": 7250
             }
         }
+    ],
+    "inputBoxes" : {
+        "name": "name",
+        "type": "input",
+        "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
+        "spritePath": "assets/Menu/input-box.png",
+        "text": "",
+        "color": "red",
+        "textSize": 2,
+        "maxChar": 30,
+        "width": 6000,
+        "height": 800,
+        "textPosition": {
+            "x": 3100,
+            "y": 1950
+        },
+        "position" : {
+            "x": 2000,
+            "y": 1700
+        },
+        "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1670.0,
+            "height": 278.0
+        },
+        "collisionRect": {
+            "width": 6000,
+            "height": 800
+        },
+        "animRect": [
+            {
+                "type": "hover",
+                "time": 80,
+                "noIncr": true,
+                "list": [
+                    {
+                        "x" : 1697.0,
+                        "y": 31.0,
+                        "width": 1618.0,
+                        "height": 221.0
+                    }
+                ]
+            },
+            {
+                "type": "selected",
+                "time": 80,
+                "noIncr": true,
+                "list": [
+                    {
+                        "x" : 3348.0,
+                        "y": 14.0,
+                        "width": 1651.0,
+                        "height": 252.0
+                    }
+                ]
+            }
+        ]
     }
 }

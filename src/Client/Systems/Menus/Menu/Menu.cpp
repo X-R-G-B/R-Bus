@@ -199,14 +199,34 @@ namespace Menu {
         }
     }
 
-    std::size_t MenuBuilder::initMenuEntity(nlohmann::json &elem, std::function<void()> callback)
+    // must be an element only no array allowed
+    std::size_t MenuBuilder::initMenuEntity(nlohmann::json &elem)
     {
+        if (elem.is_array()) {
+            throw std::runtime_error("Error while loading entity : data is array");
+        }
+        std::function<void()> callback = Callback::callbacks.at(elem["callback"].get<Callback::CallbackType>());
+
         switch (Json::getInstance().getDataFromJson<ObjectType>(elem, "type")) {
             case ObjectType::BUTTON: return (initButton(elem, callback));
             case ObjectType::TEXT: return (initText(elem));
             case ObjectType::INPUT_BOX: return (initInputBox(elem));
             case ObjectType::SPRITE: return (initSpriteFromJson(elem));
             default: Logger::error("Object type is undefined, check your json data"); return (0);
+        }
+    }
+
+    // Must be an array json data
+    void MenuBuilder::initMenuSceneEntity(nlohmann::json sceneMenuData)
+    {
+        for (auto it : sceneMenuData) {
+            try {
+                initMenuEntity(it);
+            } catch (std::runtime_error &err) {
+                Logger::error(
+                    "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
+                    throw std::runtime_error("Cannot load scene menu correctly.");
+            }
         }
     }
 

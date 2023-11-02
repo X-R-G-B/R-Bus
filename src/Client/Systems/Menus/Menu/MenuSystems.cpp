@@ -188,29 +188,11 @@ namespace Systems {
                 return;
             }
             try {
-                nlohmann::json connectButton =
-                    Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU);
-                nlohmann::json inputBoxIp =
-                    Json::getInstance().getDataByVector({"menu", "ip"}, JsonType::MENU);
-                nlohmann::json inputBoxHost =
-                    Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
-                nlohmann::json ipText =
-                    Json::getInstance().getDataByVector({"menu", "ip-text"}, JsonType::MENU);
-                nlohmann::json hostText =
-                    Json::getInstance().getDataByVector({"menu", "host-text"}, JsonType::MENU);
-                nlohmann::json connectText =
-                    Json::getInstance().getDataByVector({"menu", "connect-text"}, JsonType::MENU);
-                ::Menu::MenuBuilder::getInstance().initMenuEntity(
-                    connectButton,
-                    ::Menu::Callback::initConnection);
-                ::Menu::MenuBuilder::getInstance().initMenuEntity(inputBoxHost);
-                ::Menu::MenuBuilder::getInstance().initMenuEntity(inputBoxIp);
-                ::Menu::MenuBuilder::getInstance().initMenuEntity(ipText);
-                ::Menu::MenuBuilder::getInstance().initMenuEntity(hostText);
-                ::Menu::MenuBuilder::getInstance().initMenuEntity(connectText);
+                nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>("menu", JsonType::MENU);
+                ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(Json::getInstance().getDatasFromList(jsonData));
+
             } catch (std::runtime_error &err) {
-                Logger::error(
-                    "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
+                Logger::info(err.what());
             }
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }

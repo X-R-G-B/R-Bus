@@ -1,7 +1,8 @@
 {
-    "menu": {
-        "connect": {
+    "menu": [
+        {
             "type": "button",
+            "callback": "initConnection",
             "spritePath": "assets/Menu/button.png",
             "width": 3000,
             "height" : 1500,
@@ -48,7 +49,7 @@
                 }
             ]
         },
-        "ip": {
+        {
             "name": "ip",
             "type": "input",
             "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
@@ -106,7 +107,7 @@
                 }
             ]
         },
-        "host": {
+        {
             "name": "port",
             "type": "input",
             "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
@@ -164,7 +165,7 @@
                 }
             ]
         },
-        "ip-text" : {
+        {
             "type": "text",
             "color": "red",
             "size": 2,
@@ -174,7 +175,7 @@
                 "y": 2500
             }
         },
-        "host-text" : {
+        {
             "type": "text",
             "color": "red",
             "size": 2,
@@ -184,7 +185,7 @@
                 "y": 4400
             }
         },
-        "connect-text" : {
+        {
             "type": "text",
             "color": "red",
             "size": 3,
@@ -194,5 +195,5 @@
                 "y": 7000
             }
         }
-    }
+    ]
 }
