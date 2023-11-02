@@ -9,8 +9,8 @@
 #include "CustomTypes.hpp"
 #include "Logger.hpp"
 #include "NitworkClient.hpp"
-#include "SceneManager.hpp"
 #include "Raylib.hpp"
+#include "SceneManager.hpp"
 #include "SelectLobbySystems.hpp"
 
 namespace Menu {
@@ -49,14 +49,18 @@ namespace Menu {
         void connectLobbySelected()
         {
             auto arrInputBox = Registry::getInstance().getComponents<Types::InputBox>();
-            auto arrLobbyStatus = Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
-            auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox), typeid(::Systems::SelectLobbySystems::LobbyStatus)});
+            auto arrLobbyStatus =
+                Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
+            auto ids = Registry::getInstance().getEntitiesByComponents(
+                {typeid(Types::InputBox), typeid(::Systems::SelectLobbySystems::LobbyStatus)});
 
             for (auto id : ids) {
                 if (arrInputBox[id].selected) {
                     if (arrLobbyStatus[id].port > 0 && arrLobbyStatus[id].ip != "") {
                         Scene::SceneManager::getInstance().changeScene(Scene::Scene::MAIN_GAME);
-                        Nitwork::NitworkClient::getInstance().connectLobby(arrLobbyStatus[id].ip, arrLobbyStatus[id].port);
+                        Nitwork::NitworkClient::getInstance().connectLobby(
+                            arrLobbyStatus[id].ip,
+                            arrLobbyStatus[id].port);
                     }
                 }
             }
@@ -64,12 +68,14 @@ namespace Menu {
 
         static void resetSelectedLobby()
         {
-            auto arrLobbyStatus = Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
+            auto arrLobbyStatus =
+                Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
             auto arrText = Registry::getInstance().getComponents<Raylib::Text>();
-            auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text), typeid(::Systems::SelectLobbySystems::LobbyStatus)});
+            auto ids     = Registry::getInstance().getEntitiesByComponents(
+                {typeid(Raylib::Text), typeid(::Systems::SelectLobbySystems::LobbyStatus)});
 
             for (auto &id : ids) {
-                arrLobbyStatus[id].ip = "";
+                arrLobbyStatus[id].ip   = "";
                 arrLobbyStatus[id].port = -1;
                 arrText[id].setCurrentText(std::string(""));
             }
@@ -86,7 +92,8 @@ namespace Menu {
 
         void goNextPage()
         {
-            if (::Systems::SelectLobbySystems::LobbyStatus::pageNbr >= ::Systems::SelectLobbySystems::LobbyStatus::pageMax) {
+            if (::Systems::SelectLobbySystems::LobbyStatus::pageNbr
+                >= ::Systems::SelectLobbySystems::LobbyStatus::pageMax) {
                 return;
             }
             resetSelectedLobby();

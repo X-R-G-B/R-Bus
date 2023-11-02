@@ -37,13 +37,13 @@ namespace Types {
     NLOHMANN_JSON_SERIALIZE_ENUM(
         RectListType,
         {
-            {UNDEFINED,    nullptr  },
-            {DEFAULT_RECT, "default"},
-            {MOVE,         "move"   },
-            {ATTACK,       "attack" },
-            {DEAD,         "dead"   },
-            {HOVER,        "hover"  },
-            {SELECTED,        "selected"  }
+            {UNDEFINED,    nullptr   },
+            {DEFAULT_RECT, "default" },
+            {MOVE,         "move"    },
+            {ATTACK,       "attack"  },
+            {DEAD,         "dead"    },
+            {HOVER,        "hover"   },
+            {SELECTED,     "selected"}
     });
 
     class AnimRect {

@@ -20,7 +20,6 @@ namespace Menu {
 
     constexpr float maxPercent = 100.0F;
 
-
     static std::size_t initSpriteFromJson(nlohmann::json &elem)
     {
         std::size_t id = Registry::getInstance().addEntity();
@@ -31,9 +30,12 @@ namespace Menu {
             FRONTLAYER,
             static_cast<std::size_t>(FRONT));
         if (Json::isDataExist(elem, "rect")) {
-            Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect"))};
+            Types::Rect rect = {
+                Types::Rect(Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect"))};
             if (Json::isDataExist(elem, "animRect")) {
-                Types::AnimRect animRect(rect, Json::getInstance().getDataFromJson<nlohmann::json>(elem, "animRect"));
+                Types::AnimRect animRect(
+                    rect,
+                    Json::getInstance().getDataFromJson<nlohmann::json>(elem, "animRect"));
                 Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
             }
             Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
@@ -54,9 +56,12 @@ namespace Menu {
             FRONTLAYER,
             static_cast<std::size_t>(FRONT));
         if (Json::isDataExist(elem, "rect")) {
-            Types::Rect rect = {Types::Rect(Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect"))};
+            Types::Rect rect = {
+                Types::Rect(Json::getInstance().getDataFromJson<Types::Rect>(elem, "rect"))};
             if (Json::isDataExist(elem, "animRect")) {
-                Types::AnimRect animRect(rect, Json::getInstance().getDataFromJson<nlohmann::json>(elem, "animRect"));
+                Types::AnimRect animRect(
+                    rect,
+                    Json::getInstance().getDataFromJson<nlohmann::json>(elem, "animRect"));
                 Registry::getInstance().getComponents<Types::AnimRect>().insertBack(animRect);
             }
             Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
@@ -84,8 +89,11 @@ namespace Menu {
         Raylib::Text textComp(text);
 
         if (Json::isDataExist(elem, "textPosition")) {
-            Types::Position tmpPos(Json::getInstance().getDataFromJson<Types::Position>(elem, "textPosition"));
-            Raylib::Vector2 textPos(Maths::intToFloatConservingDecimals(tmpPos.x), Maths::intToFloatConservingDecimals(tmpPos.y));
+            Types::Position tmpPos(
+                Json::getInstance().getDataFromJson<Types::Position>(elem, "textPosition"));
+            Raylib::Vector2 textPos(
+                Maths::intToFloatConservingDecimals(tmpPos.x),
+                Maths::intToFloatConservingDecimals(tmpPos.y));
             textComp.setPosition(textPos);
         }
         Registry::getInstance().getComponents<Raylib::Text>().insertBack(textComp);
@@ -156,7 +164,7 @@ namespace Menu {
 
     static std::size_t initText(nlohmann::json &elem)
     {
-        std::size_t id = Registry::getInstance().addEntity();
+        std::size_t id   = Registry::getInstance().addEntity();
         std::string text = Json::isDataExist(elem, "text")
             ? Json::getInstance().getDataFromJson<std::string>(elem, "text")
             : "";
@@ -166,11 +174,11 @@ namespace Menu {
             Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
         }
         if (Json::isDataExist(elem, "color")) {
-            auto search =
-                Types::colorMatchStrings.find(Json::getInstance().getDataFromJson<std::string>(elem, "color"));
-            Raylib::Color color = search != Types::colorMatchStrings.end()
-                ? Types::colorMatchStrings.at(Json::getInstance().getDataFromJson<std::string>(elem, "color"))
-                : Raylib::White;
+            auto search = Types::colorMatchStrings.find(
+                Json::getInstance().getDataFromJson<std::string>(elem, "color"));
+            Raylib::Color color = search != Types::colorMatchStrings.end() ? Types::colorMatchStrings.at(
+                                      Json::getInstance().getDataFromJson<std::string>(elem, "color"))
+                                                                           : Raylib::White;
             Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
         }
         if (Json::isDataExist(elem, "position")) {

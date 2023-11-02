@@ -18,7 +18,16 @@ namespace Scene {
 
     enum class Scene { MENU, MAIN_GAME, SELECT_LOBBY, CREATE_LOBBY, SCENE_MAX };
 
-    enum class SystemManagers { GAME, EVENTS, DISPLAY, PARALLAX, NETWORK, MENU, NETWORK_MENU, NETWORK_CREATE_LOBBY };
+    enum class SystemManagers {
+        GAME,
+        EVENTS,
+        DISPLAY,
+        PARALLAX,
+        NETWORK,
+        MENU,
+        NETWORK_MENU,
+        NETWORK_CREATE_LOBBY
+    };
 
     class SceneManager {
         public:
