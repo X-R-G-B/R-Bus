@@ -73,11 +73,13 @@ namespace Systems {
         {
             Registry::components<Types::InputBox> arrInputBox =
                 Registry::getInstance().getComponents<Types::InputBox>();
+            Registry::components<::Systems::SelectLobbySystems::LobbyStatus> arrLobbyStatus =
+                Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
                 {typeid(Types::InputBox), typeid(Raylib::Text)});
 
             for (auto id : ids) {
-                if (arrInputBox[id].selected == true) {
+                if (arrInputBox[id].selected == true && !arrLobbyStatus.exist(id)) {
                     insertText(id, arrInputBox);
                 }
             }
@@ -218,6 +220,23 @@ namespace Systems {
             }
         }
 
+        // this system is not in the good file for the moment
+        void initHud(std::size_t managerId, std::size_t systemId)
+        {
+            if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::MAIN_GAME) {
+                return;
+            }
+            try {
+                nlohmann::json jsonData =
+                    Json::getInstance().getDataByJsonType<nlohmann::json>("gameHud", JsonType::HUD);
+                ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
+                    Json::getInstance().getDatasFromList(jsonData));
+            } catch (std::runtime_error &err) {
+                Logger::info(err.what());
+            }
+            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+        }
+
         std::vector<std::function<void(std::size_t, std::size_t)>> getMenuSystems()
         {
             return {
@@ -228,6 +247,7 @@ namespace Systems {
                 checkTextInput,
                 checkInputDeletion,
                 Systems::moveEntities,
+                initHud,
                 quitScene};
         }
     } // namespace Menu

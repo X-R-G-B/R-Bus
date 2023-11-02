@@ -178,7 +178,7 @@ namespace Nitwork {
         int ownerPort)
     {
 #ifdef _WIN32
-        std::string winName = "\"" + name + "\"";
+        std::string winName = "'" + name + "'";
         std::basic_ostringstream<TCHAR> cmdline;
         cmdline << _T(ECS::ResourcesManager::convertPath(
                           "./r-type_server.exe",

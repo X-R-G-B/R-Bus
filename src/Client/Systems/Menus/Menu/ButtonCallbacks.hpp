@@ -22,7 +22,8 @@ namespace Menu {
             GO_BACK,
             GO_NEXT,
             GO_SELECT_LOBBY,
-            CREATE_NORMAL
+            CREATE_NORMAL,
+            SEND_READY
         };
 
         NLOHMANN_JSON_SERIALIZE_ENUM(
@@ -35,7 +36,8 @@ namespace Menu {
                 {GO_BACK,          "goBackPage"                      },
                 {GO_NEXT,          "goNextPage"                      },
                 {GO_SELECT_LOBBY,  "goToSelectLobby"                 },
-                {CREATE_NORMAL,    "onButtonCreateLobbyNormalClicked"}
+                {CREATE_NORMAL,    "onButtonCreateLobbyNormalClicked"},
+                {SEND_READY,    "sendReadyPacket"}
         });
 
         void initConnection();
@@ -54,6 +56,8 @@ namespace Menu {
 
         void onButtonCreateLobbyNormalClicked();
 
+        void sendReadyPacket();
+
         const std::unordered_map<CallbackType, std::function<void()>> callbacks = {
             {CallbackType::DEFAULT_CALLBACK, &defaultCallBack                 },
             {CallbackType::INIT_CONNECTION,  &initConnection                  },
@@ -62,7 +66,8 @@ namespace Menu {
             {CallbackType::GO_SELECT_LOBBY,  &gotToSelectLobby                },
             {CallbackType::GO_BACK,          &goBackPage                      },
             {CallbackType::GO_NEXT,          &goNextPage                      },
-            {CallbackType::CREATE_NORMAL,    &onButtonCreateLobbyNormalClicked}
+            {CallbackType::CREATE_NORMAL,    &onButtonCreateLobbyNormalClicked},
+            {CallbackType::SEND_READY,    &sendReadyPacket}
         };
 
     } // namespace Callback

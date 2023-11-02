@@ -110,14 +110,6 @@ namespace Systems {
         return newPos;
     }
 
-    void sendReadyPacket(std::size_t managerId, std::size_t systemId)
-    {
-        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_R)) {
-            Nitwork::NitworkClient::getInstance().addReadyMsg();
-            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
-        }
-    }
-
     void playerShootBullet(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
@@ -219,6 +211,6 @@ namespace Systems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> EventsSystems::getEventSystems()
     {
-        return {playerMovement, changeScene, playerShootBullet, sendReadyPacket};
+        return {playerMovement, changeScene, playerShootBullet};
     }
 } // namespace Systems

@@ -72,8 +72,8 @@ namespace Systems {
             bulletPath,
             collisionRect.width,
             collisionRect.height,
-            FRONTLAYER,
-            static_cast<std::size_t>(FRONT));
+            DEFAULTLAYER,
+            0);
         Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(bulletDatas);
         Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
 

@@ -151,5 +151,21 @@ namespace Menu {
             resetSelectedLobby();
             ::Systems::SelectLobbySystems::LobbyStatus::pageNbr += 1;
         }
+
+        void sendReadyPacket()
+        {
+            auto idsButton = Registry::getInstance().getEntitiesByComponents({typeid(Types::Button)});
+            auto idsText = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text)});
+            auto arrText = Registry::getInstance().getComponents<Raylib::Text>();
+            
+            Nitwork::NitworkClient::getInstance().addReadyMsg();
+            for (auto &id : idsButton) {
+                Registry::getInstance().removeEntity(id);
+            }
+            for (auto &id : idsText) {
+                Logger::info("Je remove : " + std::to_string(id));
+                Registry::getInstance().removeEntity(id);
+            }
+        }
     } // namespace Callback
 } // namespace Menu
