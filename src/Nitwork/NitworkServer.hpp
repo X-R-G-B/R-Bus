@@ -103,8 +103,8 @@ namespace Nitwork {
                 const msgCreatePlayer_s &playerMsg);
 
             /**
-             * @brief Add a msg packet that contain the new bullet msg to the clients
-             * @param msg The infos of the bullet that will be created
+             * @brief Add a msg packet that contain the new missile msg to the clients
+             * @param msg The infos of the missile that will be created
              */
             void broadcastNewBulletMsg(const struct msgNewBullet_s &msg);
 
@@ -134,7 +134,7 @@ namespace Nitwork {
                 const struct msgCreatePlayer_s &playerMsg);
 
             /**
-             * @brief Add a msg packet that contain the new bullet msg to the clients
+             * @brief Add a msg packet that contain the new missile msg to the clients
              * @param id The id of the player that died
              */
             void addMissileDeathMsg(n_id_t id);
