@@ -282,4 +282,24 @@ namespace Nitwork {
     {
         _ip = ip;
     }
+
+    std::vector<std::string> NitworkMainServer::getAvailableIps() const
+    {
+        std::vector<std::string> ips;
+        boost::asio::io_context io_context;
+        boost::asio::ip::tcp::resolver resolver(io_context);
+        boost::asio::ip::tcp::resolver::query query(boost::asio::ip::host_name(), "");
+        boost::asio::ip::tcp::resolver::iterator iter = resolver.resolve(query);
+        boost::asio::ip::tcp::resolver::iterator end;
+
+        while (iter != end)
+        {
+            boost::asio::ip::tcp::endpoint ep = *iter;
+            if (ep.address().is_v4()) {
+                ips.emplace_back(ep.address().to_string());
+            }
+            ++iter;
+        }
+        return ips;
+    }
 } // namespace Nitwork

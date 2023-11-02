@@ -19,6 +19,16 @@ static void signalHandler(int signum)
     signal(SIGINT, SIG_DFL);
 }
 
+static void displayAvailableIps()
+{
+    auto ips     = Nitwork::NitworkMainServer::getInstance().getAvailableIps();
+
+    Logger::info("Available IPs:");
+    for (const auto &ip : ips) {
+        Logger::info("    " + ip);
+    }
+}
+
 int mainMainServer(const std::vector<std::string> &av)
 {
     Logger::info("Starting Main Server...");
@@ -27,6 +37,7 @@ int mainMainServer(const std::vector<std::string> &av)
     if (!Nitwork::NitworkMainServer::getInstance().startServer(port)) {
         return EXIT_EPITECH;
     }
+    displayAvailableIps();
     while (isRunning && Nitwork::NitworkMainServer::getInstance().isRunning()) { };
     Nitwork::NitworkMainServer::getInstance().stop();
     return EXIT_SUCCESS;

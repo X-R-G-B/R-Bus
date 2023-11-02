@@ -89,6 +89,12 @@ namespace Nitwork {
              */
             void setIpOfMainServer(const std::string &ip);
 
+            /**
+             * @brief Get the available ips
+             * @return the available ips
+             */
+            std::vector<std::string> getAvailableIps() const;
+
         private:
             /**
              * @brief Handle the init message
