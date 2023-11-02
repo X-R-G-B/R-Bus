@@ -905,6 +905,7 @@ Table of Contents
     *** Missile Health
     
     This field correspond to the health of the missile.
+
     This field must be of size 4 bytes.
 
     *** Missile Type
