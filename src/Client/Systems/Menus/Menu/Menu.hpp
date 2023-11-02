@@ -61,8 +61,7 @@ namespace Menu {
              * @param callback Optional callback function for the menu entity. Defaults to
              * Menu::Callback::defaultCallBack.
              */
-            std::size_t initMenuEntity(
-                nlohmann::json &elem);
+            std::size_t initMenuEntity(nlohmann::json &elem);
             void initMenuSceneEntity(nlohmann::json sceneMenuData);
 
         private:

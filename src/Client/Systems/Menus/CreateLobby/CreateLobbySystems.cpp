@@ -22,7 +22,6 @@
 namespace Systems {
     namespace CreateLobby {
 
-        
         void initCreateLobby(std::size_t managerId, std::size_t systemId)
         {
             if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::CREATE_LOBBY) {
@@ -30,8 +29,11 @@ namespace Systems {
                 return;
             }
             try {
-                nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>("createLobbyMenu", JsonType::CREATE_LOBBY);
-                ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(Json::getInstance().getDatasFromList(jsonData));
+                nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
+                    "createLobbyMenu",
+                    JsonType::CREATE_LOBBY);
+                ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
+                    Json::getInstance().getDatasFromList(jsonData));
             } catch (const std::exception &err) {
                 Logger::error(
                     "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
