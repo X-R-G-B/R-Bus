@@ -114,9 +114,9 @@ namespace Systems {
                 {typeid(Types::InputBox), typeid(Raylib::Text)});
             static auto clockId = Registry::getInstance().getClock().create();
 
-            for (auto id : ids) {
-                if (arrInputBox[id].selected && Raylib::isKeyDown(Raylib::KeyboardKey::KB_BACKSPACE)) {
-                    if (Registry::getInstance().getClock().elapsedMillisecondsSince(clockId) > delay) {
+            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_BACKSPACE) && Registry::getInstance().getClock().elapsedMillisecondsSince(clockId) > delay) {
+                for (auto id : ids) {
+                    if (arrInputBox[id].selected) {
                         Registry::getInstance().getClock().restart(clockId);
                         deleteInputBoxChar(id, arrInputBox);
                         return;

@@ -54,7 +54,7 @@
             "type": "input",
             "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
             "spritePath": "assets/Menu/input-box.png",
-            "text": "localhost",
+            "text": "",
             "color": "red",
             "textSize": 3,
             "maxChar": 16,
