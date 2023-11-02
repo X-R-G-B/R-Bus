@@ -212,6 +212,69 @@ namespace Systems {
         }
     }
 
+    static bool isGameWin()
+    {
+        Registry &registry = Registry::getInstance();
+        std::vector<std::size_t> ids =
+            registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::OtherPlayer)});
+
+        if (ids.empty()) {
+            return false;
+        }
+        return true;
+    }
+
+    static void modifEndGameText(const std::string &endGameMessage)
+    {
+        bool found                            = false;
+        const Raylib::Vector2 pos             = {0, 2};
+        constexpr std::size_t fontSize        = 2;
+        const std::string textKeywordWaveEnd  = "WaveText";
+        const std::string textKeyWordGameEnd  = "endGameText";
+
+        std::vector<std::size_t> ids =
+            Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text)});
+        auto &textArray            = Registry::getInstance().getComponents<Raylib::Text>();
+
+        for (auto &id : ids) {
+            if (textArray[id].getKeyword() == textKeyWordGameEnd) {
+                textArray[id].setText(endGameMessage);
+                found = true;
+            }
+            if (textArray[id].getKeyword() == textKeywordWaveEnd) {
+                Registry::getInstance().removeEntity(id);
+            }
+        }
+
+        if (found == false) {
+            Registry::getInstance().addEntity();
+            Raylib::Text endGameText =
+                Raylib::Text(endGameMessage, pos, fontSize, Raylib::WHITE, textKeyWordGameEnd);
+            Registry::getInstance().getComponents<Raylib::Text>().insertBack(endGameText);
+        }
+    }
+
+    void EventsSystems::handleEndGameEvent(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        constexpr std::size_t secondBeforeEnd = 5;
+        static std::size_t clockId = Registry::getInstance().getClock().create(false);
+        std::size_t elapsedSeconds = Registry::getInstance().getClock().elapsedSecondsSince(clockId);
+        std::string seconds        = std::to_string(secondBeforeEnd - elapsedSeconds);
+        std::string endGameMessage;
+
+        if (isGameWin() == true) {
+            endGameMessage = "You win! Redirecting to menu in " + seconds + " seconds";
+        } else {
+            endGameMessage = "You lose! Redirecting to menu in " + seconds + " seconds";
+        }
+
+        modifEndGameText(endGameMessage);
+
+        if (Registry::getInstance().getClock().elapsedSecondsSince(clockId) >= secondBeforeEnd) {
+            Scene::SceneManager::getInstance().changeScene(Scene::Scene::MENU);
+        }
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> EventsSystems::getEventSystems()
     {
         return {playerMovement, changeScene, playerShootBullet};

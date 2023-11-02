@@ -8,6 +8,7 @@
 #include "SceneManager.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
+#include "EventsSystems.hpp"
 
 namespace Systems {
     void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
@@ -272,9 +273,12 @@ namespace Systems {
         }
     }
 
-    void receiveEndGame(std::any &any, boost::asio::ip::udp::endpoint &endpoint)
+    void receiveEndGame(std::any& /*unused*/, boost::asio::ip::udp::endpoint& /*unused*/)
     {
-        Logger::info("End game received");
+        auto &director = SystemManagersDirector::getInstance();
+        std::lock_guard<std::mutex> lock(director.mutex);
+        director.getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::EVENTS))
+            .addSystem(EventsSystems::handleEndGameEvent);
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()

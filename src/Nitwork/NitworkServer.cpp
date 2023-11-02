@@ -5,6 +5,7 @@
 ** NitworkServer
 */
 
+#include <iostream>
 #include "NitworkServer.hpp"
 #include "ECSCustomTypes.hpp"
 #include "Logger.hpp"
