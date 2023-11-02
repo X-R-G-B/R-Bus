@@ -156,13 +156,13 @@ namespace Nitwork {
             }
             struct packetCreatePlayer_s packetMsgCreatePlayer = {
                 .header = {0, 0, 0, 0, 1, 0},
-                .action = {.magick = INIT},
+                .action = {.magick = NEW_PLAYER},
                 .msg    = {
                            .magick        = MAGICK_NEW_PLAYER,
                            .playerId      = allieId,
                            .pos           = {arrPos[*idIt].x, arrPos[*idIt].y},
                            .life          = arrHealth[*idIt],
-                           .isOtherPlayer = true}
+                           .isOtherPlayer = 1}
             };
             sendNewAllie(allieId, packetMsgCreatePlayer, endpoint, false);
         }
@@ -220,15 +220,15 @@ namespace Nitwork {
                         jsonInstance
                             .getDataByVector<int>({"player", "position", "y"}, JsonType::DEFAULT_PLAYER)},
                        .life = {jsonInstance.getDataByVector<int>({"player", "health"}, JsonType::DEFAULT_PLAYER)},
-                       .isOtherPlayer = false}
+                       .isOtherPlayer = 0}
         };
         addPlayerInitMessage(endpoint, packetMsgCreatePlayer.msg);
-        packetMsgCreatePlayer.msg.isOtherPlayer = true;
+        packetMsgCreatePlayer.msg.isOtherPlayer = 1;
         Systems::initPlayer(
             playerId,
             packetMsgCreatePlayer.msg.pos,
             packetMsgCreatePlayer.msg.life,
-            packetMsgCreatePlayer.msg.isOtherPlayer);
+            static_cast<bool>(packetMsgCreatePlayer.msg.isOtherPlayer));
         sendNewAllie(playerId, packetMsgCreatePlayer, endpoint);
         sendAlliesAlreadyPresent(endpoint, playerId);
     }
@@ -348,7 +348,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetCreatePlayer_s packetCreatePlayer = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = INIT},
+            .action = {.magick = NEW_PLAYER},
             .msg    = playerMsg
         };
         Packet packet(
