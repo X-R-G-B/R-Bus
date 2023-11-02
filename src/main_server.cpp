@@ -64,9 +64,14 @@ int main(int ac, const char **av)
 
     lock.unlock();
     while (isRunning && Nitwork::NitworkServer::getInstance().isRunning()) {
-        lock.lock();
-        director.getSystemManager(0).updateSystems();
-        lock.unlock();
+        try {
+            lock.lock();
+            director.getSystemManager(0).updateSystems();
+            lock.unlock();
+        } catch (const std::exception &e) {
+            Logger::fatal("UpdateSystems: " + std::string(e.what()));
+            break;
+        }
     }
     Nitwork::NitworkServer::getInstance().stop();
     return 0;

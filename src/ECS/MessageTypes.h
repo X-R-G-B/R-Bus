@@ -18,7 +18,8 @@ enum enemy_type_e {
     PAPYRUS,
     NAPSTABLOOK,
     LEJUTTER,
-    GREEN_HEAD
+    GREEN_HEAD,
+    MAX_ENEMY_TYPE
 };
 
 enum missileTypes_e {
