@@ -174,6 +174,17 @@ namespace Nitwork {
                             Systems::receivePlayerDeath(any, endpoint);
                         }
                     }
+                },
+                {
+                    END_GAME,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgEndGame_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveEndGame(any, endpoint);
+                        }
+                    }
                 }
             };
             std::map<

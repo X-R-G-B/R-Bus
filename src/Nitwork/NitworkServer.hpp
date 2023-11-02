@@ -55,6 +55,8 @@ namespace Nitwork {
                 boost::asio::ip::udp::endpoint &endpoint,
                 const struct msgCreatePlayer_s &playerMsg);
 
+            void addEndGameMsg();
+
             n_id_t getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const;
 
         private:
@@ -197,6 +199,10 @@ namespace Nitwork {
                 {PLAYER_DEATH,
                  [this](Packet &packet) {
                      sendData<struct packetPlayerDeath_s>(packet);
+                 }},
+                {END_GAME,
+                 [this](Packet &packet) {
+                     sendData<struct packetEndGame_s>(packet);
                  }},
             };
     };

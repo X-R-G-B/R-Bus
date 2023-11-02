@@ -399,6 +399,20 @@ namespace Nitwork {
         addPacketToSend(packet);
     }
 
+    void NitworkServer::addEndGameMsg()
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetEndGame_s packetEndGame = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = END_GAME},
+            .msg    = {.magick = MAGICK_END_GAME}
+        };
+        Packet packet(
+            packetEndGame.action.magick,
+            std::make_any<struct packetEndGame_s>(packetEndGame));
+        sendToAllClients(packet);
+    }
+
     n_id_t NitworkServer::getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const
     {
         return _playersIds.at(endpoint);

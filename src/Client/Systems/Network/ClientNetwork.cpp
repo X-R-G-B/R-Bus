@@ -272,6 +272,11 @@ namespace Systems {
         }
     }
 
+    void receiveEndGame(std::any &any, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        Logger::info("End game received");
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()
     {
         return {sendPositionRelative, sendPositionAbsolute};

@@ -33,6 +33,7 @@
     #define MAGICK_POSITION_ABSOLUTE_BROADCAST '\x10'
     #define MAGICK_NEW_PLAYER '\x0a'
     #define MAGICK_PLAYER_DEATH '\x11'
+    #define MAGICK_END_GAME '\x1c'
 
 typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
@@ -53,6 +54,7 @@ enum n_actionType_t {
     POSITION_RELATIVE_BROADCAST = 12,
     POSITION_ABSOLUTE_BROADCAST = 13,
     PLAYER_DEATH = 14,
+    END_GAME = 23,
     N_ACTION_TYPE_MAX,
 };
 
@@ -228,6 +230,17 @@ PACK(struct packetPlayerDeath_s {
         struct header_s header;
         struct action_s action;
         struct msgPlayerDeath_s msg;
+});
+
+/* Message End Game */
+PACK(struct msgEndGame_s {
+    n_magick_t magick;
+});
+
+PACK(struct packetEndGame_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgEndGame_s msg;
 });
 
 #endif

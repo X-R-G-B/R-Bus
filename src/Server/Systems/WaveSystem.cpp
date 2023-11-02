@@ -10,6 +10,7 @@
 #include "Json.hpp"
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
+#include "SystemManager.hpp"
 #include "Systems.hpp"
 
 #include <iostream>
@@ -95,7 +96,7 @@ void Wave::setTimeBetweenWaves(bool isTimeBetweenWaves)
 
 namespace Systems {
 
-    void waveHandler(std::size_t /*unused*/, std::size_t /*unused*/)
+    void waveHandler(std::size_t managerId, std::size_t systemId)
     {
         static Wave waveHandler;
         Registry &registry = Registry::getInstance();
@@ -103,6 +104,8 @@ namespace Systems {
 
         if (waveHandler.isGameEnded()) {
             std::cout << "------------------ GAME ENDED ------------------" << std::endl;
+            Nitwork::NitworkServer::getInstance().addEndGameMsg();
+            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
 
         if (waveHandler.isWaveEnded() && waveHandler.isGameEnded() == false) {
