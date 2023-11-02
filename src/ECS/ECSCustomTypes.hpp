@@ -220,7 +220,7 @@ namespace Types {
                 std::lock_guard<std::mutex> lock(_mutex);
             }
 
-            Enemy(struct enemy_id_s _constId, enum enemy_type_e _type) : constId(_constId), type(_type)
+            Enemy(struct enemy_id_s _constId, enum enemy_type_e _type) : type(_type), constId(_constId)
             {
             }
 
@@ -250,8 +250,8 @@ namespace Types {
                 return _enemyNb;
             }
 
-            enemy_id_s constId;
             enum enemy_type_e type;
+            enemy_id_s constId;
 
         private:
             static unsigned int _enemyNb;

@@ -273,7 +273,7 @@ namespace Systems {
         }
     }
 
-    void receiveEndGame(std::any &any, boost::asio::ip::udp::endpoint &endpoint)
+    void receiveEndGame(std::any& /*unused*/, boost::asio::ip::udp::endpoint& /*unused*/)
     {
         auto &director = SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);

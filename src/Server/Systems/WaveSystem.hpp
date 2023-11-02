@@ -27,8 +27,8 @@ class Wave {
     private:
 
         std::vector<std::size_t> _wavesId;
-        std::size_t _msBeforeNextWave;
         int _waveIndex;
+        std::size_t _msBeforeNextWave;
         bool _isGameEnded;
         bool _isTimeBetweenWaves;
         static std::mutex _mutex;
