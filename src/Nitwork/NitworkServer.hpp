@@ -255,10 +255,13 @@ namespace Nitwork {
              */
             lobby_s _serverInfos;
 
+            std::unordered_map<boost::asio::ip::udp::endpoint /* endpoint */, bool /* isReady */>
+                _playersReady;
+
             /**
              * @brief A boolean that say if the game has started or not
              */
-            bool isGameStarted = false;
+            bool _isGameStarted = false;
 
             // maps
             /**

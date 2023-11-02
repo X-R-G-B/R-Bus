@@ -173,7 +173,7 @@ namespace Nitwork {
         auto msgData    = std::any_cast<struct msgConnectLobby_s>(msg);
         bool canConnect = true;
 
-        if (isGameStarted) {
+        if (_isGameStarted) {
             Logger::info("Game already started, connection refused");
             return;
         }
@@ -192,7 +192,7 @@ namespace Nitwork {
     NitworkServer::handleInitMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        if (isGameStarted) {
+        if (_isGameStarted) {
             Logger::info("Game already started, connection refused");
             return;
         }
@@ -236,7 +236,7 @@ namespace Nitwork {
     void
     NitworkServer::handleReadyMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
-        if (isGameStarted) {
+        if (_isGameStarted) {
             Logger::info("Game already started, connection refused");
             return;
         }
@@ -244,13 +244,12 @@ namespace Nitwork {
             Logger::info("Client not connected");
             return;
         }
-        if (_endpoints.size() < _serverInfos.maxNbPlayer) {
-            Logger::info("A new client is ready, waiting for others");
+        _playersReady[endpoint] = true;
+        if (_endpoints.size() != _playersReady.size()) {
+            Logger::info("Client ready, waiting for others");
             return;
         }
-        if (_endpoints.size() == _serverInfos.maxNbPlayer) {
-            isGameStarted = true;
-        }
+        _isGameStarted = true;
         addStarWaveMessage(Types::Enemy::getEnemyNb());
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
