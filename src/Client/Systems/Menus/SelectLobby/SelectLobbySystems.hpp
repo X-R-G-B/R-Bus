@@ -15,7 +15,7 @@
 
 namespace Systems::SelectLobbySystems {
     struct LobbyStatus {
-            LobbyStatus(const std::string &ip, n_port_t port);
+            LobbyStatus(const std::string &ip = "", n_port_t port = -1);
 
             std::string ip;
             n_port_t port;

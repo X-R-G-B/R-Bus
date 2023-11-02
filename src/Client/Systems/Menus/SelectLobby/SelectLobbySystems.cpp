@@ -26,7 +26,7 @@ namespace Systems::SelectLobbySystems {
     std::size_t LobbyStatus::pageNbr = 1;
     std::size_t LobbyStatus::pageMax = 1;
 
-    LobbyStatus::LobbyStatus(const std::string &ip = "", n_port_t port = -1) : ip(ip), port(port)
+    LobbyStatus::LobbyStatus(const std::string &ip, n_port_t port) : ip(ip), port(port)
     {
     }
 
