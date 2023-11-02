@@ -68,12 +68,8 @@ namespace Systems {
         Registry::getInstance().addEntity();
         const std::string bulletPath = json.getDataFromJson<std::string>(bulletData, "spritePath");
         Types::Rect spriteRect       = json.getDataFromJson<Types::Rect>(bulletData, "spriteRect");
-        Types::SpriteDatas bulletDatas(
-            bulletPath,
-            collisionRect.width,
-            collisionRect.height,
-            DEFAULTLAYER,
-            0);
+        Types::SpriteDatas
+            bulletDatas(bulletPath, collisionRect.width, collisionRect.height, DEFAULTLAYER, 0);
         Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(bulletDatas);
         Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
 

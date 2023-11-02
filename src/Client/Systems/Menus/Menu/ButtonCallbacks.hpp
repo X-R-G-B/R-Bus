@@ -37,7 +37,7 @@ namespace Menu {
                 {GO_NEXT,          "goNextPage"                      },
                 {GO_SELECT_LOBBY,  "goToSelectLobby"                 },
                 {CREATE_NORMAL,    "onButtonCreateLobbyNormalClicked"},
-                {SEND_READY,    "sendReadyPacket"}
+                {SEND_READY,       "sendReadyPacket"                 }
         });
 
         void initConnection();
@@ -67,7 +67,7 @@ namespace Menu {
             {CallbackType::GO_BACK,          &goBackPage                      },
             {CallbackType::GO_NEXT,          &goNextPage                      },
             {CallbackType::CREATE_NORMAL,    &onButtonCreateLobbyNormalClicked},
-            {CallbackType::SEND_READY,    &sendReadyPacket}
+            {CallbackType::SEND_READY,       &sendReadyPacket                 }
         };
 
     } // namespace Callback

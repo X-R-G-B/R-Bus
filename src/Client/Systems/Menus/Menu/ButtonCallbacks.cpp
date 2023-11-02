@@ -155,9 +155,9 @@ namespace Menu {
         void sendReadyPacket()
         {
             auto idsButton = Registry::getInstance().getEntitiesByComponents({typeid(Types::Button)});
-            auto idsText = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text)});
-            auto arrText = Registry::getInstance().getComponents<Raylib::Text>();
-            
+            auto idsText   = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text)});
+            auto arrText   = Registry::getInstance().getComponents<Raylib::Text>();
+
             Nitwork::NitworkClient::getInstance().addReadyMsg();
             for (auto &id : idsButton) {
                 Registry::getInstance().removeEntity(id);
