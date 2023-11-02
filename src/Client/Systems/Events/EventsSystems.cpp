@@ -215,10 +215,12 @@ namespace Systems {
     static bool isGameWin()
     {
         Registry &registry = Registry::getInstance();
-        std::vector<std::size_t> ids =
-            registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::OtherPlayer)});
+        std::vector<std::size_t> idsPlayer =
+            registry.getEntitiesByComponents({typeid(Types::Player)});
+        std::vector<std::size_t> idsOtherPlayer =
+            registry.getEntitiesByComponents({typeid(Types::OtherPlayer)});
 
-        if (ids.empty()) {
+        if (idsPlayer.empty() == true && idsOtherPlayer.empty() == true) {
             return false;
         }
         return true;
