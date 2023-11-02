@@ -71,7 +71,6 @@ namespace Menu {
             for (auto &id : ids) {
                 arrLobbyStatus[id].ip = "";
                 arrLobbyStatus[id].port = -1;
-                Logger::info("RESETING ...");
                 arrText[id].setCurrentText(std::string(""));
             }
         }

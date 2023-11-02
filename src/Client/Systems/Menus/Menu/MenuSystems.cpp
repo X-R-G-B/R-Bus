@@ -25,13 +25,11 @@ namespace Systems {
                 Registry::getInstance().getComponents<Types::InputBox>();
             Registry::components<Types::AnimRect> arrAnimRect =
                 Registry::getInstance().getComponents<Types::AnimRect>();
-            Registry::components<::Systems::SelectLobbySystems::LobbyStatus> arrLobbyStatus =
-                Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
             std::vector<std::size_t> ids =
                 Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
 
             for (auto id : ids) {
-                if (arrInputBox[id].selected && !arrLobbyStatus.exist(id)) {
+                if (arrInputBox[id].selected) {
                     if (arrAnimRect.exist(id)) {
                         arrAnimRect[id].changeRectList(Types::RectListType::DEFAULT_RECT);
                     }
@@ -44,15 +42,18 @@ namespace Systems {
         {
             Registry::components<Types::InputBox> arrInputBox =
                 Registry::getInstance().getComponents<Types::InputBox>();
+            Registry::components<Types::Button> arrButton =
+                Registry::getInstance().getComponents<Types::Button>();
             Registry::components<Types::AnimRect> arrAnimRect =
                 Registry::getInstance().getComponents<Types::AnimRect>();
 
-            setAllInputBoxFalse();
+            if (!arrButton.exist(id)) {
+                setAllInputBoxFalse();
+            }
             if (arrInputBox.exist(id)) {
                 arrInputBox[id].selected = true;
                 if (arrAnimRect.exist(id)) {
                     arrAnimRect[id].changeRectList(Types::RectListType::SELECTED);
-                    Logger::info(arrInputBox[id].text);
                 }
             }
         }
@@ -86,15 +87,15 @@ namespace Systems {
         void manageInputBox(std::size_t, std::size_t)
         {
             std::size_t idEntity = 0;
-            Registry::components<Types::Button> arrButton =
+            auto &arrButton =
                 Registry::getInstance().getComponents<Types::Button>();
+            auto &arrLobbyStatus = Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
+            
 
             if (Raylib::isMouseButtonPressed(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
-                if (!::Menu::checkClick(idEntity) && !arrButton.exist(idEntity)) {
-                    setAllInputBoxFalse();
-                    return;
-                }
+                ::Menu::checkClick(idEntity);
                 setInputBoxSelected(idEntity);
+                return;
             }
         }
 
