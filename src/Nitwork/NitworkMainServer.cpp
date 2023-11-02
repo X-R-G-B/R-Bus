@@ -244,12 +244,7 @@ namespace Nitwork {
             Logger::error("Invalid name: " + name);
             return;
         }
-        forkProcessAndCreateLobby(
-            maxNbPlayer,
-            gameType,
-            name,
-            _ip,
-            _socket.local_endpoint().port());
+        forkProcessAndCreateLobby(maxNbPlayer, gameType, name, _ip, _socket.local_endpoint().port());
     }
 
     const std::vector<struct lobby_s> &NitworkMainServer::getLobbies() const
