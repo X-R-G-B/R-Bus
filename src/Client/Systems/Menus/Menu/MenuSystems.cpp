@@ -188,8 +188,10 @@ namespace Systems {
                 return;
             }
             try {
-                nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>("menu", JsonType::MENU);
-                ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(Json::getInstance().getDatasFromList(jsonData));
+                nlohmann::json jsonData =
+                    Json::getInstance().getDataByJsonType<nlohmann::json>("menu", JsonType::MENU);
+                ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
+                    Json::getInstance().getDatasFromList(jsonData));
 
             } catch (std::runtime_error &err) {
                 Logger::info(err.what());

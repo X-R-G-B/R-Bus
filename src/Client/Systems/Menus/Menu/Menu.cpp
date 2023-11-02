@@ -205,7 +205,8 @@ namespace Menu {
         if (elem.is_array()) {
             throw std::runtime_error("Error while loading entity : data is array");
         }
-        std::function<void()> callback = Callback::callbacks.at(elem["callback"].get<Callback::CallbackType>());
+        std::function<void()> callback =
+            Callback::callbacks.at(elem["callback"].get<Callback::CallbackType>());
 
         switch (Json::getInstance().getDataFromJson<ObjectType>(elem, "type")) {
             case ObjectType::BUTTON: return (initButton(elem, callback));
@@ -225,7 +226,7 @@ namespace Menu {
             } catch (std::runtime_error &err) {
                 Logger::error(
                     "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
-                    throw std::runtime_error("Cannot load scene menu correctly.");
+                throw std::runtime_error("Cannot load scene menu correctly.");
             }
         }
     }

@@ -37,8 +37,10 @@ namespace Systems::SelectLobbySystems {
             return;
         }
         try {
-            nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>("lobbyMenu", JsonType::SELECT_LOBBY);
-            ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(Json::getInstance().getDatasFromList(jsonData));
+            nlohmann::json jsonData =
+                Json::getInstance().getDataByJsonType<nlohmann::json>("lobbyMenu", JsonType::SELECT_LOBBY);
+            ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
+                Json::getInstance().getDatasFromList(jsonData));
         } catch (const std::exception &err) {
             Logger::error(
                 "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
@@ -74,7 +76,9 @@ namespace Systems::SelectLobbySystems {
 
         try {
             for (std::size_t i = 0; i < 5; i++) {
-                nlohmann::json lobbyBox = Json::getInstance().getDataByJsonType<nlohmann::json>("inputBoxes", JsonType::SELECT_LOBBY);
+                nlohmann::json lobbyBox = Json::getInstance().getDataByJsonType<nlohmann::json>(
+                    "inputBoxes",
+                    JsonType::SELECT_LOBBY);
 
                 std::size_t id = ::Menu::MenuBuilder::getInstance().initMenuEntity(lobbyBox);
                 if (arrPosition.exist(id)) {
