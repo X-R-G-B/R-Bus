@@ -162,7 +162,7 @@ namespace Systems::SelectLobbySystems {
         LobbyStatus::pageMax += (ids.size() / 5);
     }
 
-    void updateLobbyRow(std::size_t managerId, std::size_t systemId)
+    void updateLobbyRow(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         static std::size_t clockId = Registry::getInstance().getClock().create();
 

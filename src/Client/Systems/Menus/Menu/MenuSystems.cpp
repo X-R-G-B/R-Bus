@@ -87,9 +87,6 @@ namespace Systems {
         void manageInputBox(std::size_t, std::size_t)
         {
             std::size_t idEntity = 0;
-            auto &arrButton      = Registry::getInstance().getComponents<Types::Button>();
-            auto &arrLobbyStatus =
-                Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
 
             if (Raylib::isMouseButtonPressed(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
                 ::Menu::checkClick(idEntity);
