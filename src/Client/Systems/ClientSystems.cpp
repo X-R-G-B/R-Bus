@@ -7,12 +7,12 @@
 
 #include "ClientSystems.hpp"
 #include "ClientNetwork.hpp"
+#include "CreateLobbySystems.hpp"
 #include "EventsSystems.hpp"
 #include "GraphicSystems.hpp"
 #include "MenuSystems.hpp"
-#include "SelectLobbySystems.hpp"
-#include "CreateLobbySystems.hpp"
 #include "ParallaxSystems.hpp"
+#include "SelectLobbySystems.hpp"
 #include "Systems.hpp"
 
 namespace Systems {

@@ -143,8 +143,8 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                    .magick = DISCONNECT_LOBBY,
-                },
+                       .magick = DISCONNECT_LOBBY,
+                       },
             .msg = {.magick = MAGICK_DISCONNECT_LOBBY},
         };
         Packet packet(

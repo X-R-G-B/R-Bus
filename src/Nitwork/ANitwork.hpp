@@ -154,6 +154,7 @@ namespace Nitwork {
             }
 
             void addPacketToSentPackages(Packet &data);
+
         protected:
             // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
             boost::asio::io_context _context; // The main context

@@ -48,14 +48,18 @@ namespace Menu {
         void connectLobbySelected()
         {
             auto arrInputBox = Registry::getInstance().getComponents<Types::InputBox>();
-            auto arrLobbyStatus = Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
-            auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox), typeid(::Systems::SelectLobbySystems::LobbyStatus)});
+            auto arrLobbyStatus =
+                Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
+            auto ids = Registry::getInstance().getEntitiesByComponents(
+                {typeid(Types::InputBox), typeid(::Systems::SelectLobbySystems::LobbyStatus)});
 
             for (auto id : ids) {
                 Logger::info(std::string(std::to_string(arrInputBox[id].selected)));
                 if (arrInputBox[id].selected) {
                     if (arrLobbyStatus[id].port > 0 && arrLobbyStatus[id].ip != "") {
-                        Nitwork::NitworkClient::getInstance().connectLobby(arrLobbyStatus[id].ip, arrLobbyStatus[id].port);
+                        Nitwork::NitworkClient::getInstance().connectLobby(
+                            arrLobbyStatus[id].ip,
+                            arrLobbyStatus[id].port);
                     }
                 }
             }

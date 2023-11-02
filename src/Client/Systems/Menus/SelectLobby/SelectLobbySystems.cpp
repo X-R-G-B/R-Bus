@@ -8,24 +8,24 @@
 #include "SelectLobbySystems.hpp"
 #include <algorithm>
 #include <string>
+#include "ButtonCallbacks.hpp"
 #include "CustomTypes.hpp"
 #include "Geometry.hpp"
 #include "Graphics.hpp"
-#include "Systems.hpp"
+#include "Logger.hpp"
+#include "Maths.hpp"
 #include "Menu.hpp"
 #include "MessageTypes.h"
 #include "NitworkClient.hpp"
 #include "SceneManager.hpp"
-#include "Logger.hpp"
 #include "SystemManagersDirector.hpp"
-#include "Maths.hpp"
-#include "ButtonCallbacks.hpp"
+#include "Systems.hpp"
 
 namespace Systems::SelectLobbySystems {
-    
+
     std::size_t LobbyStatus::pageNbr = 1;
 
-    LobbyStatus::LobbyStatus(const std::string &ip = "", n_port_t port = -1): ip(ip), port(port)
+    LobbyStatus::LobbyStatus(const std::string &ip = "", n_port_t port = -1) : ip(ip), port(port)
     {
     }
 
@@ -41,9 +41,11 @@ namespace Systems::SelectLobbySystems {
             return;
         }
         try {
-            nlohmann::json bigBox = Json::getInstance().getDataByVector({"lobbyMenu", "bigBox"}, JsonType::SELECT_LOBBY);
-            nlohmann::json createLobbyNormalButton =
-                Json::getInstance().getDataByVector({"lobbyMenu", "gotoCreateLobby"}, JsonType::SELECT_LOBBY);
+            nlohmann::json bigBox =
+                Json::getInstance().getDataByVector({"lobbyMenu", "bigBox"}, JsonType::SELECT_LOBBY);
+            nlohmann::json createLobbyNormalButton = Json::getInstance().getDataByVector(
+                {"lobbyMenu", "gotoCreateLobby"},
+                JsonType::SELECT_LOBBY);
             nlohmann::json joinLobbyButton =
                 Json::getInstance().getDataByVector({"lobbyMenu", "joinLobby"}, JsonType::SELECT_LOBBY);
             Menu::MenuBuilder::getInstance().initMenuEntity(
@@ -83,13 +85,14 @@ namespace Systems::SelectLobbySystems {
     void initLobbyRow(std::size_t managerId, std::size_t systemId)
     {
         auto &arrLobbyText = Registry::getInstance().getComponents<Raylib::Text>();
-        auto &arrPosition = Registry::getInstance().getComponents<Types::Position>();
-        int offset = 1000;
+        auto &arrPosition  = Registry::getInstance().getComponents<Types::Position>();
+        int offset         = 1000;
 
         try {
             for (std::size_t i = 0; i < 5; i++) {
                 Logger::info("INIT LOBBYSTATUS....");
-                nlohmann::json lobbyBox = Json::getInstance().getDataByVector({"lobbyMenu", "lobbyBox"}, JsonType::SELECT_LOBBY);
+                nlohmann::json lobbyBox =
+                    Json::getInstance().getDataByVector({"lobbyMenu", "lobbyBox"}, JsonType::SELECT_LOBBY);
                 std::size_t id = ::Menu::MenuBuilder::getInstance().initMenuEntity(lobbyBox);
                 Logger::info("MENU ENTITY CORRECTLY INIT");
                 if (arrPosition.exist(id)) {
@@ -115,18 +118,20 @@ namespace Systems::SelectLobbySystems {
     void updateLobbyRow(std::size_t /* unused */, std::size_t /* unused */)
     {
         static std::size_t clockId = Registry::getInstance().getClock().create();
-        
+
         if (Registry::getInstance().getClock().elapsedSecondsSince(clockId) < 1) {
             return;
         }
         Registry::getInstance().getClock().decreaseSeconds(clockId, 1);
         // list of all lobby
-        auto idsLobbyStatus = Registry::getInstance().getEntitiesByComponents({typeid(LobbyStatus), typeid(Raylib::Text)});
-        auto idsClickableLobbys = Registry::getInstance().getEntitiesByComponents({typeid(LobbyStatus), typeid(Raylib::Text), typeid(Types::InputBox)});
-        auto ids       = Registry::getInstance().getEntitiesByComponents({typeid(struct lobby_s)});
+        auto idsLobbyStatus =
+            Registry::getInstance().getEntitiesByComponents({typeid(LobbyStatus), typeid(Raylib::Text)});
+        auto idsClickableLobbys = Registry::getInstance().getEntitiesByComponents(
+            {typeid(LobbyStatus), typeid(Raylib::Text), typeid(Types::InputBox)});
+        auto ids             = Registry::getInstance().getEntitiesByComponents({typeid(struct lobby_s)});
         auto &arrLobbyStatus = Registry::getInstance().getComponents<LobbyStatus>();
-        auto &arrLobbyText = Registry::getInstance().getComponents<Raylib::Text>();
-        auto &arrLobby = Registry::getInstance().getComponents<struct lobby_s>();
+        auto &arrLobbyText   = Registry::getInstance().getComponents<Raylib::Text>();
+        auto &arrLobby       = Registry::getInstance().getComponents<struct lobby_s>();
         static std::size_t nbrOfIt = 0;
         static std::size_t pageNbr = 1;
 
@@ -141,10 +146,9 @@ namespace Systems::SelectLobbySystems {
                         name = name.substr(0, 15);
                         name += "...";
                     }
-                    std::string text_t = name + " | "
-                        + std::to_string(arrLobby[ids[nbrOfIt]].maxNbPlayer) + " | "
-                        + gameTypeToString(arrLobby[ids[nbrOfIt]].gameType);
-                    arrLobbyStatus[id].ip = std::string(arrLobby[ids[nbrOfIt]].lobbyInfos.ip);
+                    std::string text_t = name + " | " + std::to_string(arrLobby[ids[nbrOfIt]].maxNbPlayer)
+                        + " | " + gameTypeToString(arrLobby[ids[nbrOfIt]].gameType);
+                    arrLobbyStatus[id].ip   = std::string(arrLobby[ids[nbrOfIt]].lobbyInfos.ip);
                     arrLobbyStatus[id].port = arrLobby[ids[nbrOfIt]].lobbyInfos.port;
                     Raylib::Text text(text_t);
                     if (arrLobbyText.exist(id)) {
@@ -158,6 +162,6 @@ namespace Systems::SelectLobbySystems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getLobbySystems()
     {
-            return {initSelectLoby, initLobbyRow, updateLobbyRow, sendListLobby, Systems::moveEntities};
+        return {initSelectLoby, initLobbyRow, updateLobbyRow, sendListLobby, Systems::moveEntities};
     }
 } // namespace Systems::SelectLobbySystems

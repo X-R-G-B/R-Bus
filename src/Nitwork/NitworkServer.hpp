@@ -64,8 +64,7 @@ namespace Nitwork {
              * @param endpoint The endpoint of the client that will receive the msg
              * @param canConnect A boolean that say if the client can connect to the lobby or not
              */
-            void addConnectLobbyRespMsg(
-                boost::asio::ip::udp::endpoint &endpoint, bool canConnect);
+            void addConnectLobbyRespMsg(boost::asio::ip::udp::endpoint &endpoint, bool canConnect);
 
             /**
              * @brief Add a msg packet that contain the start wave msg to the clients

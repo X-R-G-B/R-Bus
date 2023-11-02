@@ -5,8 +5,8 @@
 ** NitworkServer
 */
 
-#include <fstream>
 #include "NitworkServer.hpp"
+#include <fstream>
 #include "ECSCustomTypes.hpp"
 #include "Logger.hpp"
 #include "Registry.hpp"
@@ -170,7 +170,7 @@ namespace Nitwork {
 
     void NitworkServer::handleConnectLobbyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
     {
-        auto msgData = std::any_cast<struct msgConnectLobby_s>(msg);
+        auto msgData    = std::any_cast<struct msgConnectLobby_s>(msg);
         bool canConnect = true;
 
         if (isGameStarted) {
