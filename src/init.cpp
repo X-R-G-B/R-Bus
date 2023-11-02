@@ -37,6 +37,8 @@ void initScenes()
 #ifdef CLIENT
         {SystemManagers::EVENTS, &Systems::EventsSystems::getEventsSystems},
         {SystemManagers::CLIENTNETWORK, &Systems::getNetworkSystems},
+        {SystemManagers::MENU, &Menu::getMenuSystems},
+        {SystemManagers::NETWORK_MENU, &SelectLobbySystems::getLobbySystems()},
 #endif
     };
 
@@ -44,11 +46,13 @@ void initScenes()
         director.addSystemManager(static_cast<std::size_t>(sys.first), sys.second());
     }
     auto &sceneManager = Scene::SceneManager::getInstance();
-    std::vector<std::size_t> scene;
 #ifdef CLIENT
-        scene = enumListTosizet({SystemManagers::EVENTS, SystemManagers::ECSSYSTEMS, SystemManagers::GAME, SystemManagers::CLIENTNETWORK, SystemManagers::GRAPHICS});
+        auto menu = enumListTosizet({SystemManagers::GRAPHICS, SystemManagers::MENU, SystemsManager::ECSSYSTEMS});
+        auto selectLobby = enumListTosizet({SystemManagers::MENU, SystemManagers::NETWORK_MENU, SystemManagers::NETWORK, SystemManagers::ECSSYSTEMS, SystemManagers::GRAPHICS});
+        auto mainScene = enumListTosizet({SystemManagers::EVENTS, SystemManagers::ECSSYSTEMS, SystemManagers::GAME, SystemManagers::CLIENTNETWORK, SystemManagers::GRAPHICS, SystemManagers::MENU});
+        sceneManager.setScenes({menu, select_lobby, mainScene});
 #else
-        scene = enumListTosizet({SystemManagers::ECSSYSTEMS, SystemManagers::GAME});
+        auto scene = enumListTosizet({SystemManagers::ECSSYSTEMS, SystemManagers::GAME});
+        sceneManager.setScenes({scene});
 #endif
-    sceneManager.setScenes({scene, scene});
 }

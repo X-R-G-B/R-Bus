@@ -27,7 +27,7 @@ namespace Systems {
         {PERFORANT, "perforant"}
     };
 
-    static std::string getMissileId(missileTypes_e type)
+    std::string getMissileId(missileTypes_e type)
     {
         auto it = missileTypeMap.find(type);
         if (it != missileTypeMap.end()) {
@@ -55,15 +55,6 @@ namespace Systems {
         }
     }
 #endif
-
-    static Types::Position adjustMissilePosition(Types::Position &pos, Types::CollisionRect &collisionRect)
-    {
-        Types::Position newPos = pos;
-        int halfSprite         = Maths::divisionWithTwoIntDecimals(collisionRect.width, 200);
-        newPos.y               = Maths::subtractionWithTwoIntDecimals(newPos.y, halfSprite);
-        newPos.x               = pos.x;
-        return newPos;
-    }
 
 #ifdef CLIENT
     static void addSpriteRectsForBullet(nlohmann::json &bulletData, Types::CollisionRect &collisionRect)
@@ -119,7 +110,7 @@ namespace Systems {
         Types::Missiles missileType = typeOfMissile;
         Types::Dead deadComp        = {};
         Types::PlayerAllies playerAlliesComp = {};
-        Types::Position position             = adjustMissilePosition(pos, collisionRect);
+        Types::Position position             = pos;
         struct health_s healthComp           = {json.getDataFromJson<int>(bulletData, "health")};
         Types::Damage damageComp             = {json.getDataFromJson<int>(bulletData, "damage")};
 

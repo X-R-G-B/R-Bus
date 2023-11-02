@@ -96,11 +96,22 @@ namespace Nitwork {
             void handleBody(const actionHandler &handler, const struct header_s &header)
             {
                 // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
-                auto *body =
-                    reinterpret_cast<B *>(_receiveBuffer.data() + HEADER_SIZE + sizeof(struct action_s));
+                auto *body = reinterpret_cast<B *>(_receiveBuffer.data());
                 // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
                 handleBodyDatas<B>(handler, header, *body, boost::system::error_code());
+                std::memmove(
+                    _receiveBuffer.data(),
+                    _receiveBuffer.data() + sizeof(B),
+                    _receiveBuffer.size() - sizeof(B));
+                std::memset(_receiveBuffer.data() + _receiveBuffer.size() - sizeof(B), 0, sizeof(B));
             }
+
+            // send package to all clients but not the endpoint
+            void sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint);
+            // send package to all clients
+            void sendToAllClients(const Packet &packet);
+            // check if the client is already connected
+            bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
 
         private:
             // start the NitworkServer threads (context threads, clock thread, input thread and output

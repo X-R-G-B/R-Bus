@@ -13,6 +13,8 @@ enum class JsonType : std::size_t {
     TERMINATORBOSS,
     BULLETS,
     WAVE,
+    MENU,
+    SELECT_LOBBY,
     MAXTYPE
 };
 
@@ -21,11 +23,22 @@ const std::vector<std::string> paths = {
     "assets/Json/enemyData.json",
     "assets/Json/terminatorData.json",
     "assets/Json/bullets.json",
-    "assets/Json/wave.json"
+    "assets/Json/wave.json",
+    "assets/Json/menu.json",
+    "assets/Json/selectLobby.json",
 };
 
 class ResourcesManager {
     public:
+
+        /**
+             * @brief The type of the file
+         */
+        enum class FileType {
+            ASSETS,
+            BINARY,
+        };
+
         static std::string getPathByJsonType(JsonType type)
         {
             static bool init = false;
@@ -42,6 +55,10 @@ class ResourcesManager {
             return ResourcesManager::convertPath(paths[static_cast<std::size_t>(type)]);
         }
 
+        /**
+             * @brief Init the resource manager
+             * @param execPath The path of the executable
+         */
         static void init(std::string execPath)
         {
             if (!boost::filesystem::exists(execPath)) {
@@ -82,6 +99,12 @@ class ResourcesManager {
             Logger::info("RESOURCE_MANAGER: Path Assets: " + getRessourcePath());
         }
 
+        /**
+             * @brief Get the resource path
+             * @param path_const The path to convert
+             * @return The converted path
+             * @note You need to have 'assets' in your path at the beginning
+         */
         static std::string convertPath(const std::string &path_const)
         {
             if (getRessourcePath().empty()) {
@@ -103,6 +126,39 @@ class ResourcesManager {
                 Logger::debug("RESOURCE_MANAGER: Path found: " + path_tmp.string());
             }
             return path_tmp.string();
+        }
+
+        /**
+             * @brief Convert a path to the correct path
+             * @param path_const The path to convert
+             * @param type The type of the file
+             * @return The converted path
+         */
+        static std::string convertPath(const std::string &path_const, FileType type);
+        {
+            if (type == FileType::ASSETS) {
+                return convertPath(path_const);
+            }
+            if (type == FileType::BINARY) {
+                boost::filesystem::path path_tmp = _resourcePath;
+                path_tmp                         = path_tmp.parent_path();
+#ifdef PACKAGED
+                path_tmp.append("bin");
+#endif
+                if (!boost::filesystem::exists(path_tmp)) {
+                    Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
+                    return "";
+                }
+                path_tmp.append(path_const);
+                path_tmp = path_tmp.make_preferred();
+                if (!boost::filesystem::exists(path_tmp)) {
+                    Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
+                    return "";
+                }
+                return path_tmp.string();
+            }
+            Logger::fatal("RESOURCE_MANAGER: Invalid FileType");
+            return "";
         }
 
     private:

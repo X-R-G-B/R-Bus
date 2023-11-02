@@ -5,7 +5,9 @@ enum SystemManagers {
     ECSSYSTEMS,
     GAME,
     CLIENTNETWORK,
-    GRAPHICS
+    GRAPHICS,
+    MENU,
+    NETWORK_MENU
 };
 
 void initScenes();

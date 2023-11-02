@@ -10,6 +10,7 @@
     #endif
 
 typedef unsigned int n_id_t;
+typedef int n_port_t;
 
 enum enemy_type_e {
     CLASSIC_ENEMY = 0,
@@ -21,6 +22,11 @@ enum missileTypes_e {
     FAST,
     BOUNCE,
     PERFORANT
+};
+
+enum gameType_e {
+    CLASSIC_GAME = 0,
+    MAX_GAME_TYPE
 };
 
 PACK(struct health_s {

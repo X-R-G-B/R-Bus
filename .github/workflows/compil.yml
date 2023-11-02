@@ -61,7 +61,7 @@ jobs:
         run: sudo ./scripts/install-deps-linux.sh
 
       - name: Compil
-        run: ./scripts/compil.sh --no-tidy
+        run: ./scripts/compil.sh --no-tidy --no-parallel
 
   macos-compil:
     runs-on: macos-latest
