@@ -24,6 +24,7 @@
 namespace Systems::SelectLobbySystems {
     
     std::size_t LobbyStatus::pageNbr = 1;
+    std::size_t LobbyStatus::pageMax = 1;
 
     LobbyStatus::LobbyStatus(const std::string &ip = "", n_port_t port = -1): ip(ip), port(port)
     {
@@ -46,9 +47,35 @@ namespace Systems::SelectLobbySystems {
                 Json::getInstance().getDataByVector({"lobbyMenu", "gotoCreateLobby"}, JsonType::SELECT_LOBBY);
             nlohmann::json joinLobbyButton =
                 Json::getInstance().getDataByVector({"lobbyMenu", "joinLobby"}, JsonType::SELECT_LOBBY);
+            nlohmann::json goBackPage =
+                Json::getInstance().getDataByVector({"lobbyMenu", "goBackPage"}, JsonType::SELECT_LOBBY);
+            nlohmann::json goNextPage =
+                Json::getInstance().getDataByVector({"lobbyMenu", "goNextPage"}, JsonType::SELECT_LOBBY);
+            nlohmann::json backText =
+                Json::getInstance().getDataByVector({"lobbyMenu", "backText"}, JsonType::SELECT_LOBBY);
+            nlohmann::json nextText =
+                Json::getInstance().getDataByVector({"lobbyMenu", "nextText"}, JsonType::SELECT_LOBBY);
+            nlohmann::json createText =
+                Json::getInstance().getDataByVector({"lobbyMenu", "createText"}, JsonType::SELECT_LOBBY);
+            nlohmann::json joinText =
+                Json::getInstance().getDataByVector({"lobbyMenu", "connectText"}, JsonType::SELECT_LOBBY);
             Menu::MenuBuilder::getInstance().initMenuEntity(
                 joinLobbyButton,
                 Menu::Callback::connectLobbySelected);
+            Menu::MenuBuilder::getInstance().initMenuEntity(
+                backText);
+            Menu::MenuBuilder::getInstance().initMenuEntity(
+                nextText);
+            Menu::MenuBuilder::getInstance().initMenuEntity(
+                createText);
+            Menu::MenuBuilder::getInstance().initMenuEntity(
+                joinText),
+            Menu::MenuBuilder::getInstance().initMenuEntity(
+                goBackPage,
+                Menu::Callback::goBackPage);
+            Menu::MenuBuilder::getInstance().initMenuEntity(
+                goNextPage,
+                Menu::Callback::goNextPage);
             Menu::MenuBuilder::getInstance().initMenuEntity(
                 createLobbyNormalButton,
                 onButtonGotoCreateLobbyClicked);
@@ -88,12 +115,9 @@ namespace Systems::SelectLobbySystems {
 
         try {
             for (std::size_t i = 0; i < 5; i++) {
-                Logger::info("INIT LOBBYSTATUS....");
                 nlohmann::json lobbyBox = Json::getInstance().getDataByVector({"lobbyMenu", "lobbyBox"}, JsonType::SELECT_LOBBY);
                 std::size_t id = ::Menu::MenuBuilder::getInstance().initMenuEntity(lobbyBox);
-                Logger::info("MENU ENTITY CORRECTLY INIT");
                 if (arrPosition.exist(id)) {
-                    Logger::info("ACTUAL OFFSET FOR LOBBY : " + std::to_string(offset));
                     arrPosition[id].y += offset * i;
                 }
                 if (arrLobbyText.exist(id)) {
@@ -108,15 +132,44 @@ namespace Systems::SelectLobbySystems {
             Logger::error(
                 "Counldn't load menu correctly, verify your json data : " + std::string(err.what()));
         }
-        Logger::info("OUI OUI OUI");
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
-    void updateLobbyRow(std::size_t /* unused */, std::size_t /* unused */)
+    static void updateBox(const std::size_t &index, const std::size_t &lobbyStatusId, const std::vector<std::size_t> &ids, Registry::components<LobbyStatus> &arrLobbyStatus)
+    {
+        auto &arrLobby = Registry::getInstance().getComponents<struct lobby_s>();
+        auto &arrLobbyText = Registry::getInstance().getComponents<Raylib::Text>();
+
+        std::string name(arrLobby[ids[index]].name);
+        if (name.size() > 15) {
+            name = name.substr(0, 15);
+            name += "...";
+        }
+        std::string text_t = name + " | "
+            + std::to_string(arrLobby[ids[index]].maxNbPlayer) + " | "
+            + gameTypeToString(arrLobby[ids[index]].gameType);
+        arrLobbyStatus[lobbyStatusId].ip = std::string(arrLobby[ids[index]].lobbyInfos.ip);
+        arrLobbyStatus[lobbyStatusId].port = arrLobby[ids[index]].lobbyInfos.port;
+        Raylib::Text text(text_t);
+        if (arrLobbyText.exist(lobbyStatusId)) {
+            arrLobbyText[lobbyStatusId].setCurrentText(text_t);
+        }
+
+    }
+
+    static void updateMaxPage()
+    {
+        auto ids       = Registry::getInstance().getEntitiesByComponents({typeid(struct lobby_s)});
+
+        LobbyStatus::pageMax = 1;
+        LobbyStatus::pageMax += (ids.size() / 5);
+    }
+
+    void updateLobbyRow(std::size_t managerId, std::size_t systemId)
     {
         static std::size_t clockId = Registry::getInstance().getClock().create();
         
-        if (Registry::getInstance().getClock().elapsedSecondsSince(clockId) < 1) {
+        if (Registry::getInstance().getClock().elapsedMillisecondsSince(clockId) < 5000) {
             return;
         }
         Registry::getInstance().getClock().decreaseSeconds(clockId, 1);
@@ -126,31 +179,20 @@ namespace Systems::SelectLobbySystems {
         auto ids       = Registry::getInstance().getEntitiesByComponents({typeid(struct lobby_s)});
         auto &arrLobbyStatus = Registry::getInstance().getComponents<LobbyStatus>();
         auto &arrLobbyText = Registry::getInstance().getComponents<Raylib::Text>();
-        auto &arrLobby = Registry::getInstance().getComponents<struct lobby_s>();
         static std::size_t nbrOfIt = 0;
-        static std::size_t pageNbr = 1;
+        std::size_t pageNbr = LobbyStatus::pageNbr;
 
-        if (idsLobbyStatus.empty()) {
-            pageNbr = arrLobbyStatus[idsLobbyStatus[0]].pageNbr;
-        }
+        nbrOfIt = pageNbr * 5 - 5;
+        updateMaxPage();
         for (; nbrOfIt < pageNbr * 5 && nbrOfIt < ids.size();) {
             for (auto &id : idsLobbyStatus) {
-                if (arrLobbyStatus[id].ip.empty() && nbrOfIt < ids.size()) {
-                    std::string name(arrLobby[ids[nbrOfIt]].name);
-                    if (name.size() > 15) {
-                        name = name.substr(0, 15);
-                        name += "...";
-                    }
-                    std::string text_t = name + " | "
-                        + std::to_string(arrLobby[ids[nbrOfIt]].maxNbPlayer) + " | "
-                        + gameTypeToString(arrLobby[ids[nbrOfIt]].gameType);
-                    arrLobbyStatus[id].ip = std::string(arrLobby[ids[nbrOfIt]].lobbyInfos.ip);
-                    arrLobbyStatus[id].port = arrLobby[ids[nbrOfIt]].lobbyInfos.port;
-                    Raylib::Text text(text_t);
-                    if (arrLobbyText.exist(id)) {
-                        arrLobbyText[id].setCurrentText(text_t);
-                    }
+                if (nbrOfIt < ids.size()) {
+                    updateBox(nbrOfIt, id, ids, arrLobbyStatus);
                     nbrOfIt++;
+                } else {
+                    arrLobbyStatus[id].ip = "";
+                    arrLobbyStatus[id].port = -1;
+                    arrLobbyText[id].setCurrentText("");
                 }
             }
         }

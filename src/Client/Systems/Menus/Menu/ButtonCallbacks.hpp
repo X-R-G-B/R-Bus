@@ -14,5 +14,9 @@ namespace Menu {
         void defaultCallBack();
 
         void connectLobbySelected();
+
+        void goBackPage();
+
+        void goNextPage();
     } // namespace Callback
 } // namespace Menu

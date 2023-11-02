@@ -11,6 +11,7 @@
 #include "Maths.hpp"
 #include "Menu.hpp"
 #include "SceneManager.hpp"
+#include "SelectLobbySystems.hpp"
 #include <iostream>
 
 namespace Systems {
@@ -24,11 +25,13 @@ namespace Systems {
                 Registry::getInstance().getComponents<Types::InputBox>();
             Registry::components<Types::AnimRect> arrAnimRect =
                 Registry::getInstance().getComponents<Types::AnimRect>();
+            Registry::components<::Systems::SelectLobbySystems::LobbyStatus> arrLobbyStatus =
+                Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
             std::vector<std::size_t> ids =
                 Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
 
             for (auto id : ids) {
-                if (arrInputBox[id].selected) {
+                if (arrInputBox[id].selected && !arrLobbyStatus.exist(id)) {
                     if (arrAnimRect.exist(id)) {
                         arrAnimRect[id].changeRectList(Types::RectListType::DEFAULT_RECT);
                     }
@@ -44,6 +47,7 @@ namespace Systems {
             Registry::components<Types::AnimRect> arrAnimRect =
                 Registry::getInstance().getComponents<Types::AnimRect>();
 
+            setAllInputBoxFalse();
             if (arrInputBox.exist(id)) {
                 arrInputBox[id].selected = true;
                 if (arrAnimRect.exist(id)) {

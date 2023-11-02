@@ -20,6 +20,7 @@ namespace Systems::SelectLobbySystems {
             std::string ip;
             n_port_t port;
             static std::size_t pageNbr;
+            static std::size_t pageMax;
     };
 
     void sendListLobby(std::size_t /*unused*/, std::size_t /*unused*/);

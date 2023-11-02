@@ -94,7 +94,7 @@
         "height": 278.0
       },
       "collisionRect": {
-        "width": 4500,
+        "width": 6000,
         "height": 800
       },
       "animRect": [
@@ -162,7 +162,7 @@
         "height": 278.0
       },
       "collisionRect": {
-        "width": 4500,
+        "width": 6000,
         "height": 800
       },
       "animRect": [
@@ -230,8 +230,8 @@
         "y": 7100
       },
       "collisionRect": {
-        "width": 3000,
-        "height": 1500
+        "width": 2500,
+        "height": 1250
       },
       "animRect": [
         {

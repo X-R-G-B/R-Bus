@@ -42,7 +42,7 @@
                 "height": 278.0
             },
             "collisionRect": {
-                "width": 4500,
+                "width": 6000,
                 "height": 800
             },
             "animRect": [
@@ -227,6 +227,142 @@
                     ]
                 }
             ]
+        },
+        "goBackPage": {
+            "type": "button",
+            "spritePath": "assets/Menu/button.png",
+            "width": 1000,
+            "height": 800,
+            "rect": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1366.0,
+                "height": 406.0
+            },
+            "position": {
+                "x": 2000,
+                "y": 7000
+            },
+            "collisionRect": {
+                "width": 1000,
+                "height": 800
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 1416.0,
+                            "y": 49.0,
+                            "width": 1267.0,
+                            "height": 307.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 2759.0,
+                            "y": 31.0,
+                            "width": 1303.0,
+                            "height": 340.0
+                        }
+                    ]
+                }
+            ]
+        },
+        "goNextPage": {
+            "type": "button",
+            "spritePath": "assets/Menu/button.png",
+            "width": 1000,
+            "height": 800,
+            "rect": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1366.0,
+                "height": 406.0
+            },
+            "position": {
+                "x": 7000,
+                "y": 7000
+            },
+            "collisionRect": {
+                "width": 1000,
+                "height": 800
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 1416.0,
+                            "y": 49.0,
+                            "width": 1267.0,
+                            "height": 307.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 2759.0,
+                            "y": 31.0,
+                            "width": 1303.0,
+                            "height": 340.0
+                        }
+                    ]
+                }
+            ]
+        },
+        "backText" : {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "<---",
+            "position" : {
+                "x": 2300,
+                "y": 7250
+            }
+        },
+        "createText" : {
+            "type": "text",
+            "color": "red",
+            "size": 1.5,
+            "text": "CREATE",
+            "position" : {
+                "x": 5700,
+                "y": 7300
+            }
+        },
+        "connectText" : {
+            "type": "text",
+            "color": "red",
+            "size": 1.5,
+            "text": "CONNECT",
+            "position" : {
+                "x": 3700,
+                "y": 7300
+            }
+        },
+        "nextText" : {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "--->",
+            "position" : {
+                "x": 7350,
+                "y": 7250
+            }
         }
     }
 }

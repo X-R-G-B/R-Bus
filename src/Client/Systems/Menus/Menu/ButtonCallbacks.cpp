@@ -10,6 +10,7 @@
 #include "Logger.hpp"
 #include "NitworkClient.hpp"
 #include "SceneManager.hpp"
+#include "Raylib.hpp"
 #include "SelectLobbySystems.hpp"
 
 namespace Menu {
@@ -51,19 +52,46 @@ namespace Menu {
             auto arrLobbyStatus = Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
             auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox), typeid(::Systems::SelectLobbySystems::LobbyStatus)});
 
-            Logger::info("Calling callback");
             for (auto id : ids) {
-                Logger::info(std::string(std::to_string(arrInputBox[id].selected)));
                 if (arrInputBox[id].selected) {
-                    Logger::info("Someone is selected !");
                     if (arrLobbyStatus[id].port > 0 && arrLobbyStatus[id].ip != "") {
                         Scene::SceneManager::getInstance().changeScene(Scene::Scene::MAIN_GAME);
-                        Logger::info("IP TO CONNECT : " + arrLobbyStatus[id].ip);
-                        Logger::info("IP TO CONNECT : " + std::to_string(arrLobbyStatus[id].port));
                         Nitwork::NitworkClient::getInstance().connectLobby(arrLobbyStatus[id].ip, arrLobbyStatus[id].port);
                     }
                 }
             }
+        }
+
+        static void resetSelectedLobby()
+        {
+            auto arrLobbyStatus = Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
+            auto arrText = Registry::getInstance().getComponents<Raylib::Text>();
+            auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text), typeid(::Systems::SelectLobbySystems::LobbyStatus)});
+
+            for (auto &id : ids) {
+                arrLobbyStatus[id].ip = "";
+                arrLobbyStatus[id].port = -1;
+                Logger::info("RESETING ...");
+                arrText[id].setCurrentText(std::string(""));
+            }
+        }
+
+        void goBackPage()
+        {
+            if (::Systems::SelectLobbySystems::LobbyStatus::pageNbr <= 1) {
+                return;
+            }
+            resetSelectedLobby();
+            ::Systems::SelectLobbySystems::LobbyStatus::pageNbr -= 1;
+        }
+
+        void goNextPage()
+        {
+            if (::Systems::SelectLobbySystems::LobbyStatus::pageNbr >= ::Systems::SelectLobbySystems::LobbyStatus::pageMax) {
+                return;
+            }
+            resetSelectedLobby();
+            ::Systems::SelectLobbySystems::LobbyStatus::pageNbr += 1;
         }
     } // namespace Callback
 } // namespace Menu
