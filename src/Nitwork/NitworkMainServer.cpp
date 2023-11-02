@@ -248,7 +248,7 @@ namespace Nitwork {
             maxNbPlayer,
             gameType,
             name,
-            _socket.local_endpoint().address().to_string(),
+            _ip,
             _socket.local_endpoint().port());
     }
 
@@ -276,5 +276,10 @@ namespace Nitwork {
             return;
         }
         _lobbies.push_back(lobby);
+    }
+
+    void NitworkMainServer::setIpOfMainServer(const std::string &ip)
+    {
+        _ip = ip;
     }
 } // namespace Nitwork

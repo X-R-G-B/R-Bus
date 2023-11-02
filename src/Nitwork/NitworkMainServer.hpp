@@ -82,7 +82,12 @@ namespace Nitwork {
              */
             void addLobby(const struct lobby_s &lobby);
 
-            /* Handlers methods of the received actions */
+
+            /**
+             * @brief Set the ip of the MainServer
+             * @param ip The ip of the MainServer
+             */
+            void setIpOfMainServer(const std::string &ip);
 
         private:
             /**
@@ -141,6 +146,7 @@ namespace Nitwork {
             unsigned int _maxNbPlayer = 0;        // max number of players
             std::vector<int> _lobbyPids;          // pid of the lobbies
             std::vector<struct lobby_s> _lobbies; // list of lobbies
+            std::string _ip;                      // ip of the MainServer
             // clang-format off
 
             std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
