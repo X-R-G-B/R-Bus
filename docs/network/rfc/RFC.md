@@ -901,11 +901,13 @@ Table of Contents
     
     This field correspond to the ID of the missile.
     This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
     
     *** Missile Health
     
     This field correspond to the health of the missile.
     This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
     *** Missile Type
 
