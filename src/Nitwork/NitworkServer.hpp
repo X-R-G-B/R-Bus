@@ -60,6 +60,14 @@ namespace Nitwork {
             void addInfoLobbyMsg();
 
             /**
+             * @brief Add a msg that contain the lobby infos to the main server
+             * @param endpoint The endpoint of the client that will receive the msg
+             * @param canConnect A boolean that say if the client can connect to the lobby or not
+             */
+            void addConnectLobbyRespMsg(
+                boost::asio::ip::udp::endpoint &endpoint, bool canConnect);
+
+            /**
              * @brief Add a msg packet that contain the start wave msg to the clients
              * @param enemyId The id of the enemy that will be created
              */
@@ -200,25 +208,41 @@ namespace Nitwork {
 
             /* BEGIN handle messages methods */
             /**
-             * @brief A map that contain the endpoint of the clients and their infos
+             * @brief Handle the connect main server msg
+             * send a response to the client if he can or not connect to the lobby
+             * (if the server is full or not)
+             * @param msg The msg that will be handled
+             * @param endpoint The endpoint of the client that sent the packet
+             */
+            void handleConnectLobbyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
+
+            /**
+             * @brief Handle the init msg
              * @param msg The msg that will be handled
              * @param endpoint The endpoint of the client that sent the packet
              */
             void handleInitMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
             /**
-             * @brief A map that contain the endpoint of the clients and their infos
+             * @brief Handle the ready msg
              * @param msg The msg that will be handled
              * @param endpoint The endpoint of the client that sent the packet
              */
             void handleReadyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
             /**
-             * @brief A map that contain the endpoint of the clients and their infos
+             * @brief Handle the relative position msg
              * @param msg The msg that will be handled
              * @param endpoint The endpoint of the client that sent the packet
              */
             void handleRelativePositionMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
+
+            /**
+             * @brief Handle the disconnect msg
+             * @param msg The msg that will be handled
+             * @param endpoint The endpoint of the client that sent the packet
+             */
+            void handleDisconnectMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
             /* END handle messages methods */
 
             // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -232,11 +256,23 @@ namespace Nitwork {
              */
             lobby_s _serverInfos;
 
+            /**
+             * @brief A boolean that say if the game has started or not
+             */
+            bool isGameStarted = false;
+
             // maps
             /**
              * @brief a map that will be used to handle the actions, in order to receive them
              */
             std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
+                {CONNECT_LOBBY,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgConnectLobby_s>(actionHandler, header);
+                  },
+                  [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      handleConnectLobbyMsg(msg, endpoint);
+                  }}},
                 {INIT,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgInit_s>(actionHandler, header);
@@ -293,11 +329,22 @@ namespace Nitwork {
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::receivePlayerDeathMsg(msg, endpoint);
                   }}},
+                {DISCONNECT_LOBBY,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgDisconnectLobby_s>(actionHandler, header);
+                  },
+                  [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      handleDisconnectMsg(msg, endpoint);
+                  }}}
             };
             /**
              * @brief a map that will be used to handle the actions, in order to send them
              */
             std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
+                {CONNECT_LOBBY_RESP,
+                 [this](Packet &packet) {
+                     sendData<struct packetConnectLobbyResp_s>(packet);
+                 }                            },
                 {INIT,
                  [this](Packet &packet) {
                      sendData<struct packetCreatePlayer_s>(packet);

@@ -133,7 +133,26 @@ namespace Nitwork {
     void NitworkClient::connectLobby(const std::string &ip, n_port_t port)
     {
         setLobbyEndpoint(ip, port);
-        addInitMsg();
+        addConnectLobbyMsg();
+    }
+
+    void NitworkClient::disconnectLobby()
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetDisconnectLobby_s packetDisconnectLobby = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                    .magick = DISCONNECT_LOBBY,
+                },
+            .msg = {.magick = MAGICK_DISCONNECT_LOBBY},
+        };
+        Packet packet(
+            packetDisconnectLobby.action.magick,
+            std::make_any<struct packetDisconnectLobby_s>(packetDisconnectLobby),
+            _serverEndpoint);
+        Logger::fatal("Disconnecting from lobby");
+        addPacketToSend(packet);
     }
 
     void NitworkClient::addInitMsg()
@@ -369,6 +388,24 @@ namespace Nitwork {
             packetConnectMainServer.action.magick,
             std::make_any<struct packetConnectMainServer_s>(packetConnectMainServer),
             _mainServerEndpoint);
+        addPacketToSend(packet);
+    }
+
+    void NitworkClient::addConnectLobbyMsg()
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetConnectLobby_s packetConnectLobby = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                       .magick = CONNECT_LOBBY,
+                       },
+            .msg = {.magick = MAGICK_CONNECT_LOBBY},
+        };
+        Packet packet(
+            packetConnectLobby.action.magick,
+            std::make_any<struct packetConnectLobby_s>(packetConnectLobby),
+            _serverEndpoint);
         addPacketToSend(packet);
     }
 } // namespace Nitwork

@@ -47,6 +47,11 @@ namespace Nitwork {
             void connectLobby(const std::string &ip, n_port_t port);
 
             /**
+             * @brief Disconnect the client from the main server
+             */
+            void disconnectLobby();
+
+            /**
              * @brief Add a new init message to the packet
              * in order to create a new player when the server respond
              */
@@ -135,6 +140,11 @@ namespace Nitwork {
              */
             void addConnectMainServerMsg();
 
+            /**
+             * @brief Send a connection msg to connect to the lobby
+             */
+            void addConnectLobbyMsg();
+
         private:
             /**
              * @brief Constructor of the NitworkClient
@@ -214,6 +224,17 @@ namespace Nitwork {
                 enum n_actionType_t,
                 std::pair<handleBodyT, actionHandler>
             > _actionsHandlers = {
+                {
+                    CONNECT_LOBBY_RESP,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgConnectLobbyResp_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveConnectLobbyResp(any, endpoint);
+                        }
+                    },
+                },
                 {
                     INIT,
                     {
@@ -352,6 +373,12 @@ namespace Nitwork {
                 actionSender
                 > _actionToSendHandlers = {
                 {
+                    CONNECT_LOBBY,
+                    [this](Packet &packet) {
+                        sendData<struct packetConnectLobby_s>(packet);
+                    }
+                },
+                {
                     INIT,
                     [this](Packet &packet) {
                             sendData<struct packetMsgInit_s>(packet);
@@ -415,6 +442,12 @@ namespace Nitwork {
                     CREATE_LOBBY,
                     [this](Packet &packet) {
                         sendData<struct packetCreateLobby_s>(packet);
+                    }
+                },
+                {
+                    DISCONNECT_LOBBY,
+                    [this](Packet &packet) {
+                        sendData<struct packetDisconnectLobby_s>(packet);
                     }
                 }
             };

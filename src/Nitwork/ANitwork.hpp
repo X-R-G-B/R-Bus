@@ -112,6 +112,8 @@ namespace Nitwork {
             // check if the client is already connected
             bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
 
+            void deletePacketFromEndPoints(const boost::asio::ip::udp::endpoint &endpoint);
+
         private:
             // start the NitworkServer threads (context threads, clock thread, input thread and output
             // thread)
@@ -152,7 +154,6 @@ namespace Nitwork {
             }
 
             void addPacketToSentPackages(Packet &data);
-
         protected:
             // NOLINTBEGIN(cppcoreguidelines-non-private-member-variables-in-classes)
             boost::asio::io_context _context; // The main context

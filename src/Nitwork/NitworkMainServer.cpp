@@ -74,12 +74,9 @@ namespace Nitwork {
 
     void NitworkMainServer::handleInitMsg(std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
-        if (_endpoints.size() >= _maxNbPlayer) {
-            Logger::error("Too many clients, can't add an other one");
-            return;
-        }
         if (isClientAlreadyConnected(endpoint)) {
-            Logger::error("Client already connected");
+            Logger::info("Client already connected");
+            sendConnectMainServerResp(endpoint);
             return;
         }
         _endpoints.emplace_back(endpoint);
