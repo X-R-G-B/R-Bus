@@ -8,8 +8,8 @@
 #include "Logger.hpp"
 #ifdef _WIN32
     #include <sstream>
-    #include <windows.h>
     #include <tchar.h>
+    #include <windows.h>
 #else
 extern "C"
 {
@@ -180,20 +180,20 @@ namespace Nitwork {
 #ifdef _WIN32
         std::basic_ostringstream<TCHAR> cmdline;
         cmdline << _T(ECS::ResourcesManager::convertPath(
-                       "./r-type_server.exe",
-                       ECS::ResourcesManager::FileType::BINARY)
-                       .c_str())
-                << _T(" 1 ") << _T(maxNbPlayer) << _T(" ") << _T(gameType) << _T(" ") << _T(name.c_str()) << _T(" ") << _T(ownerIp.c_str())
-                << _T(" ") << _T(ownerPort);
+                          "./r-type_server.exe",
+                          ECS::ResourcesManager::FileType::BINARY)
+                          .c_str())
+                << _T(" 1 ") << _T(maxNbPlayer) << _T(" ") << _T(gameType) << _T(" ") << _T(name.c_str())
+                << _T(" ") << _T(ownerIp.c_str()) << _T(" ") << _T(ownerPort);
 
         Logger::fatal("cmdline: " + cmdline.str());
         STARTUPINFO si = {sizeof(si)};
         PROCESS_INFORMATION pi;
-        #ifdef UNICODE
-            TCHAR *cmd = _wcsdup(cmdline.str().c_str());
-        #else
-            TCHAR *cmd = _strdup(cmdline.str().c_str());
-        #endif
+    #ifdef UNICODE
+        TCHAR *cmd = _wcsdup(cmdline.str().c_str());
+    #else
+        TCHAR *cmd = _strdup(cmdline.str().c_str());
+    #endif
 
         if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
             Logger::error("Error: CreateProcess failed");
