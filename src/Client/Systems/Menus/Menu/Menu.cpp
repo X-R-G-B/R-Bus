@@ -197,8 +197,8 @@ namespace Menu {
             case ObjectType::BUTTON: return (initButton(elem, callback));
             case ObjectType::TEXT: return (initText(elem));
             case ObjectType::INPUT_BOX: return (initInputBox(elem));
-            case ObjectType::SPRITE: return (initSpriteFromJson(elem)); break;
-            default: Logger::error("Object type is undefined, check your json data"); break;
+            case ObjectType::SPRITE: return (initSpriteFromJson(elem));
+            default: Logger::error("Object type is undefined, check your json data"); return (0);
         }
     }
 

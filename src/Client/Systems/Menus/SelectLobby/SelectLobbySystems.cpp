@@ -112,7 +112,7 @@ namespace Systems::SelectLobbySystems {
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
-    void updateLobbyRow(std::size_t managerId, std::size_t systemId)
+    void updateLobbyRow(std::size_t /* unused */, std::size_t /* unused */)
     {
         static std::size_t clockId = Registry::getInstance().getClock().create();
         
@@ -130,12 +130,12 @@ namespace Systems::SelectLobbySystems {
         static std::size_t nbrOfIt = 0;
         static std::size_t pageNbr = 1;
 
-        if (idsLobbyStatus.size() != 0) {
+        if (idsLobbyStatus.empty()) {
             pageNbr = arrLobbyStatus[idsLobbyStatus[0]].pageNbr;
         }
         for (; nbrOfIt < pageNbr * 5 && nbrOfIt < ids.size();) {
             for (auto &id : idsLobbyStatus) {
-                if (arrLobbyStatus[id].ip == "" && nbrOfIt < ids.size()) {
+                if (arrLobbyStatus[id].ip.empty() && nbrOfIt < ids.size()) {
                     std::string name(arrLobby[ids[nbrOfIt]].name);
                     if (name.size() > 15) {
                         name = name.substr(0, 15);
