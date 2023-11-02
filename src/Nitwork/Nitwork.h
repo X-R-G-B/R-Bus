@@ -178,7 +178,7 @@ PACK(struct packetNewEnemy_s {
 PACK(struct msgNewBullet_s {
         n_magick_t magick;
         struct position_absolute_s pos;
-        missileTypes_e missileType;
+        enum missileTypes_e missileType;
 });
 
 PACK(struct packetNewBullet_s {
@@ -205,7 +205,7 @@ PACK(struct msgCreatePlayer_s {
         n_id_t playerId;
         struct position_absolute_s pos;
         struct health_s life;
-        bool isOtherPlayer;
+        char isOtherPlayer;
 });
 
 PACK(struct packetCreatePlayer_s {

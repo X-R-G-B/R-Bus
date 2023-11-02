@@ -47,12 +47,6 @@ namespace Nitwork {
             void connectLobby(const std::string &ip, n_port_t port);
 
             /**
-             * @brief Add a new init message to the packet
-             * in order to create a new player when the server respond
-             */
-            void addInitMsg();
-
-            /**
              * @brief Add a new ready message to the packet
              * in order to tell the server that the player is ready
              * and can start the game
@@ -114,6 +108,12 @@ namespace Nitwork {
             /* Private connection methods */
 
         private:
+            /**
+             * @brief Add a new init message to the packet
+             * in order to create a new player when the server respond
+             */
+
+            void addInitMsg();
             /**
              * @brief Set the main endpoint (the main server)
              * if the client is already connected to a main server, it will be disconnected

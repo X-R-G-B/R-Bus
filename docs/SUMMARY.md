@@ -28,8 +28,8 @@
 
 - [Common logic](developer-guide/common-logic.md)
 
-- [Network](developer-guide/network/README.md)
-    - [RFC](developer-guide/network/rfc/RFC.md)
+- [Network](network/README.md)
+    - [RFC](network/rfc/RFC.md)
 
 - [ECS](developer-guide/ecs/README.md)
     - [UML](developer-guide/ecs/uml.md)
