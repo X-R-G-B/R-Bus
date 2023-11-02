@@ -42,7 +42,7 @@ namespace Systems {
         return enemiesTypes.at(enemyType);
     }
 
-    static const enemy_type_e getEnemyType(const std::string &enemyId)
+    static enemy_type_e getEnemyType(const std::string &enemyId)
     {
         for (const auto &pair : enemiesTypes) {
             if (pair.second == enemyId) {

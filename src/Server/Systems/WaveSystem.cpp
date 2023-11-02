@@ -39,7 +39,7 @@ void Wave::startNextWave()
     Nitwork::NitworkServer &server = Nitwork::NitworkServer::getInstance();
     std::lock_guard<std::mutex> lock(_mutex);
 
-    if (_waveIndex > _wavesId.size()) {
+    if (static_cast<std::size_t>(_waveIndex) >= _wavesId.size()) {
         _isGameEnded = true;
         return;
     }
