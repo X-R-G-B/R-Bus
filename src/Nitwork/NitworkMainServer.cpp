@@ -178,12 +178,13 @@ namespace Nitwork {
         int ownerPort)
     {
 #ifdef _WIN32
+        std::string winName = "\"" + name + "\"";
         std::basic_ostringstream<TCHAR> cmdline;
         cmdline << _T(ECS::ResourcesManager::convertPath(
                           "./r-type_server.exe",
                           ECS::ResourcesManager::FileType::BINARY)
                           .c_str())
-                << _T(" 1 ") << _T(maxNbPlayer) << _T(" ") << _T(gameType) << _T(" ") << _T(name.c_str())
+                << _T(" 1 ") << _T(maxNbPlayer) << _T(" ") << _T(gameType) << _T(" ") << _T(winName.c_str())
                 << _T(" ") << _T(ownerIp.c_str()) << _T(" ") << _T(ownerPort);
 
         Logger::fatal("cmdline: " + cmdline.str());
