@@ -33,27 +33,30 @@ Table of Contents
             3.1.2. LIST_LOBBY
             3.1.3. CREATE_LOBBY
         3.2. Client -> Lobby Server
-            3.2.1. INIT
-            3.2.2. READY
-            3.2.3. POSITION_RELATIVE
-            3.2.4. POSITION_ABSOLUTE
-            3.2.5. NEW_BULLET
-            3.2.6. LIFE_UPDATE
-            3.2.7. ENEMY_DEATH
-            3.2.8. PLAYER_DEATH
+            3.2.1. CONNECT_LOBBY
+            3.2.2. INIT
+            3.2.3. READY
+            3.2.4. POSITION_RELATIVE
+            3.2.5. POSITION_ABSOLUTE
+            3.2.6. NEW_BULLET
+            3.2.7. LIFE_UPDATE
+            3.2.8. ENEMY_DEATH
+            3.2.9. PLAYER_DEATH
+            3.2.10. DISCONNECT_LOBBY
         3.3. Main Server -> Client
             3.3.1. CONNECT_MAIN_SERVER_RESP
             3.3.2. LIST_LOBBY
         3.4. Lobby Server -> Client
-            3.4.1. START_WAVE
-            3.4.2. LIFE_UPDATE
-            3.4.3. ENEMY_DEATH
-            3.4.4. NEW_ENEMY
-            3.4.5. NEW_PLAYER
-            3.4.6. NEW_BULLET
-            3.4.7. POSITION_ABSOLUTE_BROADCAST
-            3.4.8. POSITION_RELATIVE_BROADCAST
-            3.4.9. PLAYER_DEATH
+            3.4.1. CONNECT_LOBBY_RESP
+            3.4.2. START_WAVE
+            3.4.3. LIFE_UPDATE
+            3.4.4. ENEMY_DEATH
+            3.4.5. NEW_ENEMY
+            3.4.6. NEW_PLAYER
+            3.4.7. NEW_BULLET
+            3.4.8. POSITION_ABSOLUTE_BROADCAST
+            3.4.9. POSITION_RELATIVE_BROADCAST
+            3.4.10. PLAYER_DEATH
         3.5. Lobby Server -> Main Server
             3.5.1. INFO_LOBBY
     4. References
@@ -287,7 +290,22 @@ Table of Contents
 
 3.2. Client -> Lobby Server
 
-3.2.1. INIT
+3.2.1. CONNECT_LOBBY
+
+    To understand this action, the action header `magick` must be equal to `20`
+
+    The action body is composed of the following fields:
+    - `magick`
+    
+    *** Magick
+    
+    This field help to know the packet is realy a connect lobby action
+    
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x19`
+
+3.2.2. INIT
 
     To understand this action, the action header `magick` must be equal to `1`
 
@@ -308,7 +326,7 @@ Table of Contents
     This field is unsigned (so starting from 0 to 2^8)
     This field must be equal to the ascii `\x06`
 
-3.2.2. READY
+3.2.3. READY
 
     To understand this action, the action header `magick` must be equal to `2`
 
@@ -327,7 +345,7 @@ Table of Contents
     This field is unsigned (so starting from 0 to 2^8)
     This field must be equal to the ascii `\x17`
 
-3.2.3. POSITION_RELATIVE
+3.2.4. POSITION_RELATIVE
 
     To understand this action, the action header `magick` must be equal to `7`
 
@@ -360,7 +378,7 @@ Table of Contents
     This field must be of size 1 bytes.
     This field is signed (so starting from -((2^8)/2) to +(((2^8)/2)-1))
 
-3.2.4. POSITION_ABSOLUTE
+3.2.5. POSITION_ABSOLUTE
 
     To understand this action, the action header `magick` must be equal to `8`
 
@@ -391,7 +409,7 @@ Table of Contents
     This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-3.2.5. NEW_BULLET
+3.2.6. NEW_BULLET
 
     To understand this action, the action header `magick` must be equal to `9`
 
@@ -435,7 +453,7 @@ Table of Contents
     - 2 : bounce
     - 3 : perforant
 
-3.2.6. LIFE_UPDATE
+3.2.7. LIFE_UPDATE
 
     To understand this action, the action header `magick` must be equal to `5`
 
@@ -467,7 +485,7 @@ Table of Contents
     This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-3.2.7. ENEMY_DEATH
+3.2.8. ENEMY_DEATH
 
     To understand this action, the action header `magick` must be equal to `6`
 
@@ -491,7 +509,7 @@ Table of Contents
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each ennemy.
 
-3.2.8. PLAYER_DEATH
+3.2.9. PLAYER_DEATH
 
     To understand this action, the action header `magick` must be equal to `14`
 
@@ -514,6 +532,21 @@ Table of Contents
     This field must be of size 4 bytes.
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each player.
+
+3.2.10. DISCONNECT_LOBBY
+
+    To understant this aciton, the action header `magick` must be equal to `22`
+    
+    The action body is composed of the following fields:
+    - `magick`
+    
+    *** Magick
+    
+    This field help to know the packet is realy a disconnect lobby action
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x1b`
 
 3.3. Main Server -> Client
 
@@ -622,7 +655,32 @@ Table of Contents
 
 3.4. Lobby Server -> Client
 
-3.4.1. START_WAVE
+3.4.1. CONNECT_LOBBY_RESP
+
+    To understand this action, the action header `magick` must be equal to `21`
+
+    The action body is composed of the following fields:
+    - `magick`
+    - `isOk`
+
+    *** Magick
+
+    This field help to know the packet is realy a connect lobby response
+
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x1a`
+    
+    *** Is Ok
+    
+    This field correspond to the status of the connection to the lobby
+    
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field is equal to `1` if the connection is ok
+    This field is equal to `0` if the connection is not ok
+
+3.4.2. START_WAVE
 
     To understand this action, the action header `magick` must be equal to `3`
 
@@ -647,7 +705,7 @@ Table of Contents
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each ennemy.
 
-3.4.2. LIFE_UPDATE
+3.4.3. LIFE_UPDATE
 
     To understand this action, the action header `magick` must be equal to `5`
 
@@ -679,7 +737,7 @@ Table of Contents
     This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-3.4.3. ENEMY_DEATH
+3.4.4. ENEMY_DEATH
 
     To understand this action, the action header `magick` must be equal to `6`
 
@@ -703,7 +761,7 @@ Table of Contents
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each ennemy.
 
-3.4.4. NEW_ENEMY
+3.4.5. NEW_ENEMY
 
     To understand this action, the action header `magick` must be equal to `10`
 
@@ -762,7 +820,7 @@ Table of Contents
     - 0 : classic
     - 1 : terminator
 
-3.4.5. NEW_PLAYER
+3.4.6. NEW_PLAYER
 
     To understand this action, the action header `magick` must be equal to `11`
 
@@ -820,7 +878,7 @@ Table of Contents
     This field is equal to `1` if it is you
     This field is equal to `0` if it is not you
 
-3.4.6. NEW_BULLET
+3.4.7. NEW_BULLET
 
     To understand this action, the action header `magick` must be equal to `9`
 
@@ -864,7 +922,7 @@ Table of Contents
     - 2 : bounce
     - 3 : perforant
 
-3.4.7. POSITION_ABSOLUTE_BROADCAST
+3.4.8. POSITION_ABSOLUTE_BROADCAST
 
     To understand this action, the action header `magick` must be equal to `13`
 
@@ -905,7 +963,7 @@ Table of Contents
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each player.
 
-3.4.8. POSITION_RELATIVE_BROADCAST
+3.4.9. POSITION_RELATIVE_BROADCAST
 
     To understand this action, the action header `magick` must be equal to `12`
 
@@ -948,7 +1006,7 @@ Table of Contents
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each player.
 
-3.4.9. PLAYER_DEATH
+3.4.10. PLAYER_DEATH
 
     To understand this action, the action header `magick` must be equal to `14`
 
