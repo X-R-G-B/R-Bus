@@ -30,20 +30,17 @@ Wave::Wave() : _waveIndex(0), _msBeforeNextWave(0), _isGameEnded(false), _isTime
         return;
     }
     _clockId = Registry::getInstance().getClock().create();
-    startNextWave(true);
+    startNextWave();
 }
 
 // Called when the last enemy of the wave is killed and the time between waves is over
-void Wave::startNextWave(bool isFirstWave)
+void Wave::startNextWave()
 {
     auto &director                 = Systems::SystemManagersDirector::getInstance();
     Nitwork::NitworkServer &server = Nitwork::NitworkServer::getInstance();
     std::lock_guard<std::mutex> lock(_mutex);
 
-    if (isFirstWave == false) {
-        _waveIndex++;
-    }
-    if (_waveIndex >= _wavesId.size()) {
+    if (_waveIndex > _wavesId.size()) {
         _isGameEnded = true;
         return;
     }
@@ -54,6 +51,7 @@ void Wave::startNextWave(bool isFirstWave)
         _msBeforeNextWave = Json::getInstance().getDataFromJson<std::size_t>(waveData, "msBeforeNextWave");
         Types::WaveInfos::getInstance().setWaveId(static_cast<unsigned int>(id));
         server.addStarWaveMessage(static_cast<n_id_t>(_wavesId.at(_waveIndex)));
+        _waveIndex++;
     } catch (const std::exception &e) {
         Logger::fatal("WaveInit: " + std::string(e.what()));
         _isGameEnded = true;
@@ -120,5 +118,4 @@ namespace Systems {
             }
         }
     }
-
 } // namespace Systems

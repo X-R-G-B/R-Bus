@@ -16,7 +16,7 @@ class Wave {
     public:
 
         Wave();
-        void startNextWave(bool isFirstWave = false);
+        void startNextWave();
         bool isWaveEnded() const;
         std::size_t getMsBeforeNextWave() const;
         bool isGameEnded() const;
