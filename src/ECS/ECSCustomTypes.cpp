@@ -130,8 +130,8 @@ namespace Types {
                 }
             }
             Registry::getInstance().addEntity();
-            Raylib::Text test = Raylib::Text(text, {20, 10}, fontSize, Raylib::WHITE, textKeyword);
-            Registry::getInstance().getComponents<Raylib::Text>().insertBack(test);
+            Raylib::Text endWaveText = Raylib::Text(text, {20, 10}, fontSize, Raylib::WHITE, textKeyword);
+            Registry::getInstance().getComponents<Raylib::Text>().insertBack(endWaveText);
         }
 #endif
         _waitingForNextWave = value;

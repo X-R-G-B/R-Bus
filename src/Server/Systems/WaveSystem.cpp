@@ -13,8 +13,6 @@
 #include "SystemManager.hpp"
 #include "Systems.hpp"
 
-#include <iostream>
-
 std::size_t Wave::_clockId = 0;
 std::mutex Wave::_mutex;
 
@@ -103,7 +101,6 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(registry.mutex);
 
         if (waveHandler.isGameEnded()) {
-            std::cout << "------------------ GAME ENDED ------------------" << std::endl;
             Nitwork::NitworkServer::getInstance().addEndGameMsg();
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
