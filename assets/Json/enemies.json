@@ -699,6 +699,347 @@
                     ]
                 }
             ]
+        },
+        {
+            "id": "big-purple-boss",
+            "spritePath": "assets/Boss/big-purple-boss.png",
+            "musicPath": "assets/Audio/Musics/Napstablook.mp3",
+            "damage": 20,
+            "health": 80.0,
+            "width": 2150,
+            "height": 4000,
+            "rect": {
+                "x": 60,
+                "y": 0,
+                "width": 448.0,
+                "height": 800
+            },
+            "collisionRect": {
+                "width": 2150,
+                "height": 4000
+            },
+            "velocity": {
+                "speedX": -20,
+                "speedY": 0
+            },
+            "animRect": [
+                {
+                    "direction": "left",
+                    "type": "move",
+                    "time": 40,
+                    "restartIndex": 0,
+                    "list": [
+                        {
+                            "x": 60,
+                            "y": 0,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 60,
+                            "y": 800,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 60,
+                            "y": 1600,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 60,
+                            "y": 2400,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 60,
+                            "y": 3200,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 660,
+                            "y": 0,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 660,
+                            "y": 800,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 660,
+                            "y": 1600,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 660,
+                            "y": 2400,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 660,
+                            "y": 3200,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 1260,
+                            "y": 0,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 1260,
+                            "y": 800,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 1260,
+                            "y": 1600,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 1260,
+                            "y": 2400,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 1260,
+                            "y": 3200,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 1860,
+                            "y": 0,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 1860,
+                            "y": 800,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 1860,
+                            "y": 1600,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 1860,
+                            "y": 2400,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 1860,
+                            "y": 3200,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 2460,
+                            "y": 0,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 2460,
+                            "y": 800,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 2460,
+                            "y": 1600,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 2460,
+                            "y": 2400,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                            {
+                            "x": 2460,
+                            "y": 3200,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 3060,
+                            "y": 0,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 3060,
+                            "y": 800,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 3060,
+                            "y": 1600,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 3060,
+                            "y": 2400,
+                            "width": 448.0,
+                            "height": 800
+                        },
+                        {
+                            "x": 3060,
+                            "y": 3200,
+                            "width": 448.0,
+                            "height": 800
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "big-daemon",
+            "spritePath": "assets/R-TypeSheet/big-daemon.png",
+            "damage": 20,
+            "health": 80.0,
+            "width": 500,
+            "height": 500,
+            "rect": {
+                "x": 0,
+                "y": 0,
+                "width": 512.0,
+                "height": 512
+            },
+            "collisionRect": {
+                "width": 512,
+                "height": 512
+            },
+            "velocity": {
+                "speedX": -20,
+                "speedY": 0
+            },
+            "animRect": [
+                {
+                    "direction": "left",
+                    "type": "move",
+                    "time": 100,
+                    "restartIndex": 0,
+                    "list": [
+                        {
+                            "x": 0,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 512,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 1024,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 1536,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 2048,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 2560,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 3072,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 3584,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 4096,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 4608,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 5120,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 5632,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 6144,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 6656,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 7168,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        },
+                        {
+                            "x": 7680,
+                            "y": 0,
+                            "width": 512.0,
+                            "height": 512
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
