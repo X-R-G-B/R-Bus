@@ -6,11 +6,11 @@
 */
 
 #include "TextSystems.hpp"
+#include <iostream>
 #include "CustomTypes.hpp"
 #include "Maths.hpp"
 #include "Raylib.hpp"
 #include "SharedValues.hpp"
-#include <iostream>
 
 namespace Systems {
 

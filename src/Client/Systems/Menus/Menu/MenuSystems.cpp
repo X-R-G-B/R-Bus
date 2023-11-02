@@ -6,12 +6,12 @@
 */
 
 #include "MenuSystems.hpp"
-#include "Systems.hpp"
+#include <iostream>
 #include "CustomTypes.hpp"
 #include "Maths.hpp"
 #include "Menu.hpp"
 #include "SceneManager.hpp"
-#include <iostream>
+#include "Systems.hpp"
 
 namespace Systems {
     namespace Menu {
@@ -112,7 +112,7 @@ namespace Systems {
                 Registry::getInstance().getComponents<Types::InputBox>();
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
                 {typeid(Types::InputBox), typeid(Raylib::Text)});
-            static auto clockId         = Registry::getInstance().getClock().create();
+            static auto clockId = Registry::getInstance().getClock().create();
 
             for (auto id : ids) {
                 if (arrInputBox[id].selected && Raylib::isKeyDown(Raylib::KeyboardKey::KB_BACKSPACE)) {
@@ -190,7 +190,8 @@ namespace Systems {
             try {
                 nlohmann::json connectButton =
                     Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU);
-                nlohmann::json inputBoxIp = Json::getInstance().getDataByVector({"menu", "ip"}, JsonType::MENU);
+                nlohmann::json inputBoxIp =
+                    Json::getInstance().getDataByVector({"menu", "ip"}, JsonType::MENU);
                 nlohmann::json inputBoxHost =
                     Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
                 nlohmann::json ipText =
@@ -218,10 +219,16 @@ namespace Systems {
         {
             if (Raylib::isKeyPressed(Raylib::KeyboardKey::KB_ESCAPE)) {
                 switch (Scene::SceneManager::getInstance().getCurrentScene()) {
-                    case Scene::Scene::MENU : Scene::SceneManager::getInstance().stop(); break;
-                    case Scene::Scene::CREATE_LOBBY : Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY); break;
-                    case Scene::Scene::SELECT_LOBBY : Scene::SceneManager::getInstance().changeScene(Scene::Scene::MENU); break;
-                    case Scene::Scene::MAIN_GAME : Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY); break;
+                    case Scene::Scene::MENU: Scene::SceneManager::getInstance().stop(); break;
+                    case Scene::Scene::CREATE_LOBBY:
+                        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+                        break;
+                    case Scene::Scene::SELECT_LOBBY:
+                        Scene::SceneManager::getInstance().changeScene(Scene::Scene::MENU);
+                        break;
+                    case Scene::Scene::MAIN_GAME:
+                        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+                        break;
                     case Scene::Scene::SCENE_MAX: break;
                 }
             }

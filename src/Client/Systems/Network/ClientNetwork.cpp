@@ -1,13 +1,13 @@
-#include <algorithm>
 #include "ClientNetwork.hpp"
+#include <algorithm>
 #include "ECSCustomTypes.hpp"
 #include "Json.hpp"
 #include "Maths.hpp"
 #include "NitworkClient.hpp"
+#include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
 #include "SystemManagersDirector.hpp"
-#include "Raylib.hpp"
 #include "Systems.hpp"
 
 namespace Systems {
@@ -336,8 +336,7 @@ namespace Systems {
     void receiveConnectLobbyResp(std::any &data, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        const struct msgConnectLobbyResp_s &msg =
-            std::any_cast<struct msgConnectLobbyResp_s>(data);
+        const struct msgConnectLobbyResp_s &msg = std::any_cast<struct msgConnectLobbyResp_s>(data);
 
         if (msg.magick != MAGICK_CONNECT_LOBBY_RESP) {
             Logger::error("MAGICK_CONNECT_LOBBY_RESP is not the same");

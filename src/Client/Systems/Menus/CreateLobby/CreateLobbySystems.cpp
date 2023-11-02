@@ -5,6 +5,7 @@
 ** CreateLobbySystems
 */
 
+#include "CreateLobbySystems.hpp"
 #include <algorithm>
 #include <string>
 #include "CustomTypes.hpp"
@@ -17,7 +18,6 @@
 #include "SceneManager.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
-#include "CreateLobbySystems.hpp"
 
 namespace Systems {
     namespace CreateLobby {
@@ -74,26 +74,33 @@ namespace Systems {
                 return;
             }
             try {
-                nlohmann::json goBackButton =
-                    Json::getInstance().getDataByVector({"createLobbyMenu", "goBack"}, JsonType::CREATE_LOBBY);
-                nlohmann::json goBackText =
-                    Json::getInstance().getDataByVector({"createLobbyMenu", "goBackText"}, JsonType::CREATE_LOBBY);
-                nlohmann::json lobbyName =
-                    Json::getInstance().getDataByVector({"createLobbyMenu", "name"}, JsonType::CREATE_LOBBY);
-                nlohmann::json lobbyNameText =
-                    Json::getInstance().getDataByVector({"createLobbyMenu", "name-text"},
-                                                        JsonType::CREATE_LOBBY);
-                nlohmann::json maxNbPlayer =
-                    Json::getInstance().getDataByVector({"createLobbyMenu", "maxNb"}, JsonType::CREATE_LOBBY);
-                nlohmann::json maxNbPlayerText =
-                    Json::getInstance().getDataByVector({"createLobbyMenu", "maxNb-text"}, JsonType::CREATE_LOBBY);
-                nlohmann::json createLobbyText =
-                    Json::getInstance().getDataByVector({"createLobbyMenu", "createLobby-text"}, JsonType::CREATE_LOBBY);
-                nlohmann::json createLobbyNormalButton =
-                    Json::getInstance().getDataByVector({"createLobbyMenu", "gametype_normal"}, JsonType::CREATE_LOBBY);
-                nlohmann::json createLobbyNormalButtonText =
-                    Json::getInstance().getDataByVector({"createLobbyMenu", "gametype_normal-text"},
-                                                        JsonType::CREATE_LOBBY);
+                nlohmann::json goBackButton = Json::getInstance().getDataByVector(
+                    {"createLobbyMenu", "goBack"},
+                    JsonType::CREATE_LOBBY);
+                nlohmann::json goBackText = Json::getInstance().getDataByVector(
+                    {"createLobbyMenu", "goBackText"},
+                    JsonType::CREATE_LOBBY);
+                nlohmann::json lobbyName = Json::getInstance().getDataByVector(
+                    {"createLobbyMenu", "name"},
+                    JsonType::CREATE_LOBBY);
+                nlohmann::json lobbyNameText = Json::getInstance().getDataByVector(
+                    {"createLobbyMenu", "name-text"},
+                    JsonType::CREATE_LOBBY);
+                nlohmann::json maxNbPlayer = Json::getInstance().getDataByVector(
+                    {"createLobbyMenu", "maxNb"},
+                    JsonType::CREATE_LOBBY);
+                nlohmann::json maxNbPlayerText = Json::getInstance().getDataByVector(
+                    {"createLobbyMenu", "maxNb-text"},
+                    JsonType::CREATE_LOBBY);
+                nlohmann::json createLobbyText = Json::getInstance().getDataByVector(
+                    {"createLobbyMenu", "createLobby-text"},
+                    JsonType::CREATE_LOBBY);
+                nlohmann::json createLobbyNormalButton = Json::getInstance().getDataByVector(
+                    {"createLobbyMenu", "gametype_normal"},
+                    JsonType::CREATE_LOBBY);
+                nlohmann::json createLobbyNormalButtonText = Json::getInstance().getDataByVector(
+                    {"createLobbyMenu", "gametype_normal-text"},
+                    JsonType::CREATE_LOBBY);
                 Menu::MenuBuilder::getInstance().initMenuEntity(goBackButton, onButtonGoBackClicked);
                 Menu::MenuBuilder::getInstance().initMenuEntity(goBackText);
                 Menu::MenuBuilder::getInstance().initMenuEntity(lobbyName);
@@ -113,7 +120,8 @@ namespace Systems {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
 
-        std::vector<std::function<void(std::size_t /*unused*/, std::size_t /*unused*/)>> getCreateLobbySystems()
+        std::vector<std::function<void(std::size_t /*unused*/, std::size_t /*unused*/)>>
+        getCreateLobbySystems()
         {
             return {initCreateLobby, Systems::moveEntities};
         }

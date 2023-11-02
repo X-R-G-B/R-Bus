@@ -401,6 +401,5 @@ namespace Nitwork {
             return packet.endpoint.address() == endpoint.address()
                 && packet.endpoint.port() == endpoint.port();
         });
-
     }
 } // namespace Nitwork
