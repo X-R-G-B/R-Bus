@@ -434,6 +434,7 @@ Table of Contents
     missile.
     
     This field must be of size 4 byte.
+    This field must be equal to `0`
     
     *** Missile Health
     
@@ -442,6 +443,7 @@ Table of Contents
     missile.
     
     This field must be of size 4 byte.
+    This field must be equal to `0`
 
     *** Missile Type
 
@@ -554,6 +556,7 @@ Table of Contents
     *** Missile ID
     
     This field correspond to the ID of the missile that died
+
     This field must be of size 4 bytes.
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each missile.
@@ -900,12 +903,14 @@ Table of Contents
     *** Missile ID
     
     This field correspond to the ID of the missile.
+
     This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
     
     *** Missile Health
     
     This field correspond to the health of the missile.
+
     This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
@@ -1048,6 +1053,7 @@ Table of Contents
     *** Missile ID
     
     This field correspond to the ID of the missile that died
+
     This field must be of size 4 bytes.
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each missile.
