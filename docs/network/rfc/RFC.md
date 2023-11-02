@@ -554,6 +554,7 @@ Table of Contents
     *** Missile ID
     
     This field correspond to the ID of the missile that died
+
     This field must be of size 4 bytes.
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each missile.
