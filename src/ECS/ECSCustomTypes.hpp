@@ -84,7 +84,7 @@ namespace Types {
 
     struct Missiles {
         public:
-            Missiles(enum missileTypes_e _type = missileTypes_e::CLASSIC) : type(_type), constId(0)
+            Missiles(enum missileTypes_e _type = CLASSIC) : type(_type), constId(0)
             {
             }
 
