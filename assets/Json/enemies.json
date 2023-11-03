@@ -546,7 +546,7 @@
             "collisionRect": {
                 "width": 2320,
                 "height": 3400,
-                "offsetX": 0,
+                "offsetX": 1000,
                 "offsetY": 0
             },
             "velocity": {

@@ -68,14 +68,21 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
+        Registry::components<Types::CollisionRect> arrCollision =
+            registry.getComponents<Types::CollisionRect>();
         Registry::components<Types::RectangleShape> arrRect =
             registry.getComponents<Types::RectangleShape>();
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::RectangleShape), typeid(Types::Position)});
 
         for (auto id : ids) {
-            Types::Position &position        = arrPosition[id];
+            Types::Position position        = arrPosition[id];
             Types::RectangleShape &rectangle = arrRect[id];
+
+            if (arrCollision.exist(id)) {
+                position.x += arrCollision[id].offsetX;
+                position.y += arrCollision[id].offsetY;
+            }
 
             float x = (Maths::intToFloatConservingDecimals(position.x)
                        * static_cast<float>(Raylib::getScreenWidth()))
@@ -220,6 +227,6 @@ namespace Systems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> GraphicSystems::getSpriteSystems()
     {
-        return {updateAnimation, rectRenderer, spriteRenderer, createSprite};
+        return {updateAnimation, spriteRenderer, createSprite, rectRenderer};
     }
 } // namespace Systems

@@ -30,7 +30,7 @@ namespace Systems {
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
             registry.getComponents<Types::CollisionRect>();
-//TODO
+
         for (std::size_t id : ids) {
             if (arrPosition[id].x < 0) {
                 arrPosition[id].x = 0;
@@ -133,28 +133,27 @@ namespace Systems {
         std::vector<std::size_t> &ids,
         Registry::components<Types::Position> arrPosition,
         Registry::components<Types::CollisionRect> arrCollisionRect)
-    { // TODO
+    {
         std::size_t id                  = *itIds;
         Types::Position entityPos       = arrPosition[id];
         Types::CollisionRect entityColl = arrCollisionRect[id];
-
+        Types::Position realPosFstEntity   = {entityPos.x + entityColl.offsetX, entityPos.y + entityColl.offsetY};
         itIds++;
         while (itIds != ids.end()) {
             if (arrCollisionRect.exist(*itIds)) {
-                Types::CollisionRect sndEntityRect = arrCollisionRect[*itIds];
-                Types::Position sndEntityPos       = arrPosition[*itIds];
-                if (Maths::intToFloatConservingDecimals(entityPos.x)
-                        < (Maths::intToFloatConservingDecimals(sndEntityPos.x)
-                           + Maths::intToFloatConservingDecimals(sndEntityRect.width))
-                    && (Maths::intToFloatConservingDecimals(entityPos.x)
+                Types::Position realPosSndEntity   = {arrPosition[*itIds].x + arrCollisionRect[*itIds].offsetX, arrPosition[*itIds].y + arrCollisionRect[*itIds].offsetY};
+                if (Maths::intToFloatConservingDecimals(realPosFstEntity.x)
+                        < (Maths::intToFloatConservingDecimals(realPosSndEntity.x)
+                           + Maths::intToFloatConservingDecimals(arrCollisionRect[*itIds].width))
+                    && (Maths::intToFloatConservingDecimals(realPosFstEntity.x)
                         + Maths::intToFloatConservingDecimals(entityColl.width))
-                        > Maths::intToFloatConservingDecimals(sndEntityPos.x)
-                    && Maths::intToFloatConservingDecimals(entityPos.y)
-                        < (Maths::intToFloatConservingDecimals(sndEntityPos.y)
-                           + Maths::intToFloatConservingDecimals(sndEntityRect.height))
-                    && (Maths::intToFloatConservingDecimals(entityPos.y)
+                        > Maths::intToFloatConservingDecimals(realPosSndEntity.x)
+                    && Maths::intToFloatConservingDecimals(realPosFstEntity.y)
+                        < (Maths::intToFloatConservingDecimals(realPosSndEntity.y)
+                           + Maths::intToFloatConservingDecimals(arrCollisionRect[*itIds].height))
+                    && (Maths::intToFloatConservingDecimals(realPosFstEntity.y)
                         + Maths::intToFloatConservingDecimals(entityColl.height))
-                        > Maths::intToFloatConservingDecimals(sndEntityPos.y)) {
+                        > Maths::intToFloatConservingDecimals(realPosSndEntity.y)) {
                     checkSide(id, *itIds);
                 }
             }

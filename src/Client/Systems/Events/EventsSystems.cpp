@@ -89,12 +89,14 @@ namespace Systems {
         Json &json                                        = Json::getInstance();
         Registry &registry                                = Registry::getInstance();
         Registry::components<Types::CollisionRect> arrCol = registry.getComponents<Types::CollisionRect>();
-//TODO
+
         if (arrCol.exist(id)) {
             Types::CollisionRect &col = arrCol[id];
             float posX                = Maths::intToFloatConservingDecimals(pos.x)
+                + (Maths::intToFloatConservingDecimals(col.offsetX))
                 + (Maths::intToFloatConservingDecimals(col.width) / 2.F);
             float posY = Maths::intToFloatConservingDecimals(pos.y)
+                + (Maths::intToFloatConservingDecimals(col.offsetY))
                 + (Maths::intToFloatConservingDecimals(col.height) / 2.F);
             newPos.x = Maths::floatToIntConservingDecimals(posX);
             newPos.y = Maths::floatToIntConservingDecimals(posY);
@@ -266,10 +268,10 @@ namespace Systems {
 
         if (isGameWin() == true) {
             endGameMessage =
-                "You win! Redirecting to menu in " + seconds + (seconds == "1" ? " second" : " seconds")
+                "You win! Redirecting to menu in " + seconds + (seconds == "1" ? " second" : " seconds");
         } else {
             endGameMessage =
-                "You lose! Redirecting to menu in " + seconds + (seconds == "1" ? " second" : " seconds")
+                "You lose! Redirecting to menu in " + seconds + (seconds == "1" ? " second" : " seconds");
         }
 
         modifEndGameText(endGameMessage);
