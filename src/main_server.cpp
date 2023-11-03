@@ -55,6 +55,8 @@ int main(int ac, const char **av)
 {
 #ifndef NDEBUG
     Logger::setLogLevel(LogLevel::Debug);
+#else
+    Logger::setLogLevel(LogLevel::Info);
 #endif
     std::vector<std::string> args(av, av + ac);
     auto serverType  = Args::ServerArgsHandling::checkArgs(ac, av);
