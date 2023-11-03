@@ -53,6 +53,7 @@ namespace Systems {
                 return;
             }
         }
+        Nitwork::NitworkMainServer::getInstance().setIpOfMainServer(msg.ownerInfos.ip);
         Nitwork::NitworkMainServer::getInstance().createLobby(msg.maxNbPlayer, msg.name, msg.gameType);
     }
 

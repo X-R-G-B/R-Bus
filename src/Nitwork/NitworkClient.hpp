@@ -37,7 +37,7 @@ namespace Nitwork {
              * @param ip The ip of the main server
              * @param port The port of the main server
              */
-            void connectMainServer(const std::string &ip, n_port_t port);
+            bool connectMainServer(const std::string &ip, n_port_t port);
 
             /**
              * @brief Connect the client to the lobby
@@ -45,12 +45,6 @@ namespace Nitwork {
              * @param port
              */
             void connectLobby(const std::string &ip, n_port_t port);
-
-            /**
-             * @brief Add a new init message to the packet
-             * in order to create a new player when the server respond
-             */
-            void addInitMsg();
 
             /**
              * @brief Add a new ready message to the packet
@@ -114,6 +108,12 @@ namespace Nitwork {
             /* Private connection methods */
 
         private:
+            /**
+             * @brief Add a new init message to the packet
+             * in order to create a new player when the server respond
+             */
+
+            void addInitMsg();
             /**
              * @brief Set the main endpoint (the main server)
              * if the client is already connected to a main server, it will be disconnected

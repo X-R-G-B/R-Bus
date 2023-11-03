@@ -7,7 +7,6 @@
 
 #include "Json.hpp"
 #include <fstream>
-#include <iostream>
 #include <sstream>
 #include <utility>
 #include "ResourcesManager.hpp"

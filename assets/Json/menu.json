@@ -1,23 +1,24 @@
 {
-    "menu": {
-        "connect": {
+    "menu": [
+        {
             "type": "button",
-            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
-            "width": 500,
-            "height" : 500,
+            "callback": "initConnection",
+            "spritePath": "assets/Menu/button.png",
+            "width": 3000,
+            "height" : 1500,
             "rect": {
-                "x": 101.0,
-                "y": 0.0,
-                "width": 32.0,
-                "height": 19.0
+                "x": 51.0,
+                "y": 51.0,
+                "width": 1265.0,
+                "height": 305.0
             },
             "position" : {
-                "x": 1000,
-                "y": 1000
+                "x": 3100,
+                "y": 6500
             },
             "collisionRect": {
-                "width": 500,
-                "height": 500
+                "width": 3000,
+                "height": 1500
             },
             "animRect": [
                 {
@@ -26,39 +27,56 @@
                     "noIncr": true,
                     "list": [
                         {
-                            "x" : 233.0,
-                            "y": 2.0,
-                            "width": 32.0,
-                            "height": 14.0
+                            "x" : 1416.0,
+                            "y": 49.0,
+                            "width": 1267.0,
+                            "height": 307.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 2759.0,
+                            "y": 31.0,
+                            "width": 1303.0,
+                            "height": 340.0
                         }
                     ]
                 }
             ]
         },
-        "ip": {
+        {
             "name": "ip",
             "type": "input",
             "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
-            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "spritePath": "assets/Menu/input-box.png",
             "text": "localhost",
             "color": "red",
             "textSize": 3,
-            "maxChar": 10,
-            "width": 500,
-            "height" : 500,
+            "maxChar": 16,
+            "width": 3600,
+            "height" : 800,
+            "textPosition": {
+                "x": 3400,
+                "y": 3150
+            },
             "position" : {
-                "x": 2000,
-                "y": 2000
+                "x": 2700,
+                "y": 3000
             },
             "rect": {
-                "x": 101.0,
-                "y": 0.0,
-                "width": 32.0,
-                "height": 19.0
+                "x": 30.0,
+                "y": 32.0,
+                "width": 1615.0,
+                "height": 220.0
             },
             "collisionRect": {
-                "width": 2000,
-                "height": 500
+                "width": 3600,
+                "height": 800
             },
             "animRect": [
                 {
@@ -67,39 +85,56 @@
                     "noIncr": true,
                     "list": [
                         {
-                            "x" : 233.0,
-                            "y": 2.0,
-                            "width": 32.0,
-                            "height": 14.0
+                            "x" : 1697.0,
+                            "y": 31.0,
+                            "width": 1618.0,
+                            "height": 221.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 3348.0,
+                            "y": 14.0,
+                            "width": 1651.0,
+                            "height": 252.0
                         }
                     ]
                 }
             ]
         },
-        "host": {
+        {
             "name": "port",
             "type": "input",
             "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
-            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "spritePath": "assets/Menu/input-box.png",
             "text": "4242",
             "color": "red",
             "textSize": 3,
-            "maxChar": 10,
-            "width": 20,
-            "height" : 5,
+            "maxChar": 8,
+            "width": 3600,
+            "height" : 800,
+            "textPosition": {
+                "x": 3400,
+                "y": 5100
+            },
             "position" : {
-                "x": 3700,
-                "y": 6000
+                "x": 2700,
+                "y": 4900
             },
             "collisionRect": {
-                "width": 2000,
-                "height": 500
+                "width": 3600,
+                "height": 800
             },
             "rect": {
-                "x": 101.0,
-                "y": 0.0,
-                "width": 32.0,
-                "height": 19.0
+                "x": 30.0,
+                "y": 32.0,
+                "width": 1615.0,
+                "height": 220.0
             },
             "animRect": [
                 {
@@ -108,14 +143,57 @@
                     "noIncr": true,
                     "list": [
                         {
-                            "x" : 233.0,
-                            "y": 2.0,
-                            "width": 32.0,
-                            "height": 14.0
+                            "x" : 1697.0,
+                            "y": 31.0,
+                            "width": 1618.0,
+                            "height": 221.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 3348.0,
+                            "y": 14.0,
+                            "width": 1651.0,
+                            "height": 252.0
                         }
                     ]
                 }
             ]
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "IP (ex: 127.0.0.1)",
+            "position" : {
+                "x": 2700,
+                "y": 2500
+            }
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "PORT (ex: 4242)",
+            "position" : {
+                "x": 2700,
+                "y": 4400
+            }
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 3,
+            "text": "CONNECT",
+            "position" : {
+                "x": 3850,
+                "y": 7000
+            }
         }
-    }
+    ]
 }

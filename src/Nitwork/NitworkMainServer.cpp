@@ -8,6 +8,8 @@
 #include "Logger.hpp"
 #ifdef _WIN32
     #include <sstream>
+    #include <tchar.h>
+    #include <windows.h>
 #else
 extern "C"
 {
@@ -176,27 +178,31 @@ namespace Nitwork {
         int ownerPort)
     {
 #ifdef _WIN32
-        std::ostringstream cmdline;
-        cmdline << ECS::ResourcesManager::convertPath(
-                       "./r-type_server",
-                       ECS::ResourcesManager::FileType::BINARY)
-                       .c_str()
-                << " 1 " << maxNbPlayer << " " << gameType << " " << name.c_str() << " " << ownerIp.c_str()
-                << " " << ownerPort;
+        std::string winName = "\"" + name + "\"";
+        std::basic_ostringstream<TCHAR> cmdline;
+        cmdline << _T(ECS::ResourcesManager::convertPath(
+                          "./r-type_server.exe",
+                          ECS::ResourcesManager::FileType::BINARY)
+                          .c_str())
+                << _T(" 1 ") << _T(maxNbPlayer) << _T(" ") << _T(gameType) << _T(" ") << _T(winName.c_str())
+                << _T(" ") << _T(ownerIp.c_str()) << _T(" ") << _T(ownerPort);
 
-        STARTUPINFO si;
+        Logger::fatal("cmdline: " + cmdline.str());
+        STARTUPINFO si = {sizeof(si)};
         PROCESS_INFORMATION pi;
-        ZeroMemory(&si, sizeof(si));
-        si.cb = sizeof(si);
-        ZeroMemory(&pi, sizeof(pi));
+    #ifdef UNICODE
+        TCHAR *cmd = _wcsdup(cmdline.str().c_str());
+    #else
+        TCHAR *cmd = _strdup(cmdline.str().c_str());
+    #endif
 
-        if (!CreateProcess(NULL, &cmdline.str()[0], NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+        if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
             Logger::error("Error: CreateProcess failed");
+            free(cmd);
             return;
         }
+        free(cmd);
         _lobbyPids.emplace_back(pi.dwProcessId);
-        CloseHandle(pi.hProcess);
-        CloseHandle(pi.hThread);
 #else
         pid_t c_pid = fork();
 
@@ -244,12 +250,7 @@ namespace Nitwork {
             Logger::error("Invalid name: " + name);
             return;
         }
-        forkProcessAndCreateLobby(
-            maxNbPlayer,
-            gameType,
-            name,
-            _socket.local_endpoint().address().to_string(),
-            _socket.local_endpoint().port());
+        forkProcessAndCreateLobby(maxNbPlayer, gameType, name, _ip, _socket.local_endpoint().port());
     }
 
     const std::vector<struct lobby_s> &NitworkMainServer::getLobbies() const
@@ -276,5 +277,29 @@ namespace Nitwork {
             return;
         }
         _lobbies.push_back(lobby);
+    }
+
+    void NitworkMainServer::setIpOfMainServer(const std::string &ip)
+    {
+        _ip = ip;
+    }
+
+    std::vector<std::string> NitworkMainServer::getAvailableIps() const
+    {
+        std::vector<std::string> ips;
+        boost::asio::io_context io_context;
+        boost::asio::ip::tcp::resolver resolver(io_context);
+        boost::asio::ip::tcp::resolver::query query(boost::asio::ip::host_name(), "");
+        boost::asio::ip::tcp::resolver::iterator iter = resolver.resolve(query);
+        boost::asio::ip::tcp::resolver::iterator end;
+
+        while (iter != end) {
+            boost::asio::ip::tcp::endpoint ep = *iter;
+            if (ep.address().is_v4()) {
+                ips.emplace_back(ep.address().to_string());
+            }
+            ++iter;
+        }
+        return ips;
     }
 } // namespace Nitwork

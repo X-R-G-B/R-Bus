@@ -38,6 +38,10 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Position>();
         Registry::components<Types::FontSize> arrFsz =
             Registry::getInstance().getComponents<Types::FontSize>();
+        Registry::components<Types::InputBox> arrInputBox =
+            Registry::getInstance().getComponents<Types::InputBox>();
+        Registry::components<Types::Button> arrButton =
+            Registry::getInstance().getComponents<Types::Button>();
 
         Types::FontSize defaultFsz = {text.getFontSize()};
         setFontSizeResponsive(text, defaultFsz);
@@ -49,7 +53,7 @@ namespace Systems {
             Maths::floatToIntConservingDecimals(text.getPosition().x),
             Maths::floatToIntConservingDecimals(text.getPosition().y)};
         setPositionResponsive(text, defaultPosition);
-        if (arrPosition.exist(id)) {
+        if (arrPosition.exist(id) && !arrInputBox.exist(id) && !arrButton.exist(id)) {
             setPositionResponsive(text, arrPosition[id]);
         }
         text.setColor(text.getColor());

@@ -1,0 +1,281 @@
+{
+  "createLobbyMenu": [
+    {
+      "type": "button",
+      "spritePath": "assets/Menu/button.png",
+      "width": 1600,
+      "height": 1000,
+      "callback": "goToSelectLobby",
+      "rect": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1366.0,
+        "height": 406.0
+      },
+      "position": {
+        "x": 100,
+        "y": 500
+      },
+      "collisionRect": {
+        "width": 1600,
+        "height": 1000
+      },
+      "animRect": [
+        {
+          "type": "hover",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x": 1366.0,
+              "y": 0.0,
+              "width": 1366.0,
+              "height": 406.0
+            }
+          ]
+        },
+        {
+          "type": "selected",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x" : 2732.0,
+              "y": 0.0,
+              "width": 1366.0,
+              "height": 406.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "text": "Go Back",
+      "color": "red",
+      "size": 2,
+      "position": {
+        "x": 525,
+        "y": 875
+      }
+    },
+    {
+      "type": "text",
+      "color": "red",
+      "size": 2,
+      "text": "NAME OF THE LOBBY",
+      "position" : {
+        "x": 2670,
+        "y": 1700
+      }
+    },
+    {
+      "name": "name",
+      "type": "input",
+      "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
+      "spritePath": "assets/Menu/input-box.png",
+      "text": "ServerOfSaverio",
+      "color": "white",
+      "textSize": 2,
+      "maxChar": 30,
+      "width": 6000,
+      "height": 800,
+      "textPosition": {
+        "x": 3050,
+        "y": 2250
+      },
+      "position" : {
+        "x": 2000,
+        "y": 2000
+      },
+      "rect": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1670.0,
+        "height": 278.0
+      },
+      "collisionRect": {
+        "width": 6000,
+        "height": 800
+      },
+      "animRect": [
+        {
+          "type": "hover",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x" : 1697.0,
+              "y": 31.0,
+              "width": 1618.0,
+              "height": 221.0
+            }
+          ]
+        },
+        {
+          "type": "selected",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x" : 3348.0,
+              "y": 14.0,
+              "width": 1651.0,
+              "height": 252.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "color": "red",
+      "size": 2,
+      "text": "NUMBER OF MAX PLAYERS IN THE LOBBY",
+      "position" : {
+        "x": 2670,
+        "y": 3700
+      }
+    },
+    {
+      "name": "maxNb",
+      "type": "input",
+      "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
+      "spritePath": "assets/Menu/input-box.png",
+      "text": "2",
+      "color": "white",
+      "textSize": 3,
+      "maxChar": 2,
+      "width": 6000,
+      "height": 800,
+      "textPosition": {
+        "x": 3050,
+        "y": 4180
+      },
+      "position" : {
+        "x": 2000,
+        "y": 4000
+      },
+      "rect": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1670.0,
+        "height": 278.0
+      },
+      "collisionRect": {
+        "width": 6000,
+        "height": 800
+      },
+      "animRect": [
+        {
+          "type": "hover",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x" : 1697.0,
+              "y": 31.0,
+              "width": 1618.0,
+              "height": 221.0
+            }
+          ]
+        },
+        {
+          "type": "selected",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x" : 3348.0,
+              "y": 14.0,
+              "width": 1651.0,
+              "height": 252.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "color": "red",
+      "size": 3,
+      "text": "CREATE WITH GAME TYPE :",
+      "position" : {
+        "x": 3000,
+        "y": 6500
+      }
+    },
+    {
+      "type": "text",
+      "color": "white",
+      "size": 2,
+      "text": "NORMAL",
+      "position" : {
+        "x": 4600,
+        "y": 7600
+      }
+    },
+    {
+      "type": "button",
+      "spritePath": "assets/Menu/button.png",
+      "callback": "onButtonCreateLobbyNormalClicked",
+      "width": 2500,
+      "height" : 1250,
+      "rect": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 1366.0,
+        "height": 406.0
+      },
+      "position": {
+        "x": 3750,
+        "y": 7100
+      },
+      "collisionRect": {
+        "width": 2500,
+        "height": 1250
+      },
+      "animRect": [
+        {
+          "type": "hover",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x": 1366.0,
+              "y": 0.0,
+              "width": 1366.0,
+              "height": 406.0
+            }
+          ]
+        },
+        {
+          "type": "selected",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x" : 3348.0,
+              "y": 14.0,
+              "width": 1651.0,
+              "height": 252.0
+            }
+          ]
+        },
+        {
+          "type": "selected",
+          "time": 80,
+          "noIncr": true,
+          "list": [
+            {
+              "x": 2732.0,
+              "y": 0.0,
+              "width": 1366.0,
+              "height": 406.0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

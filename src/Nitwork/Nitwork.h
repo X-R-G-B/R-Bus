@@ -18,7 +18,7 @@
     #define TICKS_PER_MILLISECOND(t) (TICKS_PER_SECOND(t) / 1000) // The number of ticks per millisecond
     #define DEFAULT_THREAD_NB 4 // The default number of thread
     #define RANDOM_PORT 0 // The port to use to get a random port (the first available)
-    #define MAX_MAIN_SERVER_CLIENT 30 // The max number of client for the main server
+    #define MAX_MAIN_SERVER_CLIENT 300 // The max number of client for the main server
     #define MAX_NB_ACTION 16 // The max number of action per packet
 
 /* The header code of the packet (used to check if the packet is valid) */
@@ -178,7 +178,7 @@ PACK(struct packetNewEnemy_s {
 PACK(struct msgNewBullet_s {
         n_magick_t magick;
         struct position_absolute_s pos;
-        missileTypes_e missileType;
+        enum missileTypes_e missileType;
 });
 
 PACK(struct packetNewBullet_s {
@@ -205,7 +205,7 @@ PACK(struct msgCreatePlayer_s {
         n_id_t playerId;
         struct position_absolute_s pos;
         struct health_s life;
-        bool isOtherPlayer;
+        char isOtherPlayer;
 });
 
 PACK(struct packetCreatePlayer_s {

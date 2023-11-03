@@ -32,17 +32,18 @@ namespace Types {
             {LEFT,  "left" },
     });
 
-    enum RectListType { UNDEFINED, DEFAULT_RECT, MOVE, ATTACK, DEAD, HOVER };
+    enum RectListType { UNDEFINED, DEFAULT_RECT, MOVE, ATTACK, DEAD, HOVER, SELECTED };
 
     NLOHMANN_JSON_SERIALIZE_ENUM(
         RectListType,
         {
-            {UNDEFINED,    nullptr  },
-            {DEFAULT_RECT, "default"},
-            {MOVE,         "move"   },
-            {ATTACK,       "attack" },
-            {DEAD,         "dead"   },
-            {HOVER,        "hover"  }
+            {UNDEFINED,    nullptr   },
+            {DEFAULT_RECT, "default" },
+            {MOVE,         "move"    },
+            {ATTACK,       "attack"  },
+            {DEAD,         "dead"    },
+            {HOVER,        "hover"   },
+            {SELECTED,     "selected"}
     });
 
     class AnimRect {

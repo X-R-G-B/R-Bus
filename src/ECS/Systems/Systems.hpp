@@ -37,6 +37,7 @@ namespace Systems {
         bool otherPlayer = false);
     void createPlayerMissile(Types::Position pos, Types::Missiles &typeOfMissile);
     void addPhysicsToEntity(nlohmann::json jsonObject, const Types::Position &originPos);
+    void moveEntities(std::size_t, std::size_t);
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems();
     std::vector<std::function<void(std::size_t, std::size_t)>> getBulletsSystems();
     std::vector<std::function<void(std::size_t, std::size_t)>> getPhysicSystems();

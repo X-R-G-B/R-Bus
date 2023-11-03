@@ -24,7 +24,8 @@ enum class JsonType {
     WAVE,
     BULLETS,
     MENU,
-    SELECT_LOBBY
+    SELECT_LOBBY,
+    CREATE_LOBBY
 };
 
 const std::unordered_map<enemy_type_e, JsonType> messageTypes = {
@@ -41,6 +42,7 @@ const std::unordered_map<JsonType, std::string> pathToJson = {
     {JsonType::BULLETS,          "assets/Json/bullets.json"     },
     {JsonType::MENU,             "assets/Json/menu.json"        },
     {JsonType::SELECT_LOBBY,     "assets/Json/selectLobby.json" },
+    {JsonType::CREATE_LOBBY,     "assets/Json/createLobby.json" }
 };
 
 class Json {
