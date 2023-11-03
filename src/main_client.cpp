@@ -22,15 +22,10 @@ int main(int /*unused*/, const char **av)
     Logger::setLogLevel(LogLevel::Debug);
 #endif
     ResourcesManager::init(av[0]);
-    if (!checkArgs(ac, av)) {
-        return EXIT_EPITECH;
-    }
     initScenes();
     if (!Nitwork::NitworkClient::getInstance().startClient()) {
         return EXIT_EPITECH;
     }
-    Nitwork::NitworkClient::getInstance().addInitMsg();
-    Nitwork::NitworkClient::getInstance().addReadyMsg();
     int res = Scene::SceneManager::getInstance().run();
     if (Nitwork::NitworkClient::getInstance().isRunning()) {
         Nitwork::NitworkClient::getInstance().stop();

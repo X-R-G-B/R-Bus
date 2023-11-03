@@ -1,14 +1,15 @@
-#include "ClientNetwork.hpp"
 #include <algorithm>
 #include "B-luga-physics/ECSCustomTypes.hpp"
-#include "GameSystems.hpp"
-#include "B-luga/Json.hpp"
 #include "B-luga/Maths/Maths.hpp"
-#include "NitworkClient.hpp"
+#include "B-luga/Json.hpp"
 #include "B-luga/Registry.hpp"
 #include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "B-luga-physics/ECSSystems.hpp"
+#include "CreateMissiles.hpp"
+#include "ClientNetwork.hpp"
+#include "GameSystems.hpp"
+#include "NitworkClient.hpp"
 #include "init.hpp"
 
 namespace Systems {
@@ -57,7 +58,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(director.mutex);
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
         Types::Enemy::setEnemyNb(wave.enemyNb);
-        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME))
+        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC))
             .addSystem(initWave);
         Logger::info("Wave started");
     }
@@ -225,7 +226,7 @@ namespace Systems {
             Maths::addIntDecimals(msgNewBullet.pos.y),
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
-        Systems::createMissile(position, missileType);
+        createMissile(position, missileType);
     }
 
     void receiveBroadcastAbsolutePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)
@@ -311,7 +312,7 @@ namespace Systems {
             Logger::error("Server Not OK!");
             return;
         }
-        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+        Scene::SceneManager::getInstance().changeScene(Scenes::SELECT_LOBBY);
         Logger::info("Server OK!");
     }
 
@@ -325,7 +326,7 @@ namespace Systems {
             Logger::error("MAGICK_CONNECT_MAIN_SERVER_RESP is not the same");
             return;
         }
-        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+        Scene::SceneManager::getInstance().changeScene(Scenes::SELECT_LOBBY);
         Logger::info("Server OK!");
     }
 

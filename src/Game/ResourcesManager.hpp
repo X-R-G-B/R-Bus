@@ -13,7 +13,7 @@ enum class JsonType : std::size_t {
     TERMINATORBOSS,
     BULLETS,
     WAVE,
-    MENU,
+    MENU_DATA,
     SELECT_LOBBY,
     MAXTYPE
 };
@@ -134,13 +134,13 @@ class ResourcesManager {
              * @param type The type of the file
              * @return The converted path
          */
-        static std::string convertPath(const std::string &path_const, FileType type);
+        static std::string convertPath(const std::string &path_const, FileType type)
         {
             if (type == FileType::ASSETS) {
                 return convertPath(path_const);
             }
             if (type == FileType::BINARY) {
-                boost::filesystem::path path_tmp = _resourcePath;
+                boost::filesystem::path path_tmp = getRessourcePath();
                 path_tmp                         = path_tmp.parent_path();
 #ifdef PACKAGED
                 path_tmp.append("bin");

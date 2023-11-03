@@ -8,9 +8,9 @@
 #pragma once
 
 #include "ButtonCallbacks.hpp"
-#include "Json.hpp"
-#include "Registry.hpp"
-#include "SystemManagersDirector.hpp"
+#include "B-luga/Json.hpp"
+#include "B-luga/Registry.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 
 namespace Menu {
 

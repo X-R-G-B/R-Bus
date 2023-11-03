@@ -9,6 +9,7 @@
 #include "ServerNetwork.hpp"
 #include "B-luga/Maths/Maths.hpp"
 #include "NitworkServer.hpp"
+#include "CreateMissiles.hpp"
 #include "B-luga/Registry.hpp"
 #include "B-luga-physics/ECSSystems.hpp"
 
@@ -82,7 +83,7 @@ namespace Systems {
             Maths::addIntDecimals(msgNewBullet.pos.y),
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
-        Systems::createMissile(position, missileType);
+        createMissile(position, missileType);
         //         send bullet to clients but not the sender
         Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg(msgNewBullet, endpoint);
     }

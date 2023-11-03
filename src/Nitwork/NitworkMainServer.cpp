@@ -5,7 +5,7 @@
 ** NitworkMainServer
 */
 
-#include "Logger.hpp"
+#include "B-luga/Logger.hpp"
 #ifdef _WIN32
     #include <sstream>
 #else
@@ -177,9 +177,9 @@ namespace Nitwork {
     {
 #ifdef _WIN32
         std::ostringstream cmdline;
-        cmdline << ECS::ResourcesManager::convertPath(
+        cmdline << ResourcesManager::convertPath(
                        "./r-type_server",
-                       ECS::ResourcesManager::FileType::BINARY)
+                       ResourcesManager::FileType::BINARY)
                        .c_str()
                 << " 1 " << maxNbPlayer << " " << gameType << " " << name.c_str() << " " << ownerIp.c_str()
                 << " " << ownerPort;

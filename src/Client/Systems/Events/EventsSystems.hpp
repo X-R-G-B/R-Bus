@@ -12,11 +12,6 @@
 #include <vector>
 #include "B-luga-physics/ECSCustomTypes.hpp"
 
-enum SceneType {
-    MENU,
-    MAIN_GAME
-};
-
 namespace Systems {
     namespace EventsSystems {
         void playerMovement(std::size_t /*unused*/, std::size_t /*unused*/);

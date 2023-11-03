@@ -8,15 +8,15 @@
 #include "SelectLobbySystems.hpp"
 #include <algorithm>
 #include <string>
-#include "CustomTypes.hpp"
-#include "ECSCustomTypes.hpp"
-#include "Geometry.hpp"
-#include "Graphics.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#include "ResourcesManager.hpp"
+#include "init.hpp"
 #include "Menu.hpp"
 #include "MessageTypes.h"
 #include "NitworkClient.hpp"
-#include "SceneManager.hpp"
-#include "SystemManagersDirector.hpp"
 
 namespace Systems::SelectLobbySystems {
 
@@ -62,17 +62,17 @@ namespace Systems::SelectLobbySystems {
 
     void initSelectLoby(std::size_t managerId, std::size_t systemId)
     {
-        if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::SELECT_LOBBY) {
+        if (Scene::SceneManager::getInstance().getCurrentScene() != Scenes::SELECT_LOBBY) {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
             return;
         }
         try {
             nlohmann::json createLobbyNormalButton =
-                Json::getInstance().getDataByVector({"menu", "gametype_normal"}, JsonType::SELECT_LOBBY);
+                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY), {"menu", "gametype_normal"});
             nlohmann::json lobbyName =
-                Json::getInstance().getDataByVector({"menu", "name"}, JsonType::SELECT_LOBBY);
+                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY), {"menu", "name"});
             nlohmann::json maxNbPlayer =
-                Json::getInstance().getDataByVector({"menu", "maxNb"}, JsonType::SELECT_LOBBY);
+                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY), {"menu", "maxNb"});
             Menu::MenuBuilder::getInstance().initMenuEntity(
                 createLobbyNormalButton,
                 onButtonCreateLobbyNormalClicked);
@@ -142,8 +142,8 @@ namespace Systems::SelectLobbySystems {
                     + std::to_string(arrLobby[id].maxNbPlayer) + " | "
                     + gameTypeToString(arrLobby[id].gameType);
                 y += 5;
-                Raylib::Text text(text_t, Raylib::Vector2(x, y), 2, Raylib::Red);
-                arrLobbyText.insertBack(text);
+                auto text = Raylib::Text::fromText(text_t, Raylib::Vector2(x, y), 2, Raylib::Red);
+                arrLobbyText.insertBack(*text);
             }
         }
     }

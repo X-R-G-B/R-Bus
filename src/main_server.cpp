@@ -54,14 +54,14 @@ int mainLobbyServer(const std::vector<std::string> &av)
 int main(int ac, const char **av)
 {
 #ifndef NDEBUG
-    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
+    Logger::setLogLevel(LogLevel::Debug);
 #endif
     std::vector<std::string> args(av, av + ac);
     auto serverType  = Args::ServerArgsHandling::checkArgs(ac, av);
     auto programPath = std::string(av[0]);
 
     signal(SIGINT, signalHandler);
-    ECS::ResourcesManager::init(programPath);
+    ResourcesManager::init(programPath);
     if (serverType == Args::MAIN_SERVER) {
         return mainMainServer(args);
     } else if (serverType == Args::LOBBY_SERVER) {

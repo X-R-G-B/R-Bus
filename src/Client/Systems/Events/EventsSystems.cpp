@@ -97,7 +97,7 @@ namespace Systems {
             newPos.y = Maths::floatToIntConservingDecimals(posY);
         }
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile), "bullets");
+            json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileId(typeOfMissile), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         int halfSprite = Maths::divisionWithTwoIntDecimals(collisionRect.width, 200);
@@ -220,19 +220,19 @@ namespace Systems {
         constexpr float musicVolume = 0.60F;
         constexpr float soundVolume = 0.63F;
 
-        Raylib::Music music(musicPath, musicVolume);
-        Raylib::Sound soundEffectShoot(soundPathShoot, soundVolume);
-        Raylib::Sound soundEffectShoot2(soundPathShoot2, soundVolume);
-        Raylib::Sound soundEffectShoot3(soundPathShoot3, soundVolume);
+        auto music = Raylib::Music::fromFile(musicPath, musicVolume);
+        auto soundEffectShoot = Raylib::Sound::fromFile(soundPathShoot, soundVolume);
+        auto soundEffectShoot2 = Raylib::Sound::fromFile(soundPathShoot2, soundVolume);
+        auto soundEffectShoot3 = Raylib::Sound::fromFile(soundPathShoot3, soundVolume);
 
         Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Raylib::Music>().insertBack(music);
+        Registry::getInstance().getComponents<Raylib::Music>().insertBack(*music);
         Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(soundEffectShoot);
+        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(*soundEffectShoot);
         Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(soundEffectShoot2);
+        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(*soundEffectShoot2);
         Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(soundEffectShoot3);
+        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(*soundEffectShoot3);
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 

@@ -3,11 +3,17 @@
 enum SystemManagers {
     EVENTS,
     ECSSYSTEMS,
-    GAME,
+    GAME_LOGIC,
     CLIENTNETWORK,
     GRAPHICS,
-    MENU,
+    MENU_SYSTEMS,
     NETWORK_MENU
+};
+
+enum Scenes {
+    MENU,
+    SELECT_LOBBY,
+    GAME
 };
 
 void initScenes();

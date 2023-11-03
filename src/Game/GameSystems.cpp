@@ -211,53 +211,6 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Container>().insertBack(container);
     }
 
-    void createMissile(Types::Position &pos, Types::Missiles &typeOfMissile)
-    {
-        Registry::getInstance().addEntity();
-
-        constexpr float bulletWidth        = 5.0F;
-        constexpr float bulletHeight       = 5.0F;
-        constexpr float speedX             = 0.7F;
-        constexpr float speedY             = 0.0F;
-        Types::CollisionRect collisionRect = {
-                Maths::floatToIntConservingDecimals(bulletWidth),
-                Maths::floatToIntConservingDecimals(bulletHeight)};
-        Types::Velocity velocity = {
-                Maths::floatToIntConservingDecimals(speedX),
-                Maths::floatToIntConservingDecimals(speedY)};
-        Types::Missiles missileType          = typeOfMissile;
-        Types::Dead deadComp                 = {};
-        Types::PlayerAllies playerAlliesComp = {};
-        Types::Position position             = {pos.x, pos.y};
-
-    #ifdef CLIENT
-        const std::string bulletPath = "assets/R-TypeSheet/r-typesheet1.gif";
-        Types::Rect spriteRect       = {200, 121, 32, 10};
-        Types::SpriteDatas bulletDatas(
-            bulletPath,
-            Maths::floatToIntConservingDecimals(bulletWidth),
-            Maths::floatToIntConservingDecimals(bulletHeight),
-            FRONTLAYER,
-            static_cast<std::size_t>(FRONT));
-        Types::AnimRect animRect(spriteRect, Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::BULLETS), {"bullet", "animRect"}), Types::RectListType::MOVE, Types::Direction::RIGHT);
-    #endif
-        struct health_s healthComp = {1};
-        Types::Damage damageComp   = {10};
-
-        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
-    #ifdef CLIENT
-        Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(bulletDatas);
-            Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
-    #endif
-        Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
-        Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
-        Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
-        Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
-        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
-        Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
-        Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
-    }
-
     static void sendEnemyDeath(std::size_t arrId)
     {
         Logger::fatal("start send enemy death");

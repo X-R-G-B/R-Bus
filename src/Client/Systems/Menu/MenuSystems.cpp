@@ -5,11 +5,11 @@
 ** Menu
 */
 
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga/Maths/Maths.hpp"
+#include "B-luga/SceneManager.hpp"
 #include "MenuSystems.hpp"
-#include "CustomTypes.hpp"
-#include "Maths.hpp"
 #include "Menu.hpp"
-#include "SceneManager.hpp"
 
 namespace Systems {
     namespace Menu {
@@ -160,10 +160,10 @@ namespace Systems {
                 return;
             }
             nlohmann::json connectButton =
-                Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU);
-            nlohmann::json inputBoxIp = Json::getInstance().getDataByVector({"menu", "ip"}, JsonType::MENU);
+                Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU_DATA);
+            nlohmann::json inputBoxIp = Json::getInstance().getDataByVector({"menu", "ip"}, JsonType::MENU_DATA);
             nlohmann::json inputBoxHost =
-                Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU);
+                Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU_DATA);
 
             try {
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(

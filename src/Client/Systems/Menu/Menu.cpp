@@ -5,13 +5,14 @@
 ** Menu
 */
 
-#include "Menu.hpp"
+#include "B-luga/Maths/Maths.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga-graphics/AnimRect.hpp"
 #include "ButtonCallbacks.hpp"
-#include "CustomTypes.hpp"
-#include "Maths.hpp"
+#include "Menu.hpp"
 #include "NitworkClient.hpp"
-#include "Raylib.hpp"
-#include "SceneManager.hpp"
 
 namespace Menu {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
