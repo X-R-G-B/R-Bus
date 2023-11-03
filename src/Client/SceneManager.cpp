@@ -26,7 +26,7 @@ namespace Scene {
     static void initRaylib()
     {
         Raylib::initWindow(screenWidth, screenHeight, "R-Bus");
-        Raylib::setWindowState(Raylib::ConfigFlags::WINDOW_RESIZABLE);
+        Raylib::setWindowState(Raylib::ConfigFlags::FULLSCREEN_MODE);
         Raylib::setTargetFPS(Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
         Raylib::initAudioDevice();
     }
