@@ -109,19 +109,24 @@ namespace Systems {
         Registry::components<Types::Rotation> arrRotation =
             Registry::getInstance().getComponents<Types::Rotation>();
         Registry::components<Types::Color> arrColor = Registry::getInstance().getComponents<Types::Color>();
-        float scale                                 = 1.0F;
         float rotation                              = 0;
         Raylib::Color tint                          = Raylib::White;
         Raylib::Vector2 spritePos                   = {0, 0};
+        Raylib::Vector2 origin                      = {0, 0};
 
         rotation = arrRotation.exist(entityId) ? arrRotation[entityId].rotate : rotation;
         tint     = arrColor.exist(entityId) ? arrColor[entityId].color : tint;
-        scale    = (sprite.getWidth() * static_cast<float>(Raylib::getScreenWidth())) / denominator
-            / static_cast<float>(sprite.getTextureWidth());
         spritePos = calculatePosition(
             Maths::intToFloatConservingDecimals(position.x),
             Maths::intToFloatConservingDecimals(position.y));
-        sprite.drawEx(spritePos, rotation, scale, tint);
+        
+        Raylib::Vector2 size = calculateSize(sprite);
+        sprite.drawPro(
+            Raylib::Rectangle(0, 0, sprite.getTextureWidth(), sprite.getTextureHeight()),
+            Raylib::Rectangle(spritePos.x, spritePos.y, size.x, size.y),
+            origin,
+            rotation,
+            tint);
     }
 
     static void drawSpriteWithRect(
