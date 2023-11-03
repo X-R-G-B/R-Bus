@@ -31,14 +31,6 @@ const std::vector<std::string> paths = {
 class ResourcesManager {
     public:
 
-        /**
-             * @brief The type of the file
-         */
-        enum class FileType {
-            ASSETS,
-            BINARY,
-        };
-
         static std::string getPathByJsonType(JsonType type)
         {
             static bool init = false;
@@ -68,34 +60,11 @@ class ResourcesManager {
             boost::filesystem::path path_tmp = execPath;
             path_tmp                         = path_tmp.remove_filename();
             path_tmp = boost::filesystem::absolute(path_tmp, boost::filesystem::initial_path());
-#ifndef PACKAGED
-            path_tmp.append("assets");
-            if (!boost::filesystem::exists(path_tmp)) {
-                Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
-            }
-            getRessourcePath() = path_tmp.make_preferred().string();
-            Logger::info("RESOURCE_MANAGER: Path Assets: " + getRessourcePath());
-            return;
+#ifdef PACKAGED
+            getRessourcePath() = ResourcesManager::getRessourcePathPackaged(path_tmp.string());
+#else
+            getRessourcePath() = ResourcesManager::getRessourcePathNormal(path_tmp.string());
 #endif
-            path_tmp = path_tmp.parent_path();
-            path_tmp.append("share");
-            if (!boost::filesystem::exists(path_tmp)) {
-                Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
-            }
-            path_tmp.append("r-type");
-            if (!boost::filesystem::exists(path_tmp)) {
-                Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
-            }
-            getRessourcePath() = path_tmp.make_preferred().string();
-            if (!boost::filesystem::exists(getRessourcePath())) {
-                Logger::fatal("RESOURCE_MANAGER: Path not found: " + getRessourcePath());
-                path_tmp.append("assets");
-                if (!boost::filesystem::exists(path_tmp)) {
-                    Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
-                } else {
-                    getRessourcePath() = path_tmp.make_preferred().string();
-                }
-            }
             Logger::info("RESOURCE_MANAGER: Path Assets: " + getRessourcePath());
         }
 
@@ -107,58 +76,55 @@ class ResourcesManager {
          */
         static std::string convertPath(const std::string &path_const)
         {
+            std::string found_path;
+
             if (getRessourcePath().empty()) {
                 Logger::fatal("RESOURCE_MANAGER: need to call init first (" + path_const + ")");
                 return "";
             }
-            if (path_const.substr(0, std::string("assets").length()) != std::string("assets")) {
-                Logger::error(
-                    "RESOURCE_MANAGER: Invalid path given (must start with 'assets': " + path_const + ")");
-                return "";
+            if (ResourcesManager::getMap().find(path_const) != ResourcesManager::getMap().end()) {
+                return ResourcesManager::getMap().at(path_const);
             }
-            std::string path(path_const, std::string("assets").length(), std::string::npos);
-            boost::filesystem::path path_tmp = getRessourcePath();
-            path_tmp.append(path);
-            path_tmp = path_tmp.make_preferred();
-            if (!boost::filesystem::exists(path_tmp)) {
-                Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
-            } else {
-                Logger::debug("RESOURCE_MANAGER: Path found: " + path_tmp.string());
-            }
-            return path_tmp.string();
-        }
-
-        /**
-             * @brief Convert a path to the correct path
-             * @param path_const The path to convert
-             * @param type The type of the file
-             * @return The converted path
-         */
-        static std::string convertPath(const std::string &path_const, FileType type)
-        {
-            if (type == FileType::ASSETS) {
-                return convertPath(path_const);
-            }
-            if (type == FileType::BINARY) {
-                boost::filesystem::path path_tmp = getRessourcePath();
-                path_tmp                         = path_tmp.parent_path();
-#ifdef PACKAGED
-                path_tmp.append("bin");
-#endif
-                if (!boost::filesystem::exists(path_tmp)) {
-                    Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
-                    return "";
+            if (found_path.empty() && path_const.starts_with("assets")) {
+                if (ResourcesManager::isExists(ResourcesManager::getRessourcePath(), "share/r-type")) {
+                    boost::filesystem::path path_tmp = ResourcesManager::getRessourcePath();
+                    path_tmp = path_tmp.append("share");
+                    path_tmp = path_tmp.append("r-type");
+                    std::string path(path_const, std::string("assets").length(), std::string::npos);
+                    path_tmp = path_tmp.append(path);
+                    path_tmp = path_tmp.make_preferred();
+                    Logger::debug("RESOURCE_MANAGER: Path found: " + path_tmp.string());
+                    found_path = path_tmp.string();
                 }
-                path_tmp.append(path_const);
-                path_tmp = path_tmp.make_preferred();
-                if (!boost::filesystem::exists(path_tmp)) {
-                    Logger::fatal("RESOURCE_MANAGER: Path not found: " + path_tmp.string());
-                    return "";
+                if (found_path.empty() && ResourcesManager::isExists(ResourcesManager::getRessourcePath(), "assets")) {
+                    boost::filesystem::path path_tmp = ResourcesManager::getRessourcePath();
+                    path_tmp = path_tmp.append(path_const);
+                    path_tmp = path_tmp.make_preferred();
+                    Logger::debug("RESOURCE_MANAGER: Path found: " + path_tmp.string());
+                    found_path = path_tmp.string();
                 }
-                return path_tmp.string();
             }
-            Logger::fatal("RESOURCE_MANAGER: Invalid FileType");
-            return "";
+            if (found_path.empty()) {
+                if (ResourcesManager::isExists(ResourcesManager::getRessourcePath(), path_const)) {
+                    boost::filesystem::path path_tmp = ResourcesManager::getRessourcePath();
+                    path_tmp = path_tmp.append(path_const);
+                    path_tmp = path_tmp.make_preferred();
+                    Logger::debug("RESOURCE_MANAGER: Path found: " + path_tmp.string());
+                    found_path = path_tmp.string();
+                }
+                if (found_path.empty() && ResourcesManager::isExists(ResourcesManager::getRessourcePath(), "bin")) {
+                    boost::filesystem::path path_tmp = ResourcesManager::getRessourcePath();
+                    path_tmp = path_tmp.append("bin");
+                    path_tmp = path_tmp.append(path_const);
+                    path_tmp = path_tmp.make_preferred();
+                    if (boost::filesystem::exists(path_tmp)) {
+                        Logger::debug("RESOURCE_MANAGER: Path found: " + path_tmp.string());
+                        found_path = path_tmp.string();
+                    }
+                }
+            }
+            ResourcesManager::getMap()[path_const] = found_path;
+            return found_path;
         }
 
     private:
@@ -168,4 +134,40 @@ class ResourcesManager {
             return resourcePath;
         }
 
+        static std::unordered_map<std::string, std::string> &getMap()
+        {
+            static std::unordered_map<std::string, std::string> map;
+            return map;
+        }
+
+        static bool isExists(const std::string &path, const std::string &rest)
+        {
+            boost::filesystem::path path_tmp = path;
+            path_tmp = path_tmp.append(rest);
+            path_tmp = path_tmp.make_preferred();
+            return boost::filesystem::exists(path_tmp);
+        }
+
+        static std::string getRessourcePathPackaged(const std::string &pathFolderInit)
+        {
+            boost::filesystem::path path_tmp = pathFolderInit;
+            path_tmp = path_tmp.parent_path();
+
+            if (!ResourcesManager::isExists(path_tmp.string(), "share") || !ResourcesManager::isExists(path_tmp.string(), "bin")) {
+                Logger::fatal("RESOURCE_MANAGER: Path don't contain OK: " + path_tmp.string());
+                return ResourcesManager::getRessourcePathNormal(pathFolderInit);
+            }
+            return path_tmp.string();
+        }
+
+        static std::string getRessourcePathNormal(const std::string &pathFolderInit)
+        {
+            boost::filesystem::path path_tmp = pathFolderInit;
+
+            if (!ResourcesManager::isExists(path_tmp.string(), "assets")) {
+                Logger::fatal("RESOURCE_MANAGER: Path don't contain OK: " + path_tmp.string());
+                return "";
+            }
+            return path_tmp.string();
+        }
 };

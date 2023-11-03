@@ -177,10 +177,7 @@ namespace Nitwork {
     {
 #ifdef _WIN32
         std::ostringstream cmdline;
-        cmdline << ResourcesManager::convertPath(
-                       "./r-type_server",
-                       ResourcesManager::FileType::BINARY)
-                       .c_str()
+        cmdline << ResourcesManager::convertPath("r-type_server").c_str()
                 << " 1 " << maxNbPlayer << " " << gameType << " " << name.c_str() << " " << ownerIp.c_str()
                 << " " << ownerPort;
 
@@ -207,14 +204,8 @@ namespace Nitwork {
         if (c_pid == 0) {
             Logger::info("Lobby " + name + " created");
             if (execl(
-                    ECS::ResourcesManager::convertPath(
-                        "./r-type_server",
-                        ECS::ResourcesManager::FileType::BINARY)
-                        .c_str(),
-                    ECS::ResourcesManager::convertPath(
-                        "./r-type_server",
-                        ECS::ResourcesManager::FileType::BINARY)
-                        .c_str(),
+                    ResourcesManager::convertPath("r-type_server").c_str(),
+                    ResourcesManager::convertPath("r-type_server").c_str(),
                     "1",
                     std::to_string(maxNbPlayer).c_str(),
                     std::to_string(gameType).c_str(),
