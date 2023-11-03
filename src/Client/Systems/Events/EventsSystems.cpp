@@ -205,11 +205,11 @@ namespace Systems {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                            = Registry::getInstance();
-        Registry::components<Raylib::Music> arrMusics = registry.getComponents<Raylib::Music>();
+        auto &arrMusics = registry.getComponents<Raylib::MusicShared>();
 
         for (auto &music : arrMusics) {
-            if (music.getPath() == musicPath && Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_M)) {
-                music.setNeedToPlay(true);
+            if (music->getPath() == musicPath && Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_M)) {
+                music->setNeedToPlay(true);
             }
         }
     }
@@ -226,13 +226,13 @@ namespace Systems {
         auto soundEffectShoot3 = Raylib::Sound::fromFile(soundPathShoot3, soundVolume);
 
         Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Raylib::Music>().insertBack(*music);
+        Registry::getInstance().getComponents<Raylib::MusicShared>().insertBack(music);
         Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(*soundEffectShoot);
+        Registry::getInstance().getComponents<Raylib::SoundShared>().insertBack(soundEffectShoot);
         Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(*soundEffectShoot2);
+        Registry::getInstance().getComponents<Raylib::SoundShared>().insertBack(soundEffectShoot2);
         Registry::getInstance().addEntity();
-        Registry::getInstance().getComponents<Raylib::Sound>().insertBack(*soundEffectShoot3);
+        Registry::getInstance().getComponents<Raylib::SoundShared>().insertBack(soundEffectShoot3);
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 

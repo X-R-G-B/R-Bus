@@ -40,16 +40,16 @@ namespace Systems {
     static void playBulletSound(Types::Missiles &typeOfMissile)
     {
         Json &json = Json::getInstance();
-        Registry::components<Raylib::Sound> arrSounds =
-            Registry::getInstance().getComponents<Raylib::Sound>();
+        Registry::components<Raylib::SoundShared> arrSounds =
+            Registry::getInstance().getComponents<Raylib::SoundShared>();
         nlohmann::json bulletData =
             json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileId(typeOfMissile.type), "bullets");
 
         const std::string soundPathShoot = json.getDataFromJson<std::string>(bulletData, "soundPath");
 
         for (auto &sound : arrSounds) {
-            if (sound.getPath() == soundPathShoot) {
-                sound.setNeedToPlay(true);
+            if (sound->getPath() == soundPathShoot) {
+                sound->setNeedToPlay(true);
                 break;
             }
         }

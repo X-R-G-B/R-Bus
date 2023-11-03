@@ -8,7 +8,11 @@
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga/Maths/Maths.hpp"
 #include "B-luga/SceneManager.hpp"
+#include "B-luga-graphics/AnimRect.hpp"
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
 #include "MenuSystems.hpp"
+#include "ResourcesManager.hpp"
+#include "init.hpp"
 #include "Menu.hpp"
 
 namespace Systems {
@@ -43,13 +47,13 @@ namespace Systems {
 
         static void insertText(std::size_t id, Registry::components<Types::InputBox> &arrInputBox)
         {
-            Registry::components<Raylib::Text> arrText =
-                Registry::getInstance().getComponents<Raylib::Text>();
-            int key = Raylib::getCharPressed();
+            Registry::components<Raylib::TextShared> arrText =
+                Registry::getInstance().getComponents<Raylib::TextShared>();
+            int key = Raylib::KeyboardInput::getCharPressed();
 
             if ((key >= ' ') && (key <= '}') && (arrInputBox[id].text.size() < arrInputBox[id].maxChar)) {
                 arrInputBox[id].text += static_cast<char>(key);
-                arrText[id].setCurrentText(arrInputBox[id].text);
+                arrText[id]->setCurrentText(arrInputBox[id].text);
             }
         }
 
@@ -58,7 +62,7 @@ namespace Systems {
             Registry::components<Types::InputBox> arrInputBox =
                 Registry::getInstance().getComponents<Types::InputBox>();
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-                {typeid(Types::InputBox), typeid(Raylib::Text)});
+                {typeid(Types::InputBox), typeid(Raylib::TextShared)});
 
             for (auto id : ids) {
                 if (arrInputBox[id].selected == true) {
@@ -71,7 +75,7 @@ namespace Systems {
         {
             std::size_t idEntity = 0;
 
-            if (Raylib::isMouseButtonPressed(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
+            if (Raylib::MouseInput::isMouseButtonPressed(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
                 if (!::Menu::checkClick(idEntity)) {
                     setAllInputBoxFalse();
                     return;
@@ -82,12 +86,12 @@ namespace Systems {
 
         static void deleteInputBoxChar(std::size_t id, Registry::components<Types::InputBox> &arrInputBox)
         {
-            Registry::components<Raylib::Text> arrText =
-                Registry::getInstance().getComponents<Raylib::Text>();
+            auto &arrText =
+                Registry::getInstance().getComponents<Raylib::TextShared>();
 
             if (arrInputBox[id].text.size() > 0) {
                 arrInputBox[id].text.pop_back();
-                arrText[id].setCurrentText(arrInputBox[id].text);
+                arrText[id]->setCurrentText(arrInputBox[id].text);
             }
         }
 
@@ -96,10 +100,10 @@ namespace Systems {
             Registry::components<Types::InputBox> arrInputBox =
                 Registry::getInstance().getComponents<Types::InputBox>();
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-                {typeid(Types::InputBox), typeid(Raylib::Text)});
+                {typeid(Types::InputBox), typeid(Raylib::TextShared)});
 
             for (auto id : ids) {
-                if (arrInputBox[id].selected && Raylib::isKeyPressed(Raylib::KeyboardKey::KB_BACKSPACE)) {
+                if (arrInputBox[id].selected && Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_BACKSPACE)) {
                     deleteInputBoxChar(id, arrInputBox);
                 }
             }
@@ -142,28 +146,26 @@ namespace Systems {
             for (auto id : ids) {
                 if (::Menu::checkIsInsideRect(id)) {
                     arrAnimRect[id].changeRectList(Types::RectListType::HOVER);
-                    Raylib::setMouseCursor(MOUSE_CURSOR_ARROW);
-                    if (Raylib::isMouseButtonPressed(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
+                    if (Raylib::MouseInput::isMouseButtonPressed(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
                         arrButton[id].callback();
                     }
                     return;
                 }
                 arrAnimRect[id].changeRectList(Types::RectListType::UNDEFINED);
             }
-            Raylib::setMouseCursor(MOUSE_CURSOR_DEFAULT);
         }
 
         void initMenu(std::size_t managerId, std::size_t systemId)
         {
-            if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::MENU) {
+            if (Scene::SceneManager::getInstance().getCurrentScene() != Scenes::MENU) {
                 SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
                 return;
             }
             nlohmann::json connectButton =
-                Json::getInstance().getDataByVector({"menu", "connect"}, JsonType::MENU_DATA);
-            nlohmann::json inputBoxIp = Json::getInstance().getDataByVector({"menu", "ip"}, JsonType::MENU_DATA);
+                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::MENU_DATA), {"menu", "connect"});
+            nlohmann::json inputBoxIp = Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::MENU_DATA), {"menu", "ip"});
             nlohmann::json inputBoxHost =
-                Json::getInstance().getDataByVector({"menu", "host"}, JsonType::MENU_DATA);
+                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::MENU_DATA), {"menu", "host"});
 
             try {
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(

@@ -8,6 +8,7 @@
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga/Logger.hpp"
 #include "B-luga/SceneManager.hpp"
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
 #include "ButtonCallbacks.hpp"
 #include "NitworkClient.hpp"
 

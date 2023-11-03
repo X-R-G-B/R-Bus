@@ -115,9 +115,9 @@ namespace Systems::SelectLobbySystems {
         Registry::getInstance().getClock().decreaseSeconds(clockId, 1);
         // already created lobby
         auto idsLobbyStatus =
-            Registry::getInstance().getEntitiesByComponents({typeid(LobbyStatus), typeid(Raylib::Text)});
+            Registry::getInstance().getEntitiesByComponents({typeid(LobbyStatus), typeid(Raylib::TextShared)});
         auto &arrLobbyStatus = Registry::getInstance().getComponents<LobbyStatus>();
-        auto &arrLobbyText   = Registry::getInstance().getComponents<Raylib::Text>();
+        auto &arrLobbyText   = Registry::getInstance().getComponents<Raylib::TextShared>();
         // list of all lobby
         auto ids       = Registry::getInstance().getEntitiesByComponents({typeid(struct lobby_s)});
         auto &arrLobby = Registry::getInstance().getComponents<struct lobby_s>();
@@ -129,8 +129,8 @@ namespace Systems::SelectLobbySystems {
             for (auto idLobbyStatus : idsLobbyStatus) {
                 if (arrLobby[id].lobbyInfos.port == arrLobbyStatus[idLobbyStatus].port
                     && std::string(arrLobby[id].lobbyInfos.ip) == arrLobbyStatus[idLobbyStatus].ip) {
-                    x     = arrLobbyText[idLobbyStatus].x();
-                    y     = arrLobbyText[idLobbyStatus].y();
+                    x     = arrLobbyText[idLobbyStatus]->x();
+                    y     = arrLobbyText[idLobbyStatus]->y();
                     found = true;
                 }
             }
@@ -143,7 +143,7 @@ namespace Systems::SelectLobbySystems {
                     + gameTypeToString(arrLobby[id].gameType);
                 y += 5;
                 auto text = Raylib::Text::fromText(text_t, Raylib::Vector2(x, y), 2, Raylib::Red);
-                arrLobbyText.insertBack(*text);
+                arrLobbyText.insertBack(text);
             }
         }
     }

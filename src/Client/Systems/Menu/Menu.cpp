@@ -52,7 +52,7 @@ namespace Menu {
         std::string name = Json::isDataExist(elem, "name")
             ? Json::getInstance().getDataFromJson<std::string>(elem, "name")
             : "";
-        Raylib::Text textComp(text);
+        auto textComp = Raylib::Text::fromText(text);
         std::size_t maxChar(Json::getInstance().getDataFromJson<std::size_t>(elem, "maxChar"));
         Types::InputBox inputBox(text, name, maxChar);
         auto search =
@@ -73,7 +73,7 @@ namespace Menu {
             initFromSprite(elem);
         }
         Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
-        Registry::getInstance().getComponents<Raylib::Text>().insertBack(textComp);
+        Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(textComp);
         Registry::getInstance().getComponents<Types::InputBox>().insertBack(inputBox);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
@@ -174,10 +174,10 @@ namespace Menu {
             Maths::intToFloatConservingDecimals(arrPosition[id].y),
             Maths::intToFloatConservingDecimals(arrCollisionRect[id].width),
             Maths::intToFloatConservingDecimals(arrCollisionRect[id].height));
-        Raylib::Vector2 mousePos(Raylib::getMousePosition().x, Raylib::getMousePosition().y);
+        Raylib::Vector2 mousePos(Raylib::MouseInput::getMousePosition().x, Raylib::MouseInput::getMousePosition().y);
 
-        mousePos.x = (mousePos.x * maxPercent) / Raylib::getScreenWidth();
-        mousePos.y = (mousePos.y * maxPercent) / Raylib::getScreenHeight();
+        mousePos.x = (mousePos.x * maxPercent) / Raylib::Window::getScreenWidth();
+        mousePos.y = (mousePos.y * maxPercent) / Raylib::Window::getScreenHeight();
 
         return Raylib::checkCollisionPointRec(mousePos, rect);
     }
