@@ -26,8 +26,10 @@ namespace Types {
     struct CollisionRect {
             int width;
             int height;
+            int offsetX;
+            int offsetY;
 
-            NLOHMANN_DEFINE_TYPE_INTRUSIVE(CollisionRect, width, height);
+            NLOHMANN_DEFINE_TYPE_INTRUSIVE(CollisionRect, width, height, offsetX, offsetY);
     };
 
     struct Position {

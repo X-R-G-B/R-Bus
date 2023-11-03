@@ -146,10 +146,10 @@ namespace Systems {
 
         for (std::size_t id : ids) {
             if (velocities.exist(id) && collisionRects.exist(id) && positions.exist(id)) {
-                if (Maths::intToFloatConservingDecimals(positions[id].y) <= 0
-                    || Maths::intToFloatConservingDecimals(positions[id].y)
-                            + Maths::intToFloatConservingDecimals(collisionRects[id].height)
-                        >= 100) {
+                float realPosY = Maths::intToFloatConservingDecimals(positions[id].y)
+                    + Maths::intToFloatConservingDecimals(collisionRects[id].offsetY);
+                if (realPosY <= 0
+                    || realPosY + Maths::intToFloatConservingDecimals(collisionRects[id].height) >= 100) {
                     velocities[id].speedY = -velocities[id].speedY;
                 }
             }

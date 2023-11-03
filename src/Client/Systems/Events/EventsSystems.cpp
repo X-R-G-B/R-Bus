@@ -93,8 +93,10 @@ namespace Systems {
         if (arrCol.exist(id)) {
             Types::CollisionRect &col = arrCol[id];
             float posX                = Maths::intToFloatConservingDecimals(pos.x)
+                + (Maths::intToFloatConservingDecimals(col.offsetX))
                 + (Maths::intToFloatConservingDecimals(col.width) / 2.F);
             float posY = Maths::intToFloatConservingDecimals(pos.y)
+                + (Maths::intToFloatConservingDecimals(col.offsetY))
                 + (Maths::intToFloatConservingDecimals(col.height) / 2.F);
             newPos.x = Maths::floatToIntConservingDecimals(posX);
             newPos.y = Maths::floatToIntConservingDecimals(posY);
@@ -259,15 +261,17 @@ namespace Systems {
     void EventsSystems::handleEndGameEvent(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         constexpr std::size_t secondBeforeEnd = 5;
-        static std::size_t clockId = Registry::getInstance().getClock().create(false);
+        static std::size_t clockId            = Registry::getInstance().getClock().create(false);
         std::size_t elapsedSeconds = Registry::getInstance().getClock().elapsedSecondsSince(clockId);
         std::string seconds        = std::to_string(secondBeforeEnd - elapsedSeconds);
         std::string endGameMessage;
 
         if (isGameWin() == true) {
-            endGameMessage = "You win! Redirecting to menu in " + seconds + " seconds";
+            endGameMessage =
+                "You win! Redirecting to menu in " + seconds + (seconds == "1" ? " second" : " seconds");
         } else {
-            endGameMessage = "You lose! Redirecting to menu in " + seconds + " seconds";
+            endGameMessage =
+                "You lose! Redirecting to menu in " + seconds + (seconds == "1" ? " second" : " seconds");
         }
 
         modifEndGameText(endGameMessage);

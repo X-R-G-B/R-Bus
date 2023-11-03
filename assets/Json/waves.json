@@ -28,15 +28,7 @@
                     "msBeforeSpawn" : 2000
                 },
                 {
-                    "id": "big-daemon",
-                    "position" : {
-                        "x": 10500,
-                        "y": 4500
-                    },
-                    "msBeforeSpawn" : 2000
-                },
-                {
-                    "id": "big-purple-boss",
+                    "id": "green-head",
                     "position" : {
                         "x": 10500,
                         "y": 2500

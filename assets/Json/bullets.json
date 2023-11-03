@@ -11,7 +11,9 @@
             "waitTimeBullet": 500,
             "collisionRect": {
                 "width": 450,
-                "height": 450
+                "height": 450,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "spritePath": "assets/R-TypeSheet/WaterBullets.png",
             "soundPath": "assets/Audio/Sounds/laser.ogg",
@@ -77,7 +79,9 @@
             "waitTimeBullet": 200,
             "collisionRect": {
                 "width": 200,
-                "height": 200
+                "height": 200,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "spritePath": "assets/R-TypeSheet/classic-bullets.png",
             "soundPath": "assets/Audio/Sounds/glitch.ogg",
@@ -230,7 +234,9 @@
             "waitTimeBullet": 500,
             "collisionRect": {
                 "width": 300,
-                "height": 300
+                "height": 300,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "spritePath": "assets/R-TypeSheet/GreenBullets.png",
             "soundPath": "assets/Audio/Sounds/laser2.ogg",
@@ -287,7 +293,9 @@
             "waitTimeBullet": 1000,
             "collisionRect": {
                 "width": 500,
-                "height": 500
+                "height": 500,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "spritePath": "assets/R-TypeSheet/PurpleBullets.png",
             "soundPath": "assets/Audio/Sounds/forceField.ogg",
@@ -344,7 +352,9 @@
             "waitTimeBullet": 1000,
             "collisionRect": {
                 "width": 500,
-                "height": 500
+                "height": 500,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "spritePath": "assets/R-TypeSheet/jutteurs-bullet.png",
             "soundPath": "assets/Audio/Sounds/forceField.ogg",
