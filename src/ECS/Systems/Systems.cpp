@@ -30,7 +30,7 @@ namespace Systems {
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
         Registry::components<Types::CollisionRect> arrCollisionRect =
             registry.getComponents<Types::CollisionRect>();
-
+//TODO
         for (std::size_t id : ids) {
             if (arrPosition[id].x < 0) {
                 arrPosition[id].x = 0;
@@ -133,7 +133,7 @@ namespace Systems {
         std::vector<std::size_t> &ids,
         Registry::components<Types::Position> arrPosition,
         Registry::components<Types::CollisionRect> arrCollisionRect)
-    {
+    { // TODO
         std::size_t id                  = *itIds;
         Types::Position entityPos       = arrPosition[id];
         Types::CollisionRect entityColl = arrCollisionRect[id];

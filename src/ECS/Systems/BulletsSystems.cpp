@@ -153,7 +153,7 @@ namespace Systems {
                     velocities[id].speedY = -velocities[id].speedY;
                 }
             }
-        }
+        } // TODO
     }
 
     static void updateZigzagPhysics(std::vector<std::size_t> ids)
