@@ -28,6 +28,7 @@ namespace Scene {
         Raylib::initWindow(screenWidth, screenHeight, "R-Bus");
         Raylib::setWindowState(Raylib::ConfigFlags::WINDOW_RESIZABLE);
         Raylib::setTargetFPS(Raylib::getMonitorRefreshRate(Raylib::getCurrentMonitor()));
+        Raylib::setExitKey(Raylib::KeyboardKey::KB_F4);
         Raylib::initAudioDevice();
     }
 
@@ -76,7 +77,7 @@ namespace Scene {
     int SceneManager::run()
     {
         try {
-            while (!_stop) {
+            while (!_stop && !Raylib::windowShouldClose()) {
                 Raylib::beginDrawing();
                 Raylib::clearBackground(Raylib::DarkGray);
                 auto scene = _scenes.at(static_cast<std::size_t>(_currentScene));

@@ -96,10 +96,10 @@ namespace Systems {
     }
 #endif
 
-    void createPlayerMissile(Types::Position position, Types::Missiles &typeOfMissile)
+    std::size_t createPlayerMissile(Types::Position pos, Types::Missiles &typeOfMissile)
     {
-        Json &json = Json::getInstance();
-        Registry::getInstance().addEntity();
+        Json &json     = Json::getInstance();
+        std::size_t id = Registry::getInstance().addEntity();
         nlohmann::json bulletData =
             json.getJsonObjectById(JsonType::BULLETS, getMissileIdFromType(typeOfMissile.type), "bullets");
         Types::CollisionRect collisionRect =
@@ -117,14 +117,15 @@ namespace Systems {
 #endif
 
         Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
-        addPhysicsToEntity(bulletData, position);
-        Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+        addPhysicsToEntity(bulletData, pos);
+        Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
+        return id;
     }
 
     void

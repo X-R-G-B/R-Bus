@@ -2,6 +2,8 @@
 
 unsigned int Types::Enemy::_enemyNb = 0;
 std::mutex Types::Enemy::_mutex;
+unsigned int Types::Missiles::_missileNb = 0;
+std::mutex Types::Missiles::_mutex;
 
 namespace Types {
 

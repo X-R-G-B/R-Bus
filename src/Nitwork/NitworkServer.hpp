@@ -54,6 +54,7 @@ namespace Nitwork {
             struct lobby_s getServerInfos() const;
 
             /* Messages creation methods */
+
             /**
              * @brief Add a msg that contain the lobby infos to the main server
              */
@@ -63,7 +64,7 @@ namespace Nitwork {
              * @brief Add a msg packet that contain the start wave msg to the clients
              * @param enemyId The id of the enemy that will be created
              */
-            void addStarWaveMessage(n_id_t enemyId);
+            void addStarWaveMessage(n_id_t enemyNb);
 
             /**
              * @brief Add a msg packet that contain the life update msg to the clients
@@ -102,13 +103,10 @@ namespace Nitwork {
                 const msgCreatePlayer_s &playerMsg);
 
             /**
-             * @brief Add a msg packet that contain the new bullet msg to the clients
-             * @param msg The infos of the bullet that will be created
-             * @param senderEndpoint The endpoint of the client that sent the msg of hie new bullet
+             * @brief Add a msg packet that contain the new missile msg to the clients
+             * @param msg The infos of the missile that will be created
              */
-            void broadcastNewBulletMsg(
-                const struct msgNewBullet_s &msg,
-                boost::asio::ip::udp::endpoint &senderEndpoint);
+            void broadcastNewBulletMsg(const struct msgNewBullet_s &msg);
 
             /**
              * @brief Add a msg packet that contain the new bullet msg to the clients
@@ -134,6 +132,12 @@ namespace Nitwork {
             void addNewPlayerMsg(
                 boost::asio::ip::udp::endpoint &endpoint,
                 const struct msgCreatePlayer_s &playerMsg);
+
+            /**
+             * @brief Add a msg packet that contain the new missile msg to the clients
+             * @param id The id of the player that died
+             */
+            void addMissileDeathMsg(n_id_t id);
 
             /**
              * @brief Add a msg packet that contain the new bullet msg to the clients
@@ -272,7 +276,7 @@ namespace Nitwork {
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::handleClientEnemyDeath(msg, endpoint);
                   }}},
-                {NEW_BULLET,
+                {NEW_MISSILE,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgNewBullet_s>(actionHandler, header);
                   },
@@ -292,6 +296,13 @@ namespace Nitwork {
                   },
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::receivePlayerDeathMsg(msg, endpoint);
+                  }}},
+                {MISSILE_DEATH,
+                 {[this](actionHandler &actionHandler, const struct header_s &header) {
+                      handleBody<struct msgMissileDeath_s>(actionHandler, header);
+                  },
+                  [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                      Systems::handleClientMissileDeath(msg, endpoint);
                   }}},
             };
             /**
@@ -318,7 +329,7 @@ namespace Nitwork {
                  [this](Packet &packet) {
                      sendData<struct packetNewEnemy_s>(packet);
                  }                            },
-                {NEW_BULLET,
+                {NEW_MISSILE,
                  [this](Packet &packet) {
                      sendData<struct packetNewBullet_s>(packet);
                  }                            },
@@ -337,6 +348,10 @@ namespace Nitwork {
                 {PLAYER_DEATH,
                  [this](Packet &packet) {
                      sendData<struct packetPlayerDeath_s>(packet);
+                 }                            },
+                {MISSILE_DEATH,
+                 [this](Packet &packet) {
+                     sendData<struct packetMissileDeath_s>(packet);
                  }                            },
                 {INFO_LOBBY,                  [this](Packet &packet) {
                      sendData<struct packetInfoLobby_s>(packet);

@@ -37,10 +37,11 @@ Table of Contents
             3.2.2. READY
             3.2.3. POSITION_RELATIVE
             3.2.4. POSITION_ABSOLUTE
-            3.2.5. NEW_BULLET
+            3.2.5. NEW_MISSILE
             3.2.6. LIFE_UPDATE
             3.2.7. ENEMY_DEATH
             3.2.8. PLAYER_DEATH
+            3.2.9. MISSILE_DEATH
         3.3. Main Server -> Client
             3.3.1. CONNECT_MAIN_SERVER_RESP
             3.3.2. LIST_LOBBY
@@ -50,10 +51,11 @@ Table of Contents
             3.4.3. ENEMY_DEATH
             3.4.4. NEW_ENEMY
             3.4.5. NEW_PLAYER
-            3.4.6. NEW_BULLET
+            3.4.6. NEW_MISSILE
             3.4.7. POSITION_ABSOLUTE_BROADCAST
             3.4.8. POSITION_RELATIVE_BROADCAST
             3.4.9. PLAYER_DEATH
+            3.4.10. MISSILE_DEATH
         3.5. Lobby Server -> Main Server
             3.5.1. INFO_LOBBY
     4. References
@@ -190,7 +192,7 @@ Table of Contents
 
 3.1.1. CONNECT_MAIN_SERVER
 
-    To understand this action, the action header `magick` must be equal to `18`
+    To understand this action, the action header `magick` must be equal to `19`
 
     The action body is composed of the following fields:
     - `magick`
@@ -220,7 +222,7 @@ Table of Contents
 
 3.1.3. CREATE_LOBBY
 
-    To understand this action, the action header `magick` must be equal to `15`
+    To understand this action, the action header `magick` must be equal to `17`
 
     The action body is composed of the following fields:
     - `magick`
@@ -391,7 +393,7 @@ Table of Contents
     This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
 
-3.2.5. NEW_BULLET
+3.2.5. NEW_MISSILE
 
     To understand this action, the action header `magick` must be equal to `9`
 
@@ -399,6 +401,8 @@ Table of Contents
     - `magick`
     - `x`
     - `y`
+    - `missileId`
+    - `missileHealth`
     - `missileType`
 
     *** Magick
@@ -422,6 +426,24 @@ Table of Contents
 
     This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+    *** Missile ID
+    
+    This field correspond to the ID of the missile.
+    This is useless because this is the server that will set the ID of the
+    missile.
+    
+    This field must be of size 4 byte.
+    This field must be equal to `0`
+    
+    *** Missile Health
+    
+    This field correspond to the health of the missile.
+    This is useless because this is the server that will set the health of the
+    missile.
+    
+    This field must be of size 4 byte.
+    This field must be equal to `0`
 
     *** Missile Type
 
@@ -515,11 +537,35 @@ Table of Contents
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each player.
 
+3.2.9. MISSILE_DEATH
+
+    To understant This action, the aciton header `magick` must be equal to `15`
+    
+    The action body is composed of ther following fields:
+    - `magick`
+    - `missileId`
+
+    *** Magick
+   
+    This field help to know the packet is realy missile death action
+    
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x16`
+    
+    *** Missile ID
+    
+    This field correspond to the ID of the missile that died
+
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each missile.
+
 3.3. Main Server -> Client
 
 3.3.1. CONNECT_MAIN_SERVER_RESP
 
-    To understand this action, the action header `magick` must be equal to `19`
+    To understand this action, the action header `magick` must be equal to `20`
 
     The action body is composed of the following fields:
     - `magick`
@@ -820,7 +866,7 @@ Table of Contents
     This field is equal to `1` if it is you
     This field is equal to `0` if it is not you
 
-3.4.6. NEW_BULLET
+3.4.6. NEW_MISSILE
 
     To understand this action, the action header `magick` must be equal to `9`
 
@@ -828,6 +874,8 @@ Table of Contents
     - `magick`
     - `x`
     - `y`
+    - `missileId`
+    - `missileHealth`
     - `missileType`
 
     *** Magick
@@ -848,6 +896,20 @@ Table of Contents
     *** Y
 
     This field correspond to the absolute y position of the bullet.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+
+    *** Missile ID
+    
+    This field correspond to the ID of the missile.
+
+    This field must be of size 4 bytes.
+    This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
+    
+    *** Missile Health
+    
+    This field correspond to the health of the missile.
 
     This field must be of size 4 bytes.
     This field is signed (so starting from -((2^32)/2) to +(((2^32)/2)-1))
@@ -972,11 +1034,35 @@ Table of Contents
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each player.
 
+3.2.10. MISSILE_DEATH
+
+    To understant This action, the aciton header `magick` must be equal to `15`
+    
+    The action body is composed of ther following fields:
+    - `magick`
+    - `missileId`
+
+    *** Magick
+   
+    This field help to know the packet is realy missile death action
+    
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x16`
+    
+    *** Missile ID
+    
+    This field correspond to the ID of the missile that died
+
+    This field must be of size 4 bytes.
+    This field is unsigned (so starting from 0 to 2^32)
+    This field is unique for each missile.
+
 3.5. Lobby Server -> Main Server
 
 3.5.1. INFO_LOBBY
 
-    To understand this action, the action header `magick` must be equal to `17`
+    To understand this action, the action header `magick` must be equal to `18`
 
     This action is used to let the Main Server know the current Lobby Server
     exists.

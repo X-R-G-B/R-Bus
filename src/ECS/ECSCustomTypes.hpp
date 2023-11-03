@@ -87,7 +87,30 @@ namespace Types {
     };
 
     struct Missiles {
+        public:
+            Missiles(enum missileTypes_e _type = CLASSIC) : type(_type), constId(0)
+            {
+            }
+
+            static void setMissileNb(unsigned int nb)
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+
+                _missileNb = nb;
+            }
+
+            static unsigned int getMissileNb()
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+                return _missileNb;
+            }
+
             missileTypes_e type;
+            unsigned int constId;
+
+        private:
+            static unsigned int _missileNb;
+            static std::mutex _mutex;
     };
 
     enum physicsType_e { ZIGZAG = 0, BOUNCING };

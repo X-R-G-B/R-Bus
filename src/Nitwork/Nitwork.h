@@ -34,7 +34,7 @@
     #define MAGICK_LIFE_UPDATE '\x0b'
     #define MAGICK_ENEMY_DEATH '\x0c'
     #define MAGICK_NEW_ENEMY '\x0e'
-    #define MAGICK_NEW_BULLET '\x0d'
+    #define MAGICK_NEW_MISSILE '\x0d'
     #define MAGICK_POSITION_RELATIVE_BROADCAST '\x0f'
     #define MAGICK_POSITION_ABSOLUTE_BROADCAST '\x10'
     #define MAGICK_NEW_PLAYER '\x0a'
@@ -45,6 +45,7 @@
     #define MAGICK_CONNECT_MAIN_SERVER '\x18'
     #define MAGICK_CONNECT_MAIN_SERVER_RESP '\x14'
     #define MAGICK_INFO_LOBBY '\x15'
+    #define MAGICK_MISSILE_DEATH '\x16'
 
 typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
@@ -64,17 +65,18 @@ enum n_actionType_t {
     ENEMY_DEATH = 6,
     POSITION_RELATIVE = 7,
     POSITION_ABSOLUTE = 8,
-    NEW_BULLET = 9,
+    NEW_MISSILE = 9,
     NEW_ENEMY = 10,
     NEW_PLAYER = 11,
     POSITION_RELATIVE_BROADCAST = 12,
     POSITION_ABSOLUTE_BROADCAST = 13,
     PLAYER_DEATH = 14,
-    CREATE_LOBBY = 15,
-    LIST_LOBBY = 16,
-    INFO_LOBBY = 17,
-    CONNECT_MAIN_SERVER = 18,
-    CONNECT_MAIN_SERVER_RESP = 19,
+    MISSILE_DEATH = 15,
+    CREATE_LOBBY = 16,
+    LIST_LOBBY = 17,
+    INFO_LOBBY = 18,
+    CONNECT_MAIN_SERVER = 19,
+    CONNECT_MAIN_SERVER_RESP = 20,
     N_ACTION_TYPE_MAX,
 };
 
@@ -178,7 +180,9 @@ PACK(struct packetNewEnemy_s {
 PACK(struct msgNewBullet_s {
         n_magick_t magick;
         struct position_absolute_s pos;
-        enum missileTypes_e missileType;
+        n_id_t id;
+        int life;
+        missileTypes_e missileType;
 });
 
 PACK(struct packetNewBullet_s {
@@ -252,7 +256,19 @@ PACK(struct packetPlayerDeath_s {
         struct msgPlayerDeath_s msg;
 });
 
-/* Message Request List Lobby */
+/* Message Missile Death */
+PACK(struct msgMissileDeath_s {
+     n_magick_t magick;
+     n_id_t missileId;
+});
+
+PACK(struct packetMissileDeath_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgMissileDeath_s msgMissileDeath;
+});
+
+ /* Message Request List Lobby */
 PACK(struct msgRequestListLobby_s {
     n_magick_t magick;
 });
