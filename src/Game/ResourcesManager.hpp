@@ -4,6 +4,7 @@
 #include <boost/asio.hpp>
 #include "B-luga/Json.hpp"
 #include "B-luga/Logger.hpp"
+#include "B-luga/PathResolver.hpp"
 #include "ResourcesManager.hpp"
 #include "boost/filesystem.hpp"
 
@@ -37,14 +38,14 @@ class ResourcesManager {
 
             if (!init) {
                 for (const auto &path : paths) {
-                    Json::getInstance().registerJsonFile(ResourcesManager::convertPath(path));
+                    Json::getInstance().registerJsonFile(path);
                 }
                 init = true;
             }
             if (paths.size() <= static_cast<std::size_t>(type)) {
                 return "";
             }
-            return ResourcesManager::convertPath(paths[static_cast<std::size_t>(type)]);
+            return paths[static_cast<std::size_t>(type)];
         }
 
         /**
@@ -66,6 +67,7 @@ class ResourcesManager {
             getRessourcePath() = ResourcesManager::getRessourcePathNormal(path_tmp.string());
 #endif
             Logger::info("RESOURCE_MANAGER: Path Assets: " + getRessourcePath());
+            PathResolver::setResolver(ResourcesManager::convertPath);
         }
 
         /**
