@@ -46,7 +46,9 @@ class ResourcesManager {
                 init = true;
             }
             if (ResourcesManagerValues::paths.size() <= static_cast<std::size_t>(type)) {
-                Logger::fatal("RESOURCE_MANAGER: Invalid JsonType: " + std::to_string(static_cast<std::size_t>(type)));
+                Logger::fatal(
+                    "RESOURCE_MANAGER: Invalid JsonType: "
+                    + std::to_string(static_cast<std::size_t>(type)));
                 return "";
             }
             return ResourcesManagerValues::paths[static_cast<std::size_t>(type)];
