@@ -6,8 +6,8 @@ target_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_subdirectory(Events)
-add_subdirectory(Network)
-add_subdirectory(Menus)
-add_subdirectory(Menu)
-add_subdirectory(Parallax)
+target_sources(
+        ${PROJECT_NAME_CLIENT}
+        PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/Parallax.cpp
+)

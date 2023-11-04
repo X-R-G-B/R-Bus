@@ -1,13 +1,18 @@
-namespace Systems::ParallaxSystems {
+#include <nlohmann/json.hpp>
+#include "B-luga/Json.hpp"
+#include "B-luga-graphics/GraphicsSystems.hpp"
+#include "ResourcesManager.hpp"
+
+namespace Systems::Parallax {
 
     static void initParallaxEntity(nlohmann::basic_json<> &elem, const int maxOffsideParallax = 0)
     {
         std::size_t id          = Registry::getInstance().addEntity();
-        Raylib::Sprite parralax = {
+        auto parralax = Raylib::Sprite::fromFile(
             Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
             Json::getInstance().getDataFromJson<float>(elem, "width"),
             Json::getInstance().getDataFromJson<float>(elem, "height"),
-            id};
+            id);
 
         Types::Position position = Json::getInstance().getDataFromJson<Types::Position>(elem, "position");
         Types::Velocity velocity = Json::getInstance().getDataFromJson<Types::Velocity>(elem, "velocity");
@@ -26,26 +31,25 @@ namespace Systems::ParallaxSystems {
         Types::NoRemoveOutside noRem;
 
         Registry::getInstance().getComponents<Types::NoRemoveOutside>().insertBack(noRem);
-        Registry::getInstance().getComponents<Raylib::Sprite>().insertBack(parralax);
+        Registry::getInstance().getComponents<Raylib::SpriteShared>().insertBack(parralax);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
         Registry::getInstance().getComponents<Types::Parallax>().insertBack(inst);
         Registry::getInstance().setToBackLayers(id);
     }
 
-    void initParalax(std::size_t managerId, std::size_t systemId)
+    void initParalax()
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         std::vector<nlohmann::basic_json<>> parallaxData =
-            Json::getInstance().getDataByJsonType("parallax", JsonType::DEFAULT_PARALLAX);
+            Json::getInstance().getDataByJsonType(ResourcesManager::getPathByJsonType(JsonType::PARALLAX), "parallax");
 
         for (auto &elem : parallaxData) {
             initParallaxEntity(elem);
             if (Json::getInstance().isDataExist(elem, "copy")
                 && Json::getInstance().getDataFromJson<bool>(elem, "copy") == true) {
-                initParallaxEntity(elem, maxOutParallaxRight);
+                initParallaxEntity(elem, 100);
             }
         }
-        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 }

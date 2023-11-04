@@ -15,6 +15,7 @@ enum class JsonType : std::size_t {
     WAVE,
     MENU_DATA,
     SELECT_LOBBY,
+    PARALLAX,
     MAXTYPE
 };
 
@@ -26,6 +27,7 @@ const std::vector<std::string> paths = {
     "assets/Json/wave.json",
     "assets/Json/menu.json",
     "assets/Json/selectLobby.json",
+    "assets/Json/parallaxData.json",
 };
 
 class ResourcesManager {

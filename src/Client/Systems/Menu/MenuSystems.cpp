@@ -14,6 +14,7 @@
 #include "ResourcesManager.hpp"
 #include "init.hpp"
 #include "Menu.hpp"
+#include "Parallax.hpp"
 
 namespace Systems {
     namespace Menu {
@@ -161,6 +162,7 @@ namespace Systems {
                 SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
                 return;
             }
+            Parallax::initParalax();
             nlohmann::json connectButton =
                 Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::MENU_DATA), {"menu", "connect"});
             nlohmann::json inputBoxIp = Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::MENU_DATA), {"menu", "ip"});
