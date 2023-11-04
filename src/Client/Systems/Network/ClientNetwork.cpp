@@ -1,3 +1,4 @@
+#include "Logger.hpp"
 #include "ClientNetwork.hpp"
 #include <algorithm>
 #include "ECSCustomTypes.hpp"
