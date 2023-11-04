@@ -6,15 +6,18 @@
 */
 
 #include "EventsSystems.hpp"
-#include "CustomTypes.hpp"
-#include "Json.hpp"
-#include "Logger.hpp"
-#include "Maths.hpp"
+#include "B-luga-graphics/AnimRect.hpp"
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#include "B-luga/Json.hpp"
+#include "B-luga/Logger.hpp"
+#include "B-luga/Maths/Maths.hpp"
+#include "B-luga/Registry.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "CreateMissiles.hpp"
+#include "GameSystems.hpp"
 #include "NitworkClient.hpp"
-#include "Raylib.hpp"
-#include "Registry.hpp"
-#include "SceneManager.hpp"
-#include "Systems.hpp"
+#include "ResourcesManager.hpp"
 
 namespace Systems {
 
@@ -55,31 +58,27 @@ namespace Systems {
         } else if (clockId == getClockIdFromMissileType(PERFORANT)) {
             bulletType = "perforant";
         }
-        nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, bulletType, "bullets");
-        float waitTimeBullet      = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
+        nlohmann::json bulletData = json.getJsonObjectById(
+            ResourcesManager::getPathByJsonType(JsonType::BULLETS),
+            bulletType,
+            "bullets");
+        float waitTimeBullet = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
 
-        if (clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
-            return false;
-        }
-        return true;
+        return clock_.elapsedMillisecondsSince(clockId) >= static_cast<std::size_t>(waitTimeBullet);
     }
 
     static bool checkBulletRequirements(struct Types::Missiles &missile)
     {
         bool isKeyPressed = false;
 
-        for (auto &key : bulletKeyMap) {
-            if (Raylib::isKeyDown(key.second)) {
+        for (const auto &key : bulletKeyMap) {
+            if (Raylib::KeyboardInput::isKeyDown(key.second)) {
                 missile.type = key.first;
                 isKeyPressed = true;
                 break;
             }
         }
-        if (isKeyPressed == false
-            || isBulletTimeElapsed(getClockIdFromMissileType(missile.type)) == false) {
-            return false;
-        }
-        return true;
+        return isKeyPressed && isBulletTimeElapsed(getClockIdFromMissileType(missile.type));
     }
 
     static Types::Position
@@ -99,8 +98,10 @@ namespace Systems {
             newPos.x = Maths::floatToIntConservingDecimals(posX);
             newPos.y = Maths::floatToIntConservingDecimals(posY);
         }
-        nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile), "bullets");
+        nlohmann::json bulletData = json.getJsonObjectById(
+            ResourcesManager::getPathByJsonType(JsonType::BULLETS),
+            getMissileId(typeOfMissile),
+            "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         int halfSprite = Maths::divisionWithTwoIntDecimals(collisionRect.width, 200);
@@ -120,7 +121,7 @@ namespace Systems {
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
-        if (checkBulletRequirements(missile) == false) {
+        if (!checkBulletRequirements(missile)) {
             return;
         }
 
@@ -173,43 +174,75 @@ namespace Systems {
             if (clock_.elapsedMillisecondsSince(clockId) < elapsedBetweenMove || arrHealth[id].hp <= 0) {
                 continue;
             }
-            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
+            if (Raylib::KeyboardInput::isKeyDown(Raylib::KeyboardKey::KB_RIGHT)) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::RIGHT);
                 Maths::addFloatToDecimalInt(arrPos[id].x, 1.F);
                 isKeyPressed = true;
             }
-            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
+            if (Raylib::KeyboardInput::isKeyDown(Raylib::KeyboardKey::KB_LEFT)) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::LEFT);
                 Maths::subFloatToDecimalInt(arrPos[id].x, 1.F);
                 isKeyPressed = true;
             }
-            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
+            if (Raylib::KeyboardInput::isKeyDown(Raylib::KeyboardKey::KB_UP)) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::UP);
                 Maths::subFloatToDecimalInt(arrPos[id].y, 1.F);
                 isKeyPressed = true;
             }
-            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
+            if (Raylib::KeyboardInput::isKeyDown(Raylib::KeyboardKey::KB_DOWN)) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::DOWN);
                 Maths::addFloatToDecimalInt(arrPos[id].y, 1.F);
                 isKeyPressed = true;
             }
-            if (isKeyPressed == false) {
+            if (!isKeyPressed) {
                 checkAnimRect(id, clock_, clockId, Types::Direction::NONE);
             }
         }
     }
 
-    void EventsSystems::changeScene(std::size_t /*unused*/, std::size_t /*unused*/)
+    const std::string musicPath       = "assets/Audio/Musics/Title.mp3";
+    const std::string soundPathShoot  = "assets/Audio/Sounds/laser.ogg";
+    const std::string soundPathShoot2 = "assets/Audio/Sounds/laser2.ogg";
+    const std::string soundPathShoot3 = "assets/Audio/Sounds/glitch.ogg";
+
+    void EventsSystems::playSoundWithKey(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
-            auto &sceneManager = Scene::SceneManager::getInstance();
-            sceneManager.changeScene(Scene::Scene::MENU);
+        Registry &registry = Registry::getInstance();
+        auto &arrMusics    = registry.getComponents<Raylib::MusicShared>();
+
+        for (auto &music : arrMusics) {
+            if (music->getPath() == musicPath
+                && Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_M)) {
+                music->setNeedToPlay(true);
+            }
         }
     }
 
-    std::vector<std::function<void(std::size_t, std::size_t)>> EventsSystems::getEventSystems()
+    void initAudio(std::size_t managerId, std::size_t systemId)
     {
-        return {playerMovement, changeScene, playerShootBullet};
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        constexpr float musicVolume = 0.60F;
+        constexpr float soundVolume = 0.63F;
+
+        auto music             = Raylib::Music::fromFile(musicPath, musicVolume);
+        auto soundEffectShoot  = Raylib::Sound::fromFile(soundPathShoot, soundVolume);
+        auto soundEffectShoot2 = Raylib::Sound::fromFile(soundPathShoot2, soundVolume);
+        auto soundEffectShoot3 = Raylib::Sound::fromFile(soundPathShoot3, soundVolume);
+
+        Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Raylib::MusicShared>().insertBack(music);
+        Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Raylib::SoundShared>().insertBack(soundEffectShoot);
+        Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Raylib::SoundShared>().insertBack(soundEffectShoot2);
+        Registry::getInstance().addEntity();
+        Registry::getInstance().getComponents<Raylib::SoundShared>().insertBack(soundEffectShoot3);
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+    }
+
+    std::vector<std::function<void(std::size_t, std::size_t)>> EventsSystems::getEventsSystems()
+    {
+        return {playerMovement, playerShootBullet, playSoundWithKey, initAudio};
     }
 } // namespace Systems

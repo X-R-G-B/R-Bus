@@ -10,13 +10,13 @@
 #include <cstddef>
 #include <functional>
 #include <vector>
-#include "ECSCustomTypes.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
 
 namespace Systems {
     namespace EventsSystems {
         void playerMovement(std::size_t /*unused*/, std::size_t /*unused*/);
-        void changeScene(std::size_t /*unused*/, std::size_t /*unused*/);
         void shootBullet(std::size_t /*unused*/, std::size_t /*unused*/);
-        std::vector<std::function<void(std::size_t, std::size_t)>> getEventSystems();
+        void playSoundWithKey(std::size_t /*unused*/, std::size_t /*unused*/);
+        std::vector<std::function<void(std::size_t, std::size_t)>> getEventsSystems();
     } // namespace EventsSystems
 } // namespace Systems

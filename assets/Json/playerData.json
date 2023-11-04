@@ -2,10 +2,16 @@
     "player": {
         "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
         "damage": 10.0,
-        "health": 1.0,
+        "health": 1000.0,
         "deadTime": 1000,
         "width": 500,
         "height" : 500,
+        "container": {
+            "minX": 0.0,
+            "maxX": 100.0,
+            "minY": 0.0,
+            "maxY": 100.0
+        },
         "rect": {
             "x": 101.0,
             "y": 0.0,

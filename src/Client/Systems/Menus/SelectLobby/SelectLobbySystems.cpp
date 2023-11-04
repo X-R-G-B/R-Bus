@@ -8,15 +8,15 @@
 #include "SelectLobbySystems.hpp"
 #include <algorithm>
 #include <string>
-#include "CustomTypes.hpp"
-#include "ECSCustomTypes.hpp"
-#include "Geometry.hpp"
-#include "Graphics.hpp"
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "Menu.hpp"
 #include "MessageTypes.h"
 #include "NitworkClient.hpp"
-#include "SceneManager.hpp"
-#include "SystemManagersDirector.hpp"
+#include "ResourcesManager.hpp"
+#include "init.hpp"
 
 namespace Systems::SelectLobbySystems {
 
@@ -62,17 +62,20 @@ namespace Systems::SelectLobbySystems {
 
     void initSelectLoby(std::size_t managerId, std::size_t systemId)
     {
-        if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::SELECT_LOBBY) {
+        if (Scene::SceneManager::getInstance().getCurrentScene() != Scenes::SELECT_LOBBY) {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
             return;
         }
         try {
-            nlohmann::json createLobbyNormalButton =
-                Json::getInstance().getDataByVector({"menu", "gametype_normal"}, JsonType::SELECT_LOBBY);
-            nlohmann::json lobbyName =
-                Json::getInstance().getDataByVector({"menu", "name"}, JsonType::SELECT_LOBBY);
-            nlohmann::json maxNbPlayer =
-                Json::getInstance().getDataByVector({"menu", "maxNb"}, JsonType::SELECT_LOBBY);
+            nlohmann::json createLobbyNormalButton = Json::getInstance().getDataByVector(
+                ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY),
+                {"menu", "gametype_normal"});
+            nlohmann::json lobbyName = Json::getInstance().getDataByVector(
+                ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY),
+                {"menu", "name"});
+            nlohmann::json maxNbPlayer = Json::getInstance().getDataByVector(
+                ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY),
+                {"menu", "maxNb"});
             Menu::MenuBuilder::getInstance().initMenuEntity(
                 createLobbyNormalButton,
                 onButtonCreateLobbyNormalClicked);
@@ -114,10 +117,10 @@ namespace Systems::SelectLobbySystems {
         }
         Registry::getInstance().getClock().decreaseSeconds(clockId, 1);
         // already created lobby
-        auto idsLobbyStatus =
-            Registry::getInstance().getEntitiesByComponents({typeid(LobbyStatus), typeid(Raylib::Text)});
+        auto idsLobbyStatus = Registry::getInstance().getEntitiesByComponents(
+            {typeid(LobbyStatus), typeid(Raylib::TextShared)});
         auto &arrLobbyStatus = Registry::getInstance().getComponents<LobbyStatus>();
-        auto &arrLobbyText   = Registry::getInstance().getComponents<Raylib::Text>();
+        auto &arrLobbyText   = Registry::getInstance().getComponents<Raylib::TextShared>();
         // list of all lobby
         auto ids       = Registry::getInstance().getEntitiesByComponents({typeid(struct lobby_s)});
         auto &arrLobby = Registry::getInstance().getComponents<struct lobby_s>();
@@ -129,8 +132,8 @@ namespace Systems::SelectLobbySystems {
             for (auto idLobbyStatus : idsLobbyStatus) {
                 if (arrLobby[id].lobbyInfos.port == arrLobbyStatus[idLobbyStatus].port
                     && std::string(arrLobby[id].lobbyInfos.ip) == arrLobbyStatus[idLobbyStatus].ip) {
-                    x     = arrLobbyText[idLobbyStatus].x();
-                    y     = arrLobbyText[idLobbyStatus].y();
+                    x     = arrLobbyText[idLobbyStatus]->x();
+                    y     = arrLobbyText[idLobbyStatus]->y();
                     found = true;
                 }
             }
@@ -142,7 +145,11 @@ namespace Systems::SelectLobbySystems {
                     + std::to_string(arrLobby[id].maxNbPlayer) + " | "
                     + gameTypeToString(arrLobby[id].gameType);
                 y += 5;
-                Raylib::Text text(text_t, Raylib::Vector2(x, y), 2, Raylib::Red);
+                auto text = Raylib::Text::fromText(
+                    text_t,
+                    Raylib::Vector2(x, y),
+                    2,
+                    Raylib::Color(Raylib::ColorDef::Red));
                 arrLobbyText.insertBack(text);
             }
         }

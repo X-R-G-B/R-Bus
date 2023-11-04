@@ -11,7 +11,11 @@
 #include <functional>
 #include <string>
 #include <vector>
-#include "ECSCustomTypes.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
+extern "C"
+{
+#include "MessageTypes.h"
+}
 
 namespace Systems::SelectLobbySystems {
     struct LobbyStatus {

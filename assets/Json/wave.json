@@ -1,6 +1,6 @@
 {
     "wave" : {
-        "nbrEnemy" : 5,
+        "nbrEnemy" : 200,
         "positions": [
             {
                 "position" : {

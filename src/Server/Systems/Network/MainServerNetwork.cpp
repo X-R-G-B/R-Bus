@@ -6,9 +6,9 @@
 */
 
 #include "MainServerNetwork.hpp"
+#include "B-luga/Registry.hpp"
 #include "Nitwork.h"
 #include "NitworkMainServer.hpp"
-#include "Registry.hpp"
 
 constexpr int LIST_LOBBY_SIZE = 5;
 

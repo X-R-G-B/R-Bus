@@ -6,12 +6,13 @@
 */
 
 #include "Menu.hpp"
+#include "B-luga-graphics/AnimRect.hpp"
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga/Maths/Maths.hpp"
+#include "B-luga/SceneManager.hpp"
 #include "ButtonCallbacks.hpp"
-#include "CustomTypes.hpp"
-#include "Maths.hpp"
 #include "NitworkClient.hpp"
-#include "Raylib.hpp"
-#include "SceneManager.hpp"
 
 namespace Menu {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -51,7 +52,7 @@ namespace Menu {
         std::string name = Json::isDataExist(elem, "name")
             ? Json::getInstance().getDataFromJson<std::string>(elem, "name")
             : "";
-        Raylib::Text textComp(text);
+        auto textComp    = Raylib::Text::fromText(text);
         std::size_t maxChar(Json::getInstance().getDataFromJson<std::size_t>(elem, "maxChar"));
         Types::InputBox inputBox(text, name, maxChar);
         auto search =
@@ -59,7 +60,7 @@ namespace Menu {
 
         Raylib::Color color = search != Types::colorMatchStrings.end()
             ? Types::colorMatchStrings.at(Json::getInstance().getDataFromJson<std::string>(elem, "color"))
-            : Raylib::White;
+            : Raylib::Color(Raylib::ColorDef::White);
         Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
 
         if (!Json::getInstance().isDataExist(elem, "spritePath")) {
@@ -72,7 +73,7 @@ namespace Menu {
             initFromSprite(elem);
         }
         Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
-        Registry::getInstance().getComponents<Raylib::Text>().insertBack(textComp);
+        Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(textComp);
         Registry::getInstance().getComponents<Types::InputBox>().insertBack(inputBox);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
@@ -140,7 +141,6 @@ namespace Menu {
             case ObjectType::BUTTON: initButton(elem, callback); break;
             case ObjectType::TEXT: break; // no clickable text for now
             case ObjectType::INPUT_BOX: initInputBox(elem); break;
-            default: Logger::error("Object type is undefined, check your json data"); break;
         }
     }
 
@@ -173,10 +173,12 @@ namespace Menu {
             Maths::intToFloatConservingDecimals(arrPosition[id].y),
             Maths::intToFloatConservingDecimals(arrCollisionRect[id].width),
             Maths::intToFloatConservingDecimals(arrCollisionRect[id].height));
-        Raylib::Vector2 mousePos(Raylib::getMousePosition().x, Raylib::getMousePosition().y);
+        Raylib::Vector2 mousePos(
+            Raylib::MouseInput::getMousePosition().x,
+            Raylib::MouseInput::getMousePosition().y);
 
-        mousePos.x = (mousePos.x * maxPercent) / Raylib::getScreenWidth();
-        mousePos.y = (mousePos.y * maxPercent) / Raylib::getScreenHeight();
+        mousePos.x = (mousePos.x * maxPercent) / Raylib::Window::getScreenWidth();
+        mousePos.y = (mousePos.y * maxPercent) / Raylib::Window::getScreenHeight();
 
         return Raylib::checkCollisionPointRec(mousePos, rect);
     }

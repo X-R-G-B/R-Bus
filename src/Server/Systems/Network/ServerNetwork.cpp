@@ -6,11 +6,12 @@
 */
 
 #include "ServerNetwork.hpp"
-#include "ECSCustomTypes.hpp"
-#include "Maths.hpp"
+#include "B-luga-physics/ECSSystems.hpp"
+#include "B-luga/Maths/Maths.hpp"
+#include "B-luga/Registry.hpp"
+#include "CreateMissiles.hpp"
+#include "GameSystems.hpp"
 #include "NitworkServer.hpp"
-#include "Registry.hpp"
-#include "Systems.hpp"
 
 namespace Systems {
     void handleLifeUpdateMsg(const std::any &any, boost::asio::ip::udp::endpoint &endpoint)
@@ -31,6 +32,7 @@ namespace Systems {
                     endpoint,
                     msg.playerId,
                     msg.life);
+                arrHealth[id].hp = msg.life.hp;
                 return;
             }
         }
@@ -81,7 +83,7 @@ namespace Systems {
             Maths::addIntDecimals(msgNewBullet.pos.y),
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
-        Systems::createMissile(position, missileType);
+        createMissile(position, missileType);
         //         send bullet to clients but not the sender
         Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg(msgNewBullet, endpoint);
     }
