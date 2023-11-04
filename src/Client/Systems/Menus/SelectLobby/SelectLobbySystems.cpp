@@ -142,7 +142,7 @@ namespace Systems::SelectLobbySystems {
                     + std::to_string(arrLobby[id].maxNbPlayer) + " | "
                     + gameTypeToString(arrLobby[id].gameType);
                 y += 5;
-                auto text = Raylib::Text::fromText(text_t, Raylib::Vector2(x, y), 2, Raylib::Red);
+                auto text = Raylib::Text::fromText(text_t, Raylib::Vector2(x, y), 2, Raylib::Color(Raylib::ColorDef::Red));
                 arrLobbyText.insertBack(text);
             }
         }
