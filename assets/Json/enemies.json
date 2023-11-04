@@ -50,7 +50,25 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "physics": [
+                {
+                    "id": "zigzag",
+                    "amplitude": 10.0,
+                    "period": 400.0
+                }
+            ],
+            "attack" : {
+                "bulletId": "fast",
+                "emitterId": "circle",
+                "numberOfMissiles": 6,
+                "missileDirection" : {
+                    "x": -1,
+                    "y": 0
+                },
+                "msBetweenMissiles": 4000.0,
+                "bulletSpeed": 0.9
+            }
         },
         {
             "id": "default2",
@@ -132,7 +150,25 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "physics": [
+                {
+                    "id": "zigzag",
+                    "amplitude": 10.0,
+                    "period": 400.0
+                }
+            ],
+            "attack" : {
+                "bulletId": "fast",
+                "emitterId": "circle",
+                "numberOfMissiles": 6,
+                "missileDirection" : {
+                    "x": -1,
+                    "y": 0
+                },
+                "msBetweenMissiles": 4000.0,
+                "bulletSpeed": 0.9
+            }
         },
         {
             "id": "daemon",
@@ -202,7 +238,25 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "physics": [
+                {
+                    "id": "zigzag",
+                    "amplitude": 10.0,
+                    "period": 400.0
+                }
+            ],
+            "attack" : {
+                "bulletId": "fast",
+                "emitterId": "circle",
+                "numberOfMissiles": 6,
+                "missileDirection" : {
+                    "x": -1,
+                    "y": 0
+                },
+                "msBetweenMissiles": 4000.0,
+                "bulletSpeed": 0.9
+            }
         },
         {
             "id": "papyrus",
@@ -266,7 +320,25 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "physics": [
+                {
+                    "id": "zigzag",
+                    "amplitude": 10.0,
+                    "period": 400.0
+                }
+            ],
+            "attack" : {
+                "bulletId": "fast",
+                "emitterId": "circle",
+                "numberOfMissiles": 6,
+                "missileDirection" : {
+                    "x": -1,
+                    "y": 0
+                },
+                "msBetweenMissiles": 4000.0,
+                "bulletSpeed": 0.9
+            }
         },
         {
             "id": "napstablook",
@@ -336,7 +408,25 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "physics": [
+                {
+                    "id": "zigzag",
+                    "amplitude": 10.0,
+                    "period": 400.0
+                }
+            ],
+            "attack" : {
+                "bulletId": "fast",
+                "emitterId": "circle",
+                "numberOfMissiles": 6,
+                "missileDirection" : {
+                    "x": -1,
+                    "y": 0
+                },
+                "msBetweenMissiles": 4000.0,
+                "bulletSpeed": 0.9
+            }
         },
         {
             "id": "le-jutteur",
@@ -527,7 +617,25 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "physics": [
+                {
+                    "id": "zigzag",
+                    "amplitude": 10.0,
+                    "period": 400.0
+                }
+            ],
+            "attack" : {
+                "bulletId": "fast",
+                "emitterId": "circle",
+                "numberOfMissiles": 6,
+                "missileDirection" : {
+                    "x": -1,
+                    "y": 0
+                },
+                "msBetweenMissiles": 4000.0,
+                "bulletSpeed": 0.9
+            }
         },
         {
             "id": "green-head",
@@ -712,7 +820,25 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "physics": [
+                {
+                    "id": "zigzag",
+                    "amplitude": 10.0,
+                    "period": 400.0
+                }
+            ],
+            "attack" : {
+                "bulletId": "fast",
+                "emitterId": "circle",
+                "numberOfMissiles": 6,
+                "missileDirection" : {
+                    "x": -1,
+                    "y": 0
+                },
+                "msBetweenMissiles": 4000.0,
+                "bulletSpeed": 0.9
+            }
         },
         {
             "id": "big-purple-boss",
@@ -927,7 +1053,25 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "physics": [
+                {
+                    "id": "zigzag",
+                    "amplitude": 10.0,
+                    "period": 400.0
+                }
+            ],
+            "attack" : {
+                "bulletId": "fast",
+                "emitterId": "circle",
+                "numberOfMissiles": 6,
+                "missileDirection" : {
+                    "x": -1,
+                    "y": 0
+                },
+                "msBetweenMissiles": 4000.0,
+                "bulletSpeed": 0.9
+            }
         },
         {
             "id": "big-daemon",
@@ -1057,7 +1201,25 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "physics": [
+                {
+                    "id": "zigzag",
+                    "amplitude": 10.0,
+                    "period": 400.0
+                }
+            ],
+            "attack" : {
+                "bulletId": "fast",
+                "emitterId": "circle",
+                "numberOfMissiles": 6,
+                "missileDirection" : {
+                    "x": -1,
+                    "y": 0
+                },
+                "msBetweenMissiles": 4000.0,
+                "bulletSpeed": 0.9
+            }
         }
     ]
 }

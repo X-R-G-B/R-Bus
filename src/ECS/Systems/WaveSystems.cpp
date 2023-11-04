@@ -24,15 +24,15 @@
 namespace Systems {
 
     static const std::unordered_map<enemy_type_e, std::string> enemiesTypes = {
-        {enemy_type_e::CLASSIC_ENEMY, "default"},
-        {enemy_type_e::CLASSIC_ENEMY_2, "default2"},
-        {enemy_type_e::BIG_DAEMON, "big-daemon"},
-        {enemy_type_e::DAEMON, "daemon"},
-        {enemy_type_e::PAPYRUS, "papyrus"},
-        {enemy_type_e::NAPSTABLOOK, "napstablook"},
-        {enemy_type_e::LEJUTTER, "le-jutteur"},
-        {enemy_type_e::GREEN_HEAD, "green-head"},
-        {enemy_type_e::BIG_PURPLE, "big-purple-boss"},
+        {enemy_type_e::CLASSIC_ENEMY,   "default"        },
+        {enemy_type_e::CLASSIC_ENEMY_2, "default2"       },
+        {enemy_type_e::BIG_DAEMON,      "big-daemon"     },
+        {enemy_type_e::DAEMON,          "daemon"         },
+        {enemy_type_e::PAPYRUS,         "papyrus"        },
+        {enemy_type_e::NAPSTABLOOK,     "napstablook"    },
+        {enemy_type_e::LEJUTTER,        "le-jutteur"     },
+        {enemy_type_e::GREEN_HEAD,      "green-head"     },
+        {enemy_type_e::BIG_PURPLE,      "big-purple-boss"},
     };
 
     static const std::string &getEnemyId(enemy_type_e enemyType)
@@ -66,6 +66,40 @@ namespace Systems {
 
     //////////////////////////////// INIT ENEMIES ////////////////////////////////
 
+    static void initEnemyWeapon(nlohmann::json jsonData, Types::EnemyAttack &attackData)
+    {
+        Json &json = Json::getInstance();
+        if (!json.isDataExist(jsonData, "attack")) {
+            attackData.isAttacking = false;
+            return;
+        }
+        if (json.isDataExist(jsonData["attack"], "bulletId")) {
+            std::string id         = json.getDataFromJson<std::string>(jsonData["attack"], "bulletId");
+            attackData.missileType = getMissileTypeFromId(id);
+        }
+        if (json.isDataExist(jsonData["attack"], "missileDirection")) {
+            attackData.launchDirection =
+                json.getDataFromJson<Types::Position>(jsonData["attack"], "missileDirection");
+        }
+        if (json.isDataExist(jsonData["attack"], "numberOfMissiles")) {
+            attackData.numberOfMissiles = json.getDataFromJson<int>(jsonData["attack"], "numberOfMissiles");
+        }
+        if (json.isDataExist(jsonData["attack"], "msBetweenMissiles")) {
+            attackData.msBetweenMissiles =
+                json.getDataFromJson<float>(jsonData["attack"], "msBetweenMissiles");
+        }
+        if (json.isDataExist(jsonData["attack"], "missileSpawnOffset")) {
+            attackData.missileSpawnOffset =
+                json.getDataFromJson<float>(jsonData["attack"], "missileSpawnOffset");
+        }
+        if (json.isDataExist(jsonData["attack"], "bulletSpeed")) {
+            attackData.bulletSpeed = json.getDataFromJson<float>(jsonData["attack"], "bulletSpeed");
+        }
+        if (json.isDataExist(jsonData["attack"], "emitterId")) {
+            attackData.emitterId = json.getDataFromJson<std::string>(jsonData["attack"], "emitterId");
+        }
+    }
+
     void
     initEnemy(enemy_type_e enemyType, Types::Position position, bool setId, struct ::enemy_id_s enemyId)
     {
@@ -78,8 +112,7 @@ namespace Systems {
             Json::getInstance().getDataFromJson<int>(enemyData, "width"),
             Json::getInstance().getDataFromJson<int>(enemyData, "height"),
             LayerType::DEFAULTLAYER,
-            0
-        };
+            0};
 
         auto rect = Json::getInstance().getDataFromJson<Types::Rect>(enemyData, "rect");
 
@@ -89,7 +122,8 @@ namespace Systems {
 
         constexpr float musicVolume = 0.80F;
         if (Json::isDataExist(enemyData, "musicPath")) {
-            std::string musicPath = Json::getInstance().getDataFromJson<std::string>(enemyData, "musicPath");
+            std::string musicPath =
+                Json::getInstance().getDataFromJson<std::string>(enemyData, "musicPath");
             Raylib::Music music(musicPath, musicVolume);
             music.setNeedToPlay(true);
             Registry::getInstance().getComponents<Raylib::Music>().insertBack(music);
@@ -103,6 +137,8 @@ namespace Systems {
         struct health_s healthComp = {Json::getInstance().getDataFromJson<int>(enemyData, "health")};
         Types::Velocity velocity =
             Json::getInstance().getDataFromJson<Types::Velocity>(enemyData, "velocity");
+
+        addPhysicsToEntity(enemyData, position);
 
 #ifdef CLIENT
         Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
@@ -135,7 +171,8 @@ namespace Systems {
             if (Json::isDataExist(enemy, "position") && Json::isDataExist(enemy, "id")) {
                 std::size_t msBeforeSpawn = 0;
                 if (Json::isDataExist(enemy, "msBeforeSpawn")) {
-                    msBeforeSpawn = Json::getInstance().getDataFromJson<std::size_t>(enemy, "msBeforeSpawn");
+                    msBeforeSpawn =
+                        Json::getInstance().getDataFromJson<std::size_t>(enemy, "msBeforeSpawn");
                 }
                 waveInfos.addEnemy(enemy, msBeforeSpawn);
             }
@@ -159,10 +196,11 @@ namespace Systems {
         }
         // Handle the creation of the enemies
         auto &enemy = waveInfos.getRemainingEnemies().front();
-        if (waveInfos.isFirstEnemyCreated() == false)
-        {
+        if (waveInfos.isFirstEnemyCreated() == false) {
             waveInfos.setFirstEnemyCreated(true);
-        } else if (Registry::getInstance().getClock().elapsedMillisecondsSince(waveInfos.getClockId()) < enemy.second) {
+        } else if (
+            Registry::getInstance().getClock().elapsedMillisecondsSince(waveInfos.getClockId())
+            < enemy.second) {
             return;
         }
         Registry::getInstance().getClock().restart(waveInfos.getClockId());
