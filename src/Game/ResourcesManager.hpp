@@ -5,7 +5,6 @@
 #include "B-luga/Json.hpp"
 #include "B-luga/Logger.hpp"
 #include "B-luga/PathResolver.hpp"
-#include "ResourcesManager.hpp"
 #include "boost/filesystem.hpp"
 
 enum class JsonType : std::size_t {
@@ -37,6 +36,7 @@ class ResourcesManager {
     public:
         static std::string getPathByJsonType(JsonType type)
         {
+            std::lock_guard<std::mutex> lock(ResourcesManager::getMutex());
             static bool init = false;
 
             if (!init) {
