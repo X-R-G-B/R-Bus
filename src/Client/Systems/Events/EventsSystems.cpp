@@ -8,15 +8,15 @@
 #include "EventsSystems.hpp"
 #include "B-luga-graphics/AnimRect.hpp"
 #include "B-luga-graphics/GraphicsCustomTypes.hpp"
-#include "GameSystems.hpp"
 #include "B-luga/Json.hpp"
 #include "B-luga/Logger.hpp"
 #include "B-luga/Maths/Maths.hpp"
-#include "NitworkClient.hpp"
 #include "B-luga/Registry.hpp"
 #include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "CreateMissiles.hpp"
+#include "GameSystems.hpp"
+#include "NitworkClient.hpp"
 #include "ResourcesManager.hpp"
 
 namespace Systems {
@@ -58,8 +58,11 @@ namespace Systems {
         } else if (clockId == getClockIdFromMissileType(PERFORANT)) {
             bulletType = "perforant";
         }
-        nlohmann::json bulletData = json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), bulletType, "bullets");
-        float waitTimeBullet      = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
+        nlohmann::json bulletData = json.getJsonObjectById(
+            ResourcesManager::getPathByJsonType(JsonType::BULLETS),
+            bulletType,
+            "bullets");
+        float waitTimeBullet = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
 
         return clock_.elapsedMillisecondsSince(clockId) >= static_cast<std::size_t>(waitTimeBullet);
     }
@@ -75,8 +78,7 @@ namespace Systems {
                 break;
             }
         }
-        return isKeyPressed
-            && isBulletTimeElapsed(getClockIdFromMissileType(missile.type));
+        return isKeyPressed && isBulletTimeElapsed(getClockIdFromMissileType(missile.type));
     }
 
     static Types::Position
@@ -96,8 +98,10 @@ namespace Systems {
             newPos.x = Maths::floatToIntConservingDecimals(posX);
             newPos.y = Maths::floatToIntConservingDecimals(posY);
         }
-        nlohmann::json bulletData =
-            json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileId(typeOfMissile), "bullets");
+        nlohmann::json bulletData = json.getJsonObjectById(
+            ResourcesManager::getPathByJsonType(JsonType::BULLETS),
+            getMissileId(typeOfMissile),
+            "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         int halfSprite = Maths::divisionWithTwoIntDecimals(collisionRect.width, 200);
@@ -204,11 +208,12 @@ namespace Systems {
     void EventsSystems::playSoundWithKey(std::size_t /*unused*/, std::size_t /*unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        Registry &registry                            = Registry::getInstance();
-        auto &arrMusics = registry.getComponents<Raylib::MusicShared>();
+        Registry &registry = Registry::getInstance();
+        auto &arrMusics    = registry.getComponents<Raylib::MusicShared>();
 
         for (auto &music : arrMusics) {
-            if (music->getPath() == musicPath && Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_M)) {
+            if (music->getPath() == musicPath
+                && Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_M)) {
                 music->setNeedToPlay(true);
             }
         }
@@ -220,8 +225,8 @@ namespace Systems {
         constexpr float musicVolume = 0.60F;
         constexpr float soundVolume = 0.63F;
 
-        auto music = Raylib::Music::fromFile(musicPath, musicVolume);
-        auto soundEffectShoot = Raylib::Sound::fromFile(soundPathShoot, soundVolume);
+        auto music             = Raylib::Music::fromFile(musicPath, musicVolume);
+        auto soundEffectShoot  = Raylib::Sound::fromFile(soundPathShoot, soundVolume);
         auto soundEffectShoot2 = Raylib::Sound::fromFile(soundPathShoot2, soundVolume);
         auto soundEffectShoot3 = Raylib::Sound::fromFile(soundPathShoot3, soundVolume);
 

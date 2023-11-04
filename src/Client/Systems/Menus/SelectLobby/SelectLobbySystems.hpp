@@ -12,7 +12,8 @@
 #include <string>
 #include <vector>
 #include "B-luga-physics/ECSCustomTypes.hpp"
-extern "C" {
+extern "C"
+{
 #include "MessageTypes.h"
 }
 

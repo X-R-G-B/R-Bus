@@ -2,4 +2,4 @@
 
 namespace Systems::Parallax {
     void initParalax();
-} // namespace Systems::ParallaxSystems
+} // namespace Systems::Parallax

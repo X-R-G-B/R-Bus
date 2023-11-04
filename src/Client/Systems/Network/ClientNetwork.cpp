@@ -1,13 +1,13 @@
+#include "ClientNetwork.hpp"
 #include <algorithm>
 #include "B-luga-physics/ECSCustomTypes.hpp"
-#include "B-luga/Maths/Maths.hpp"
+#include "B-luga-physics/ECSSystems.hpp"
 #include "B-luga/Json.hpp"
+#include "B-luga/Maths/Maths.hpp"
 #include "B-luga/Registry.hpp"
 #include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
-#include "B-luga-physics/ECSSystems.hpp"
 #include "CreateMissiles.hpp"
-#include "ClientNetwork.hpp"
 #include "GameSystems.hpp"
 #include "NitworkClient.hpp"
 #include "init.hpp"
@@ -58,8 +58,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(director.mutex);
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
         Types::Enemy::setEnemyNb(wave.enemyNb);
-        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC))
-            .addSystem(initWave);
+        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC)).addSystem(initWave);
         Logger::info("Wave started");
     }
 

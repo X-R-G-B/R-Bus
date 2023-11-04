@@ -5,13 +5,13 @@
 ** Menu
 */
 
-#include "B-luga/Maths/Maths.hpp"
-#include "B-luga/SceneManager.hpp"
+#include "Menu.hpp"
+#include "B-luga-graphics/AnimRect.hpp"
 #include "B-luga-graphics/GraphicsCustomTypes.hpp"
 #include "B-luga-physics/ECSCustomTypes.hpp"
-#include "B-luga-graphics/AnimRect.hpp"
+#include "B-luga/Maths/Maths.hpp"
+#include "B-luga/SceneManager.hpp"
 #include "ButtonCallbacks.hpp"
-#include "Menu.hpp"
 #include "NitworkClient.hpp"
 
 namespace Menu {
@@ -59,7 +59,7 @@ namespace Menu {
         std::string name = Json::isDataExist(elem, "name")
             ? Json::getInstance().getDataFromJson<std::string>(elem, "name")
             : "";
-        auto textComp = Raylib::Text::fromText(text);
+        auto textComp    = Raylib::Text::fromText(text);
         std::size_t maxChar(Json::getInstance().getDataFromJson<std::size_t>(elem, "maxChar"));
         Types::InputBox inputBox(text, name, maxChar);
         auto search =
@@ -195,7 +195,9 @@ namespace Menu {
             Maths::intToFloatConservingDecimals(arrPosition[id].y),
             Maths::intToFloatConservingDecimals(arrCollisionRect[id].width),
             Maths::intToFloatConservingDecimals(arrCollisionRect[id].height));
-        Raylib::Vector2 mousePos(Raylib::MouseInput::getMousePosition().x, Raylib::MouseInput::getMousePosition().y);
+        Raylib::Vector2 mousePos(
+            Raylib::MouseInput::getMousePosition().x,
+            Raylib::MouseInput::getMousePosition().y);
 
         mousePos.x = (mousePos.x * maxPercent) / Raylib::Window::getScreenWidth();
         mousePos.y = (mousePos.y * maxPercent) / Raylib::Window::getScreenHeight();

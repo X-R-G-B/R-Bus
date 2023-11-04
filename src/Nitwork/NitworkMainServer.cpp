@@ -177,9 +177,8 @@ namespace Nitwork {
     {
 #ifdef _WIN32
         std::ostringstream cmdline;
-        cmdline << ResourcesManager::convertPath("r-type_server").c_str()
-                << " 1 " << maxNbPlayer << " " << gameType << " " << name.c_str() << " " << ownerIp.c_str()
-                << " " << ownerPort;
+        cmdline << ResourcesManager::convertPath("r-type_server").c_str() << " 1 " << maxNbPlayer << " "
+                << gameType << " " << name.c_str() << " " << ownerIp.c_str() << " " << ownerPort;
 
         STARTUPINFO si;
         PROCESS_INFORMATION pi;

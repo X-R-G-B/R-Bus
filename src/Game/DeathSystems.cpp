@@ -8,9 +8,9 @@
 #include "DeathSystems.hpp"
 #include <optional>
 #include <unordered_map>
-#include "GameCustomTypes.hpp"
-#include "B-luga/Registry.hpp"
 #include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga/Registry.hpp"
+#include "GameCustomTypes.hpp"
 #ifdef CLIENT
     #include "B-luga-graphics/AnimRect.hpp"
     #include "B-luga-graphics/GraphicsCustomTypes.hpp"

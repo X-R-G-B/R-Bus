@@ -1,12 +1,12 @@
-#include <csignal>
 #include <boost/asio.hpp>
+#include <csignal>
 #include "B-luga/Logger.hpp"
+#include "B-luga/SceneManager.hpp"
 #include "NitworkMainServer.hpp"
 #include "NitworkServer.hpp"
 #include "ResourcesManager.hpp"
-#include "init.hpp"
-#include "B-luga/SceneManager.hpp"
 #include "ServerArgsHandling.hpp"
+#include "init.hpp"
 
 constexpr int EXIT_EPITECH = 84;
 static bool isRunning      = true;

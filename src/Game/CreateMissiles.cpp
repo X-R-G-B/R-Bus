@@ -5,17 +5,17 @@
 ** Bullets systems implementation
 */
 
-#include "B-luga-physics/ECSCustomTypes.hpp"
-#include "B-luga/Maths/Maths.hpp"
-#include "MessageTypes.h"
-#include "B-luga/Registry.hpp"
-#include "ResourcesManager.hpp"
 #include "CreateMissiles.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga/Json.hpp"
+#include "B-luga/Maths/Maths.hpp"
+#include "B-luga/Registry.hpp"
+#include "MessageTypes.h"
+#include "ResourcesManager.hpp"
 #ifdef CLIENT
+    #include "B-luga-graphics/AnimRect.hpp"
     #include "B-luga-graphics/GraphicsCustomTypes.hpp"
     #include "NitworkClient.hpp"
-    #include "B-luga-graphics/AnimRect.hpp"
 #endif
 
 namespace Systems {
@@ -42,8 +42,10 @@ namespace Systems {
         Json &json = Json::getInstance();
         Registry::components<Raylib::SoundShared> arrSounds =
             Registry::getInstance().getComponents<Raylib::SoundShared>();
-        nlohmann::json bulletData =
-            json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileId(typeOfMissile.type), "bullets");
+        nlohmann::json bulletData = json.getJsonObjectById(
+            ResourcesManager::getPathByJsonType(JsonType::BULLETS),
+            getMissileId(typeOfMissile.type),
+            "bullets");
 
         const std::string soundPathShoot = json.getDataFromJson<std::string>(bulletData, "soundPath");
 
@@ -102,8 +104,10 @@ namespace Systems {
     {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
-        nlohmann::json bulletData =
-            json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileId(typeOfMissile.type), "bullets");
+        nlohmann::json bulletData = json.getJsonObjectById(
+            ResourcesManager::getPathByJsonType(JsonType::BULLETS),
+            getMissileId(typeOfMissile.type),
+            "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");

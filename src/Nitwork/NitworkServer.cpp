@@ -6,13 +6,13 @@
 */
 
 #include "NitworkServer.hpp"
-#include "GameSystems.hpp"
 #include <boost/asio.hpp>
+#include "B-luga-physics/ECSSystems.hpp"
 #include "B-luga/Logger.hpp"
 #include "B-luga/Registry.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "GameSystems.hpp"
 #include "ResourcesManager.hpp"
-#include "B-luga-physics/ECSSystems.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -192,11 +192,15 @@ namespace Nitwork {
                        .magick   = MAGICK_NEW_PLAYER,
                        .playerId = playerId,
                        .pos =
-                    {jsonInstance
-                            .getDataByVector<int>(ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER), {"player", "position", "x"}),
-                        jsonInstance
-                            .getDataByVector<int>(ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER), {"player", "position", "y"})},
-                       .life = {jsonInstance.getDataByVector<int>(ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER), {"player", "health"})},
+                    {jsonInstance.getDataByVector<int>(
+                         ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER),
+                         {"player", "position", "x"}),
+                        jsonInstance.getDataByVector<int>(
+                         ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER),
+                         {"player", "position", "y"})},
+                       .life          = {jsonInstance.getDataByVector<int>(
+                    ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER),
+                    {"player", "health"})},
                        .isOtherPlayer = 0}
         };
         addPlayerInitMessage(endpoint, packetMsgCreatePlayer.msg);

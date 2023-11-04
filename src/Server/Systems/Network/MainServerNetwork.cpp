@@ -5,8 +5,8 @@
 ** MainServerNetwork
 */
 
-#include "B-luga/Registry.hpp"
 #include "MainServerNetwork.hpp"
+#include "B-luga/Registry.hpp"
 #include "Nitwork.h"
 #include "NitworkMainServer.hpp"
 

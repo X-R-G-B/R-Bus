@@ -8,15 +8,15 @@
 #include "SelectLobbySystems.hpp"
 #include <algorithm>
 #include <string>
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
-#include "B-luga-graphics/GraphicsCustomTypes.hpp"
-#include "ResourcesManager.hpp"
-#include "init.hpp"
 #include "Menu.hpp"
 #include "MessageTypes.h"
 #include "NitworkClient.hpp"
+#include "ResourcesManager.hpp"
+#include "init.hpp"
 
 namespace Systems::SelectLobbySystems {
 
@@ -67,12 +67,15 @@ namespace Systems::SelectLobbySystems {
             return;
         }
         try {
-            nlohmann::json createLobbyNormalButton =
-                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY), {"menu", "gametype_normal"});
-            nlohmann::json lobbyName =
-                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY), {"menu", "name"});
-            nlohmann::json maxNbPlayer =
-                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY), {"menu", "maxNb"});
+            nlohmann::json createLobbyNormalButton = Json::getInstance().getDataByVector(
+                ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY),
+                {"menu", "gametype_normal"});
+            nlohmann::json lobbyName = Json::getInstance().getDataByVector(
+                ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY),
+                {"menu", "name"});
+            nlohmann::json maxNbPlayer = Json::getInstance().getDataByVector(
+                ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY),
+                {"menu", "maxNb"});
             Menu::MenuBuilder::getInstance().initMenuEntity(
                 createLobbyNormalButton,
                 onButtonCreateLobbyNormalClicked);
@@ -114,8 +117,8 @@ namespace Systems::SelectLobbySystems {
         }
         Registry::getInstance().getClock().decreaseSeconds(clockId, 1);
         // already created lobby
-        auto idsLobbyStatus =
-            Registry::getInstance().getEntitiesByComponents({typeid(LobbyStatus), typeid(Raylib::TextShared)});
+        auto idsLobbyStatus = Registry::getInstance().getEntitiesByComponents(
+            {typeid(LobbyStatus), typeid(Raylib::TextShared)});
         auto &arrLobbyStatus = Registry::getInstance().getComponents<LobbyStatus>();
         auto &arrLobbyText   = Registry::getInstance().getComponents<Raylib::TextShared>();
         // list of all lobby
@@ -142,7 +145,11 @@ namespace Systems::SelectLobbySystems {
                     + std::to_string(arrLobby[id].maxNbPlayer) + " | "
                     + gameTypeToString(arrLobby[id].gameType);
                 y += 5;
-                auto text = Raylib::Text::fromText(text_t, Raylib::Vector2(x, y), 2, Raylib::Color(Raylib::ColorDef::Red));
+                auto text = Raylib::Text::fromText(
+                    text_t,
+                    Raylib::Vector2(x, y),
+                    2,
+                    Raylib::Color(Raylib::ColorDef::Red));
                 arrLobbyText.insertBack(text);
             }
         }

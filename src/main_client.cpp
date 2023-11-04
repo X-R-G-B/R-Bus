@@ -7,11 +7,11 @@
 
 #include <boost/asio.hpp>
 #include "B-luga/Logger.hpp"
-#include "NitworkClient.hpp"
 #include "B-luga/Registry.hpp"
-#include "ResourcesManager.hpp"
-#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "NitworkClient.hpp"
+#include "ResourcesManager.hpp"
 #include "init.hpp"
 
 constexpr int EXIT_EPITECH = 84;

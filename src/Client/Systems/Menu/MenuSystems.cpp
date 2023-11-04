@@ -5,16 +5,16 @@
 ** Menu
 */
 
+#include "MenuSystems.hpp"
+#include "B-luga-graphics/AnimRect.hpp"
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga/Maths/Maths.hpp"
 #include "B-luga/SceneManager.hpp"
-#include "B-luga-graphics/AnimRect.hpp"
-#include "B-luga-graphics/GraphicsCustomTypes.hpp"
-#include "MenuSystems.hpp"
-#include "ResourcesManager.hpp"
-#include "init.hpp"
 #include "Menu.hpp"
 #include "Parallax.hpp"
+#include "ResourcesManager.hpp"
+#include "init.hpp"
 
 namespace Systems {
     namespace Menu {
@@ -87,8 +87,7 @@ namespace Systems {
 
         static void deleteInputBoxChar(std::size_t id, Registry::components<Types::InputBox> &arrInputBox)
         {
-            auto &arrText =
-                Registry::getInstance().getComponents<Raylib::TextShared>();
+            auto &arrText = Registry::getInstance().getComponents<Raylib::TextShared>();
 
             if (arrInputBox[id].text.size() > 0) {
                 arrInputBox[id].text.pop_back();
@@ -104,7 +103,8 @@ namespace Systems {
                 {typeid(Types::InputBox), typeid(Raylib::TextShared)});
 
             for (auto id : ids) {
-                if (arrInputBox[id].selected && Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_BACKSPACE)) {
+                if (arrInputBox[id].selected
+                    && Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_BACKSPACE)) {
                     deleteInputBoxChar(id, arrInputBox);
                 }
             }
@@ -163,11 +163,15 @@ namespace Systems {
                 return;
             }
             Parallax::initParalax();
-            nlohmann::json connectButton =
-                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::MENU_DATA), {"menu", "connect"});
-            nlohmann::json inputBoxIp = Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::MENU_DATA), {"menu", "ip"});
-            nlohmann::json inputBoxHost =
-                Json::getInstance().getDataByVector(ResourcesManager::getPathByJsonType(JsonType::MENU_DATA), {"menu", "host"});
+            nlohmann::json connectButton = Json::getInstance().getDataByVector(
+                ResourcesManager::getPathByJsonType(JsonType::MENU_DATA),
+                {"menu", "connect"});
+            nlohmann::json inputBoxIp = Json::getInstance().getDataByVector(
+                ResourcesManager::getPathByJsonType(JsonType::MENU_DATA),
+                {"menu", "ip"});
+            nlohmann::json inputBoxHost = Json::getInstance().getDataByVector(
+                ResourcesManager::getPathByJsonType(JsonType::MENU_DATA),
+                {"menu", "host"});
 
             try {
                 ::Menu::MenuBuilder::getInstance().initMenuEntity(

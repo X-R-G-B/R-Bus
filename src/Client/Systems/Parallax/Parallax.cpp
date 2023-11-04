@@ -1,14 +1,14 @@
 #include <nlohmann/json.hpp>
-#include "B-luga/Json.hpp"
 #include "B-luga-graphics/GraphicsSystems.hpp"
+#include "B-luga/Json.hpp"
 #include "ResourcesManager.hpp"
 
 namespace Systems::Parallax {
 
     static void initParallaxEntity(nlohmann::basic_json<> &elem, const int maxOffsideParallax = 0)
     {
-        std::size_t id          = Registry::getInstance().addEntity();
-        auto parralax = Raylib::Sprite::fromFile(
+        std::size_t id = Registry::getInstance().addEntity();
+        auto parralax  = Raylib::Sprite::fromFile(
             Json::getInstance().getDataFromJson<std::string>(elem, "spritePath"),
             Json::getInstance().getDataFromJson<float>(elem, "width"),
             Json::getInstance().getDataFromJson<float>(elem, "height"),
@@ -41,8 +41,9 @@ namespace Systems::Parallax {
     void initParalax()
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        std::vector<nlohmann::basic_json<>> parallaxData =
-            Json::getInstance().getDataByJsonType(ResourcesManager::getPathByJsonType(JsonType::PARALLAX), "parallax");
+        std::vector<nlohmann::basic_json<>> parallaxData = Json::getInstance().getDataByJsonType(
+            ResourcesManager::getPathByJsonType(JsonType::PARALLAX),
+            "parallax");
 
         for (auto &elem : parallaxData) {
             initParallaxEntity(elem);
@@ -52,4 +53,4 @@ namespace Systems::Parallax {
             }
         }
     }
-}
+} // namespace Systems::Parallax

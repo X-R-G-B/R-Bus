@@ -14,8 +14,8 @@
 #include <memory>
 #include <mutex>
 #include <unordered_map>
-#include "INitwork.hpp"
 #include "B-luga/Logger.hpp"
+#include "INitwork.hpp"
 #include "Zstd.hpp"
 
 namespace Nitwork {
