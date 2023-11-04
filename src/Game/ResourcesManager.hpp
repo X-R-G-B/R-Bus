@@ -20,16 +20,18 @@ enum class JsonType : std::size_t {
     MAXTYPE
 };
 
-const std::vector<std::string> paths = {
-    "assets/Json/playerData.json",
-    "assets/Json/enemyData.json",
-    "assets/Json/terminatorData.json",
-    "assets/Json/bullets.json",
-    "assets/Json/wave.json",
-    "assets/Json/menu.json",
-    "assets/Json/selectLobby.json",
-    "assets/Json/parallaxData.json",
-};
+namespace ResourcesManagerValues {
+    const std::vector<std::string> paths = {
+        "assets/Json/playerData.json",
+        "assets/Json/enemyData.json",
+        "assets/Json/terminatorData.json",
+        "assets/Json/bullets.json",
+        "assets/Json/wave.json",
+        "assets/Json/menu.json",
+        "assets/Json/selectLobby.json",
+        "assets/Json/parallaxData.json",
+    };
+}
 
 class ResourcesManager {
     public:
@@ -38,15 +40,16 @@ class ResourcesManager {
             static bool init = false;
 
             if (!init) {
-                for (const auto &path : paths) {
+                for (const auto &path : ResourcesManagerValues::paths) {
                     Json::getInstance().registerJsonFile(path);
                 }
                 init = true;
             }
-            if (paths.size() <= static_cast<std::size_t>(type)) {
+            if (ResourcesManagerValues::paths.size() <= static_cast<std::size_t>(type)) {
+                Logger::fatal("RESOURCE_MANAGER: Invalid JsonType: " + std::to_string(static_cast<std::size_t>(type)));
                 return "";
             }
-            return paths[static_cast<std::size_t>(type)];
+            return ResourcesManagerValues::paths[static_cast<std::size_t>(type)];
         }
 
         /**
