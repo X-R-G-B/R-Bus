@@ -36,15 +36,18 @@ class ResourcesManager {
     public:
         static std::string getPathByJsonType(JsonType type)
         {
-            std::lock_guard<std::mutex> lock(ResourcesManager::getMutex());
             static bool init = false;
 
+            ResourcesManager::getMutex().lock();
             if (!init) {
+                ResourcesManager::getMutex().unlock();
                 for (const auto &path : ResourcesManagerValues::paths) {
                     Json::getInstance().registerJsonFile(path);
                 }
+                ResourcesManager::getMutex().lock();
                 init = true;
             }
+            ResourcesManager::getMutex().unlock();
             if (ResourcesManagerValues::paths.size() <= static_cast<std::size_t>(type)) {
                 Logger::fatal(
                     "RESOURCE_MANAGER: Invalid JsonType: "
