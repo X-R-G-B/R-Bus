@@ -118,7 +118,7 @@ namespace Systems::SelectLobbySystems {
         arrLobbyStatus[lobbyStatusId].port = arrLobby[ids[index]].lobbyInfos.port;
         Raylib::Text text(text_t);
         if (arrLobbyText.exist(lobbyStatusId)) {
-            arrLobbyText[lobbyStatusId].setCurrentText(text_t);
+            arrLobbyText[lobbyStatusId].setText(text_t);
         }
     }
 
@@ -159,7 +159,7 @@ namespace Systems::SelectLobbySystems {
                 } else {
                     arrLobbyStatus[id].ip   = "";
                     arrLobbyStatus[id].port = -1;
-                    arrLobbyText[id].setCurrentText("");
+                    arrLobbyText[id].setText("");
                 }
             }
         }

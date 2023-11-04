@@ -54,6 +54,11 @@ namespace Nitwork {
             struct lobby_s getServerInfos() const;
 
             /* Messages creation methods */
+            /**
+             * @brief Add a msg packet that contain the new player msg to the clients
+             * @param waveId The id of the wave that will be started
+             */
+            void addStarWaveMessage(n_id_t waveId);
 
             /**
              * @brief Add a msg that contain the lobby infos to the main server
@@ -66,12 +71,6 @@ namespace Nitwork {
              * @param canConnect A boolean that say if the client can connect to the lobby or not
              */
             void addConnectLobbyRespMsg(boost::asio::ip::udp::endpoint &endpoint, bool canConnect);
-
-            /**
-             * @brief Add a msg packet that contain the start wave msg to the clients
-             * @param enemyId The id of the enemy that will be created
-             */
-            void addStarWaveMessage(n_id_t enemyNb);
 
             /**
              * @brief Add a msg packet that contain the life update msg to the clients
@@ -147,10 +146,10 @@ namespace Nitwork {
             void addMissileDeathMsg(n_id_t id);
 
             /**
-             * @brief Add a msg packet that contain the new bullet msg to the clients
-             * @param endpoint The endpoint of the client that will receive the new player
-             * @return the id of the player
+             * @brief Add a msg packet that contain the new end game msg to the clients
              */
+            void addEndGameMsg();
+
             n_id_t getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const;
 
         private:
@@ -404,7 +403,11 @@ namespace Nitwork {
                  }                            },
                 {INFO_LOBBY,                  [this](Packet &packet) {
                      sendData<struct packetInfoLobby_s>(packet);
-                 }}
+                 }},
+                {END_GAME,
+                 [this](Packet &packet) {
+                     sendData<struct packetEndGame_s>(packet);
+                 }},
             };
     };
 } // namespace Nitwork

@@ -15,6 +15,7 @@
 #include "Registry.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
+#include "WaveSystem.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -256,7 +257,7 @@ namespace Nitwork {
         addStarWaveMessage(Types::Enemy::getEnemyNb());
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
-        director.getSystemManager(0).addSystem(Systems::initWave);
+        director.getSystemManager(0).addSystem(Systems::waveHandler);
     }
 
     void
@@ -361,13 +362,13 @@ namespace Nitwork {
         _playersIds[endpoint] = playerMsg.playerId;
     }
 
-    void NitworkServer::addStarWaveMessage(n_id_t enemyNb)
+    void NitworkServer::addStarWaveMessage(n_id_t waveId)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgStartWave_s packetMsgStartWave = {
             .header       = {0, 0, 0, 0, 1, 0},
             .action       = {.magick = START_WAVE},
-            .msgStartWave = {.magick = MAGICK_START_WAVE, .enemyNb = enemyNb}
+            .msgStartWave = {.magick = MAGICK_START_WAVE, .waveId = waveId}
         };
         Packet packet(
             packetMsgStartWave.action.magick,
@@ -521,6 +522,19 @@ namespace Nitwork {
         Packet packet(
             packetMissileDeath.action.magick,
             std::make_any<struct packetMissileDeath_s>(packetMissileDeath));
+    }
+
+    void NitworkServer::addEndGameMsg()
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetEndGame_s packetEndGame = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = END_GAME},
+            .msg    = {.magick = MAGICK_END_GAME}
+        };
+        Packet packet(
+            packetEndGame.action.magick,
+            std::make_any<struct packetEndGame_s>(packetEndGame));
         sendToAllClients(packet);
     }
 

@@ -26,8 +26,10 @@ namespace Types {
     struct CollisionRect {
             int width;
             int height;
+            int offsetX;
+            int offsetY;
 
-            NLOHMANN_DEFINE_TYPE_INTRUSIVE(CollisionRect, width, height);
+            NLOHMANN_DEFINE_TYPE_INTRUSIVE(CollisionRect, width, height, offsetX, offsetY);
     };
 
     struct Position {
@@ -138,9 +140,99 @@ namespace Types {
 
     struct EnemyAllies { };
 
+    class WaveInfos {
+        public:
+            WaveInfos()
+                : _clockId(Registry::getInstance().getClock().create(false)),
+                  _isFirstEnemyCreated(false),
+                  _waitingForNextWave(false)
+            {
+            }
+
+            static WaveInfos &getInstance()
+            {
+                static WaveInfos instance;
+                return instance;
+            }
+
+            WaveInfos(const WaveInfos &)             = delete;
+            WaveInfos(const WaveInfos &&)            = delete;
+            WaveInfos &operator=(const WaveInfos &)  = delete;
+            WaveInfos &operator=(const WaveInfos &&) = delete;
+
+            void setWaveId(unsigned int id)
+            {
+                _waveId = id;
+            }
+
+            unsigned int getWaveId()
+            {
+                return _waveId;
+            }
+
+            void addEnemy(const nlohmann::json &data, std::size_t msBeforeSpwan)
+            {
+                _remainingEnemies.emplace_back(data, msBeforeSpwan);
+            }
+
+            const std::vector<std::pair<nlohmann::json, std::size_t>> &getRemainingEnemies() const
+            {
+                return _remainingEnemies;
+            }
+
+            std::size_t getEnemiesRemaining() const
+            {
+                return _remainingEnemies.size();
+            }
+
+            bool isEnemyRemaining() const
+            {
+                return !_remainingEnemies.empty();
+            }
+
+            std::size_t getClockId() const
+            {
+                return _clockId;
+            }
+
+            void removeFirstEnemy()
+            {
+                if (_isFirstEnemyCreated == false) {
+                    _isFirstEnemyCreated = true;
+                }
+                _remainingEnemies.erase(_remainingEnemies.begin());
+            }
+
+            void setFirstEnemyCreated(bool value)
+            {
+                _isFirstEnemyCreated = value;
+            }
+
+            bool isFirstEnemyCreated() const
+            {
+                return _isFirstEnemyCreated;
+            }
+
+            bool getWaitingForNextWave() const
+            {
+                return _waitingForNextWave;
+            }
+
+            void setWaitingForNextWave(bool value);
+
+            void prepareNextWave();
+
+        private:
+            std::vector<std::pair<nlohmann::json, std::size_t>> _remainingEnemies;
+            unsigned int _waveId;
+            std::size_t _clockId;
+            bool _isFirstEnemyCreated;
+            bool _waitingForNextWave;
+    };
+
     struct Enemy {
         public:
-            Enemy(enum enemy_type_e _type = enemy_type_e::CLASSIC_ENEMY) : type(_type)
+            Enemy(enum enemy_type_e _type) : type(_type)
             {
                 std::lock_guard<std::mutex> lock(_mutex);
 
@@ -148,15 +240,25 @@ namespace Types {
                 _enemyNb++;
             }
 
-            Enemy(struct enemy_id_s _constId, enum enemy_type_e _type = enemy_type_e::CLASSIC_ENEMY)
-                : constId(_constId),
-                  type(_type)
+            Enemy(enum enemy_type_e _type, enemy_id_s enemyId) : type(_type), constId(enemyId)
+            {
+                std::lock_guard<std::mutex> lock(_mutex);
+            }
+
+            Enemy(struct enemy_id_s _constId, enum enemy_type_e _type) : type(_type), constId(_constId)
             {
             }
 
             [[nodiscard]] enemy_id_s getConstId() const
             {
                 return constId;
+            }
+
+            static bool isEnemyAlive()
+            {
+                Registry &registry           = Registry::getInstance();
+                std::vector<std::size_t> ids = registry.getEntitiesByComponents({typeid(Types::Enemy)});
+                return ids.empty() == false;
             }
 
             static void setEnemyNb(unsigned int nb)
@@ -173,8 +275,8 @@ namespace Types {
                 return _enemyNb;
             }
 
-            enemy_id_s constId;
             enum enemy_type_e type;
+            enemy_id_s constId;
 
         private:
             static unsigned int _enemyNb;

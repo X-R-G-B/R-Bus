@@ -49,6 +49,7 @@
     #define MAGICK_CONNECT_LOBBY_RESP '\x1a'
     #define MAGICK_DISCONNECT_LOBBY '\x1b'
     #define MAGICK_MISSILE_DEATH '\x1c'
+    #define MAGICK_END_GAME '\x1d'
 
 typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
@@ -83,6 +84,7 @@ enum n_actionType_t {
     CONNECT_LOBBY_RESP = 21,
     DISCONNECT_LOBBY = 22,
     CREATE_LOBBY = 23,
+    END_GAME = 24,
     N_ACTION_TYPE_MAX,
 };
 
@@ -124,7 +126,7 @@ PACK(struct packetMsgReady_s {
 /* Message Start Game */
 PACK(struct msgStartWave_s {
         n_magick_t magick;
-        n_id_t enemyNb;
+        n_id_t waveId;
 });
 
 PACK(struct packetMsgStartWave_s {
@@ -411,6 +413,17 @@ PACK(struct packetDisconnectLobby_s {
     struct header_s header;
     struct action_s action;
     struct msgDisconnectLobby_s msg;
+});
+
+/* Message End Game */
+PACK(struct msgEndGame_s {
+    n_magick_t magick;
+});
+
+PACK(struct packetEndGame_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgEndGame_s msg;
 });
 
 #endif

@@ -35,7 +35,8 @@ namespace Systems {
             if (arrPosition.exist(id) && !arrRectangleShape.exist(id)) {
                 Types::RectangleShape rectShape = {
                     Maths::intToFloatConservingDecimals(arrCollisionRect[id].width),
-                    Maths::intToFloatConservingDecimals(arrCollisionRect[id].height)};
+                    Maths::intToFloatConservingDecimals(arrCollisionRect[id].height),
+                };
                 Registry::getInstance().getComponents<Types::RectangleShape>().insert(id, rectShape);
             }
         }

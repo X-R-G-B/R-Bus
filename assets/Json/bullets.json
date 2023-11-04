@@ -11,7 +11,9 @@
             "waitTimeBullet": 500,
             "collisionRect": {
                 "width": 450,
-                "height": 450
+                "height": 450,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "spritePath": "assets/R-TypeSheet/WaterBullets.png",
             "soundPath": "assets/Audio/Sounds/laser.ogg",
@@ -77,16 +79,146 @@
             "waitTimeBullet": 200,
             "collisionRect": {
                 "width": 200,
-                "height": 200
+                "height": 200,
+                "offsetX": 0,
+                "offsetY": 0
             },
-            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "spritePath": "assets/R-TypeSheet/classic-bullets.png",
             "soundPath": "assets/Audio/Sounds/glitch.ogg",
             "spriteRect": {
-                "x": 200,
-                "y": 121,
-                "width": 32,
-                "height": 10
-            }
+                "x": 6,
+                "y": 153,
+                "width": 39,
+                "height": 21
+            },
+            "animRect": [
+                {
+                    "type": "move",
+                    "time": 400,
+                    "list": [
+                        {
+                            "x": 6,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 56,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 106,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 156,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 206,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 256,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 306,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 356,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 406,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 456,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 506,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 556,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 606,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 656,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 706,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 756,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 806,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 856,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 906,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        },
+                        {
+                            "x": 956,
+                            "y": 153,
+                            "width": 39,
+                            "height": 21
+                        }
+                    ]
+                }
+            ]
         },
         {
             "id": "bounce",
@@ -102,7 +234,9 @@
             "waitTimeBullet": 500,
             "collisionRect": {
                 "width": 300,
-                "height": 300
+                "height": 300,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "spritePath": "assets/R-TypeSheet/GreenBullets.png",
             "soundPath": "assets/Audio/Sounds/laser2.ogg",
@@ -159,7 +293,9 @@
             "waitTimeBullet": 1000,
             "collisionRect": {
                 "width": 500,
-                "height": 500
+                "height": 500,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "spritePath": "assets/R-TypeSheet/PurpleBullets.png",
             "soundPath": "assets/Audio/Sounds/forceField.ogg",
@@ -197,6 +333,65 @@
                             "y": 64,
                             "width": 16,
                             "height": 16
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "jutteur-eye",
+            "damage": 10,
+            "health": 1,
+            "velocity": {
+                "speedX": -90,
+                "speedY": 0
+            },
+            "physics": [
+                "zigzag"
+            ],
+            "waitTimeBullet": 1000,
+            "collisionRect": {
+                "width": 500,
+                "height": 500,
+                "offsetX": 0,
+                "offsetY": 0
+            },
+            "spritePath": "assets/R-TypeSheet/jutteurs-bullet.png",
+            "soundPath": "assets/Audio/Sounds/forceField.ogg",
+            "spriteRect": {
+                "x": 22,
+                "y": 125,
+                "width": 341,
+                "height": 125
+            },
+            "animRect": [
+                {
+                    "type": "move",
+                    "time": 60,
+                    "list": [
+                        {
+                            "x": 22,
+                            "y": 125,
+                            "width": 341,
+                            "height": 125
+                        },
+                        {
+                            "x": 525,
+                            "y": 129,
+                            "width": 357,
+                            "height": 125
+                        },
+                        {
+                            "x": 829,
+                            "y": 129,
+                            "width": 331,
+                            "height": 121
+                        },
+                        {
+                            "x": 1225,
+                            "y": 122,
+                            "width": 332,
+                            "height": 128
                         }
                     ]
                 }

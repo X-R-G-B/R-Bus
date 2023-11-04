@@ -61,9 +61,14 @@ int mainLobbyServer(const std::vector<std::string> &av)
     director.addSystemManager(Systems::getECSSystems());
     lock.unlock();
     while (isRunning && Nitwork::NitworkServer::getInstance().isRunning()) {
-        lock.lock();
-        director.getSystemManager(0).updateSystems();
-        lock.unlock();
+        try {
+            lock.lock();
+            director.getSystemManager(0).updateSystems();
+            lock.unlock();
+        } catch (const std::exception &e) {
+            Logger::fatal("UpdateSystems: " + std::string(e.what()));
+            break;
+        }
     }
     Nitwork::NitworkServer::getInstance().stop();
     return EXIT_SUCCESS;

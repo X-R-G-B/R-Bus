@@ -14,7 +14,15 @@ typedef int n_port_t;
 
 enum enemy_type_e {
     CLASSIC_ENEMY = 0,
-    TERMINATOR
+    CLASSIC_ENEMY_2,
+    DAEMON,
+    BIG_DAEMON,
+    PAPYRUS,
+    NAPSTABLOOK,
+    LEJUTTER,
+    GREEN_HEAD,
+    BIG_PURPLE,
+    MAX_ENEMY_TYPE
 };
 
 enum missileTypes_e {

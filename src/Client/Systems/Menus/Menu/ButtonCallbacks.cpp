@@ -128,7 +128,7 @@ namespace Menu {
             for (auto &id : ids) {
                 arrLobbyStatus[id].ip   = "";
                 arrLobbyStatus[id].port = -1;
-                arrText[id].setCurrentText(std::string(""));
+                arrText[id].setText(std::string(""));
             }
         }
 
@@ -162,7 +162,7 @@ namespace Menu {
             auto &arrText   = Registry::getInstance().getComponents<Raylib::Text>();
             auto idsText   = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text)});
             for (auto &id : idsText) {
-                if (arrText[id].getCurrentText() == "READY !") {
+                if (arrText[id].getText() == "READY !") {
                     Registry::getInstance().removeEntity(id);
                 }
             }

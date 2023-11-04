@@ -48,7 +48,7 @@ namespace Systems {
         Registry::components<Raylib::Sound> arrSounds =
             Registry::getInstance().getComponents<Raylib::Sound>();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
+            json.getJsonObjectById<std::string>(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
 
         const std::string soundPathShoot = json.getDataFromJson<std::string>(bulletData, "soundPath");
 
@@ -106,7 +106,7 @@ namespace Systems {
         Json &json = Json::getInstance();
         std::size_t id = Registry::getInstance().addEntity();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
+            json.getJsonObjectById<std::string>(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");
@@ -145,10 +145,10 @@ namespace Systems {
 
         for (std::size_t id : ids) {
             if (velocities.exist(id) && collisionRects.exist(id) && positions.exist(id)) {
-                if (Maths::intToFloatConservingDecimals(positions[id].y) <= 0
-                    || Maths::intToFloatConservingDecimals(positions[id].y)
-                            + Maths::intToFloatConservingDecimals(collisionRects[id].height)
-                        >= 100) {
+                float realPosY = Maths::intToFloatConservingDecimals(positions[id].y)
+                    + Maths::intToFloatConservingDecimals(collisionRects[id].offsetY);
+                if (realPosY <= 0
+                    || realPosY + Maths::intToFloatConservingDecimals(collisionRects[id].height) >= 100) {
                     velocities[id].speedY = -velocities[id].speedY;
                 }
             }

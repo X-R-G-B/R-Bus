@@ -63,7 +63,7 @@ namespace Systems {
 
             if ((key >= ' ') && (key <= '}') && (arrInputBox[id].text.size() < arrInputBox[id].maxChar)) {
                 arrInputBox[id].text += static_cast<char>(key);
-                arrText[id].setCurrentText(arrInputBox[id].text);
+                arrText[id].setText(arrInputBox[id].text);
             }
         }
 
@@ -101,7 +101,7 @@ namespace Systems {
 
             if (arrInputBox[id].text.size() > 0) {
                 arrInputBox[id].text.pop_back();
-                arrText[id].setCurrentText(arrInputBox[id].text);
+                arrText[id].setText(arrInputBox[id].text);
             }
         }
 

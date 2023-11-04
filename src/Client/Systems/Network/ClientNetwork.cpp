@@ -10,6 +10,7 @@
 #include "SceneManager.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
+#include "EventsSystems.hpp"
 
 namespace Systems {
     void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
@@ -78,7 +79,8 @@ namespace Systems {
         auto &director = SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
-        Types::Enemy::setEnemyNb(wave.enemyNb);
+        Types::WaveInfos::getInstance().setWaveId(wave.waveId);
+        Types::WaveInfos::getInstance().setWaitingForNextWave(false);
         director.getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::GAME))
             .addSystem(initWave);
         Logger::info("Wave started");
@@ -388,6 +390,14 @@ namespace Systems {
                 Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
             }
         }
+    }
+
+    void receiveEndGame(std::any& /*unused*/, boost::asio::ip::udp::endpoint& /*unused*/)
+    {
+        auto &director = SystemManagersDirector::getInstance();
+        std::lock_guard<std::mutex> lock(director.mutex);
+        director.getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::EVENTS))
+            .addSystem(EventsSystems::handleEndGameEvent);
     }
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()

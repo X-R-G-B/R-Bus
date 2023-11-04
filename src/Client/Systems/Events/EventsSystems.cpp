@@ -56,7 +56,7 @@ namespace Systems {
         } else if (clockId == getClockIdFromMissileType(PERFORANT)) {
             bulletType = "perforant";
         }
-        nlohmann::json bulletData = json.getJsonObjectById(JsonType::BULLETS, bulletType, "bullets");
+        nlohmann::json bulletData = json.getJsonObjectById<std::string>(JsonType::BULLETS, bulletType, "bullets");
         float waitTimeBullet      = json.getDataFromJson<float>(bulletData, "waitTimeBullet");
 
         if (clock_.elapsedMillisecondsSince(clockId) < waitTimeBullet) {
@@ -94,14 +94,16 @@ namespace Systems {
         if (arrCol.exist(id)) {
             Types::CollisionRect &col = arrCol[id];
             float posX                = Maths::intToFloatConservingDecimals(pos.x)
+                + (Maths::intToFloatConservingDecimals(col.offsetX))
                 + (Maths::intToFloatConservingDecimals(col.width) / 2.F);
             float posY = Maths::intToFloatConservingDecimals(pos.y)
+                + (Maths::intToFloatConservingDecimals(col.offsetY))
                 + (Maths::intToFloatConservingDecimals(col.height) / 2.F);
             newPos.x = Maths::floatToIntConservingDecimals(posX);
             newPos.y = Maths::floatToIntConservingDecimals(posY);
         }
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile), "bullets");
+            json.getJsonObjectById<std::string>(JsonType::BULLETS, getMissileId(typeOfMissile), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         int halfSprite = Maths::divisionWithTwoIntDecimals(collisionRect.width, 200);
@@ -205,6 +207,73 @@ namespace Systems {
         if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_J)) {
             auto &sceneManager = Scene::SceneManager::getInstance();
             sceneManager.changeScene(Scene::Scene::MENU);
+        }
+    }
+
+    static bool isGameWin()
+    {
+        Registry &registry = Registry::getInstance();
+        std::vector<std::size_t> idsPlayer =
+            registry.getEntitiesByComponents({typeid(Types::Player)});
+        std::vector<std::size_t> idsOtherPlayer =
+            registry.getEntitiesByComponents({typeid(Types::OtherPlayer)});
+
+        if (idsPlayer.empty() == true && idsOtherPlayer.empty() == true) {
+            return false;
+        }
+        return true;
+    }
+
+    static void modifEndGameText(const std::string &endGameMessage)
+    {
+        bool found                            = false;
+        const Raylib::Vector2 pos             = {0, 2};
+        constexpr std::size_t fontSize        = 2;
+        const std::string textKeywordWaveEnd  = "WaveText";
+        const std::string textKeyWordGameEnd  = "endGameText";
+
+        std::vector<std::size_t> ids =
+            Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text)});
+        auto &textArray            = Registry::getInstance().getComponents<Raylib::Text>();
+
+        for (auto &id : ids) {
+            if (textArray[id].getKeyword() == textKeyWordGameEnd) {
+                textArray[id].setText(endGameMessage);
+                found = true;
+            }
+            if (textArray[id].getKeyword() == textKeywordWaveEnd) {
+                Registry::getInstance().removeEntity(id);
+            }
+        }
+
+        if (found == false) {
+            Registry::getInstance().addEntity();
+            Raylib::Text endGameText =
+                Raylib::Text(endGameMessage, pos, fontSize, Raylib::WHITE, textKeyWordGameEnd);
+            Registry::getInstance().getComponents<Raylib::Text>().insertBack(endGameText);
+        }
+    }
+
+    void EventsSystems::handleEndGameEvent(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        constexpr std::size_t secondBeforeEnd = 5;
+        static std::size_t clockId            = Registry::getInstance().getClock().create(false);
+        std::size_t elapsedSeconds = Registry::getInstance().getClock().elapsedSecondsSince(clockId);
+        std::string seconds        = std::to_string(secondBeforeEnd - elapsedSeconds);
+        std::string endGameMessage;
+
+        if (isGameWin() == true) {
+            endGameMessage =
+                "You win! Redirecting to menu in " + seconds + (seconds == "1" ? " second" : " seconds");
+        } else {
+            endGameMessage =
+                "You lose! Redirecting to menu in " + seconds + (seconds == "1" ? " second" : " seconds");
+        }
+
+        modifEndGameText(endGameMessage);
+
+        if (Registry::getInstance().getClock().elapsedSecondsSince(clockId) >= secondBeforeEnd) {
+            Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
         }
     }
 

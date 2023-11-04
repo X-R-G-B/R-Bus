@@ -34,7 +34,9 @@
             },
             "collisionRect": {
                 "width": 1000,
-                "height": 800
+                "height": 800,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "animRect": [
                 {
@@ -83,7 +85,9 @@
             },
             "collisionRect": {
                 "width": 1000,
-                "height": 800
+                "height": 800,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "animRect": [
                 {
@@ -132,7 +136,9 @@
             },
             "collisionRect": {
                 "width": 1000,
-                "height": 800
+                "height": 800,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "animRect": [
                 {
@@ -181,7 +187,9 @@
             },
             "collisionRect": {
                 "width": 1000,
-                "height": 800
+                "height": 800,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "animRect": [
                 {
@@ -280,7 +288,9 @@
         },
         "collisionRect": {
             "width": 6000,
-            "height": 800
+            "height": 800,
+            "offsetX": 0,
+            "offsetY": 0
         },
         "animRect": [
             {

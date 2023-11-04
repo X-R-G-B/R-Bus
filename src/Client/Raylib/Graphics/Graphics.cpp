@@ -626,7 +626,7 @@ namespace Raylib {
     }
 
     // Text functions
-    void drawText(std::string text, int posX, int posY, int fontSize, Color color)
+    void drawText(const std::string &text, int posX, int posY, int fontSize, Color color)
     {
         ::Color textColor = {color.r, color.g, color.b, color.a};
 
@@ -643,13 +643,14 @@ namespace Raylib {
         return MeasureText(text.c_str(), fontSize);
     }
 
-    Text::Text(std::string text, Vector2 position, float fontSize, Color color)
+    Text::Text(std::string text, Vector2 position, float fontSize, Color color, const std::string &keyword)
         : _text(std::move(text)),
           _fontSize(fontSize),
           _currentFontSize(fontSize),
           _color(color),
           _position(position),
-          _pixelPosition(position)
+          _pixelPosition(position),
+          _keyword(keyword)
     {
     }
 
@@ -740,12 +741,17 @@ namespace Raylib {
         _currentFontSize = fontSize;
     }
 
-    std::string &Text::getCurrentText()
+    const std::string &Text::getText() const
     {
-        return (_text);
+        return _text;
     }
 
-    void Text::setCurrentText(const std::string &text)
+    const std::string &Text::getKeyword() const
+    {
+        return _keyword;
+    }
+
+    void Text::setText(const std::string &text)
     {
         _text = text;
     }

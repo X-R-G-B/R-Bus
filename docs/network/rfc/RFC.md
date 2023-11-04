@@ -60,6 +60,7 @@ Table of Contents
             3.4.9. POSITION_RELATIVE_BROADCAST
             3.4.10. PLAYER_DEATH
             3.4.11. MISSILE_DEATH
+            3.4.12. END_GAME
         3.5. Lobby Server -> Main Server
             3.5.1. INFO_LOBBY
     4. References
@@ -1116,6 +1117,21 @@ Table of Contents
     This field must be of size 4 bytes.
     This field is unsigned (so starting from 0 to 2^32)
     This field is unique for each missile.
+    
+3.4.12. END_GAME
+
+     To understant This action, the aciton header `magick` must be equal to `24`
+     
+     The action body is composed of ther following fields:
+    - `magick`
+    
+    *** Magick
+   
+    This field help to know the packet is realy missile death action
+    
+    This field must be of size 1 byte.
+    This field is unsigned (so starting from 0 to 2^8)
+    This field must be equal to the ascii `\x1d`
 
 3.5. Lobby Server -> Main Server
 
