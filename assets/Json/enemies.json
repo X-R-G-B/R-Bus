@@ -21,7 +21,7 @@
             },
             "velocity": {
                 "speedX": -40,
-                "speedY": 0
+                "speedY": -40
             },
             "animRect": [
                 {
@@ -53,20 +53,18 @@
             ],
             "physics": [
                 {
-                    "id": "zigzag",
-                    "amplitude": 10.0,
-                    "period": 400.0
+                    "id": "bouncing"
                 }
             ],
             "attack" : {
-                "bulletId": "fast",
-                "emitterId": "circle",
-                "numberOfMissiles": 6,
+                "bulletId": "classic",
+                "emitterId": "line",
+                "numberOfMissiles": 1,
                 "missileDirection" : {
                     "x": -1,
                     "y": 0
                 },
-                "msBetweenMissiles": 4000.0,
+                "msBetweenMissiles": 2000.0,
                 "bulletSpeed": 0.9
             }
         },
@@ -160,8 +158,8 @@
             ],
             "attack" : {
                 "bulletId": "fast",
-                "emitterId": "circle",
-                "numberOfMissiles": 6,
+                "emitterId": "line",
+                "numberOfMissiles": 2,
                 "missileDirection" : {
                     "x": -1,
                     "y": 0
@@ -247,9 +245,9 @@
                 }
             ],
             "attack" : {
-                "bulletId": "fast",
+                "bulletId": "bounce",
                 "emitterId": "circle",
-                "numberOfMissiles": 6,
+                "numberOfMissiles": 3,
                 "missileDirection" : {
                     "x": -1,
                     "y": 0

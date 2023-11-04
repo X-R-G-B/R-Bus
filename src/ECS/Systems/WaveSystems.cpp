@@ -139,6 +139,7 @@ namespace Systems {
             Json::getInstance().getDataFromJson<Types::Velocity>(enemyData, "velocity");
 
         addPhysicsToEntity(enemyData, position);
+        initEnemyWeapon(enemyData, enemyComp.getAttack());
 
 #ifdef CLIENT
         Registry::getInstance().getComponents<Types::Rect>().insertBack(rect);
