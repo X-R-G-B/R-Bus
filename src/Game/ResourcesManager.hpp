@@ -84,16 +84,21 @@ class ResourcesManager {
         {
             std::string found_path;
 
-            if (getRessourcePath().empty()) {
+            ResourcesManager::getMutex().lock();
+            std::string resource_path = ResourcesManager::getRessourcePath();
+            if (resource_path.empty()) {
+                ResourcesManager::getMutex().unlock();
                 Logger::fatal("RESOURCE_MANAGER: need to call init first (" + path_const + ")");
                 return "";
             }
             if (ResourcesManager::getMap().find(path_const) != ResourcesManager::getMap().end()) {
+                ResourcesManager::getMutex().unlock();
                 return ResourcesManager::getMap().at(path_const);
             }
+            ResourcesManager::getMutex().unlock();
             if (found_path.empty() && path_const.starts_with("assets")) {
-                if (ResourcesManager::isExists(ResourcesManager::getRessourcePath(), "share/r-type")) {
-                    boost::filesystem::path path_tmp = ResourcesManager::getRessourcePath();
+                if (ResourcesManager::isExists(resource_path, "share/r-type")) {
+                    boost::filesystem::path path_tmp = resource_path;
                     path_tmp                         = path_tmp.append("share");
                     path_tmp                         = path_tmp.append("r-type");
                     std::string path(path_const, std::string("assets").length(), std::string::npos);
@@ -103,8 +108,8 @@ class ResourcesManager {
                     found_path = path_tmp.string();
                 }
                 if (found_path.empty()
-                    && ResourcesManager::isExists(ResourcesManager::getRessourcePath(), "assets")) {
-                    boost::filesystem::path path_tmp = ResourcesManager::getRessourcePath();
+                    && ResourcesManager::isExists(resource_path, "assets")) {
+                    boost::filesystem::path path_tmp = resource_path;
                     path_tmp                         = path_tmp.append(path_const);
                     path_tmp                         = path_tmp.make_preferred();
                     Logger::debug("RESOURCE_MANAGER: Path found: " + path_tmp.string());
@@ -112,15 +117,15 @@ class ResourcesManager {
                 }
             }
             if (found_path.empty()) {
-                if (ResourcesManager::isExists(ResourcesManager::getRessourcePath(), path_const)) {
-                    boost::filesystem::path path_tmp = ResourcesManager::getRessourcePath();
+                if (ResourcesManager::isExists(resource_path, path_const)) {
+                    boost::filesystem::path path_tmp = resource_path;
                     path_tmp                         = path_tmp.append(path_const);
                     path_tmp                         = path_tmp.make_preferred();
                     Logger::debug("RESOURCE_MANAGER: Path found: " + path_tmp.string());
                     found_path = path_tmp.string();
                 }
                 if (found_path.empty()
-                    && ResourcesManager::isExists(ResourcesManager::getRessourcePath(), "bin")) {
+                    && ResourcesManager::isExists(resource_path, "bin")) {
                     boost::filesystem::path path_tmp = ResourcesManager::getRessourcePath();
                     path_tmp                         = path_tmp.append("bin");
                     path_tmp                         = path_tmp.append(path_const);
@@ -131,7 +136,9 @@ class ResourcesManager {
                     }
                 }
             }
+            ResourcesManager::getMutex().lock();
             ResourcesManager::getMap()[path_const] = found_path;
+            ResourcesManager::getMutex().unlock();
             return found_path;
         }
 
@@ -146,6 +153,12 @@ class ResourcesManager {
         {
             static std::unordered_map<std::string, std::string> map;
             return map;
+        }
+
+        static std::mutex &getMutex()
+        {
+            static std::mutex mutex;
+            return mutex;
         }
 
         static bool isExists(const std::string &path, const std::string &rest)
