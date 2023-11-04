@@ -254,7 +254,6 @@ namespace Nitwork {
             return;
         }
         _isGameStarted = true;
-        addStarWaveMessage(Types::Enemy::getEnemyNb());
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
         director.getSystemManager(0).addSystem(Systems::waveHandler);
