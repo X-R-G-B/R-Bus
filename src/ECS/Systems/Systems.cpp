@@ -385,7 +385,8 @@ namespace Systems {
 
     static void sendDeathMsg(std::size_t arrId)
     {
-        auto &arrEnemies = Registry::getInstance().getComponents<Types::Enemy>();
+        auto &arrEnemies  = Registry::getInstance().getComponents<Types::Enemy>();
+        auto &arrMissiles = Registry::getInstance().getComponents<Types::Missiles>();
 
 #ifndef CLIENT
         auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
@@ -393,6 +394,15 @@ namespace Systems {
             Nitwork::NitworkServer::getInstance().addPlayerDeathMsg(arrOtherPlayer[arrId].constId);
         }
 #endif
+
+        if (arrMissiles.exist(arrId)) {
+#ifdef CLIENT
+            Nitwork::NitworkClient::getInstance().addMissileDeathMsg(arrMissiles[arrId].constId);
+#else
+            Nitwork::NitworkServer::getInstance().addMissileDeathMsg(arrMissiles[arrId].constId);
+#endif
+        }
+
         if (arrEnemies.exist(arrId)) {
 #ifdef CLIENT
             Nitwork::NitworkClient::getInstance().addEnemyDeathMsg(arrEnemies[arrId].getConstId().id);

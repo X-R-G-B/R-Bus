@@ -361,13 +361,13 @@ namespace Nitwork {
         _playersIds[endpoint] = playerMsg.playerId;
     }
 
-    void NitworkServer::addStarWaveMessage(n_id_t enemyId)
+    void NitworkServer::addStarWaveMessage(n_id_t enemyNb)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgStartWave_s packetMsgStartWave = {
             .header       = {0, 0, 0, 0, 1, 0},
             .action       = {.magick = START_WAVE},
-            .msgStartWave = {.magick = MAGICK_START_WAVE, .enemyNb = enemyId}
+            .msgStartWave = {.magick = MAGICK_START_WAVE, .enemyNb = enemyNb}
         };
         Packet packet(
             packetMsgStartWave.action.magick,
@@ -424,20 +424,18 @@ namespace Nitwork {
         addPacketToSend(packet);
     }
 
-    void NitworkServer::broadcastNewBulletMsg(
-        const struct msgNewBullet_s &msg,
-        boost::asio::ip::udp::endpoint &senderEndpoint)
+    void NitworkServer::broadcastNewBulletMsg(const struct msgNewBullet_s &msg)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetNewBullet_s packetNewBullet = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = NEW_BULLET},
+            .action = {.magick = NEW_MISSILE},
             .msg    = msg
         };
         Packet packet(
             packetNewBullet.action.magick,
             std::make_any<struct packetNewBullet_s>(packetNewBullet));
-        sendToAllClientsButNotOne(packet, senderEndpoint);
+        sendToAllClients(packet);
     }
 
     void NitworkServer::broadcastAbsolutePositionMsg(
@@ -503,6 +501,27 @@ namespace Nitwork {
             std::make_any<struct packetCreatePlayer_s>(packetCreatePlayer),
             endpoint);
         addPacketToSend(packet);
+    }
+
+    void NitworkServer::addMissileDeathMsg(n_id_t id)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetMissileDeath_s packetMissileDeath = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                       .magick = MISSILE_DEATH,
+                       },
+            .msgMissileDeath =
+                {
+                       .magick    = MAGICK_MISSILE_DEATH,
+                       .missileId = id,
+                       },
+        };
+        Packet packet(
+            packetMissileDeath.action.magick,
+            std::make_any<struct packetMissileDeath_s>(packetMissileDeath));
+        sendToAllClients(packet);
     }
 
     n_id_t NitworkServer::getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const

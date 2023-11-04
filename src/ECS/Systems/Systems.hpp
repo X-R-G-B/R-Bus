@@ -35,7 +35,7 @@ namespace Systems {
         const struct position_absolute_s &pos,
         const struct health_s &life,
         bool otherPlayer = false);
-    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile);
+    std::size_t createMissile(Types::Position pos, Types::Missiles &typeOfMissile);
     void moveEntities(std::size_t, std::size_t);
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems();
     std::vector<std::function<void(std::size_t, std::size_t)>> getBulletSystems();

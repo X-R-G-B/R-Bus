@@ -65,7 +65,6 @@ namespace Systems {
     static void addSpriteRectsForBullet(nlohmann::json &bulletData, Types::CollisionRect &collisionRect)
     {
         Json &json = Json::getInstance();
-        Registry::getInstance().addEntity();
         const std::string bulletPath = json.getDataFromJson<std::string>(bulletData, "spritePath");
         Types::Rect spriteRect       = json.getDataFromJson<Types::Rect>(bulletData, "spriteRect");
         Types::SpriteDatas
@@ -99,13 +98,13 @@ namespace Systems {
         }
     }
 
-    void createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
+    std::size_t createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
     {
         if (typeOfMissile.type >= MAX_MISSILE_TYPE || typeOfMissile.type < 0) {
             throw std::runtime_error("Unknown missile type");
         }
         Json &json = Json::getInstance();
-        Registry::getInstance().addEntity();
+        std::size_t id = Registry::getInstance().addEntity();
         nlohmann::json bulletData =
             json.getJsonObjectById(JsonType::BULLETS, getMissileId(typeOfMissile.type), "bullets");
         Types::CollisionRect collisionRect =
@@ -131,6 +130,7 @@ namespace Systems {
         Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
+        return id;
     }
 
     static void updateBouncePhysics(std::vector<std::size_t> ids)

@@ -15,6 +15,7 @@ namespace Systems {
     void receiveRelativePosition(std::any &any, boost::asio::ip::udp::endpoint &);
     void receiveBroadcastAbsolutePosition(std::any &any, boost::asio::ip::udp::endpoint &endpoint);
     void receivePlayerDeath(std::any &any, boost::asio::ip::udp::endpoint &endpoint);
+    void receiveMissileDeath(std::any &any, boost::asio::ip::udp::endpoint & /* unused */);
     void handleNewLobbyMsg(std::any &data, boost::asio::ip::udp::endpoint &endpoint);
     void receiveConnectMainServerResp(std::any &data, boost::asio::ip::udp::endpoint &endpoint);
     void receiveConnectLobbyResp(std::any &data, boost::asio::ip::udp::endpoint &endpoint);

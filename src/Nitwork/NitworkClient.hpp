@@ -101,6 +101,7 @@ namespace Nitwork {
              * @param id The id of the dead player
              */
             void addPlayerDeathMsg(n_id_t id);
+            void addMissileDeathMsg(n_id_t id);
 
             /**
              * @brief Add a connect main server message to the packet
@@ -302,7 +303,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    NEW_BULLET,
+                    NEW_MISSILE,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgNewBullet_s>(handler, header);
@@ -342,6 +343,17 @@ namespace Nitwork {
                         },
                         [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
                             Systems::receivePlayerDeath(any, endpoint);
+                        }
+                    }
+                },
+                {
+                    MISSILE_DEATH,
+                    {
+                         [this](actionHandler &handler, const struct header_s &header) {
+                           handleBody<struct msgMissileDeath_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveMissileDeath(any, endpoint);
                         }
                     }
                 },
@@ -403,7 +415,7 @@ namespace Nitwork {
                         }
                 },
                 {
-                    NEW_BULLET,
+                    NEW_MISSILE,
                         [this](Packet &packet) {
                             sendData<struct packetNewBullet_s>(packet);
                         }
