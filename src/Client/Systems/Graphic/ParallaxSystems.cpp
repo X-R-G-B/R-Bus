@@ -47,17 +47,17 @@ namespace Systems::ParallaxSystems {
 
     void initParalax(std::size_t managerId, std::size_t systemId)
     {
-        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        std::vector<nlohmann::basic_json<>> parallaxData =
-            Json::getInstance().getDataByJsonType("parallax", JsonType::DEFAULT_PARALLAX);
+         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+         std::vector<nlohmann::basic_json<>> parallaxData =
+             Json::getInstance().getDataByJsonType("parallax", JsonType::DEFAULT_PARALLAX);
 
-        for (auto &elem : parallaxData) {
-            initParallaxEntity(elem);
-            if (Json::getInstance().isDataExist(elem, "copy")
-                && Json::getInstance().getDataFromJson<bool>(elem, "copy") == true) {
-                initParallaxEntity(elem, maxOutParallaxRight);
-            }
-        }
+         for (auto &elem : parallaxData) {
+             initParallaxEntity(elem);
+             if (Json::getInstance().isDataExist(elem, "copy")
+                 && Json::getInstance().getDataFromJson<bool>(elem, "copy") == true) {
+                 initParallaxEntity(elem, maxOutParallaxRight);
+             }
+         }
         SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 

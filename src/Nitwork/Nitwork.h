@@ -45,6 +45,9 @@
     #define MAGICK_CONNECT_MAIN_SERVER '\x18'
     #define MAGICK_CONNECT_MAIN_SERVER_RESP '\x14'
     #define MAGICK_INFO_LOBBY '\x15'
+    #define MAGICK_CONNECT_LOBBY '\x19'
+    #define MAGICK_CONNECT_LOBBY_RESP '\x1a'
+    #define MAGICK_DISCONNECT_LOBBY '\x1b'
 
 typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
@@ -75,6 +78,9 @@ enum n_actionType_t {
     INFO_LOBBY = 17,
     CONNECT_MAIN_SERVER = 18,
     CONNECT_MAIN_SERVER_RESP = 19,
+    CONNECT_LOBBY = 20,
+    CONNECT_LOBBY_RESP = 21,
+    DISCONNECT_LOBBY = 22,
     N_ACTION_TYPE_MAX,
 };
 
@@ -352,6 +358,43 @@ PACK(struct packetConnectMainServerResp_s {
     struct header_s header;
     struct action_s action;
     struct msgConnectMainServerResp_s msg;
+});
+
+/* Message Connect Lobby */
+// Client Connect to Lobby
+
+PACK(struct msgConnectLobby_s {
+    n_magick_t magick;
+});
+
+PACK(struct packetConnectLobby_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgConnectLobby_s msg;
+});
+
+// Lobby Respond
+
+PACK(struct msgConnectLobbyResp_s {
+    n_magick_t magick;
+    char isOk;
+});
+
+PACK(struct packetConnectLobbyResp_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgConnectLobbyResp_s msg;
+});
+
+/* Message Disconnect Lobby */
+PACK(struct msgDisconnectLobby_s {
+    n_magick_t magick;
+});
+
+PACK(struct packetDisconnectLobby_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgDisconnectLobby_s msg;
 });
 
 #endif

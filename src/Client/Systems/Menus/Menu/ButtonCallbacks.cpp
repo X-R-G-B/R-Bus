@@ -109,7 +109,6 @@ namespace Menu {
             for (auto id : ids) {
                 if (arrInputBox[id].selected) {
                     if (arrLobbyStatus[id].port > 0 && arrLobbyStatus[id].ip != "") {
-                        Scene::SceneManager::getInstance().changeScene(Scene::Scene::MAIN_GAME);
                         Nitwork::NitworkClient::getInstance().connectLobby(
                             arrLobbyStatus[id].ip,
                             arrLobbyStatus[id].port);
@@ -155,16 +154,19 @@ namespace Menu {
         void sendReadyPacket()
         {
             auto idsButton = Registry::getInstance().getEntitiesByComponents({typeid(Types::Button)});
-            auto idsText   = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text)});
-            auto arrText   = Registry::getInstance().getComponents<Raylib::Text>();
 
             Nitwork::NitworkClient::getInstance().addReadyMsg();
             for (auto &id : idsButton) {
                 Registry::getInstance().removeEntity(id);
             }
+            auto &arrText   = Registry::getInstance().getComponents<Raylib::Text>();
+            auto idsText   = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text)});
             for (auto &id : idsText) {
-                Logger::info("Je remove : " + std::to_string(id));
-                Registry::getInstance().removeEntity(id);
+                Logger::error("caca");
+                if (arrText[id].getCurrentText() == "READY !") {
+                    Logger::error("pipi");
+                    Registry::getInstance().removeEntity(id);
+                }
             }
         }
     } // namespace Callback

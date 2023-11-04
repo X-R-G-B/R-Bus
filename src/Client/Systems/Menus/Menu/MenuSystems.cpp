@@ -16,8 +16,6 @@
 namespace Systems {
     namespace Menu {
 
-        constexpr float maxPercent = 100.0F;
-
         static void setAllInputBoxFalse()
         {
             Registry::components<Types::InputBox> arrInputBox =
@@ -195,7 +193,6 @@ namespace Systems {
                     Json::getInstance().getDataByJsonType<nlohmann::json>("menu", JsonType::MENU);
                 ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
                     Json::getInstance().getDatasFromList(jsonData));
-
             } catch (std::runtime_error &err) {
                 Logger::info(err.what());
             }

@@ -4,6 +4,7 @@
 #include "Json.hpp"
 #include "Maths.hpp"
 #include "NitworkClient.hpp"
+#include "Raylib.hpp"
 #include "Registry.hpp"
 #include "SceneManager.hpp"
 #include "SystemManagersDirector.hpp"
@@ -139,6 +140,15 @@ namespace Systems {
         arrPos[*otherPlayer].y = Maths::additionWithTwoIntDecimals(arrPos[*otherPlayer].y, position.y);
     }
 
+    void sendInitPacket(std::size_t managerId, std::size_t systemId)
+    {
+        if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::MAIN_GAME) {
+            return;
+        }
+        Nitwork::NitworkClient::getInstance().addInitMsg();
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+    }
+
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
@@ -265,6 +275,7 @@ namespace Systems {
         }
         for (auto &id : otherPlayersIds) {
             if (arrOtherPlayers[id].constId == playerDeath.playerId) {
+                Logger::fatal("Other player death: " + std::to_string(playerDeath.playerId));
                 arrHealth[id].hp = 0;
                 return;
             }
@@ -322,8 +333,34 @@ namespace Systems {
         Logger::info("Server OK!");
     }
 
+    void receiveConnectLobbyResp(std::any &data, boost::asio::ip::udp::endpoint & /* unused */)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const struct msgConnectLobbyResp_s &msg = std::any_cast<struct msgConnectLobbyResp_s>(data);
+
+        if (msg.magick != MAGICK_CONNECT_LOBBY_RESP) {
+            Logger::error("MAGICK_CONNECT_LOBBY_RESP is not the same");
+            return;
+        }
+        if (msg.isOk == 1) {
+            Scene::SceneManager::getInstance().changeScene(Scene::Scene::MAIN_GAME);
+        } else {
+            Logger::info("Lobby is full");
+        }
+    }
+
+    void quitGame(std::size_t /* unused */, std::size_t /* unused */)
+    {
+        if (Raylib::isKeyPressed(Raylib::KeyboardKey::KB_ESCAPE)) {
+            if (Scene::SceneManager::getInstance().getCurrentScene() == Scene::Scene::MAIN_GAME) {
+                Nitwork::NitworkClient::getInstance().disconnectLobby();
+                Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+            }
+        }
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()
     {
-        return {sendPositionRelative, sendPositionAbsolute};
+        return {quitGame, sendInitPacket, sendPositionRelative, sendPositionAbsolute};
     }
 } // namespace Systems

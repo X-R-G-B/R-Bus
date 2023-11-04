@@ -6,6 +6,7 @@
 */
 
 #include "NitworkServer.hpp"
+#include <fstream>
 #include "ECSCustomTypes.hpp"
 #include "Logger.hpp"
 #include "Registry.hpp"
@@ -167,10 +168,34 @@ namespace Nitwork {
         }
     }
 
+    void NitworkServer::handleConnectLobbyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        auto msgData    = std::any_cast<struct msgConnectLobby_s>(msg);
+        bool canConnect = true;
+
+        if (_isGameStarted) {
+            Logger::info("Game already started, connection refused");
+            return;
+        }
+        if (msgData.magick != MAGICK_CONNECT_LOBBY) {
+            Logger::error("Error: magick not matching");
+            return;
+        }
+        if (_endpoints.size() >= _serverInfos.maxNbPlayer) {
+            Logger::error("Too many clients, can't add an other one");
+            canConnect = false;
+        }
+        addConnectLobbyRespMsg(endpoint, canConnect);
+    }
+
     void
     NitworkServer::handleInitMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        if (_isGameStarted) {
+            Logger::info("Game already started, connection refused");
+            return;
+        }
         if (_endpoints.size() >= _serverInfos.maxNbPlayer) {
             Logger::error("Too many clients, can't add an other one");
             return;
@@ -211,14 +236,20 @@ namespace Nitwork {
     void
     NitworkServer::handleReadyMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
+        if (_isGameStarted) {
+            Logger::info("Game already started, connection refused");
+            return;
+        }
         if (!isClientAlreadyConnected(endpoint)) {
             Logger::info("Client not connected");
             return;
         }
-        if (_endpoints.size() < _serverInfos.maxNbPlayer) {
-            Logger::info("A new client is ready, waiting for others");
+        _playersReady[endpoint] = true;
+        if (_endpoints.size() != _playersReady.size()) {
+            Logger::info("Client ready, waiting for others");
             return;
         }
+        _isGameStarted = true;
         addStarWaveMessage(Types::Enemy::getEnemyNb());
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
@@ -253,9 +284,38 @@ namespace Nitwork {
             std::make_any<struct packetPositionRelativeBroadcast_s>(msgPosBroadcast));
         sendToAllClientsButNotOne(packet, endpoint);
     }
+
+    void NitworkServer::handleDisconnectMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        auto msgData = std::any_cast<struct msgDisconnectLobby_s>(msg);
+
+        if (msgData.magick != MAGICK_DISCONNECT_LOBBY) {
+            Logger::error("Error: magick is not MAGICK_DISCONNECT_LOBBY");
+            return;
+        }
+        _endpoints.erase(std::remove(_endpoints.begin(), _endpoints.end(), endpoint));
+        deletePacketFromEndPoints(endpoint);
+        addPlayerDeathMsg(getPlayerId(endpoint));
+    }
     /* End Handle packet (msg) Section */
 
     /* Message Creation Section */
+    void NitworkServer::addConnectLobbyRespMsg(boost::asio::ip::udp::endpoint &endpoint, bool canConnect)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetConnectLobbyResp_s packetConnectLobbyResp = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = CONNECT_LOBBY_RESP},
+            .msg    = {.magick = MAGICK_CONNECT_LOBBY_RESP, .isOk = static_cast<char>(canConnect)}
+        };
+        Packet packet(
+            packetConnectLobbyResp.action.magick,
+            std::make_any<struct packetConnectLobbyResp_s>(packetConnectLobbyResp),
+            endpoint);
+        addPacketToSend(packet);
+    }
+
     void NitworkServer::addInfoLobbyMsg()
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);

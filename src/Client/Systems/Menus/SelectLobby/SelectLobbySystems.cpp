@@ -79,7 +79,6 @@ namespace Systems::SelectLobbySystems {
                 nlohmann::json lobbyBox = Json::getInstance().getDataByJsonType<nlohmann::json>(
                     "inputBoxes",
                     JsonType::SELECT_LOBBY);
-
                 std::size_t id = ::Menu::MenuBuilder::getInstance().initMenuEntity(lobbyBox);
                 if (arrPosition.exist(id)) {
                     arrPosition[id].y += offset * i;
