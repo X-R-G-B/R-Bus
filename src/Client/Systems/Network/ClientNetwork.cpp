@@ -1,16 +1,17 @@
 #include "Logger.hpp"
 #include "ClientNetwork.hpp"
 #include <algorithm>
-#include "ECSCustomTypes.hpp"
-#include "Json.hpp"
-#include "Maths.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga-physics/ECSSystems.hpp"
+#include "B-luga/Json.hpp"
+#include "B-luga/Maths/Maths.hpp"
+#include "B-luga/Registry.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "CreateMissiles.hpp"
+#include "GameSystems.hpp"
 #include "NitworkClient.hpp"
-#include "Raylib.hpp"
-#include "Registry.hpp"
-#include "SceneManager.hpp"
-#include "SystemManagersDirector.hpp"
-#include "Systems.hpp"
-#include "EventsSystems.hpp"
+#include "init.hpp"
 
 namespace Systems {
     void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
@@ -45,7 +46,7 @@ namespace Systems {
                     arrHealth[id].hp = 0;
                 } else {
                     Logger::fatal("\n\n\n!!!! Enemy has no health component, but is alive !!!!\n\n\n");
-                    Registry::getInstance().removeEntity(id);
+                    Registry::getInstance().addToRemove(id);
                 }
                 return;
             }
@@ -102,6 +103,7 @@ namespace Systems {
 
     static void createNewPlayer(const struct msgCreatePlayer_s &newPlayer)
     {
+        Logger::debug("CREATE NEW PLAYER");
         Registry &registry   = Registry::getInstance();
         auto &arrPlayer      = registry.getComponents<Types::Player>();
         auto &arrOtherPlayer = registry.getComponents<Types::OtherPlayer>();
@@ -109,6 +111,7 @@ namespace Systems {
             {typeid(Types::Position), typeid(Types::Player), typeid(struct health_s)});
         auto idsOtherPlayer = registry.getEntitiesByComponents(
             {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct health_s)});
+        Logger::debug("CREATE NEW PLAYER2");
         auto player =
             std::find_if(idsPlayer.begin(), idsPlayer.end(), [&arrPlayer, &newPlayer](std::size_t id) {
                 return arrPlayer[id].constId == newPlayer.playerId;
@@ -120,10 +123,13 @@ namespace Systems {
                 return arrOtherPlayer[id].constId == newPlayer.playerId;
             });
 
+        Logger::debug("CREATE NEW PLAYER3");
         if (player != idsPlayer.end() || otherPlayers != idsOtherPlayer.end()) {
             auto id = player != idsPlayer.end() ? *player : *otherPlayers;
-            Registry::getInstance().removeEntity(id);
+            Logger::debug("REMOVE already existing player: " + std::to_string(id));
+            Registry::getInstance().addToRemove(id);
         }
+        Logger::debug("CREATE NEW PLAYER4");
         initPlayer(newPlayer.playerId, newPlayer.pos, newPlayer.life, newPlayer.isOtherPlayer);
     }
 
@@ -348,7 +354,7 @@ namespace Systems {
             Logger::error("Server Not OK!");
             return;
         }
-        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+        Scene::SceneManager::getInstance().changeScene(Scenes::SELECT_LOBBY);
         Logger::info("Server OK!");
     }
 
@@ -362,7 +368,7 @@ namespace Systems {
             Logger::error("MAGICK_CONNECT_MAIN_SERVER_RESP is not the same");
             return;
         }
-        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+        Scene::SceneManager::getInstance().changeScene(Scenes::SELECT_LOBBY);
         Logger::info("Server OK!");
     }
 

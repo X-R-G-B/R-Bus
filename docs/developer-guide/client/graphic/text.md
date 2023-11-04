@@ -26,7 +26,7 @@ void Raylib::Text::setFontSize(float fontSize);
 Raylib::Vector2 Raylib::Text::getPosition() const;
 void Raylib::Text::setPixelPosition(Raylib::Vector2 position);
 void Raylib::Text::setCurrentFontSize(float fontSize);
-std::string &Text::getText();
+std::string &Text::getCurrentText();
 void Text::setText(const std::string &text)
 ```
 

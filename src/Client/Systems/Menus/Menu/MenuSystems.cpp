@@ -6,12 +6,17 @@
 */
 
 #include "MenuSystems.hpp"
-#include "CustomTypes.hpp"
-#include "Maths.hpp"
+#include "B-luga-graphics/AnimRect.hpp"
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga/Maths/Maths.hpp"
+#include "B-luga/SceneManager.hpp"
 #include "Menu.hpp"
 #include "SceneManager.hpp"
 #include "SelectLobbySystems.hpp"
-#include "Systems.hpp"
+#include "Parallax.hpp"
+#include "ResourcesManager.hpp"
+#include "init.hpp"
 
 namespace Systems {
     namespace Menu {
@@ -57,13 +62,13 @@ namespace Systems {
 
         static void insertText(std::size_t id, Registry::components<Types::InputBox> &arrInputBox)
         {
-            Registry::components<Raylib::Text> arrText =
-                Registry::getInstance().getComponents<Raylib::Text>();
-            int key = Raylib::getCharPressed();
+            Registry::components<Raylib::TextShared> arrText =
+                Registry::getInstance().getComponents<Raylib::TextShared>();
+            int key = Raylib::KeyboardInput::getCharPressed();
 
             if ((key >= ' ') && (key <= '}') && (arrInputBox[id].text.size() < arrInputBox[id].maxChar)) {
                 arrInputBox[id].text += static_cast<char>(key);
-                arrText[id].setText(arrInputBox[id].text);
+                arrText[id]->setCurrentText(arrInputBox[id].text);
             }
         }
 
@@ -74,7 +79,7 @@ namespace Systems {
             Registry::components<::Systems::SelectLobbySystems::LobbyStatus> arrLobbyStatus =
                 Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-                {typeid(Types::InputBox), typeid(Raylib::Text)});
+                {typeid(Types::InputBox), typeid(Raylib::TextShared)});
 
             for (auto id : ids) {
                 if (arrInputBox[id].selected == true && !arrLobbyStatus.exist(id)) {
@@ -96,12 +101,11 @@ namespace Systems {
 
         static void deleteInputBoxChar(std::size_t id, Registry::components<Types::InputBox> &arrInputBox)
         {
-            Registry::components<Raylib::Text> arrText =
-                Registry::getInstance().getComponents<Raylib::Text>();
+            auto &arrText = Registry::getInstance().getComponents<Raylib::TextShared>();
 
             if (arrInputBox[id].text.size() > 0) {
                 arrInputBox[id].text.pop_back();
-                arrText[id].setText(arrInputBox[id].text);
+                arrText[id]->setCurrentText(arrInputBox[id].text);
             }
         }
 
@@ -184,11 +188,12 @@ namespace Systems {
 
         void initMenu(std::size_t managerId, std::size_t systemId)
         {
-            if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::MENU) {
+            if (Scene::SceneManager::getInstance().getCurrentScene() != Scenes::MENU) {
                 SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
                 return;
             }
             try {
+                Parallax::initParalax();
                 nlohmann::json jsonData =
                     Json::getInstance().getDataByJsonType<nlohmann::json>("menu", JsonType::MENU);
                 ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(

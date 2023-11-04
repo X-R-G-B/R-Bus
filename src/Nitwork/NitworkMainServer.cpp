@@ -5,7 +5,7 @@
 ** NitworkMainServer
 */
 
-#include "Logger.hpp"
+#include "B-luga/Logger.hpp"
 #ifdef _WIN32
     #include <sstream>
     #include <tchar.h>
@@ -210,14 +210,8 @@ namespace Nitwork {
         if (c_pid == 0) {
             Logger::info("Lobby " + name + " created");
             if (execl(
-                    ECS::ResourcesManager::convertPath(
-                        "./r-type_server",
-                        ECS::ResourcesManager::FileType::BINARY)
-                        .c_str(),
-                    ECS::ResourcesManager::convertPath(
-                        "./r-type_server",
-                        ECS::ResourcesManager::FileType::BINARY)
-                        .c_str(),
+                    ResourcesManager::convertPath("r-type_server").c_str(),
+                    ResourcesManager::convertPath("r-type_server").c_str(),
                     "1",
                     std::to_string(maxNbPlayer).c_str(),
                     std::to_string(gameType).c_str(),

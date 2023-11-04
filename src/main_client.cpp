@@ -5,25 +5,30 @@
 ** main
 */
 
-#include "Logger.hpp"
+#include <boost/asio.hpp>
+#include "B-luga/Logger.hpp"
+#include "B-luga/Registry.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "NitworkClient.hpp"
-#include "Registry.hpp"
 #include "ResourcesManager.hpp"
-#include "SceneManager.hpp"
+#include "init.hpp"
 
 constexpr int EXIT_EPITECH = 84;
 
 int main(int /*unused*/, const char **av)
 {
 #ifndef NDEBUG
-    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
+    Logger::setLogLevel(LogLevel::Debug);
+#else
+    Logger::setLogLevel(LogLevel::Warn);
 #endif
-    ECS::ResourcesManager::init(av[0]);
-    auto &sceneManager = Scene::SceneManager::getInstance();
+    ResourcesManager::init(av[0]);
+    initScenes();
     if (!Nitwork::NitworkClient::getInstance().startClient()) {
         return EXIT_EPITECH;
     }
-    int res = sceneManager.run();
+    int res = Scene::SceneManager::getInstance().run();
     if (Nitwork::NitworkClient::getInstance().isRunning()) {
         Nitwork::NitworkClient::getInstance().stop();
     }

@@ -8,6 +8,7 @@
 #include "SelectLobbySystems.hpp"
 #include <algorithm>
 #include <string>
+<<<<<<< HEAD
 #include "ButtonCallbacks.hpp"
 #include "CustomTypes.hpp"
 #include "Geometry.hpp"
@@ -20,6 +21,17 @@
 #include "SceneManager.hpp"
 #include "SystemManagersDirector.hpp"
 #include "Systems.hpp"
+=======
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "Menu.hpp"
+#include "MessageTypes.h"
+#include "NitworkClient.hpp"
+#include "ResourcesManager.hpp"
+#include "init.hpp"
+>>>>>>> origin/dev
 
 namespace Systems::SelectLobbySystems {
 
@@ -32,7 +44,7 @@ namespace Systems::SelectLobbySystems {
 
     void initSelectLoby(std::size_t managerId, std::size_t systemId)
     {
-        if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::SELECT_LOBBY) {
+        if (Scene::SceneManager::getInstance().getCurrentScene() != Scenes::SELECT_LOBBY) {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
             return;
         }

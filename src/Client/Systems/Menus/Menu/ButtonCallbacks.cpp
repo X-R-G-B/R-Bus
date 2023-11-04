@@ -162,7 +162,7 @@ namespace Menu {
             auto &arrText   = Registry::getInstance().getComponents<Raylib::Text>();
             auto idsText   = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text)});
             for (auto &id : idsText) {
-                if (arrText[id].getText() == "READY !") {
+                if (arrText[id].getCurrentText() == "READY !") {
                     Registry::getInstance().removeEntity(id);
                 }
             }

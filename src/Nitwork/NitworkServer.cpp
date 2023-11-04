@@ -9,12 +9,13 @@
     #define _CRT_SECURE_NO_WARNINGS
 #endif
 #include "NitworkServer.hpp"
-#include <fstream>
-#include "ECSCustomTypes.hpp"
-#include "Logger.hpp"
-#include "Registry.hpp"
-#include "SystemManagersDirector.hpp"
-#include "Systems.hpp"
+#include <boost/asio.hpp>
+#include "B-luga-physics/ECSSystems.hpp"
+#include "B-luga/Logger.hpp"
+#include "B-luga/Registry.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "GameSystems.hpp"
+#include "ResourcesManager.hpp"
 #include "WaveSystem.hpp"
 
 namespace Nitwork {
@@ -219,11 +220,15 @@ namespace Nitwork {
                        .magick   = MAGICK_NEW_PLAYER,
                        .playerId = playerId,
                        .pos =
-                    {jsonInstance
-                            .getDataByVector<int>({"player", "position", "x"}, JsonType::DEFAULT_PLAYER),
-                        jsonInstance
-                            .getDataByVector<int>({"player", "position", "y"}, JsonType::DEFAULT_PLAYER)},
-                       .life = {jsonInstance.getDataByVector<int>({"player", "health"}, JsonType::DEFAULT_PLAYER)},
+                    {jsonInstance.getDataByVector<int>(
+                         ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER),
+                         {"player", "position", "x"}),
+                        jsonInstance.getDataByVector<int>(
+                         ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER),
+                         {"player", "position", "y"})},
+                       .life          = {jsonInstance.getDataByVector<int>(
+                    ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER),
+                    {"player", "health"})},
                        .isOtherPlayer = 0}
         };
         addPlayerInitMessage(endpoint, packetMsgCreatePlayer.msg);

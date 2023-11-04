@@ -10,7 +10,7 @@
 #endif
 #include <Logger.hpp>
 #include "NitworkClient.hpp"
-#include "Registry.hpp"
+#include "B-luga/Registry.hpp"
 
 namespace Nitwork {
     NitworkClient::NitworkClient() : _resolver(_context)

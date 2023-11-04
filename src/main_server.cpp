@@ -1,13 +1,12 @@
+#include <boost/asio.hpp>
 #include <csignal>
-#include <vector>
-#include "Logger.hpp"
+#include "B-luga/Logger.hpp"
+#include "B-luga/SceneManager.hpp"
 #include "NitworkMainServer.hpp"
 #include "NitworkServer.hpp"
-#include "Registry.hpp"
 #include "ResourcesManager.hpp"
 #include "ServerArgsHandling.hpp"
-#include "SystemManagersDirector.hpp"
-#include "Systems.hpp"
+#include "init.hpp"
 
 constexpr int EXIT_EPITECH = 84;
 static bool isRunning      = true;
@@ -15,7 +14,7 @@ static bool isRunning      = true;
 static void signalHandler(int signum)
 {
     Logger::info("Interrupt signal (" + std::to_string(signum) + ") received.");
-    isRunning = false;
+    Scene::SceneManager::getInstance().stop();
     signal(SIGINT, SIG_DFL);
 }
 
@@ -55,21 +54,10 @@ int mainLobbyServer(const std::vector<std::string> &av)
     if (!Nitwork::NitworkServer::getInstance().startServer(nbPlayer, gameType, name, ownerIp, ownerPort)) {
         return EXIT_EPITECH;
     }
+    initScenes();
+    signal(SIGINT, signalHandler);
     Nitwork::NitworkServer::getInstance().addInfoLobbyMsg();
-    auto &director = Systems::SystemManagersDirector::getInstance();
-    std::unique_lock<std::mutex> lock(director.mutex);
-    director.addSystemManager(Systems::getECSSystems());
-    lock.unlock();
-    while (isRunning && Nitwork::NitworkServer::getInstance().isRunning()) {
-        try {
-            lock.lock();
-            director.getSystemManager(0).updateSystems();
-            lock.unlock();
-        } catch (const std::exception &e) {
-            Logger::fatal("UpdateSystems: " + std::string(e.what()));
-            break;
-        }
-    }
+    Scene::SceneManager::getInstance().run();
     Nitwork::NitworkServer::getInstance().stop();
     return EXIT_SUCCESS;
 }
@@ -77,14 +65,16 @@ int mainLobbyServer(const std::vector<std::string> &av)
 int main(int ac, const char **av)
 {
 #ifndef NDEBUG
-    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
+    Logger::setLogLevel(LogLevel::Debug);
+#else
+    Logger::setLogLevel(LogLevel::Info);
 #endif
     std::vector<std::string> args(av, av + ac);
     auto serverType  = Args::ServerArgsHandling::checkArgs(ac, av);
     auto programPath = std::string(av[0]);
 
     signal(SIGINT, signalHandler);
-    ECS::ResourcesManager::init(programPath);
+    ResourcesManager::init(programPath);
     if (serverType == Args::MAIN_SERVER) {
         return mainMainServer(args);
     } else if (serverType == Args::LOBBY_SERVER) {
