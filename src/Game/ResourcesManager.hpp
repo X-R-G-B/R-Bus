@@ -112,8 +112,7 @@ class ResourcesManager {
                     Logger::debug("RESOURCE_MANAGER: Path found: " + path_tmp.string());
                     found_path = path_tmp.string();
                 }
-                if (found_path.empty()
-                    && ResourcesManager::isExists(resource_path, "assets")) {
+                if (found_path.empty() && ResourcesManager::isExists(resource_path, "assets")) {
                     boost::filesystem::path path_tmp = resource_path;
                     path_tmp                         = path_tmp.append(path_const);
                     path_tmp                         = path_tmp.make_preferred();
@@ -129,8 +128,7 @@ class ResourcesManager {
                     Logger::debug("RESOURCE_MANAGER: Path found: " + path_tmp.string());
                     found_path = path_tmp.string();
                 }
-                if (found_path.empty()
-                    && ResourcesManager::isExists(resource_path, "bin")) {
+                if (found_path.empty() && ResourcesManager::isExists(resource_path, "bin")) {
                     boost::filesystem::path path_tmp = ResourcesManager::getRessourcePath();
                     path_tmp                         = path_tmp.append("bin");
                     path_tmp                         = path_tmp.append(path_const);
