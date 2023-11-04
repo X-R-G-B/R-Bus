@@ -67,7 +67,7 @@ namespace Menu {
 
         Raylib::Color color = search != Types::colorMatchStrings.end()
             ? Types::colorMatchStrings.at(Json::getInstance().getDataFromJson<std::string>(elem, "color"))
-            : Raylib::White;
+            : Raylib::Color(Raylib::ColorDef::White);
         Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
 
         if (!Json::getInstance().isDataExist(elem, "spritePath")) {
