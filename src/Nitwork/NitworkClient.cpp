@@ -5,6 +5,9 @@
 ** NitworkClient
 */
 
+#if defined(_WIN32)
+    #define _CRT_SECURE_NO_WARNINGS
+#endif
 #include "NitworkClient.hpp"
 #include "Registry.hpp"
 

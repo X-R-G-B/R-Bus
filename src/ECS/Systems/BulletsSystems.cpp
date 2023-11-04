@@ -101,6 +101,9 @@ namespace Systems {
 
     void createMissile(Types::Position pos, Types::Missiles &typeOfMissile)
     {
+        if (typeOfMissile.type >= MAX_MISSILE_TYPE || typeOfMissile.type < 0) {
+            throw std::runtime_error("Unknown missile type");
+        }
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
         nlohmann::json bulletData =
