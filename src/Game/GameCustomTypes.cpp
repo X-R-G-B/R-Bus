@@ -1,9 +1,3 @@
-
-#include "GameCustomTypes.hpp"
-
-unsigned int Types::Enemy::_enemyNb = 0;
-std::mutex Types::Enemy::_mutex;
-
 /*
 ** EPITECH PROJECT, 2023
 ** R-Bus
@@ -11,7 +5,7 @@ std::mutex Types::Enemy::_mutex;
 ** Custom Types
 */
 
-#include "ECSCustomTypes.hpp"
+#include "GameCustomTypes.hpp"
 #ifdef CLIENT
     #include "Raylib.hpp"
 #endif

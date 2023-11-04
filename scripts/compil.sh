@@ -9,8 +9,8 @@ else
     cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug
 fi
 
-if ! command -v nproc &> /dev/null; then
-        cmake --build build --parallel 2
+if [[ "$1" == "--no-parallel" ]] || ! command -v nproc &> /dev/null; then
+        cmake --build build --parallel 1
 else
   NB_PROC=$(nproc)
   NB_THREADS=$(($NB_PROC - 2))

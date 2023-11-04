@@ -6,13 +6,13 @@
 */
 
 #include "MenuSystems.hpp"
+#include "B-luga-graphics/Raylib/Graphics/Graphics.hpp"
 #include "B-luga-graphics/AnimRect.hpp"
 #include "B-luga-graphics/GraphicsCustomTypes.hpp"
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga/Maths/Maths.hpp"
 #include "B-luga/SceneManager.hpp"
 #include "Menu.hpp"
-#include "SceneManager.hpp"
 #include "SelectLobbySystems.hpp"
 #include "Parallax.hpp"
 #include "ResourcesManager.hpp"
@@ -92,7 +92,7 @@ namespace Systems {
         {
             std::size_t idEntity = 0;
 
-            if (Raylib::isMouseButtonPressed(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
+            if (Raylib::MouseInput::isMouseButtonPressed(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
                 ::Menu::checkClick(idEntity);
                 setInputBoxSelected(idEntity);
                 return;
@@ -118,7 +118,7 @@ namespace Systems {
                 {typeid(Types::InputBox), typeid(Raylib::Text)});
             static auto clockId = Registry::getInstance().getClock().create();
 
-            if (Raylib::isKeyDown(Raylib::KeyboardKey::KB_BACKSPACE)
+            if (Raylib::KeyboardInput::isKeyDown(Raylib::KeyboardKey::KB_BACKSPACE)
                 && Registry::getInstance().getClock().elapsedMillisecondsSince(clockId) > delay) {
                 for (auto id : ids) {
                     if (arrInputBox[id].selected) {
@@ -158,10 +158,10 @@ namespace Systems {
                 Registry::getInstance().getComponents<Types::Button>();
 
             arrAnimRect[id].changeRectList(Types::RectListType::HOVER);
-            if (Raylib::isMouseButtonDown(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
+            if (Raylib::MouseInput::isMouseButtonDown(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
                 arrAnimRect[id].changeRectList(Types::RectListType::SELECTED);
             }
-            if (Raylib::isMouseButtonReleased(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
+            if (Raylib::MouseInput::isMouseButtonReleased(Raylib::MouseButton::MOUSE_BTN_LEFT)) {
                 arrButton[id].callback();
             }
         }
@@ -206,19 +206,18 @@ namespace Systems {
 
         void quitScene(std::size_t /*unused*/, std::size_t /*unused*/)
         {
-            if (Raylib::isKeyPressed(Raylib::KeyboardKey::KB_ESCAPE)) {
+            if (Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_ESCAPE)) {
                 switch (Scene::SceneManager::getInstance().getCurrentScene()) {
-                    case Scene::Scene::MENU: Scene::SceneManager::getInstance().stop(); break;
-                    case Scene::Scene::CREATE_LOBBY:
-                        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+                    case MENU: Scene::SceneManager::getInstance().stop(); break;
+                    case CREATE_LOBBY_SCENE:
+                        Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
-                    case Scene::Scene::SELECT_LOBBY:
-                        Scene::SceneManager::getInstance().changeScene(Scene::Scene::MENU);
+                    case SELECT_LOBBY:
+                        Scene::SceneManager::getInstance().changeScene(MENU);
                         break;
-                    case Scene::Scene::MAIN_GAME:
-                        Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+                    case GAME:
+                        Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
-                    case Scene::Scene::SCENE_MAX: break;
                 }
             }
         }

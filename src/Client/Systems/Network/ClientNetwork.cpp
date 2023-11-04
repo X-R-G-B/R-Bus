@@ -1,4 +1,3 @@
-#include "Logger.hpp"
 #include "ClientNetwork.hpp"
 #include <algorithm>
 #include "B-luga-physics/ECSCustomTypes.hpp"
@@ -8,9 +7,12 @@
 #include "B-luga/Registry.hpp"
 #include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "B-luga-graphics/Raylib/Events/Inputs.hpp"
+#include "B-luga-graphics/Raylib/Graphics/Graphics.hpp"
 #include "CreateMissiles.hpp"
 #include "GameSystems.hpp"
 #include "NitworkClient.hpp"
+#include "EventsSystems.hpp"
 #include "init.hpp"
 
 namespace Systems {
@@ -82,7 +84,7 @@ namespace Systems {
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
         Types::WaveInfos::getInstance().setWaveId(wave.waveId);
         Types::WaveInfos::getInstance().setWaitingForNextWave(false);
-        director.getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::GAME))
+        director.getSystemManager(static_cast<std::size_t>(GAME))
             .addSystem(initWave);
         Logger::info("Wave started");
     }
@@ -173,7 +175,7 @@ namespace Systems {
 
     void sendInitPacket(std::size_t managerId, std::size_t systemId)
     {
-        if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::MAIN_GAME) {
+        if (Scene::SceneManager::getInstance().getCurrentScene() != GAME) {
             return;
         }
         Nitwork::NitworkClient::getInstance().addInitMsg();
@@ -382,7 +384,7 @@ namespace Systems {
             return;
         }
         if (msg.isOk == 1) {
-            Scene::SceneManager::getInstance().changeScene(Scene::Scene::MAIN_GAME);
+            Scene::SceneManager::getInstance().changeScene(static_cast<std::size_t>(GAME));
         } else {
             Logger::info("Lobby is full");
         }
@@ -390,10 +392,10 @@ namespace Systems {
 
     void quitGame(std::size_t /* unused */, std::size_t /* unused */)
     {
-        if (Raylib::isKeyPressed(Raylib::KeyboardKey::KB_ESCAPE)) {
-            if (Scene::SceneManager::getInstance().getCurrentScene() == Scene::Scene::MAIN_GAME) {
+        if (Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_ESCAPE)) {
+            if (Scene::SceneManager::getInstance().getCurrentScene() == static_cast<std::size_t>(GAME)) {
                 Nitwork::NitworkClient::getInstance().disconnectLobby();
-                Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+                Scene::SceneManager::getInstance().changeScene(static_cast<std::size_t>(SELECT_LOBBY));
             }
         }
     }
@@ -402,7 +404,7 @@ namespace Systems {
     {
         auto &director = SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
-        director.getSystemManager(static_cast<std::size_t>(Scene::SystemManagers::EVENTS))
+        director.getSystemManager(static_cast<std::size_t>(SystemManagers::EVENTS))
             .addSystem(EventsSystems::handleEndGameEvent);
     }
 

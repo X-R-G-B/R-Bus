@@ -18,6 +18,7 @@
 #include "GameSystems.hpp"
 #include "NitworkClient.hpp"
 #include "ResourcesManager.hpp"
+#include "init.hpp"
 
 namespace Systems {
 
@@ -243,24 +244,23 @@ namespace Systems {
         const std::string textKeyWordGameEnd  = "endGameText";
 
         std::vector<std::size_t> ids =
-            Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text)});
-        auto &textArray            = Registry::getInstance().getComponents<Raylib::Text>();
+            Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
+        auto &textArray            = Registry::getInstance().getComponents<Raylib::TextShared>();
 
         for (auto &id : ids) {
-            if (textArray[id].getKeyword() == textKeyWordGameEnd) {
-                textArray[id].setText(endGameMessage);
+            if (textArray[id]->getKeyword() == textKeyWordGameEnd) {
+                textArray[id]->setCurrentText(endGameMessage);
                 found = true;
             }
-            if (textArray[id].getKeyword() == textKeywordWaveEnd) {
+            if (textArray[id]->getKeyword() == textKeywordWaveEnd) {
                 Registry::getInstance().removeEntity(id);
             }
         }
 
         if (found == false) {
             Registry::getInstance().addEntity();
-            Raylib::Text endGameText =
-                Raylib::Text(endGameMessage, pos, fontSize, Raylib::WHITE, textKeyWordGameEnd);
-            Registry::getInstance().getComponents<Raylib::Text>().insertBack(endGameText);
+            Raylib::TextShared endGameText = Raylib::Text::fromText(endGameMessage, pos, fontSize, Raylib::Color(Raylib::ColorDef::White), textKeyWordGameEnd);
+            Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(endGameText);
         }
     }
 
@@ -283,7 +283,7 @@ namespace Systems {
         modifEndGameText(endGameMessage);
 
         if (Registry::getInstance().getClock().elapsedSecondsSince(clockId) >= secondBeforeEnd) {
-            Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+            Scene::SceneManager::getInstance().changeScene(static_cast<std::size_t>(SELECT_LOBBY));
         }
     }
 

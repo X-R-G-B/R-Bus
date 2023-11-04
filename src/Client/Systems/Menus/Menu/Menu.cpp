@@ -89,17 +89,15 @@ namespace Menu {
             : Raylib::Color(Raylib::ColorDef::White);
         Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
 
-        Raylib::Text textComp(text);
-
         if (Json::isDataExist(elem, "textPosition")) {
             Types::Position tmpPos(
                 Json::getInstance().getDataFromJson<Types::Position>(elem, "textPosition"));
             Raylib::Vector2 textPos(
                 Maths::intToFloatConservingDecimals(tmpPos.x),
                 Maths::intToFloatConservingDecimals(tmpPos.y));
-            textComp.setPosition(textPos);
+            textComp->setPosition(textPos);
         }
-        Registry::getInstance().getComponents<Raylib::Text>().insertBack(textComp);
+        Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(textComp);
         Registry::getInstance().getComponents<Types::InputBox>().insertBack(inputBox);
         Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
         Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
@@ -123,9 +121,6 @@ namespace Menu {
         } else {
             initFromSprite(elem);
         }
-        Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
-        Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(textComp);
-        Registry::getInstance().getComponents<Types::InputBox>().insertBack(inputBox);
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         return (id);
@@ -174,7 +169,7 @@ namespace Menu {
         std::string text = Json::isDataExist(elem, "text")
             ? Json::getInstance().getDataFromJson<std::string>(elem, "text")
             : "";
-        Raylib::Text textComp(text);
+        Raylib::TextShared textComp = Raylib::Text::fromText(text);
         if (Json::isDataExist(elem, "size")) {
             Types::FontSize fsz({Json::getInstance().getDataFromJson<float>(elem, "size")});
             Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
@@ -184,7 +179,7 @@ namespace Menu {
                 Json::getInstance().getDataFromJson<std::string>(elem, "color"));
             Raylib::Color color = search != Types::colorMatchStrings.end() ? Types::colorMatchStrings.at(
                                       Json::getInstance().getDataFromJson<std::string>(elem, "color"))
-                                                                           : Raylib::White;
+                                    : Raylib::Color(Raylib::ColorDef::White);
             Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
         }
         if (Json::isDataExist(elem, "position")) {
@@ -192,7 +187,7 @@ namespace Menu {
                 Types::Position(Json::getInstance().getDataFromJson<Types::Position>(elem, "position"))};
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         }
-        Registry::getInstance().getComponents<Raylib::Text>().insertBack(textComp);
+        Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(textComp);
         return (id);
     }
 

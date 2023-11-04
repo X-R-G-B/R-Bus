@@ -11,6 +11,7 @@
     #include "EventsSystems.hpp"
     #include "MenuSystems.hpp"
     #include "SelectLobbySystems.hpp"
+    #include "CreateLobbySystems.hpp"
 #endif
 
 static std::vector<std::size_t> enumListTosizet(std::vector<SystemManagers> list)

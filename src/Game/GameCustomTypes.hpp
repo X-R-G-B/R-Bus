@@ -8,6 +8,7 @@
 #pragma once
 
 #include <mutex>
+#include "B-luga-physics/ECSCustomTypes.hpp"
 #include "MessageTypes.h"
 
 namespace Types {
