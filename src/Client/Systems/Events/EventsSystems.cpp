@@ -103,7 +103,7 @@ namespace Systems {
             newPos.y = Maths::floatToIntConservingDecimals(posY);
         }
         nlohmann::json bulletData =
-            json.getJsonObjectById<std::string>(JsonType::BULLETS, getMissileId(typeOfMissile), "bullets");
+            json.getJsonObjectById(JsonType::BULLETS, getMissileIdFromType(typeOfMissile), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         int halfSprite = Maths::divisionWithTwoIntDecimals(collisionRect.width, 200);

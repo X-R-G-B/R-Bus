@@ -26,7 +26,7 @@
             "animRect": [
                 {
                     "type": "move",
-                    "time": 400,
+                    "time": 100,
                     "list": [
                         {
                             "x": 306,
@@ -225,7 +225,9 @@
             "damage": 1,
             "health": 1,
             "physics": [
-                "bouncing"
+                {
+                    "id": "bouncing"
+                }
             ],
             "velocity": {
                 "speedX": 80,
@@ -288,7 +290,16 @@
                 "speedY": 0
             },
             "physics": [
-                "zigzag"
+                {
+                    "id": "zigzag",
+                    "amplitude": 100.0,
+                    "period": 800.0,
+                    "maxScreenY": 100.0,
+                    "minScreenY": -10.0
+                },
+                {
+                    "id": "bounce"
+                }
             ],
             "waitTimeBullet": 1000,
             "collisionRect": {

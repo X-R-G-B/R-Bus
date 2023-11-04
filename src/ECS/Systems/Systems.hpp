@@ -30,15 +30,20 @@ namespace Systems {
     void updatePhysics(std::size_t, std::size_t);
     std::string getMissileId(missileTypes_e type);
     void waveUpdate(std::size_t, std::size_t);
+    void updateEnemiesAttacks(std::size_t, std::size_t);
     void initWave(std::size_t managerId, std::size_t systemId);
     void initPlayer(
         unsigned int constId,
         const struct position_absolute_s &pos,
         const struct health_s &life,
         bool otherPlayer = false);
-    std::size_t createMissile(Types::Position pos, Types::Missiles &typeOfMissile);
+    std::size_t createPlayerMissile(Types::Position pos, Types::Missiles &typeOfMissile);
+    void addPhysicsToEntity(nlohmann::json jsonObject, const Types::Position &originPos);
     void moveEntities(std::size_t, std::size_t);
     std::vector<std::function<void(std::size_t, std::size_t)>> getECSSystems();
-    std::vector<std::function<void(std::size_t, std::size_t)>> getBulletSystems();
+    std::vector<std::function<void(std::size_t, std::size_t)>> getBulletsSystems();
+    std::vector<std::function<void(std::size_t, std::size_t)>> getPhysicSystems();
     std::vector<std::function<void(std::size_t, std::size_t)>> getWaveSystems();
+    missileTypes_e getMissileTypeFromId(const std::string &id);
+    std::string getMissileIdFromType(missileTypes_e type);
 } // namespace Systems

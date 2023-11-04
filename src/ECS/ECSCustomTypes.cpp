@@ -17,40 +17,8 @@ std::mutex Types::Missiles::_mutex;
 
 namespace Types {
 
-    Physics::Physics(const Types::Position &originPos) : _originPos(originPos)
+    Physics::Physics()
     {
-    }
-
-    void Physics::addPhysic(physicsType_e type)
-    {
-        if (_physicsMap.find(type) != _physicsMap.end()) {
-            Logger::error("Physics already added");
-            return;
-        }
-        if (type == ZIGZAG) {
-            _physicsMap[type] = Registry::getInstance().getClock().create(true);
-        } else {
-            _physicsMap[type] = std::nullopt;
-        }
-    }
-
-    void Physics::addPhysic(std::string type)
-    {
-        auto it = physicsTypeMap.find(type);
-        if (it == physicsTypeMap.end()) {
-            Logger::error("Physics not found");
-            return;
-        }
-        addPhysic(it->second);
-    }
-
-    std::optional<std::size_t> Physics::getClock(physicsType_e type) const
-    {
-        if (_physicsMap.find(type) == _physicsMap.end()) {
-            Logger::error("Physics not found");
-            throw std::runtime_error("Get clock: Physics of type " + std::to_string(type) + " not found");
-        }
-        return _physicsMap.at(type);
     }
 
     std::vector<physicsType_e> Physics::getPhysics() const
@@ -73,7 +41,7 @@ namespace Types {
         return !_physicsMap.empty();
     }
 
-    void Physics::removePhysics(physicsType_e type)
+    void Physics::removePhysic(physicsType_e type)
     {
         if (_physicsMap.find(type) == _physicsMap.end()) {
             Logger::error("Physics not found");
@@ -82,20 +50,56 @@ namespace Types {
         _physicsMap.erase(type);
     }
 
-    std::size_t Physics::getClockId(physicsType_e type) const
+    void Physics::removePhysic(std::string type)
     {
-        auto it = _physicsMap.find(type);
-        if (it == _physicsMap.end()) {
-            Logger::error("Get clock id: Physics not found");
-            throw std::runtime_error(
-                "Physics of type " + std::to_string(type) + " not found in getClockId");
+        auto it = physicsTypeMap.find(type);
+        if (it == physicsTypeMap.end()) {
+            Logger::error("Physics not found");
+            return;
         }
-        return it->second.value();
+        removePhysic(it->second);
     }
 
-    const Types::Position &Physics::getOriginPos() const
+    void Physics::removePhysics()
     {
-        return _originPos;
+        _physicsMap.clear();
+    }
+
+    void Physics::initBounce(nlohmann::json & /*unused*/, const Types::Position &originPos)
+    {
+        Bouncing bounce(originPos);
+        _physicsMap[BOUNCING] = bounce;
+    }
+
+    void Physics::initZigzag(nlohmann::json &jsonObject, const Types::Position &originPos)
+    {
+        Json &json = Json::getInstance();
+        Zigzag zigzag(originPos);
+        if (json.isDataExist(jsonObject, "amplitude")) {
+            zigzag.amplitude = json.getDataFromJson<float>(jsonObject, "amplitude");
+        }
+        if (json.isDataExist(jsonObject, "period")) {
+            zigzag.period = json.getDataFromJson<float>(jsonObject, "period");
+        }
+        if (json.isDataExist(jsonObject, "maxScreenY")) {
+            zigzag.maxScreenY = json.getDataFromJson<float>(jsonObject, "maxScreenY");
+        }
+        if (json.isDataExist(jsonObject, "minScreenY")) {
+            zigzag.minScreenY = json.getDataFromJson<float>(jsonObject, "minScreenY");
+        }
+        _physicsMap[ZIGZAG] = zigzag;
+    }
+
+    void Physics::addPhysic(nlohmann::json &jsonObject, const Types::Position &originPos)
+    {
+        Json &json     = Json::getInstance();
+        std::string id = json.getDataFromJson<std::string>(jsonObject, "id");
+        if (id == "zigzag") {
+            initZigzag(jsonObject, originPos);
+        }
+        if (id == "bouncing") {
+            initBounce(jsonObject, originPos);
+        }
     }
 
     void Types::WaveInfos::prepareNextWave()

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <Json.hpp>
+#include <any>
 #include <cstddef>
 #include <functional>
 #include <mutex>
@@ -19,6 +21,8 @@ extern "C"
 #include "MessageTypes.h"
 }
 #include "Registry.hpp"
+
+#include <iostream>
 
 // all values are in percentage of the screen
 namespace Types {
@@ -111,29 +115,58 @@ namespace Types {
             static std::mutex _mutex;
     };
 
+    enum physicsType_e { ZIGZAG = 0, BOUNCING };
+
+    // These structs are used to store physics data
+
+    struct Zigzag {
+            Zigzag(const Types::Position &originPosition)
+                : clockId(Registry::getInstance().getClock().create(true)),
+                  originPos(originPosition)
+            {
+            }
+            std::size_t clockId;
+            Types::Position originPos;
+            float period     = 400.0F;
+            float amplitude  = 10.0F;
+            float maxScreenY = 100.0F;
+            float minScreenY = 0.0F;
+    };
+
+    struct Bouncing {
+            Bouncing(const Types::Position &originPosition) : originPos(originPosition)
+            {
+            }
+            Types::Position originPos;
+    };
+
     class Physics {
         public:
             inline static const std::map<std::string, physicsType_e> physicsTypeMap = {
                 {"bouncing", BOUNCING},
                 {"zigzag",   ZIGZAG  }
             };
-            Physics(const Types::Position &originPos);
+            Physics();
 
-            void addPhysic(physicsType_e type);
-            void addPhysic(std::string type);
-            std::optional<std::size_t> getClock(physicsType_e type) const;
+            void addPhysic(nlohmann::json &jsonObject, const Types::Position &originPos);
+
+            void removePhysic(physicsType_e type);
+            void removePhysic(std::string type);
+            void removePhysics();
             std::vector<physicsType_e> getPhysics() const;
             bool hasPhysics(physicsType_e type) const;
             bool hasPhysics() const;
-            void removePhysics(physicsType_e type);
-            std::size_t getClockId(physicsType_e type) const;
-            const Types::Position &getOriginPos() const;
+
+            template <typename T>
+            T &getPhysicData(physicsType_e type)
+            {
+                return std::any_cast<T &>(_physicsMap[type]);
+            }
 
         private:
-            // we have a map with a physic and an optional clock
-            // because some physics don't need a clock
-            std::unordered_map<physicsType_e, std::optional<std::size_t>> _physicsMap;
-            Types::Position _originPos;
+            void initBounce(nlohmann::json &jsonObject, const Types::Position &originPos);
+            void initZigzag(nlohmann::json &jsonObject, const Types::Position &originPos);
+            std::unordered_map<physicsType_e, std::any> _physicsMap;
     };
 
     struct PlayerAllies { };
@@ -230,6 +263,18 @@ namespace Types {
             bool _waitingForNextWave;
     };
 
+    struct EnemyAttack {
+            bool isAttacking                = true;
+            missileTypes_e missileType      = missileTypes_e::CLASSIC;
+            Types::Position launchDirection = {-1, 0};
+            std::size_t numberOfMissiles    = 1;
+            std::size_t clockId             = Registry::getInstance().getClock().create(false);
+            float msBetweenMissiles         = 1000.0F;
+            float missileSpawnOffset        = 10.0F;
+            float bulletSpeed               = 20.0F;
+            std::string emitterId;
+    };
+
     struct Enemy {
         public:
             Enemy(enum enemy_type_e _type) : type(_type)
@@ -278,9 +323,15 @@ namespace Types {
             enum enemy_type_e type;
             enemy_id_s constId;
 
+            EnemyAttack &getAttack()
+            {
+                return attack;
+            }
+
         private:
             static unsigned int _enemyNb;
             static std::mutex _mutex;
+            EnemyAttack attack;
     };
 
     struct Dead {

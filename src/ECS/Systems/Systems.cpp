@@ -407,10 +407,12 @@ namespace Systems {
             deathChecker,
             moveEntities};
 
-        std::vector<std::function<void(std::size_t, std::size_t)>> bulletSystems = getBulletSystems();
+        std::vector<std::function<void(std::size_t, std::size_t)>> bulletSystems = getBulletsSystems();
+        std::vector<std::function<void(std::size_t, std::size_t)>> physicSystems = getPhysicSystems();
         std::vector<std::function<void(std::size_t, std::size_t)>> waveSystems = getWaveSystems();
 
         EcsSystems.insert(EcsSystems.end(), bulletSystems.begin(), bulletSystems.end());
+        EcsSystems.insert(EcsSystems.end(), physicSystems.begin(), physicSystems.end());
         EcsSystems.insert(EcsSystems.end(), waveSystems.begin(), waveSystems.end());
         return EcsSystems;
     }

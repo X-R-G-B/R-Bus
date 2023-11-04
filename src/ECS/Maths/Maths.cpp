@@ -6,6 +6,7 @@
 */
 
 #include "Maths.hpp"
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <stdexcept>
 
@@ -87,4 +88,18 @@ void Maths::addFloatToDecimalInt(int &decimalInt, const float normalFloat)
 void Maths::subFloatToDecimalInt(int &decimalInt, const float normalFloat)
 {
     decimalInt -= floatToIntConservingDecimals(normalFloat);
+}
+
+float Maths::getAngleFromVector(const float x, const float y)
+{
+    float angle = atan2(y, x) * 180.0F / static_cast<float>(M_PI);
+    if (angle < 0) {
+        angle += 360;
+    }
+    return angle;
+}
+
+float Maths::degreesToRadians(const float degrees)
+{
+    return degrees * static_cast<float>(M_PI) / 180;
 }
