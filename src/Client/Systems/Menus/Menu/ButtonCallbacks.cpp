@@ -184,6 +184,12 @@ namespace Menu {
             Scene::SceneManager::getInstance().changeScene(MENU);
         }
 
+
+        void exitGame()
+        {
+            Scene::SceneManager::getInstance().stop();
+        }
+
         void createServer()
         {
             auto arrInputBox = Registry::getInstance().getComponents<Types::InputBox>();

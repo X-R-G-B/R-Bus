@@ -27,7 +27,8 @@ namespace Menu {
             GO_CREATE_SERVER,
             CREATE_SERVER,
             GO_MENU,
-            CHANGE_PARALLAX
+            CHANGE_PARALLAX,
+            EXIT_GAME
         };
 
         NLOHMANN_JSON_SERIALIZE_ENUM(
@@ -45,7 +46,8 @@ namespace Menu {
                 {GO_CREATE_SERVER, "goCreateServer"                  },
                 {CREATE_SERVER,    "createServer"                    },
                 {GO_MENU,          "goToMenu"                        },
-                {CHANGE_PARALLAX,  "changeParallax"                  }
+                {CHANGE_PARALLAX,  "changeParallax"                  },
+                {EXIT_GAME,  "exitGame"                  },
         });
 
         void initConnection();
@@ -74,6 +76,8 @@ namespace Menu {
 
         void changeParallax();
 
+        void exitGame();
+
         const std::unordered_map<CallbackType, std::function<void()>> callbacks = {
             {CallbackType::DEFAULT_CALLBACK, &defaultCallBack},
             {CallbackType::INIT_CONNECTION, &initConnection},
@@ -86,6 +90,7 @@ namespace Menu {
             {CallbackType::SEND_READY, &sendReadyPacket},
             {CallbackType::GO_CREATE_SERVER, &goCreateServer},
             {CallbackType::CREATE_SERVER, &createServer},
+            {CallbackType::EXIT_GAME, &exitGame},
             {
              CallbackType::GO_MENU,
              &goMenu,

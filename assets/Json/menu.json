@@ -52,6 +52,67 @@
             ]
         },
         {
+            "type": "text",
+            "text": "Go Back ('ESC')",
+            "color": "red",
+            "size": 1.5,
+            "position": {
+              "x": 350,
+              "y": 875
+            }
+          },
+          {
+            "type": "button",
+            "spritePath": "assets/Menu/button.png",
+            "width": 1600,
+            "height": 1000,
+            "callback": "exitGame",
+            "rect": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1366.0,
+              "height": 406.0
+            },
+            "position": {
+              "x": 100,
+              "y": 500
+            },
+            "collisionRect": {
+              "width": 1600,
+              "height": 1000,
+              "offsetX": 0,
+              "offsetY": 0
+            },
+            "animRect": [
+              {
+                "type": "hover",
+                "time": 80,
+                "noIncr": true,
+                "list": [
+                  {
+                    "x": 1366.0,
+                    "y": 0.0,
+                    "width": 1366.0,
+                    "height": 406.0
+                  }
+                ]
+              },
+              {
+                "type": "selected",
+                "time": 80,
+                "noIncr": true,
+                "list": [
+                  {
+                    "x" : 2732.0,
+                    "y": 0.0,
+                    "width": 1366.0,
+                    "height": 406.0
+                  }
+                ]
+              }
+            ]
+          },
+        {
             "type": "button",
             "callback": "changeParallax",
             "spritePath": "assets/Menu/button.png",
