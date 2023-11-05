@@ -79,7 +79,7 @@ namespace Menu {
             ? Json::getInstance().getDataFromJson<std::string>(elem, "name")
             : "";
         Types::FontSize fsz({Json::getInstance().getDataFromJson<float>(elem, "textSize")});
-        auto textComp    = Raylib::Text::fromText(text);
+        auto textComp = Raylib::Text::fromText(text);
         std::size_t maxChar(Json::getInstance().getDataFromJson<std::size_t>(elem, "maxChar"));
         Types::InputBox inputBox(text, name, maxChar);
         auto search =
@@ -165,10 +165,10 @@ namespace Menu {
 
     static std::size_t initText(nlohmann::json &elem)
     {
-        std::size_t id   = Registry::getInstance().addEntity();
-        std::string text = Json::isDataExist(elem, "text")
-            ? Json::getInstance().getDataFromJson<std::string>(elem, "text")
-            : "";
+        std::size_t id              = Registry::getInstance().addEntity();
+        std::string text            = Json::isDataExist(elem, "text")
+                       ? Json::getInstance().getDataFromJson<std::string>(elem, "text")
+                       : "";
         Raylib::TextShared textComp = Raylib::Text::fromText(text);
         if (Json::isDataExist(elem, "size")) {
             Types::FontSize fsz({Json::getInstance().getDataFromJson<float>(elem, "size")});
@@ -177,9 +177,10 @@ namespace Menu {
         if (Json::isDataExist(elem, "color")) {
             auto search = Types::colorMatchStrings.find(
                 Json::getInstance().getDataFromJson<std::string>(elem, "color"));
-            Raylib::Color color = search != Types::colorMatchStrings.end() ? Types::colorMatchStrings.at(
-                                      Json::getInstance().getDataFromJson<std::string>(elem, "color"))
-                                    : Raylib::Color(Raylib::ColorDef::White);
+            Raylib::Color color = search != Types::colorMatchStrings.end()
+                ? Types::colorMatchStrings.at(
+                    Json::getInstance().getDataFromJson<std::string>(elem, "color"))
+                : Raylib::Color(Raylib::ColorDef::White);
             Registry::getInstance().getComponents<Raylib::Color>().insertBack(color);
         }
         if (Json::isDataExist(elem, "position")) {

@@ -1,5 +1,7 @@
 #include "ClientNetwork.hpp"
 #include <algorithm>
+#include "B-luga-graphics/Raylib/Events/Inputs.hpp"
+#include "B-luga-graphics/Raylib/Graphics/Graphics.hpp"
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga-physics/ECSSystems.hpp"
 #include "B-luga/Json.hpp"
@@ -7,23 +9,21 @@
 #include "B-luga/Registry.hpp"
 #include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
-#include "B-luga-graphics/Raylib/Events/Inputs.hpp"
-#include "B-luga-graphics/Raylib/Graphics/Graphics.hpp"
 #include "CreateMissiles.hpp"
+#include "EventsSystems.hpp"
 #include "GameSystems.hpp"
 #include "NitworkClient.hpp"
-#include "EventsSystems.hpp"
 #include "init.hpp"
 
 namespace Systems {
     void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        auto msg                                        = std::any_cast<struct msgLifeUpdate_s>(any);
-        Registry &registry                              = Registry::getInstance();
+        auto msg                                      = std::any_cast<struct msgLifeUpdate_s>(any);
+        Registry &registry                            = Registry::getInstance();
         Registry::components<Types::Health> arrHealth = registry.getComponents<Types::Health>();
-        std::vector<std::size_t> ids                    = Registry::getInstance().getEntitiesByComponents(
-            {typeid(Types::Health), typeid(Types::Player)});
+        std::vector<std::size_t> ids =
+            Registry::getInstance().getEntitiesByComponents({typeid(Types::Health), typeid(Types::Player)});
 
         if (ids.empty()) {
             return;
@@ -39,8 +39,8 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto enemyDeath                      = std::any_cast<struct msgEnemyDeath_s>(any);
         Registry::components<Types::Enemy> enemies = Registry::getInstance().getComponents<Types::Enemy>();
-        auto &arrHealth              = Registry::getInstance().getComponents<Types::Health>();
-        std::vector<std::size_t> ids = enemies.getExistingsId();
+        auto &arrHealth                            = Registry::getInstance().getComponents<Types::Health>();
+        std::vector<std::size_t> ids               = enemies.getExistingsId();
 
         for (auto id : ids) {
             if (enemies[id].getConstId().id == enemyDeath.enemyId.id) {
@@ -84,8 +84,7 @@ namespace Systems {
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
         Types::WaveInfos::getInstance().setWaveId(wave.waveId);
         Types::WaveInfos::getInstance().setWaitingForNextWave(false);
-        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC))
-            .addSystem(initWave);
+        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC)).addSystem(initWave);
         Logger::info("Wave started");
     }
 
@@ -268,8 +267,8 @@ namespace Systems {
             Logger::error("Error: missile not created");
             return;
         }
-        missiles[id].constId               = msgNewBullet.id;
-        health[id].hp                      = msgNewBullet.life;
+        missiles[id].constId = msgNewBullet.id;
+        health[id].hp        = msgNewBullet.life;
     }
 
     void receiveBroadcastAbsolutePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)
@@ -303,8 +302,8 @@ namespace Systems {
         auto &arrPlayer        = Registry::getInstance().getComponents<Types::Player>();
         auto &arrOtherPlayers  = Registry::getInstance().getComponents<Types::OtherPlayer>();
         auto &arrHealth        = Registry::getInstance().getComponents<Types::Health>();
-        auto playersIds        = Registry::getInstance().getEntitiesByComponents(
-            {typeid(Types::Player), typeid(Types::Health)});
+        auto playersIds =
+            Registry::getInstance().getEntitiesByComponents({typeid(Types::Player), typeid(Types::Health)});
         auto otherPlayersIds = Registry::getInstance().getEntitiesByComponents(
             {typeid(Types::OtherPlayer), typeid(Types::Health)});
 
@@ -400,7 +399,7 @@ namespace Systems {
         }
     }
 
-    void receiveEndGame(std::any& /*unused*/, boost::asio::ip::udp::endpoint& /*unused*/)
+    void receiveEndGame(std::any & /*unused*/, boost::asio::ip::udp::endpoint & /*unused*/)
     {
         auto &director = SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);

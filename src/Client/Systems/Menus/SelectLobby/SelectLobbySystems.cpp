@@ -15,8 +15,8 @@
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "Menu.hpp"
 #include "MessageTypes.h"
-#include "Parallax.hpp"
 #include "NitworkClient.hpp"
+#include "Parallax.hpp"
 #include "ResourcesManager.hpp"
 #include "init.hpp"
 
@@ -37,8 +37,9 @@ namespace Systems::SelectLobbySystems {
         }
         try {
             Parallax::initParalax();
-            nlohmann::json jsonData =
-                Json::getInstance().getDataByJsonType<nlohmann::json>(ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY), "lobbyMenu");
+            nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
+                ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY),
+                "lobbyMenu");
             ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
                 Json::getInstance().getDatasFromList(jsonData));
         } catch (const std::exception &err) {
@@ -88,7 +89,9 @@ namespace Systems::SelectLobbySystems {
                     arrPosition[id].y += offset * i;
                 }
                 if (arrLobbyText.exist(id)) {
-                    Raylib::Vector2 pos(arrLobbyText[id]->getPosition().x, arrLobbyText[id]->getPosition().y);
+                    Raylib::Vector2 pos(
+                        arrLobbyText[id]->getPosition().x,
+                        arrLobbyText[id]->getPosition().y);
                     pos.y += Maths::intToFloatConservingDecimals(offset) * i;
                     arrLobbyText[id]->setPosition(pos);
                 }
@@ -120,7 +123,7 @@ namespace Systems::SelectLobbySystems {
             + gameTypeToString(arrLobby[ids[index]].gameType);
         arrLobbyStatus[lobbyStatusId].ip   = std::string(arrLobby[ids[index]].lobbyInfos.ip);
         arrLobbyStatus[lobbyStatusId].port = arrLobby[ids[index]].lobbyInfos.port;
-        Raylib::TextShared text = Raylib::Text::fromText(text_t);
+        Raylib::TextShared text            = Raylib::Text::fromText(text_t);
         if (arrLobbyText.exist(lobbyStatusId)) {
             arrLobbyText[lobbyStatusId]->setCurrentText(text_t);
         }
@@ -143,8 +146,8 @@ namespace Systems::SelectLobbySystems {
         }
         Registry::getInstance().getClock().decreaseSeconds(clockId, 1);
         // list of all lobby
-        auto idsLobbyStatus =
-            Registry::getInstance().getEntitiesByComponents({typeid(LobbyStatus), typeid(Raylib::TextShared)});
+        auto idsLobbyStatus = Registry::getInstance().getEntitiesByComponents(
+            {typeid(LobbyStatus), typeid(Raylib::TextShared)});
         auto idsClickableLobbys = Registry::getInstance().getEntitiesByComponents(
             {typeid(LobbyStatus), typeid(Raylib::TextShared), typeid(Types::InputBox)});
         auto ids             = Registry::getInstance().getEntitiesByComponents({typeid(struct lobby_s)});

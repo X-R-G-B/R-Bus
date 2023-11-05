@@ -9,8 +9,8 @@
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga/Json.hpp"
 #include "B-luga/Registry.hpp"
-#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "B-luga/SystemManagers/SystemManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "GameCustomTypes.hpp"
 #include "GameSystems.hpp"
 #include "ResourcesManager.hpp"
@@ -23,7 +23,9 @@ std::mutex Wave::_mutex;
 Wave::Wave() : _waveIndex(0), _msBeforeNextWave(0), _isGameEnded(false), _isTimeBetweenWaves(false)
 {
     try {
-        _wavesId = Json::getInstance().getObjectsIdInArray<std::size_t>(ResourcesManager::getPathByJsonType(JsonType::WAVE), "waves");
+        _wavesId = Json::getInstance().getObjectsIdInArray<std::size_t>(
+            ResourcesManager::getPathByJsonType(JsonType::WAVE),
+            "waves");
     } catch (const std::exception &e) {
         Logger::fatal("WaveInit: " + std::string(e.what()));
     }
@@ -48,9 +50,11 @@ void Wave::startNextWave()
         return;
     }
     try {
-        std::size_t id = _wavesId.at(_waveIndex);
-        nlohmann::json waveData =
-            Json::getInstance().getJsonObjectById<std::size_t>(ResourcesManager::getPathByJsonType(JsonType::WAVE), id, "waves");
+        std::size_t id          = _wavesId.at(_waveIndex);
+        nlohmann::json waveData = Json::getInstance().getJsonObjectById<std::size_t>(
+            ResourcesManager::getPathByJsonType(JsonType::WAVE),
+            id,
+            "waves");
         _msBeforeNextWave = Json::getInstance().getDataFromJson<std::size_t>(waveData, "msBeforeNextWave");
         Types::WaveInfos::getInstance().setWaveId(static_cast<unsigned int>(id));
         server.addStarWaveMessage(static_cast<n_id_t>(_wavesId.at(_waveIndex)));
@@ -60,7 +64,8 @@ void Wave::startNextWave()
         _isGameEnded = true;
         return;
     }
-    director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC)).addSystem(Systems::initWave);
+    director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC))
+        .addSystem(Systems::initWave);
 }
 
 bool Wave::isWaveEnded() const

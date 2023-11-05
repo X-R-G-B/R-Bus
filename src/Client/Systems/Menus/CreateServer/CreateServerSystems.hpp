@@ -12,5 +12,5 @@
 
 namespace Systems::CreateServerSystems {
     std::vector<std::function<void(std::size_t /*unused*/, std::size_t /*unused*/)>>
-        getCreateServerSystems();
+    getCreateServerSystems();
 }

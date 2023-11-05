@@ -6,13 +6,12 @@
 */
 
 #include "CreateServerSystems.hpp"
-#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "B-luga/SceneManager.hpp"
-#include "ResourcesManager.hpp"
-#include "Parallax.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "Menu.hpp"
+#include "Parallax.hpp"
+#include "ResourcesManager.hpp"
 #include "init.hpp"
-
 
 namespace Systems::CreateServerSystems {
     void initCreateServer(std::size_t managerId, std::size_t systemId)
@@ -27,7 +26,7 @@ namespace Systems::CreateServerSystems {
                 ResourcesManager::getPathByJsonType(JsonType::CREATE_SERVER),
                 "createServerMenu");
             ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
-                    Json::getInstance().getDatasFromList(jsonData));
+                Json::getInstance().getDatasFromList(jsonData));
         } catch (std::runtime_error &err) {
             Logger::info(err.what());
         }
@@ -38,4 +37,4 @@ namespace Systems::CreateServerSystems {
     {
         return {initCreateServer};
     }
-}
+} // namespace Systems::CreateServerSystems

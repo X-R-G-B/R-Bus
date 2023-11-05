@@ -8,8 +8,8 @@
 #if defined(_WIN32)
     #define _CRT_SECURE_NO_WARNINGS
 #endif
-#include "B-luga/Logger.hpp"
 #include "NitworkClient.hpp"
+#include "B-luga/Logger.hpp"
 #include "B-luga/Registry.hpp"
 #include "ResourcesManager.hpp"
 
@@ -421,7 +421,7 @@ namespace Nitwork {
     }
 
     void NitworkClient::createForkedServer(const std::string &port)
-        {
+    {
 #ifdef _WIN32
         std::string winName = "'" + name + "'";
         std::basic_ostringstream<TCHAR> cmdline;
@@ -458,7 +458,7 @@ namespace Nitwork {
                     "0",
                     port.c_str(),
                     NULL)
-                    == -1) {
+                == -1) {
                 Logger::error("Error: execl failed");
                 return;
             }
@@ -471,7 +471,7 @@ namespace Nitwork {
 
     void NitworkClient::stop()
     {
-        #ifdef _WIN32
+#ifdef _WIN32
         for (auto pid : _serverPids) {
             HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
             if (hProcess != NULL) {

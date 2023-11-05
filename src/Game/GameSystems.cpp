@@ -2,10 +2,10 @@
 #include "B-luga/Json.hpp"
 #include "B-luga/Maths/Maths.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "CreateMissiles.hpp"
 #include "DeathSystems.hpp"
 #include "GameCustomTypes.hpp"
 #include "ResourcesManager.hpp"
-#include "CreateMissiles.hpp"
 #include "WaveSystemsAll.hpp"
 #ifdef CLIENT
     #include "B-luga-graphics/AnimRect.hpp"
@@ -117,7 +117,9 @@ namespace Systems {
         auto arrHealth = Registry::getInstance().getComponents<Types::Health>();
 
         if (arrPlayer.exist(id)) {
-            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, {arrHealth[id].hp});
+            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(
+                arrPlayer[id].constId,
+                {arrHealth[id].hp});
         }
     }
 
@@ -162,7 +164,7 @@ namespace Systems {
         std::vector<std::function<void(std::size_t, std::size_t)>> deathSystems =
             DeathSystems::getDeathSystems();
         std::vector<std::function<void(std::size_t, std::size_t)>> bulletSystems = getBulletsSystems();
-        std::vector<std::function<void(std::size_t, std::size_t)>> waveSystems = getWaveSystems();
+        std::vector<std::function<void(std::size_t, std::size_t)>> waveSystems   = getWaveSystems();
 
         gameSystems.insert(gameSystems.end(), deathSystems.begin(), deathSystems.end());
         gameSystems.insert(gameSystems.end(), bulletSystems.begin(), bulletSystems.end());
