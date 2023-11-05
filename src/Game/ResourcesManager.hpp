@@ -22,15 +22,15 @@ enum class JsonType : std::size_t {
 
 namespace ResourcesManagerValues {
     const std::vector<std::string> paths = {
-    "assets/Json/playerData.json"  ,
-    "assets/Json/parallaxData.json",
-    "assets/Json/waves.json"       ,
-    "assets/Json/bullets.json"     ,
-    "assets/Json/menu.json"        ,
-    "assets/Json/selectLobby.json" ,
-    "assets/Json/createLobby.json" ,
-    "assets/Json/HUD.json"         ,
-    "assets/Json/enemies.json"     ,
+        "assets/Json/playerData.json",
+        "assets/Json/parallaxData.json",
+        "assets/Json/waves.json",
+        "assets/Json/bullets.json",
+        "assets/Json/menu.json",
+        "assets/Json/selectLobby.json",
+        "assets/Json/createLobby.json",
+        "assets/Json/HUD.json",
+        "assets/Json/enemies.json",
     };
 }
 

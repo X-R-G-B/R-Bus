@@ -8,8 +8,8 @@
 #if defined(_WIN32)
     #define _CRT_SECURE_NO_WARNINGS
 #endif
-#include "B-luga/Logger.hpp"
 #include "NitworkClient.hpp"
+#include "B-luga/Logger.hpp"
 #include "B-luga/Registry.hpp"
 
 namespace Nitwork {

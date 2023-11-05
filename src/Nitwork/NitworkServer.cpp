@@ -13,8 +13,8 @@
 #include "B-luga-physics/ECSSystems.hpp"
 #include "B-luga/Logger.hpp"
 #include "B-luga/Registry.hpp"
-#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "GameSystems.hpp"
 #include "ResourcesManager.hpp"
 #include "WaveSystem.hpp"
@@ -89,7 +89,7 @@ namespace Nitwork {
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
         auto action = *actionPtr;
-        auto it = _actionsHandlers.find(action.magick);
+        auto it     = _actionsHandlers.find(action.magick);
         std::memmove(
             _receiveBuffer.data(),
             _receiveBuffer.data() + sizeof(struct action_s),
@@ -264,7 +264,8 @@ namespace Nitwork {
         _isGameStarted = true;
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
-        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC)).addSystem(Systems::waveHandler); // le sheeiiiiiitan VERIF
+        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC))
+            .addSystem(Systems::waveHandler); // le sheeiiiiiitan VERIF
     }
 
     void
@@ -395,8 +396,9 @@ namespace Nitwork {
             Logger::error("Error: magick is not MAGICK_DISCONNECT_LOBBY");
             return;
         }
-        Logger::fatal("Client disconnected: " + endpoint.address().to_string() + ":"
-                      + std::to_string(endpoint.port()));
+        Logger::fatal(
+            "Client disconnected: " + endpoint.address().to_string() + ":"
+            + std::to_string(endpoint.port()));
         _endpoints.erase(std::remove(_endpoints.begin(), _endpoints.end(), endpoint));
         deletePacketFromEndPoints(endpoint);
         addPlayerDeathMsg(getPlayerId(endpoint));
@@ -636,9 +638,7 @@ namespace Nitwork {
             .action = {.magick = NITWORK_END_GAME},
             .msg    = {.magick = MAGICK_END_GAME}
         };
-        Packet packet(
-            packetEndGame.action.magick,
-            std::make_any<struct packetEndGame_s>(packetEndGame));
+        Packet packet(packetEndGame.action.magick, std::make_any<struct packetEndGame_s>(packetEndGame));
         sendToAllClients(packet);
     }
 

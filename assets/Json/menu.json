@@ -201,5 +201,10 @@
                 "y": 7000
             }
         }
-    ]
+    ],
+    "background": {
+        "imgPath": "assets/Menu/loading.gif",
+        "width": 100,
+        "height": 100
+    }
 }

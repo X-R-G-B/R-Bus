@@ -6,18 +6,18 @@
 */
 
 #include "MenuSystems.hpp"
-#include "B-luga-graphics/Raylib/Graphics/Graphics.hpp"
 #include "B-luga-graphics/AnimRect.hpp"
 #include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#include "B-luga-graphics/Raylib/Graphics/Graphics.hpp"
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga/Maths/Maths.hpp"
 #include "B-luga/SceneManager.hpp"
-#include "NitworkClient.hpp"
 #include "Menu.hpp"
-#include "SelectLobbySystems.hpp"
+#include "NitworkClient.hpp"
 #include "Parallax.hpp"
 #include "ResourcesManager.hpp"
 #include "GameCustomTypes.hpp"
+#include "SelectLobbySystems.hpp"
 #include "init.hpp"
 
 namespace Systems {
@@ -196,8 +196,9 @@ namespace Systems {
             }
             try {
                 Parallax::initParalax();
-                nlohmann::json jsonData =
-                    Json::getInstance().getDataByJsonType<nlohmann::json>(ResourcesManager::getPathByJsonType(JsonType::MENU), "menu");
+                nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
+                    ResourcesManager::getPathByJsonType(JsonType::MENU),
+                    "menu");
                 ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
                     Json::getInstance().getDatasFromList(jsonData));
             } catch (std::runtime_error &err) {
@@ -214,14 +215,13 @@ namespace Systems {
                     case CREATE_LOBBY_SCENE:
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
-                    case SELECT_LOBBY:
-                        Scene::SceneManager::getInstance().changeScene(MENU);
-                        break;
+                    case SELECT_LOBBY: Scene::SceneManager::getInstance().changeScene(MENU); break;
                     case GAME:
                         Nitwork::NitworkClient::getInstance().disconnectLobby();
                         Types::WaveInfos::getInstance().reset();
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
+                    case LOADING_SCREEN: Scene::SceneManager::getInstance().stop(); break;
                 }
             }
         }
@@ -236,17 +236,89 @@ namespace Systems {
                 Json::getInstance().getDatasFromList(jsonData));
         }
 
-        static void preloadTexture()
+        static std::vector<std::string> getGameTextures()
         {
             std::vector<std::string> textures = Json::getInstance().getDatasByKey(
                 {ResourcesManager::getPathByJsonType(JsonType::ENEMIES),
                  ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PARALLAX),
+                 ResourcesManager::getPathByJsonType(JsonType::BULLETS),
                  ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER)},
                 "spritePath");
-            for (auto elem : textures) {
+            for (auto &elem : textures) {
                 std::string::iterator end_pos = std::remove(elem.begin(), elem.end(), '"');
                 elem.erase(end_pos, elem.end());
-                Raylib::TextureManager::getInstance().preloadTexture(elem);
+            }
+            return textures;
+        }
+
+        static void initLoadingScreen()
+        {
+            std::size_t id                  = Registry::getInstance().addEntity();
+            Types::Position position        = {0, 0};
+            const Raylib::Vector2 txtPos    = {0, 95};
+            static constexpr float fontSize = 2.0F;
+            std::string textKeyword         = "loading";
+            Json &json                      = Json::getInstance();
+
+            nlohmann::json jsonData = json.getDataByJsonType<nlohmann::json>(
+                ResourcesManager::getPathByJsonType(JsonType::MENU),
+                "background");
+            std::string path = json.getDataFromJson<std::string>(jsonData, "imgPath");
+            float width      = json.getDataFromJson<float>(jsonData, "width");
+            float height     = json.getDataFromJson<float>(jsonData, "height");
+            auto background  = Raylib::Sprite::fromFile(path, width, height, id);
+            Registry::getInstance().getComponents<Raylib::SpriteShared>().insertBack(background);
+            Registry::getInstance().setToFrontLayers(id);
+            Registry::getInstance().getComponents<Types::Position>().insertBack(position);
+            Raylib::TextShared loadingText = Raylib::Text::fromText(
+                "0%",
+                txtPos,
+                fontSize,
+                Raylib::Color(Raylib::ColorDef::White),
+                textKeyword);
+            Registry::getInstance().addEntity();
+            Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(loadingText);
+        }
+
+        static void updateText(std::size_t size, std::size_t loadedTexture)
+        {
+            std::size_t percentage  = (loadedTexture * 100) / size;
+            std::string textKeyword = "loading";
+            auto &arrText           = Registry::getInstance().getComponents<Raylib::TextShared>();
+            auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
+
+            for (auto id : ids) {
+                if (arrText[id]->getKeyword() == textKeyword) {
+                    arrText[id]->setCurrentText(std::to_string(percentage) + "%");
+                    arrText[id]->setFontSize(2.0F);
+                }
+            }
+        }
+
+        void initTextures(std::size_t managerId, std::size_t systemId)
+        {
+            static int step                                = 0;
+            static std::size_t textureId                   = 0;
+            static const std::vector<std::string> textures = getGameTextures();
+
+            if (Scene::SceneManager::getInstance().getCurrentScene() != LOADING_SCREEN) {
+                return;
+            }
+            if (step == 1) {
+                if (textureId < textures.size()) {
+                    Raylib::TextureManager::getInstance().preloadTexture(textures[textureId]);
+                    textureId++;
+                    updateText(textures.size(), textureId);
+                } else {
+                    SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(
+                        systemId);
+                    Scene::SceneManager::getInstance().changeScene(static_cast<std::size_t>(MENU));
+                }
+                return;
+            }
+            if (step == 0) {
+                initLoadingScreen();
+                step++;
             }
         }
 
@@ -257,7 +329,6 @@ namespace Systems {
             }
             try {
                 Parallax::initParalax();
-                preloadTexture();
                 initHud();
             } catch (std::runtime_error &err) {
                 Logger::warn(err.what());
@@ -268,6 +339,7 @@ namespace Systems {
         std::vector<std::function<void(std::size_t, std::size_t)>> getMenuSystems()
         {
             return {
+                initTextures,
                 initMenu,
                 pressButton,
                 manageInputBox,
