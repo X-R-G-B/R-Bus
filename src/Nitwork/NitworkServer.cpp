@@ -83,11 +83,12 @@ namespace Nitwork {
     {
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data());
+        auto *actionPtr = reinterpret_cast<struct action_s *>(_receiveBuffer.data());
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
-        auto it = _actionsHandlers.find(action->magick);
+        auto action = *actionPtr;
+        auto it = _actionsHandlers.find(action.magick);
         std::memmove(
             _receiveBuffer.data(),
             _receiveBuffer.data() + sizeof(struct action_s),
@@ -108,7 +109,7 @@ namespace Nitwork {
         Logger::debug(
             "Received packet from " + endpoint.address().to_string() + ":" + std::to_string(endpoint.port())
             + " with id " + std::to_string(header.id) + " and action of type "
-            + std::to_string(action->magick));
+            + std::to_string(action.magick));
         it->second.first(it->second.second, header);
     }
 
@@ -162,7 +163,7 @@ namespace Nitwork {
             }
             struct packetCreatePlayer_s packetMsgCreatePlayer = {
                 .header = {0, 0, 0, 0, 1, 0},
-                .action = {.magick = NEW_PLAYER},
+                .action = {.magick = NITWORK_NEW_PLAYER},
                 .msg    = {
                            .magick        = MAGICK_NEW_PLAYER,
                            .playerId      = allieId,
@@ -187,6 +188,7 @@ namespace Nitwork {
             Logger::error("Error: magick not matching");
             return;
         }
+        Logger::error("magick connect lobby = " + std::to_string(msgData.magick) + " (" + MAGICK_CONNECT_LOBBY + ")");
         if (_endpoints.size() >= _serverInfos.maxNbPlayer) {
             Logger::error("Too many clients, can't add an other one");
             canConnect = false;
@@ -217,7 +219,7 @@ namespace Nitwork {
 
         struct packetCreatePlayer_s packetMsgCreatePlayer = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = NEW_PLAYER},
+            .action = {.magick = NITWORK_NEW_PLAYER},
             .msg    = {
                        .magick   = MAGICK_NEW_PLAYER,
                        .playerId = playerId,
@@ -285,7 +287,7 @@ namespace Nitwork {
                          .id               = 0,
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action = {.magick = POSITION_RELATIVE_BROADCAST},
+            .action = {.magick = NITWORK_POSITION_RELATIVE_BROADCAST},
             .msg    = {
                          .magick   = MAGICK_POSITION_RELATIVE_BROADCAST,
                          .pos      = {.x = pos.x, .y = pos.y},
@@ -318,7 +320,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetConnectLobbyResp_s packetConnectLobbyResp = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = CONNECT_LOBBY_RESP},
+            .action = {.magick = NITWORK_CONNECT_LOBBY_RESP},
             .msg    = {.magick = MAGICK_CONNECT_LOBBY_RESP, .isOk = static_cast<char>(canConnect)}
         };
         Packet packet(
@@ -333,7 +335,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetInfoLobby_s packetInfo = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = INFO_LOBBY},
+            .action = {.magick = NITWORK_INFO_LOBBY},
             .msg    = {
                        .magick      = MAGICK_INFO_LOBBY,
                        .name        = {},
@@ -359,7 +361,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetCreatePlayer_s packetCreatePlayer = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = NEW_PLAYER},
+            .action = {.magick = NITWORK_NEW_PLAYER},
             .msg    = playerMsg
         };
         Packet packet(
@@ -375,7 +377,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgStartWave_s packetMsgStartWave = {
             .header       = {0, 0, 0, 0, 1, 0},
-            .action       = {.magick = START_WAVE},
+            .action       = {.magick = NITWORK_START_WAVE},
             .msgStartWave = {.magick = MAGICK_START_WAVE, .waveId = waveId}
         };
         Packet packet(
@@ -392,7 +394,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetLifeUpdate_s packetLifeUpdate = {
             .header        = {0, 0, 0, 0, 1, 0},
-            .action        = {.magick = LIFE_UPDATE},
+            .action        = {.magick = NITWORK_LIFE_UPDATE},
             .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE, .playerId = playerId, .life = life}
         };
         Packet packet(
@@ -407,7 +409,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetEnemyDeath_s packetEnemyDeath = {
             .header        = {0, 0, 0, 0, 1, 0},
-            .action        = {.magick = ENEMY_DEATH},
+            .action        = {.magick = NITWORK_ENEMY_DEATH},
             .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH, .enemyId = {.id = enemyId}}
         };
         Packet packet(
@@ -423,7 +425,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetNewEnemy_s packetNewEnemy = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = NEW_ENEMY},
+            .action = {.magick = NITWORK_NEW_ENEMY},
             .msg    = {.magick = MAGICK_NEW_ENEMY, .enemyInfos = enemyInfos}
         };
         Packet packet(
@@ -438,7 +440,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetNewBullet_s packetNewBullet = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = NEW_MISSILE},
+            .action = {.magick = NITWORK_NEW_MISSILE},
             .msg    = msg
         };
         Packet packet(
@@ -454,7 +456,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetPositionAbsoluteBroadcast_s packetPosAbsoluteBroadcast = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = POSITION_ABSOLUTE_BROADCAST},
+            .action = {.magick = NITWORK_POSITION_ABSOLUTE_BROADCAST},
             .msg    = {
                        .magick   = MAGICK_POSITION_ABSOLUTE_BROADCAST,
                        .pos      = {.x = pos.x, .y = pos.y},
@@ -471,7 +473,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetPlayerDeath_s packetPlayerDeath = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = PLAYER_DEATH},
+            .action = {.magick = NITWORK_PLAYER_DEATH},
             .msg    = {.magick = MAGICK_PLAYER_DEATH, .playerId = id}
         };
         Packet packet(
@@ -485,7 +487,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetPlayerDeath_s packetPlayerDeath = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = PLAYER_DEATH},
+            .action = {.magick = NITWORK_PLAYER_DEATH},
             .msg    = {.magick = MAGICK_PLAYER_DEATH, .playerId = id}
         };
         Packet packet(
@@ -502,7 +504,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetCreatePlayer_s packetCreatePlayer = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = NEW_PLAYER},
+            .action = {.magick = NITWORK_NEW_PLAYER},
             .msg    = playerMsg
         };
         Packet packet(
@@ -519,7 +521,7 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = MISSILE_DEATH,
+                       .magick = NITWORK_MISSILE_DEATH,
                        },
             .msgMissileDeath =
                 {
@@ -537,7 +539,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetEndGame_s packetEndGame = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = END_GAME},
+            .action = {.magick = NITWORK_END_GAME},
             .msg    = {.magick = MAGICK_END_GAME}
         };
         Packet packet(

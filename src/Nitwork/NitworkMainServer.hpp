@@ -156,7 +156,7 @@ namespace Nitwork {
 
             std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
                 {
-                    CONNECT_MAIN_SERVER,
+                    NITWORK_CONNECT_MAIN_SERVER,
                     {
                         [this](actionHandler &actionHandler, const struct header_s &header) {
                             handleBody<struct msgConnectMainServer_s>(actionHandler, header);
@@ -167,7 +167,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    LIST_LOBBY,
+                    NITWORK_LIST_LOBBY,
                     {
                         [this](actionHandler &actionHandler, const struct header_s &header) {
                             handleBody<struct msgRequestListLobby_s>(actionHandler, header);
@@ -178,7 +178,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    CREATE_LOBBY,
+                    NITWORK_CREATE_LOBBY,
                     {
                         [this](actionHandler &actionHandler, const struct header_s &header) {
                             handleBody<struct msgCreateLobby_s>(actionHandler, header);
@@ -189,7 +189,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    INFO_LOBBY,
+                    NITWORK_INFO_LOBBY,
                     {
                         [this](actionHandler &actionHandler, const struct header_s &header) {
                             handleBody<struct msgInfoLobby_s>(actionHandler, header);
@@ -202,13 +202,13 @@ namespace Nitwork {
             };
             std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
                 {
-                    LIST_LOBBY,
+                    NITWORK_LIST_LOBBY,
                     [this](Packet &packet) {
                         sendData<struct packetListLobby_s>(packet);
                     }
                 },
                 {
-                    CONNECT_MAIN_SERVER_RESP,
+                    NITWORK_CONNECT_MAIN_SERVER_RESP,
                     [this](Packet &packet) {
                         sendData<struct packetConnectMainServerResp_s>(packet);
                     }

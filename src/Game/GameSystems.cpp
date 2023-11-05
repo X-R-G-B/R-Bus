@@ -116,8 +116,9 @@ namespace Systems {
             Registry::getInstance().getComponents<Types::Player>();
         auto arrHealth = Registry::getInstance().getComponents<Types::Health>();
 
+        struct health_s health = {arrHealth[id].hp};
         if (arrPlayer.exist(id)) {
-            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, {arrHealth[id].hp});
+            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, health);
         }
     }
 
@@ -146,7 +147,6 @@ namespace Systems {
         registry.addEventCallback(Events::ENTITY_DEATH, sendMissileDeath);
 #ifdef CLIENT
         registry.addEventCallback(Events::ENTITY_DEATH, sendPlayerDeathToServer);
-
         registry.addEventCallback(Events::TAKE_DAMAGE, sendLifeUpdateToServer);
 #endif
         registry.addAllie(static_cast<std::size_t>(AlliesType::PLAYERS), typeid(Types::Player));
