@@ -232,6 +232,20 @@ namespace Systems {
                 Json::getInstance().getDatasFromList(jsonData));
         }
 
+        static void preloadTexture()
+        {
+            std::vector<std::string> textures = Json::getInstance().getDatasByKey(
+                {ResourcesManager::getPathByJsonType(JsonType::ENEMIES),
+                 ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PARALLAX),
+                 ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER)},
+                "spritePath");
+            for (auto elem : textures) {
+                std::string::iterator end_pos = std::remove(elem.begin(), elem.end(), '"');
+                elem.erase(end_pos, elem.end());
+                Raylib::TextureManager::getInstance().preloadTexture(elem);
+            }
+        }
+
         void initSceneGame(std::size_t managerId, std::size_t systemId)
         {
             if (Scene::SceneManager::getInstance().getCurrentScene() != GAME) {
@@ -239,6 +253,7 @@ namespace Systems {
             }
             try {
                 Parallax::initParalax();
+                preloadTexture();
                 initHud();
             } catch (std::runtime_error &err) {
                 Logger::info(err.what());
