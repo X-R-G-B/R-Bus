@@ -422,6 +422,9 @@ namespace Nitwork {
 
     void NitworkClient::createForkedServer(const std::string &port)
     {
+        if (_serverPids.size() > 0) {
+            return;
+        }
 #ifdef _WIN32
         std::string winName = "'" + name + "'";
         std::basic_ostringstream<TCHAR> cmdline;
