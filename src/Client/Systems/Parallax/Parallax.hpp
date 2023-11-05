@@ -21,6 +21,8 @@ namespace Systems::Parallax {
                 _actualParallax = data;
             }
 
+            static std::size_t _actualParallaxNbr;
+
         private:
             ActualParallax()
             {

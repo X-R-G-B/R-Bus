@@ -5,6 +5,8 @@
 
 namespace Systems::Parallax {
 
+    std::size_t ActualParallax::_actualParallaxNbr = 1;
+
     static void initParallaxEntity(nlohmann::basic_json<> &elem, const int maxOffsideParallax = 0)
     {
         std::size_t id = Registry::getInstance().addEntity();

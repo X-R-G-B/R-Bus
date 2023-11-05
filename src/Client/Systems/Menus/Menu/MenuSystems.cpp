@@ -315,6 +315,27 @@ namespace Systems {
             }
         }
 
+        void resetParallaxTextForParallax(std::size_t /*unused*/, std::size_t /*unused*/)
+        {
+            auto ids     = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
+            auto arrText = Registry::getInstance().getComponents<Raylib::TextShared>();
+
+            for (auto id : ids) {
+                if (arrText[id]->getCurrentText().find("PARALLAX") != std::string::npos) {
+                    Logger::info(
+                        "parallax name"
+                        + std::to_string(
+                            Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr));
+                    std::string paraName =
+                        "PARALLAX_"
+                        + std::to_string(
+                            Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr);
+
+                    arrText[id]->setCurrentText(paraName);
+                }
+            }
+        }
+
         void initTextures(std::size_t managerId, std::size_t systemId)
         {
             static int step                                = 0;
@@ -367,7 +388,8 @@ namespace Systems {
                 checkTextInput,
                 checkInputDeletion,
                 initSceneGame,
-                quitScene};
+                quitScene,
+                resetParallaxTextForParallax};
         }
     } // namespace Menu
 } // namespace Systems

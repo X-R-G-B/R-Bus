@@ -52,6 +52,67 @@
       ]
     },
     {
+      "type": "button",
+      "callback": "changeParallax",
+      "spritePath": "assets/Menu/button.png",
+      "width": 1500,
+      "height" : 750,
+      "rect": {
+          "x": 51.0,
+          "y": 51.0,
+          "width": 1265.0,
+          "height": 305.0
+      },
+      "position" : {
+          "x": 8000,
+          "y": 500
+      },
+      "collisionRect": {
+          "width": 1500,
+          "height": 750,
+          "offsetX": 0,
+          "offsetY": 0
+      },
+      "animRect": [
+          {
+              "type": "hover",
+              "time": 80,
+              "noIncr": true,
+              "list": [
+                  {
+                      "x" : 1416.0,
+                      "y": 49.0,
+                      "width": 1267.0,
+                      "height": 307.0
+                  }
+              ]
+          },
+          {
+              "type": "selected",
+              "time": 80,
+              "noIncr": true,
+              "list": [
+                  {
+                      "x" : 2759.0,
+                      "y": 31.0,
+                      "width": 1303.0,
+                      "height": 340.0
+                  }
+              ]
+          }
+      ]
+  },
+    {
+        "type": "text",
+        "color": "red",
+        "size": 1.5,
+        "text": "PARALLAX_1",
+        "position" : {
+            "x": 8300,
+            "y": 800
+        }
+    },
+    {
       "type": "text",
       "text": "Go Back",
       "color": "red",
