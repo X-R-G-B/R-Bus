@@ -7,8 +7,9 @@
 
 #if defined(_WIN32)
     #define _CRT_SECURE_NO_WARNINGS
+    #include <sstream>
+    #include <tchar.h>
 #endif
-#include "NitworkServer.hpp"
 #include <boost/asio.hpp>
 #include "B-luga-physics/ECSSystems.hpp"
 #include "B-luga/Logger.hpp"
@@ -16,6 +17,7 @@
 #include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "GameSystems.hpp"
+#include "NitworkServer.hpp"
 #include "ResourcesManager.hpp"
 #include "WaveSystem.hpp"
 #include "init.hpp"
@@ -326,7 +328,9 @@ namespace Nitwork {
             return;
         }
         free(cmd);
-        _lobbyPids.emplace_back(pi.dwProcessId);
+        sendLobbyPid(
+            boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string(ownerIp), ownerPort),
+            pi.dwProcessId);
 #else
         pid_t c_pid = fork();
 
@@ -378,7 +382,7 @@ namespace Nitwork {
             _serverInfos.ownerInfos.port);
     }
 
-    void NitworkServer::sendLobbyPid(const boost::asio::ip::udp::endpoint &endpoint, pid_t pid)
+    void NitworkServer::sendLobbyPid(const boost::asio::ip::udp::endpoint &endpoint, int pid)
     {
         struct packetReplaceLobbyPid_s packetLobbyPid = {
             .header = {0, 0, 0, 0, 1, 0},
