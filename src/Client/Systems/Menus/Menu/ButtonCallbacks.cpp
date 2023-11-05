@@ -195,9 +195,10 @@ namespace Menu {
         {
             auto arrInputBox = Registry::getInstance().getComponents<Types::InputBox>();
             auto idsText = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
-            auto ids         = Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
+            auto ids     = Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
 
-            if (Nitwork::NitworkClient::getInstance().serverAlreadyCreated() && idsText.size() < MAX_TEXT_OF_SCENE) {
+            if (Nitwork::NitworkClient::getInstance().serverAlreadyCreated()
+                && idsText.size() < MAX_TEXT_OF_SCENE) {
                 try {
                     nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
                         ResourcesManager::getPathByJsonType(JsonType::CREATE_SERVER),
