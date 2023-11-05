@@ -7,6 +7,7 @@
 
 #include "GameCustomTypes.hpp"
 #ifdef CLIENT
+    #include "B-luga-graphics/GraphicsCustomTypes.hpp"
     #include "B-luga-graphics/Raylib/Raylib.hpp"
 #endif
 
@@ -43,6 +44,7 @@ namespace Types {
         } else {
             unsigned int previousWave = getWaveId();
             const std::string text    = "Wave " + std::to_string(previousWave) + " survived";
+            Types::FontSize fsz       = {fontSize};
 
             for (auto &id : ids) {
                 if (arrCol[id]->getKeyword() == textKeyword) {
@@ -58,6 +60,7 @@ namespace Types {
                 Raylib::Color(Raylib::ColorDef::White),
                 textKeyword);
             Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(endWaveText);
+            Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
         }
 #endif
         _waitingForNextWave = value;
