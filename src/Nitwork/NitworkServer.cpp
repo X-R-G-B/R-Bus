@@ -210,6 +210,7 @@ namespace Nitwork {
             Logger::error("Client already connected");
             return;
         }
+        Logger::error("WTF WTF ICI");
         _endpoints.emplace_back(endpoint);
         auto playerId      = static_cast<n_id_t>(_endpoints.size() - 1);
         auto &jsonInstance = Json::getInstance();
