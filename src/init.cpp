@@ -40,12 +40,12 @@ void initScenes()
     std::map<SystemManagers, std::function<std::vector<std::function<void(std::size_t, std::size_t)>>()>>
         systems = {
 #ifdef CLIENT
-            {SystemManagers::EVENTS,               &Systems::EventsSystems::getEventsSystems    },
-            {SystemManagers::CLIENTNETWORK,        &Systems::getNetworkSystems                  },
-            {SystemManagers::MENU_SYSTEMS,         &Systems::Menu::getMenuSystems               },
-            {SystemManagers::NETWORK_MENU,         &Systems::SelectLobbySystems::getLobbySystems},
-            {SystemManagers::NETWORK_CREATE_LOBBY, &Systems::CreateLobby::getCreateLobbySystems },
-            {SystemManagers::NETWORK_CREATE_SERVER, &Systems::CreateServerSystems::getCreateServerSystems },
+            {SystemManagers::EVENTS,                &Systems::EventsSystems::getEventsSystems            },
+            {SystemManagers::CLIENTNETWORK,         &Systems::getNetworkSystems                          },
+            {SystemManagers::MENU_SYSTEMS,          &Systems::Menu::getMenuSystems                       },
+            {SystemManagers::NETWORK_MENU,          &Systems::SelectLobbySystems::getLobbySystems        },
+            {SystemManagers::NETWORK_CREATE_LOBBY,  &Systems::CreateLobby::getCreateLobbySystems         },
+            {SystemManagers::NETWORK_CREATE_SERVER, &Systems::CreateServerSystems::getCreateServerSystems},
 #endif
     };
 
