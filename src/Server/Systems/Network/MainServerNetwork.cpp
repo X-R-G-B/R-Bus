@@ -5,6 +5,9 @@
 ** MainServerNetwork
 */
 
+#if defined(_WIN32)
+    #define _CRT_SECURE_NO_WARNINGS
+#endif
 #include "MainServerNetwork.hpp"
 #include "B-luga/Registry.hpp"
 #include "Nitwork.h"
@@ -53,6 +56,7 @@ namespace Systems {
                 return;
             }
         }
+        Nitwork::NitworkMainServer::getInstance().setIpOfMainServer(msg.ownerInfos.ip);
         Nitwork::NitworkMainServer::getInstance().createLobby(msg.maxNbPlayer, msg.name, msg.gameType);
     }
 

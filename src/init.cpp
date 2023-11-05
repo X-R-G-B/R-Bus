@@ -8,6 +8,8 @@
 #ifdef CLIENT
     #include "B-luga-graphics/GraphicsSystems.hpp"
     #include "ClientNetwork.hpp"
+    #include "CreateLobbySystems.hpp"
+    #include "CreateServerSystems.hpp"
     #include "EventsSystems.hpp"
     #include "MenuSystems.hpp"
     #include "SelectLobbySystems.hpp"
@@ -38,10 +40,12 @@ void initScenes()
     std::map<SystemManagers, std::function<std::vector<std::function<void(std::size_t, std::size_t)>>()>>
         systems = {
 #ifdef CLIENT
-            {SystemManagers::EVENTS,        &Systems::EventsSystems::getEventsSystems    },
-            {SystemManagers::CLIENTNETWORK, &Systems::getNetworkSystems                  },
-            {SystemManagers::MENU_SYSTEMS,  &Systems::Menu::getMenuSystems               },
-            {SystemManagers::NETWORK_MENU,  &Systems::SelectLobbySystems::getLobbySystems},
+            {SystemManagers::EVENTS,                &Systems::EventsSystems::getEventsSystems            },
+            {SystemManagers::CLIENTNETWORK,         &Systems::getNetworkSystems                          },
+            {SystemManagers::MENU_SYSTEMS,          &Systems::Menu::getMenuSystems                       },
+            {SystemManagers::NETWORK_MENU,          &Systems::SelectLobbySystems::getLobbySystems        },
+            {SystemManagers::NETWORK_CREATE_LOBBY,  &Systems::CreateLobby::getCreateLobbySystems         },
+            {SystemManagers::NETWORK_CREATE_SERVER, &Systems::CreateServerSystems::getCreateServerSystems},
 #endif
     };
 
@@ -50,12 +54,25 @@ void initScenes()
     }
     auto &sceneManager = Scene::SceneManager::getInstance();
 #ifdef CLIENT
+    auto loadingScreen = enumListTosizet(
+        {SystemManagers::GRAPHICS, SystemManagers::MENU_SYSTEMS, SystemManagers::ECSSYSTEMS});
     auto menu = enumListTosizet(
         {SystemManagers::GRAPHICS, SystemManagers::MENU_SYSTEMS, SystemManagers::ECSSYSTEMS});
-    auto selectLobby = enumListTosizet(
+    auto createServer = enumListTosizet({
+        SystemManagers::MENU_SYSTEMS,
+        SystemManagers::GRAPHICS,
+        SystemManagers::NETWORK_CREATE_SERVER,
+        SystemManagers::ECSSYSTEMS,
+        SystemManagers::CLIENTNETWORK,
+    });
+    auto selectLobby  = enumListTosizet(
         {SystemManagers::MENU_SYSTEMS,
-         SystemManagers::NETWORK_MENU,
-         SystemManagers::CLIENTNETWORK,
+          SystemManagers::NETWORK_MENU,
+          SystemManagers::ECSSYSTEMS,
+          SystemManagers::GRAPHICS});
+    auto createLobby = enumListTosizet(
+        {SystemManagers::MENU_SYSTEMS,
+         SystemManagers::NETWORK_CREATE_LOBBY,
          SystemManagers::ECSSYSTEMS,
          SystemManagers::GRAPHICS});
     auto mainScene = enumListTosizet(
@@ -65,9 +82,11 @@ void initScenes()
          SystemManagers::CLIENTNETWORK,
          SystemManagers::GRAPHICS,
          SystemManagers::MENU_SYSTEMS});
-    sceneManager.setScenes({menu, selectLobby, mainScene});
+    sceneManager.setScenes({loadingScreen, menu, createServer, selectLobby, createLobby, mainScene});
+
 #else
-    auto scene = enumListTosizet({SystemManagers::ECSSYSTEMS, SystemManagers::GAME_LOGIC});
-    sceneManager.setScenes({scene});
+    auto scene  = enumListTosizet({SystemManagers::ECSSYSTEMS, SystemManagers::GAME_LOGIC});
+    auto scene2 = std::vector<std::size_t>();
+    sceneManager.setScenes({scene, scene2});
 #endif
 }

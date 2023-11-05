@@ -26,8 +26,8 @@ namespace Args {
     constexpr int LOBBY_SERVER               = 1;
     static constexpr auto LOBBY_SERVER_ARG   = "1";
     static constexpr int MAX_LOBBY_ARGS      = 6;
-    static constexpr int MAX_LOBBY_NAME_SIZE = 20;
-    static constexpr int MAX_LOBBY_IP_SIZE   = 15;
+    static constexpr int MAX_LOBBY_NAME_SIZE = 32;
+    static constexpr int MAX_LOBBY_IP_SIZE   = 16;
 
     class ServerArgsHandling {
         public:

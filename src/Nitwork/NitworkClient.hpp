@@ -37,7 +37,7 @@ namespace Nitwork {
              * @param ip The ip of the main server
              * @param port The port of the main server
              */
-            void connectMainServer(const std::string &ip, n_port_t port);
+            bool connectMainServer(const std::string &ip, n_port_t port);
 
             /**
              * @brief Connect the client to the lobby
@@ -45,6 +45,17 @@ namespace Nitwork {
              * @param port
              */
             void connectLobby(const std::string &ip, n_port_t port);
+
+            /**
+             * @brief Disconnect the client from the main server
+             */
+            void disconnectLobby();
+
+            /**
+             * @brief Add a new init message to the packet
+             * in order to create a new player when the server respond
+             */
+            void addInitMsg();
 
             /**
              * @brief Add a new ready message to the packet
@@ -90,6 +101,7 @@ namespace Nitwork {
              * @param id The id of the dead player
              */
             void addPlayerDeathMsg(n_id_t id);
+            void addMissileDeathMsg(n_id_t id);
 
             /**
              * @brief Add a connect main server message to the packet
@@ -105,15 +117,25 @@ namespace Nitwork {
             void
             addCreateLobbyMsg(const std::string &name, enum gameType_e gameType, unsigned int maxNbPlayer);
 
+            /**
+             * @brief Check if the server is created by the client
+             */
+            bool serverAlreadyCreated();
+
+            /**
+             * @brief Create a server
+             * @param port port of the server
+             */
+            void createForkedServer(const std::string &port);
+
+            /**
+             * @brief Stop the server
+             */
+            void stop() final;
+
             /* Private connection methods */
 
         private:
-            /**
-             * @brief Add a new init message to the packet
-             * in order to create a new player when the server respond
-             */
-
-            void addInitMsg();
             /**
              * @brief Set the main endpoint (the main server)
              * if the client is already connected to a main server, it will be disconnected
@@ -134,6 +156,11 @@ namespace Nitwork {
              * @brief Send a connection msg to connect to the main server
              */
             void addConnectMainServerMsg();
+
+            /**
+             * @brief Send a connection msg to connect to the lobby
+             */
+            void addConnectLobbyMsg();
 
         private:
             /**
@@ -206,6 +233,8 @@ namespace Nitwork {
              */
             boost::asio::ip::udp::endpoint _serverEndpoint;
 
+            std::vector<int> _serverPids; // pid of the servers
+
             // clang-format off
             /**
              * @brief Map that will be used to handle the actions, in order to send or receive them
@@ -215,7 +244,18 @@ namespace Nitwork {
                 std::pair<handleBodyT, actionHandler>
             > _actionsHandlers = {
                 {
-                    INIT,
+                    NITWORK_CONNECT_LOBBY_RESP,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgConnectLobbyResp_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveConnectLobbyResp(any, endpoint);
+                        }
+                    },
+                },
+                {
+                    NITWORK_INIT,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgCreatePlayer_s>(handler, header);
@@ -226,7 +266,7 @@ namespace Nitwork {
                     },
                 },
                 {
-                    START_WAVE,
+                    NITWORK_START_WAVE,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgStartWave_s>(handler, header);
@@ -237,7 +277,7 @@ namespace Nitwork {
                     },
                 },
                 {
-                    LIFE_UPDATE,
+                    NITWORK_LIFE_UPDATE,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgLifeUpdate_s>(handler, header);
@@ -248,7 +288,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    ENEMY_DEATH,
+                    NITWORK_ENEMY_DEATH,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgEnemyDeath_s>(handler, header);
@@ -259,7 +299,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    NEW_ENEMY,
+                    NITWORK_NEW_ENEMY,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgNewEnemy_s>(handler, header);
@@ -270,7 +310,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    NEW_PLAYER,
+                    NITWORK_NEW_PLAYER,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgCreatePlayer_s>(handler, header);
@@ -281,7 +321,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    NEW_BULLET,
+                    NITWORK_NEW_MISSILE,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgNewBullet_s>(handler, header);
@@ -292,7 +332,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    POSITION_RELATIVE_BROADCAST,
+                    NITWORK_POSITION_RELATIVE_BROADCAST,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgPositionRelativeBroadcast_s>(handler, header);
@@ -303,7 +343,7 @@ namespace Nitwork {
                     },
                 },
                 {
-                    POSITION_ABSOLUTE_BROADCAST,
+                    NITWORK_POSITION_ABSOLUTE_BROADCAST,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgPositionAbsoluteBroadcast_s>(handler, header);
@@ -314,7 +354,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    PLAYER_DEATH,
+                    NITWORK_PLAYER_DEATH,
                     {
                         [this](actionHandler &handler, const struct header_s &header) {
                             handleBody<struct msgPlayerDeath_s>(handler, header);
@@ -325,7 +365,18 @@ namespace Nitwork {
                     }
                 },
                 {
-                    LIST_LOBBY,
+                    NITWORK_MISSILE_DEATH,
+                    {
+                         [this](actionHandler &handler, const struct header_s &header) {
+                           handleBody<struct msgMissileDeath_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveMissileDeath(any, endpoint);
+                        }
+                    }
+                },
+                {
+                    NITWORK_LIST_LOBBY,
                     {
                         [this](actionHandler &actionHandler, const struct header_s &header) {
                             handleBody<struct msgLobbyInfo_s>(actionHandler, header);
@@ -336,13 +387,24 @@ namespace Nitwork {
                     }
                 },
                 {
-                    CONNECT_MAIN_SERVER_RESP,
+                    NITWORK_CONNECT_MAIN_SERVER_RESP,
                     {
                         [this](actionHandler &actionHandler, const struct header_s &header) {
                             handleBody<struct msgConnectMainServerResp_s>(actionHandler, header);
                         },
                         [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                             Systems::receiveConnectMainServerResp(msg, endpoint);
+                        }
+                    }
+                },
+                {
+                    NITWORK_END_GAME,
+                    {
+                        [this](actionHandler &handler, const struct header_s &header) {
+                            handleBody<struct msgEndGame_s>(handler, header);
+                        },
+                        [](std::any &any, boost::asio::ip::udp::endpoint &endpoint) {
+                            Systems::receiveEndGame(any, endpoint);
                         }
                     }
                 }
@@ -352,69 +414,81 @@ namespace Nitwork {
                 actionSender
                 > _actionToSendHandlers = {
                 {
-                    INIT,
+                    NITWORK_CONNECT_LOBBY,
+                    [this](Packet &packet) {
+                        sendData<struct packetConnectLobby_s>(packet);
+                    }
+                },
+                {
+                    NITWORK_INIT,
                     [this](Packet &packet) {
                             sendData<struct packetMsgInit_s>(packet);
                         }
                 },
                 {
-                    READY,
+                    NITWORK_READY,
                         [this](Packet &packet) {
                             sendData<struct packetMsgReady_s>(packet);
                         }
                 },
                 {
-                    POSITION_RELATIVE,
+                    NITWORK_POSITION_RELATIVE,
                         [this](Packet &packet) {
                             sendData<struct packetPositionRelative_s>(packet);
                         }
                 },
                 {
-                    POSITION_ABSOLUTE,
+                    NITWORK_POSITION_ABSOLUTE,
                         [this](Packet &packet) {
                             sendData<struct packetPositionAbsolute_s>(packet);
                         }
                 },
                 {
-                    NEW_BULLET,
+                    NITWORK_NEW_MISSILE,
                         [this](Packet &packet) {
                             sendData<struct packetNewBullet_s>(packet);
                         }
                 },
                 {
-                    LIFE_UPDATE,
+                    NITWORK_LIFE_UPDATE,
                         [this](Packet &packet) {
                             sendData<struct packetLifeUpdate_s>(packet);
                         }
                 },
                 {
-                    ENEMY_DEATH,
+                    NITWORK_ENEMY_DEATH,
                         [this](Packet &packet) {
                             sendData<struct packetEnemyDeath_s>(packet);
                         }
                 },
                 {
-                    PLAYER_DEATH,
+                    NITWORK_PLAYER_DEATH,
                         [this](Packet &packet) {
                             sendData<struct packetPlayerDeath_s>(packet);
                         }
                 },
                 {
-                    CONNECT_MAIN_SERVER,
+                    NITWORK_CONNECT_MAIN_SERVER,
                     [this](Packet &packet) {
                         sendData<struct packetConnectMainServer_s>(packet);
                     }
                 },
                 {
-                    LIST_LOBBY,
+                    NITWORK_LIST_LOBBY,
                     [this](Packet &packet) {
                         sendData<struct packetRequestListLobby_s>(packet);
                     }
                 },
                 {
-                    CREATE_LOBBY,
+                    NITWORK_CREATE_LOBBY,
                     [this](Packet &packet) {
                         sendData<struct packetCreateLobby_s>(packet);
+                    }
+                },
+                {
+                    NITWORK_DISCONNECT_LOBBY,
+                    [this](Packet &packet) {
+                        sendData<struct packetDisconnectLobby_s>(packet);
                     }
                 }
             };

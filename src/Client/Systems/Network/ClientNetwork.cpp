@@ -1,5 +1,7 @@
 #include "ClientNetwork.hpp"
 #include <algorithm>
+#include "B-luga-graphics/Raylib/Events/Inputs.hpp"
+#include "B-luga-graphics/Raylib/Graphics/Graphics.hpp"
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga-physics/ECSSystems.hpp"
 #include "B-luga/Json.hpp"
@@ -8,6 +10,7 @@
 #include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "CreateMissiles.hpp"
+#include "EventsSystems.hpp"
 #include "GameSystems.hpp"
 #include "NitworkClient.hpp"
 #include "init.hpp"
@@ -16,16 +19,16 @@ namespace Systems {
     void receiveLifeUpdate(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        auto msg                                        = std::any_cast<struct msgLifeUpdate_s>(any);
-        Registry &registry                              = Registry::getInstance();
-        Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
-        std::vector<std::size_t> ids                    = Registry::getInstance().getEntitiesByComponents(
-            {typeid(struct health_s), typeid(Types::Player)});
+        auto msg                                      = std::any_cast<struct msgLifeUpdate_s>(any);
+        Registry &registry                            = Registry::getInstance();
+        Registry::components<Types::Health> arrHealth = registry.getComponents<Types::Health>();
+        std::vector<std::size_t> ids =
+            Registry::getInstance().getEntitiesByComponents({typeid(Types::Health), typeid(Types::Player)});
 
         if (ids.empty()) {
             return;
         }
-        struct health_s &life = arrHealth[ids[0]];
+        Types::Health &life = arrHealth[ids[0]];
         if (life.hp != msg.life.hp) {
             life.hp = msg.life.hp;
         }
@@ -36,8 +39,8 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto enemyDeath                      = std::any_cast<struct msgEnemyDeath_s>(any);
         Registry::components<Types::Enemy> enemies = Registry::getInstance().getComponents<Types::Enemy>();
-        auto &arrHealth              = Registry::getInstance().getComponents<struct health_s>();
-        std::vector<std::size_t> ids = enemies.getExistingsId();
+        auto &arrHealth                            = Registry::getInstance().getComponents<Types::Health>();
+        std::vector<std::size_t> ids               = enemies.getExistingsId();
 
         for (auto id : ids) {
             if (enemies[id].getConstId().id == enemyDeath.enemyId.id) {
@@ -52,12 +55,35 @@ namespace Systems {
         }
     }
 
+    void receiveMissileDeath(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const auto missileDeath      = std::any_cast<struct msgMissileDeath_s>(any);
+        auto &missiles               = Registry::getInstance().getComponents<Types::Missiles>();
+        auto &arrHealth              = Registry::getInstance().getComponents<Types::Health>();
+        std::vector<std::size_t> ids = missiles.getExistingsId();
+
+        for (auto id : ids) {
+            if (missiles[id].constId == missileDeath.missileId) {
+                if (arrHealth.exist(id)) {
+                    arrHealth[id].hp = 0;
+                } else {
+                    Logger::fatal("\n\n\n!!!! Missile has no health component, but is alive !!!!\n\n\n");
+                    // TODO : remove missile
+                    Registry::getInstance().removeEntity(id);
+                }
+                return;
+            }
+        }
+    }
+
     void handleStartWave(std::any &any, boost::asio::ip::udp::endpoint & /* unused */)
     {
         auto &director = SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
-        Types::Enemy::setEnemyNb(wave.enemyNb);
+        Types::WaveInfos::getInstance().setWaveId(wave.waveId);
+        Types::WaveInfos::getInstance().setWaitingForNextWave(false);
         director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC)).addSystem(initWave);
         Logger::info("Wave started");
     }
@@ -72,8 +98,8 @@ namespace Systems {
             Maths::addIntDecimals(newEnemy.enemyInfos.pos.x),
             Maths::addIntDecimals(newEnemy.enemyInfos.pos.y)};
         initEnemy(newEnemy.enemyInfos.type, pos, true, newEnemy.enemyInfos.id);
-        struct health_s hp = newEnemy.enemyInfos.life;
-        Registry::getInstance().getComponents<struct health_s>().insertBack(hp);
+        Types::Health hp(newEnemy.enemyInfos.life.hp);
+        Registry::getInstance().getComponents<Types::Health>().insertBack(hp);
     }
 
     static void createNewPlayer(const struct msgCreatePlayer_s &newPlayer)
@@ -83,9 +109,9 @@ namespace Systems {
         auto &arrPlayer      = registry.getComponents<Types::Player>();
         auto &arrOtherPlayer = registry.getComponents<Types::OtherPlayer>();
         auto idsPlayer       = registry.getEntitiesByComponents(
-            {typeid(Types::Position), typeid(Types::Player), typeid(struct health_s)});
+            {typeid(Types::Position), typeid(Types::Player), typeid(Types::Health)});
         auto idsOtherPlayer = registry.getEntitiesByComponents(
-            {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct health_s)});
+            {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct Types::Health)});
         Logger::debug("CREATE NEW PLAYER2");
         auto player =
             std::find_if(idsPlayer.begin(), idsPlayer.end(), [&arrPlayer, &newPlayer](std::size_t id) {
@@ -144,6 +170,15 @@ namespace Systems {
             + std::to_string(Maths::intToFloatConservingDecimals(position.y)));
         arrPos[*otherPlayer].x = Maths::additionWithTwoIntDecimals(arrPos[*otherPlayer].x, position.x);
         arrPos[*otherPlayer].y = Maths::additionWithTwoIntDecimals(arrPos[*otherPlayer].y, position.y);
+    }
+
+    void sendInitPacket(std::size_t managerId, std::size_t systemId)
+    {
+        if (Scene::SceneManager::getInstance().getCurrentScene() != GAME) {
+            return;
+        }
+        Nitwork::NitworkClient::getInstance().addInitMsg();
+        SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
     }
 
     void sendPositionRelative(std::size_t /* unused */, std::size_t /* unused */)
@@ -217,6 +252,8 @@ namespace Systems {
     void receiveNewBullet(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        auto &missiles = Registry::getInstance().getComponents<Types::Missiles>();
+        auto &health   = Registry::getInstance().getComponents<Types::Health>();
 
         const struct msgNewBullet_s &msgNewBullet = std::any_cast<struct msgNewBullet_s>(any);
 
@@ -225,7 +262,13 @@ namespace Systems {
             Maths::addIntDecimals(msgNewBullet.pos.y),
         };
         struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
-        createMissile(position, missileType);
+        auto id                            = Systems::createPlayerMissile(position, missileType);
+        if (!missiles.exist(id) || !health.exist(id)) {
+            Logger::error("Error: missile not created");
+            return;
+        }
+        missiles[id].constId = msgNewBullet.id;
+        health[id].hp        = msgNewBullet.life;
     }
 
     void receiveBroadcastAbsolutePosition(std::any &any, boost::asio::ip::udp::endpoint & /* unused*/)
@@ -258,11 +301,11 @@ namespace Systems {
         const auto playerDeath = std::any_cast<struct msgPlayerDeath_s>(any);
         auto &arrPlayer        = Registry::getInstance().getComponents<Types::Player>();
         auto &arrOtherPlayers  = Registry::getInstance().getComponents<Types::OtherPlayer>();
-        auto &arrHealth        = Registry::getInstance().getComponents<struct health_s>();
-        auto playersIds        = Registry::getInstance().getEntitiesByComponents(
-            {typeid(Types::Player), typeid(struct health_s)});
+        auto &arrHealth        = Registry::getInstance().getComponents<Types::Health>();
+        auto playersIds =
+            Registry::getInstance().getEntitiesByComponents({typeid(Types::Player), typeid(Types::Health)});
         auto otherPlayersIds = Registry::getInstance().getEntitiesByComponents(
-            {typeid(Types::OtherPlayer), typeid(struct health_s)});
+            {typeid(Types::OtherPlayer), typeid(Types::Health)});
 
         for (auto &id : playersIds) {
             if (arrPlayer[id].constId == playerDeath.playerId) {
@@ -329,8 +372,32 @@ namespace Systems {
         Logger::info("Server OK!");
     }
 
+    void receiveConnectLobbyResp(std::any &data, boost::asio::ip::udp::endpoint & /* unused */)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const struct msgConnectLobbyResp_s &msg = std::any_cast<struct msgConnectLobbyResp_s>(data);
+
+        if (msg.magick != MAGICK_CONNECT_LOBBY_RESP) {
+            Logger::error("MAGICK_CONNECT_LOBBY_RESP is not the same");
+            return;
+        }
+        if (msg.isOk == 1) {
+            Scene::SceneManager::getInstance().changeScene(static_cast<std::size_t>(GAME));
+        } else {
+            Logger::info("Lobby is full");
+        }
+    }
+
+    void receiveEndGame(std::any & /*unused*/, boost::asio::ip::udp::endpoint & /*unused*/)
+    {
+        auto &director = SystemManagersDirector::getInstance();
+        std::lock_guard<std::mutex> lock(director.mutex);
+        director.getSystemManager(static_cast<std::size_t>(SystemManagers::EVENTS))
+            .addSystem(EventsSystems::handleEndGameEvent);
+    }
+
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()
     {
-        return {sendPositionRelative, sendPositionAbsolute};
+        return {sendInitPacket, sendPositionRelative, sendPositionAbsolute};
     }
 } // namespace Systems

@@ -18,6 +18,7 @@
 #include "GameSystems.hpp"
 #include "NitworkClient.hpp"
 #include "ResourcesManager.hpp"
+#include "init.hpp"
 
 namespace Systems {
 
@@ -92,8 +93,10 @@ namespace Systems {
         if (arrCol.exist(id)) {
             Types::CollisionRect &col = arrCol[id];
             float posX                = Maths::intToFloatConservingDecimals(pos.x)
+                + (Maths::intToFloatConservingDecimals(col.offsetX))
                 + (Maths::intToFloatConservingDecimals(col.width) / 2.F);
             float posY = Maths::intToFloatConservingDecimals(pos.y)
+                + (Maths::intToFloatConservingDecimals(col.offsetY))
                 + (Maths::intToFloatConservingDecimals(col.height) / 2.F);
             newPos.x = Maths::floatToIntConservingDecimals(posX);
             newPos.y = Maths::floatToIntConservingDecimals(posY);
@@ -117,7 +120,7 @@ namespace Systems {
         Registry &registry                                = Registry::getInstance();
         Clock &clock_                                     = registry.getClock();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
-        Registry::components<struct health_s> arrHealth   = registry.getComponents<struct health_s>();
+        Registry::components<Types::Health> arrHealth     = registry.getComponents<Types::Health>();
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
@@ -134,7 +137,6 @@ namespace Systems {
             Nitwork::NitworkClient::getInstance().addNewBulletMsg(
                 {Maths::removeIntDecimals(pos.x), Maths::removeIntDecimals(pos.y)},
                 missile.type);
-            createMissile(pos, missile);
             clock_.restart(getClockIdFromMissileType(missile.type));
         }
     }
@@ -162,11 +164,11 @@ namespace Systems {
     {
         bool isKeyPressed = false;
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        Registry &registry                              = Registry::getInstance();
-        Registry::components<Types::Position> arrPos    = registry.getComponents<Types::Position>();
-        Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
-        std::vector<std::size_t> ids                    = registry.getEntitiesByComponents(
-            {typeid(Types::Player), typeid(Types::Position), typeid(struct health_s)});
+        Registry &registry                            = Registry::getInstance();
+        Registry::components<Types::Position> arrPos  = registry.getComponents<Types::Position>();
+        Registry::components<Types::Health> arrHealth = registry.getComponents<Types::Health>();
+        std::vector<std::size_t> ids                  = registry.getEntitiesByComponents(
+            {typeid(Types::Player), typeid(Types::Position), typeid(Types::Health)});
         Clock &clock_              = registry.getClock();
         static std::size_t clockId = clock_.create(true);
 
@@ -216,6 +218,86 @@ namespace Systems {
                 && Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_M)) {
                 music->setNeedToPlay(true);
             }
+        }
+    }
+
+    static bool isGameWin()
+    {
+        Registry &registry                 = Registry::getInstance();
+        std::vector<std::size_t> idsPlayer = registry.getEntitiesByComponents({typeid(Types::Player)});
+        std::vector<std::size_t> idsOtherPlayer =
+            registry.getEntitiesByComponents({typeid(Types::OtherPlayer)});
+
+        if (idsPlayer.empty() == true && idsOtherPlayer.empty() == true) {
+            return false;
+        }
+        return true;
+    }
+
+    static void modifEndGameText(const std::string &endGameMessage)
+    {
+        bool found                           = false;
+        const Raylib::Vector2 pos            = {0, 2};
+        const int fontSize                   = 2;
+        Types::FontSize fsz                  = {fontSize};
+        const std::string textKeywordWaveEnd = "WaveText";
+        const std::string textKeyWordGameEnd = "endGameText";
+
+        std::vector<std::size_t> ids =
+            Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
+        auto &textArray = Registry::getInstance().getComponents<Raylib::TextShared>();
+
+        for (auto &id : ids) {
+            if (textArray[id]->getKeyword() == textKeyWordGameEnd) {
+                textArray[id]->setCurrentText(endGameMessage);
+                found = true;
+            }
+            if (textArray[id]->getKeyword() == textKeywordWaveEnd) {
+                Registry::getInstance().removeEntity(id);
+            }
+        }
+
+        if (found == false) {
+            Registry::getInstance().addEntity();
+            Raylib::TextShared endGameText = Raylib::Text::fromText(
+                endGameMessage,
+                pos,
+                fontSize,
+                Raylib::Color(Raylib::ColorDef::White),
+                textKeyWordGameEnd);
+            Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(endGameText);
+            Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
+        }
+    }
+
+    void EventsSystems::handleEndGameEvent(std::size_t /*unused*/, std::size_t /*unused*/)
+    {
+        constexpr std::size_t secondBeforeEnd = 5;
+        static std::size_t clockId            = Registry::getInstance().getClock().create(false);
+        static bool restart                   = false;
+        std::size_t elapsedSeconds = Registry::getInstance().getClock().elapsedSecondsSince(clockId);
+        std::string seconds        = std::to_string(secondBeforeEnd - elapsedSeconds);
+        std::string endGameMessage;
+
+        if (restart) {
+            Registry::getInstance().getClock().restart(clockId);
+            restart = false;
+        }
+        if (isGameWin() == true) {
+            endGameMessage =
+                "You win! Redirecting to menu in " + seconds + (seconds == "1" ? " second" : " seconds");
+        } else {
+            endGameMessage =
+                "You lose! Redirecting to menu in " + seconds + (seconds == "1" ? " second" : " seconds");
+        }
+
+        modifEndGameText(endGameMessage);
+
+        if (Registry::getInstance().getClock().elapsedSecondsSince(clockId) >= secondBeforeEnd) {
+            Nitwork::NitworkClient::getInstance().disconnectLobby();
+            Types::WaveInfos::getInstance().reset();
+            restart = true;
+            Scene::SceneManager::getInstance().changeScene(static_cast<std::size_t>(SELECT_LOBBY));
         }
     }
 

@@ -19,11 +19,12 @@ extern "C"
 
 namespace Systems::SelectLobbySystems {
     struct LobbyStatus {
-            LobbyStatus(const std::string &ip, n_port_t port) : ip(ip), port(port)
-            {
-            }
+            LobbyStatus(const std::string &ip = "", n_port_t port = -1);
+
             std::string ip;
             n_port_t port;
+            static std::size_t pageNbr;
+            static std::size_t pageMax;
     };
 
     void sendListLobby(std::size_t /*unused*/, std::size_t /*unused*/);

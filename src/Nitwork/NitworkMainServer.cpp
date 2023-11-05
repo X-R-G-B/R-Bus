@@ -5,15 +5,16 @@
 ** NitworkMainServer
 */
 
-#include "B-luga/Logger.hpp"
 #ifdef _WIN32
     #include <sstream>
+    #include <tchar.h>
 #else
 extern "C"
 {
     #include <unistd.h>
 }
 #endif
+#include "B-luga/Logger.hpp"
 #include "NitworkMainServer.hpp"
 #include "ResourcesManager.hpp"
 
@@ -61,7 +62,7 @@ namespace Nitwork {
                          .id               = 0,
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action = {.magick = CONNECT_MAIN_SERVER_RESP},
+            .action = {.magick = NITWORK_CONNECT_MAIN_SERVER_RESP},
             .msg    = {.magick = MAGICK_CONNECT_MAIN_SERVER_RESP}
         };
 
@@ -74,12 +75,9 @@ namespace Nitwork {
 
     void NitworkMainServer::handleInitMsg(std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
-        if (_endpoints.size() >= _maxNbPlayer) {
-            Logger::error("Too many clients, can't add an other one");
-            return;
-        }
         if (isClientAlreadyConnected(endpoint)) {
-            Logger::error("Client already connected");
+            Logger::warn("Client already connected");
+            sendConnectMainServerResp(endpoint);
             return;
         }
         _endpoints.emplace_back(endpoint);
@@ -141,6 +139,23 @@ namespace Nitwork {
         it->second.first(it->second.second, header);
     }
 
+    void
+    NitworkMainServer::handleLobbyPidMsg(const std::any &data, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        const struct msgReplaceLobbyPid_s &msg = std::any_cast<struct msgReplaceLobbyPid_s>(data);
+
+        Logger::info("Lobby pid: " + std::to_string(msg.pid));
+        _lobbies.erase(
+            std::remove_if(
+                _lobbies.begin(),
+                _lobbies.end(),
+                [&msg](const struct lobby_s &lobby) {
+                    return std::strcmp(lobby.name, msg.name) == 0;
+                }),
+            _lobbies.end());
+        _lobbyPids.emplace_back(msg.pid);
+    }
+
     /* Send methods */
     void NitworkMainServer::sendListLobby(
         const boost::asio::ip::udp::endpoint &endpoint,
@@ -157,7 +172,7 @@ namespace Nitwork {
 
         for (std::size_t i = 0; i < lobbies.size(); i++) {
             msg.actionLobby[i] = {
-                .action = {.magick = LIST_LOBBY},
+                .action = {.magick = NITWORK_LIST_LOBBY},
                 .lobby  = {.magick = MAGICK_LIST_LOBBY, .lobby = lobbies[i]}
             };
         }
@@ -176,23 +191,27 @@ namespace Nitwork {
         int ownerPort)
     {
 #ifdef _WIN32
-        std::ostringstream cmdline;
-        cmdline << ResourcesManager::convertPath("r-type_server").c_str() << " 1 " << maxNbPlayer << " "
-                << gameType << " " << name.c_str() << " " << ownerIp.c_str() << " " << ownerPort;
+        std::string winName = "'" + name + "'";
+        std::basic_ostringstream<TCHAR> cmdline;
+        cmdline << _T(ResourcesManager::convertPath("./r-type_server.exe").c_str()) << _T(" 1 ")
+                << _T(maxNbPlayer) << _T(" ") << _T(gameType) << _T(" ") << _T(winName.c_str()) << _T(" ")
+                << _T(ownerIp.c_str()) << _T(" ") << _T(ownerPort);
 
-        STARTUPINFO si;
+        STARTUPINFO si = {sizeof(si)};
         PROCESS_INFORMATION pi;
-        ZeroMemory(&si, sizeof(si));
-        si.cb = sizeof(si);
-        ZeroMemory(&pi, sizeof(pi));
+    #ifdef UNICODE
+        TCHAR *cmd = _wcsdup(cmdline.str().c_str());
+    #else
+        TCHAR *cmd = _strdup(cmdline.str().c_str());
+    #endif
 
-        if (!CreateProcess(NULL, &cmdline.str()[0], NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+        if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
             Logger::error("Error: CreateProcess failed");
+            free(cmd);
             return;
         }
+        free(cmd);
         _lobbyPids.emplace_back(pi.dwProcessId);
-        CloseHandle(pi.hProcess);
-        CloseHandle(pi.hThread);
 #else
         pid_t c_pid = fork();
 
@@ -234,12 +253,7 @@ namespace Nitwork {
             Logger::error("Invalid name: " + name);
             return;
         }
-        forkProcessAndCreateLobby(
-            maxNbPlayer,
-            gameType,
-            name,
-            _socket.local_endpoint().address().to_string(),
-            _socket.local_endpoint().port());
+        forkProcessAndCreateLobby(maxNbPlayer, gameType, name, _ip, _socket.local_endpoint().port());
     }
 
     const std::vector<struct lobby_s> &NitworkMainServer::getLobbies() const
@@ -266,5 +280,29 @@ namespace Nitwork {
             return;
         }
         _lobbies.push_back(lobby);
+    }
+
+    void NitworkMainServer::setIpOfMainServer(const std::string &ip)
+    {
+        _ip = ip;
+    }
+
+    std::vector<std::string> NitworkMainServer::getAvailableIps() const
+    {
+        std::vector<std::string> ips;
+        boost::asio::io_context io_context;
+        boost::asio::ip::tcp::resolver resolver(io_context);
+        boost::asio::ip::tcp::resolver::query query(boost::asio::ip::host_name(), "");
+        boost::asio::ip::tcp::resolver::iterator iter = resolver.resolve(query);
+        boost::asio::ip::tcp::resolver::iterator end;
+
+        while (iter != end) {
+            boost::asio::ip::tcp::endpoint ep = *iter;
+            if (ep.address().is_v4()) {
+                ips.emplace_back(ep.address().to_string());
+            }
+            ++iter;
+        }
+        return ips;
     }
 } // namespace Nitwork

@@ -9,5 +9,4 @@ target_include_directories(
 add_subdirectory(Events)
 add_subdirectory(Network)
 add_subdirectory(Menus)
-add_subdirectory(Menu)
 add_subdirectory(Parallax)

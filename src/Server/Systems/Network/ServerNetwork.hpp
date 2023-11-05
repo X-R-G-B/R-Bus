@@ -16,4 +16,5 @@ namespace Systems {
     void receiveNewBulletMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
     void receiveAbsolutePositionMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
     void receivePlayerDeathMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
+    void handleClientMissileDeath(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 } // namespace Systems

@@ -1,0 +1,91 @@
+{
+    "waves" : [
+        {
+            "id": 1,
+            "msBeforeNextWave" : 3000,
+            "enemies" : [
+                {
+                    "id": "default",
+                    "position" : {
+                        "x": 10500,
+                        "y": 1500
+                    }
+                },
+                {
+                    "id": "default2",
+                    "position" : {
+                        "x": 10500,
+                        "y": 8500
+                    },
+                    "msBeforeSpawn" : 2000
+                },
+                {
+                    "id": "daemon",
+                    "position" : {
+                        "x": 10500,
+                        "y": 6500
+                    },
+                    "msBeforeSpawn" : 2000
+                },
+                {
+                    "id": "green-head",
+                    "position" : {
+                        "x": 10500,
+                        "y": 2500
+                    },
+                    "msBeforeSpawn" : 3000
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "msBeforeNextWave" : 5000,
+            "enemies" : [
+                {
+                    "id": "default",
+                    "position" : {
+                        "x": 10500,
+                        "y": 500
+                    }
+                },
+                {
+                    "id": "default",
+                    "position" : {
+                        "x": 10500,
+                        "y": 8500
+                    },
+                    "msBeforeSpawn" : 1000
+                },
+                {
+                    "id": "napstablook",
+                    "position" : {
+                        "x": 10500,
+                        "y": 2500
+                    },
+                    "msBeforeSpawn" : 1000
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "msBeforeNextWave" : 3000,
+            "enemies" : [
+                {
+                    "id": "default",
+                    "position" : {
+                        "x": 10500,
+                        "y": 8500
+                    }
+                },
+                {
+                    "id": "papyrus",
+                    "position" : {
+                        "x": 10500,
+                        "y": 2500
+                    },
+                    "msBeforeSpawn" : 1000
+                }
+            ]
+        }
+    ]
+}

@@ -82,7 +82,17 @@ namespace Nitwork {
              */
             void addLobby(const struct lobby_s &lobby);
 
-            /* Handlers methods of the received actions */
+            /**
+             * @brief Set the ip of the MainServer
+             * @param ip The ip of the MainServer
+             */
+            void setIpOfMainServer(const std::string &ip);
+
+            /**
+             * @brief Get the available ips
+             * @return the available ips
+             */
+            std::vector<std::string> getAvailableIps() const;
 
         private:
             /**
@@ -105,6 +115,13 @@ namespace Nitwork {
                 const std::string &name,
                 const std::string &ownerIp,
                 int ownerPort);
+
+            /**
+             * @brief Handle the lobby pid message
+             * @param msg The message
+             * @param endpoint The endpoint of the sender
+             */
+            void handleLobbyPidMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
 
         private:
             NitworkMainServer() = default;
@@ -141,11 +158,12 @@ namespace Nitwork {
             unsigned int _maxNbPlayer = 0;        // max number of players
             std::vector<int> _lobbyPids;          // pid of the lobbies
             std::vector<struct lobby_s> _lobbies; // list of lobbies
+            std::string _ip;                      // ip of the MainServer
             // clang-format off
 
             std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
                 {
-                    CONNECT_MAIN_SERVER,
+                    NITWORK_CONNECT_MAIN_SERVER,
                     {
                         [this](actionHandler &actionHandler, const struct header_s &header) {
                             handleBody<struct msgConnectMainServer_s>(actionHandler, header);
@@ -156,7 +174,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    LIST_LOBBY,
+                    NITWORK_LIST_LOBBY,
                     {
                         [this](actionHandler &actionHandler, const struct header_s &header) {
                             handleBody<struct msgRequestListLobby_s>(actionHandler, header);
@@ -167,7 +185,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    CREATE_LOBBY,
+                    NITWORK_CREATE_LOBBY,
                     {
                         [this](actionHandler &actionHandler, const struct header_s &header) {
                             handleBody<struct msgCreateLobby_s>(actionHandler, header);
@@ -178,7 +196,7 @@ namespace Nitwork {
                     }
                 },
                 {
-                    INFO_LOBBY,
+                    NITWORK_INFO_LOBBY,
                     {
                         [this](actionHandler &actionHandler, const struct header_s &header) {
                             handleBody<struct msgInfoLobby_s>(actionHandler, header);
@@ -187,17 +205,28 @@ namespace Nitwork {
                             Systems::handleInfoLobbyMsg(msg, endpoint);
                         }
                     }
+                },
+                {
+                    NITWORK_LOBBY_PID,
+                    {
+                        [this](actionHandler &actionHandler, const struct header_s &header) {
+                            handleBody<struct msgReplaceLobbyPid_s>(actionHandler, header);
+                        },
+                        [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                            handleLobbyPidMsg(msg, endpoint);
+                        }
+                    }
                 }
             };
             std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
                 {
-                    LIST_LOBBY,
+                    NITWORK_LIST_LOBBY,
                     [this](Packet &packet) {
                         sendData<struct packetListLobby_s>(packet);
                     }
                 },
                 {
-                    CONNECT_MAIN_SERVER_RESP,
+                    NITWORK_CONNECT_MAIN_SERVER_RESP,
                     [this](Packet &packet) {
                         sendData<struct packetConnectMainServerResp_s>(packet);
                     }

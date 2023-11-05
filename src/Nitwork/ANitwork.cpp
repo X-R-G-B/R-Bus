@@ -247,7 +247,8 @@ namespace Nitwork {
                         try {
                             action.second(action.first.data, action.first.endpoint);
                         } catch (std::exception &e) {
-                            Logger::error("NITWORK: catch action: " + std::string(e.what()));
+                            Logger::error(
+                                "StartInputHandler: NITWORK: catch action: " + std::string(e.what()));
                         }
                     }
                     _actions.clear();
@@ -391,5 +392,15 @@ namespace Nitwork {
         }
         _outputQueue.emplace_back(packet);
         Logger::trace("NITWORK: Adding packet to send of type: " + std::to_string(packet.action));
+    }
+
+    void ANitwork::deletePacketFromEndPoints(const boost::asio::ip::udp::endpoint &endpoint)
+    {
+        std::lock_guard<std::mutex> lock(_outputQueueMutex);
+
+        _outputQueue.remove_if([endpoint](auto &packet) {
+            return packet.endpoint.address() == endpoint.address()
+                && packet.endpoint.port() == endpoint.port();
+        });
     }
 } // namespace Nitwork

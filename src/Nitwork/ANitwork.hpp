@@ -9,10 +9,10 @@
 
 #include <boost/asio.hpp>
 #include <condition_variable>
-#include <iostream>
 #include <list>
 #include <memory>
 #include <mutex>
+#include <type_traits>
 #include <unordered_map>
 #include "B-luga/Logger.hpp"
 #include "INitwork.hpp"
@@ -64,6 +64,13 @@ namespace Nitwork {
                         HEADER_CODE2};
                     data.header = newHeader;
                 }
+#ifdef DEBUG
+                if constexpr (!std::is_same_v<T, struct packetListLobby_s>) {
+                    Logger::fatal(
+                        "id of packet = " + std::to_string(id)
+                        + " action type = " + std::to_string(data.action.magick));
+                }
+#endif
                 std::shared_ptr<std::vector<char>> compressedPacket =
                     std::make_shared<std::vector<char>>(Zstd::compress(data));
 
@@ -112,6 +119,8 @@ namespace Nitwork {
             void sendToAllClients(const Packet &packet);
             // check if the client is already connected
             bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
+
+            void deletePacketFromEndPoints(const boost::asio::ip::udp::endpoint &endpoint);
 
         private:
             // start the NitworkServer threads (context threads, clock thread, input thread and output

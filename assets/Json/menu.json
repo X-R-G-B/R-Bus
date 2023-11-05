@@ -1,23 +1,26 @@
 {
-    "menu": {
-        "connect": {
+    "menu": [
+        {
             "type": "button",
-            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
-            "width": 500,
-            "height" : 500,
+            "callback": "initConnection",
+            "spritePath": "assets/Menu/button.png",
+            "width": 1500,
+            "height" : 750,
             "rect": {
-                "x": 101.0,
-                "y": 0.0,
-                "width": 32.0,
-                "height": 19.0
+                "x": 51.0,
+                "y": 51.0,
+                "width": 1265.0,
+                "height": 305.0
             },
             "position" : {
-                "x": 1000,
-                "y": 1000
+                "x": 3800,
+                "y": 6500
             },
             "collisionRect": {
-                "width": 500,
-                "height": 500
+                "width": 1500,
+                "height": 750,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "animRect": [
                 {
@@ -26,39 +29,231 @@
                     "noIncr": true,
                     "list": [
                         {
-                            "x" : 233.0,
-                            "y": 2.0,
-                            "width": 32.0,
-                            "height": 14.0
+                            "x" : 1416.0,
+                            "y": 49.0,
+                            "width": 1267.0,
+                            "height": 307.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 2759.0,
+                            "y": 31.0,
+                            "width": 1303.0,
+                            "height": 340.0
                         }
                     ]
                 }
             ]
         },
-        "ip": {
+        {
+            "type": "text",
+            "text": "EXIT ('ESC')",
+            "color": "red",
+            "size": 1.5,
+            "position": {
+              "x": 450,
+              "y": 875
+            }
+          },
+          {
+            "type": "button",
+            "spritePath": "assets/Menu/button.png",
+            "width": 1600,
+            "height": 1000,
+            "callback": "exitGame",
+            "rect": {
+              "x": 0.0,
+              "y": 0.0,
+              "width": 1366.0,
+              "height": 406.0
+            },
+            "position": {
+              "x": 100,
+              "y": 500
+            },
+            "collisionRect": {
+              "width": 1600,
+              "height": 1000,
+              "offsetX": 0,
+              "offsetY": 0
+            },
+            "animRect": [
+              {
+                "type": "hover",
+                "time": 80,
+                "noIncr": true,
+                "list": [
+                  {
+                    "x": 1366.0,
+                    "y": 0.0,
+                    "width": 1366.0,
+                    "height": 406.0
+                  }
+                ]
+              },
+              {
+                "type": "selected",
+                "time": 80,
+                "noIncr": true,
+                "list": [
+                  {
+                    "x" : 2732.0,
+                    "y": 0.0,
+                    "width": 1366.0,
+                    "height": 406.0
+                  }
+                ]
+              }
+            ]
+          },
+        {
+            "type": "button",
+            "callback": "changeParallax",
+            "spritePath": "assets/Menu/button.png",
+            "width": 1500,
+            "height" : 750,
+            "rect": {
+                "x": 51.0,
+                "y": 51.0,
+                "width": 1265.0,
+                "height": 305.0
+            },
+            "position" : {
+                "x": 8000,
+                "y": 500
+            },
+            "collisionRect": {
+                "width": 1500,
+                "height": 750,
+                "offsetX": 0,
+                "offsetY": 0
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 1416.0,
+                            "y": 49.0,
+                            "width": 1267.0,
+                            "height": 307.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 2759.0,
+                            "y": 31.0,
+                            "width": 1303.0,
+                            "height": 340.0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 1.5,
+            "text": "PARALLAX_1",
+            "position" : {
+                "x": 8300,
+                "y": 800
+            }
+        },
+        {
+            "type": "button",
+            "callback": "goCreateServer",
+            "spritePath": "assets/Menu/button.png",
+            "width": 1500,
+            "height" : 750,
+            "rect": {
+                "x": 51.0,
+                "y": 51.0,
+                "width": 1265.0,
+                "height": 305.0
+            },
+            "position" : {
+                "x": 3800,
+                "y": 7700
+            },
+            "collisionRect": {
+                "width": 1500,
+                "height": 750,
+                "offsetX": 0,
+                "offsetY": 0
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 1416.0,
+                            "y": 49.0,
+                            "width": 1267.0,
+                            "height": 307.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 2759.0,
+                            "y": 31.0,
+                            "width": 1303.0,
+                            "height": 340.0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
             "name": "ip",
             "type": "input",
             "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
-            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
-            "text": "localhost",
+            "spritePath": "assets/Menu/input-box.png",
+            "text": "",
             "color": "red",
             "textSize": 3,
-            "maxChar": 10,
-            "width": 500,
-            "height" : 500,
+            "maxChar": 16,
+            "width": 3600,
+            "height" : 800,
+            "textPosition": {
+                "x": 3400,
+                "y": 3150
+            },
             "position" : {
-                "x": 2000,
-                "y": 2000
+                "x": 2700,
+                "y": 3000
             },
             "rect": {
-                "x": 101.0,
-                "y": 0.0,
-                "width": 32.0,
-                "height": 19.0
+                "x": 30.0,
+                "y": 32.0,
+                "width": 1615.0,
+                "height": 220.0
             },
             "collisionRect": {
-                "width": 2000,
-                "height": 500
+                "width": 3600,
+                "height": 800,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "animRect": [
                 {
@@ -67,39 +262,58 @@
                     "noIncr": true,
                     "list": [
                         {
-                            "x" : 233.0,
-                            "y": 2.0,
-                            "width": 32.0,
-                            "height": 14.0
+                            "x" : 1697.0,
+                            "y": 31.0,
+                            "width": 1618.0,
+                            "height": 221.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 3348.0,
+                            "y": 14.0,
+                            "width": 1651.0,
+                            "height": 252.0
                         }
                     ]
                 }
             ]
         },
-        "host": {
+        {
             "name": "port",
             "type": "input",
             "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
-            "spritePath": "assets/R-TypeSheet/r-typesheet1.gif",
+            "spritePath": "assets/Menu/input-box.png",
             "text": "4242",
             "color": "red",
             "textSize": 3,
-            "maxChar": 10,
-            "width": 20,
-            "height" : 5,
+            "maxChar": 8,
+            "width": 3600,
+            "height" : 800,
+            "textPosition": {
+                "x": 3400,
+                "y": 5100
+            },
             "position" : {
-                "x": 3700,
-                "y": 6000
+                "x": 2700,
+                "y": 4900
             },
             "collisionRect": {
-                "width": 2000,
-                "height": 500
+                "width": 3600,
+                "height": 800,
+                "offsetX": 0,
+                "offsetY": 0
             },
             "rect": {
-                "x": 101.0,
-                "y": 0.0,
-                "width": 32.0,
-                "height": 19.0
+                "x": 30.0,
+                "y": 32.0,
+                "width": 1615.0,
+                "height": 220.0
             },
             "animRect": [
                 {
@@ -108,14 +322,86 @@
                     "noIncr": true,
                     "list": [
                         {
-                            "x" : 233.0,
-                            "y": 2.0,
-                            "width": 32.0,
-                            "height": 14.0
+                            "x" : 1697.0,
+                            "y": 31.0,
+                            "width": 1618.0,
+                            "height": 221.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 3348.0,
+                            "y": 14.0,
+                            "width": 1651.0,
+                            "height": 252.0
                         }
                     ]
                 }
             ]
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "IP (ex: 127.0.0.1)",
+            "position" : {
+                "x": 2700,
+                "y": 2500
+            }
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "PORT (ex: 4242)",
+            "position" : {
+                "x": 2700,
+                "y": 4400
+            }
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "CONNECT",
+            "position" : {
+                "x": 4100,
+                "y": 6750
+            }
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "CREATE",
+            "position" : {
+                "x": 4150,
+                "y": 7950
+            }
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "MENU",
+            "position" : {
+                "x": 4150,
+                "y": 500
+            }
         }
+    ],
+    "background": {
+        "imgPath": "assets/Menu/loading.gif",
+        "width": 100,
+        "height": 100
+    },
+    "mainTheme": {
+        "path": "assets/Audio/Musics/home.mp3",
+        "volume": 0.65
     }
 }

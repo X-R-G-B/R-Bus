@@ -24,6 +24,13 @@
                 "speedX": -20,
                 "speedY": 0
             },
+            "physics": [
+                {
+                    "id": "zigzag",
+                    "amplitude": 40.0,
+                    "period": 3000.0
+                }
+            ],
             "animRect": [
                 {
                     "type": "move",
@@ -49,7 +56,18 @@
                         }
                     ]
                 }
-            ]
+            ],
+            "attack" : {
+                "bulletId": "bounce",
+                "emitterId": "circle",
+                "numberOfMissiles": 6,
+                "missileDirection" : {
+                    "x": -1,
+                    "y": 0
+                },
+                "msBetweenMissiles": 4000.0,
+                "bulletSpeed": 0.9
+            }
         }
     ]
 }
