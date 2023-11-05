@@ -106,10 +106,12 @@ namespace Systems {
             throw std::runtime_error("Unknown missile type");
         }
         Logger::fatal("Create missile2");
-        Json &json = Json::getInstance();
-        std::size_t id = Registry::getInstance().addEntity();
-        nlohmann::json bulletData =
-            json.getJsonObjectById<std::string>(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileIdFromType(typeOfMissile.type), "bullets");
+        Json &json                = Json::getInstance();
+        std::size_t id            = Registry::getInstance().addEntity();
+        nlohmann::json bulletData = json.getJsonObjectById<std::string>(
+            ResourcesManager::getPathByJsonType(JsonType::BULLETS),
+            getMissileIdFromType(typeOfMissile.type),
+            "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");
@@ -126,7 +128,9 @@ namespace Systems {
 
         Registry::getInstance().getComponents<Types::PlayerAllies>().insertBack(playerAlliesComp);
         addPhysicsToEntity(bulletData, pos);
-        Logger::fatal("type of missile = " + std::to_string(typeOfMissile.type) + " pos = " + std::to_string(pos.x) + " " + std::to_string(pos.y));
+        Logger::fatal(
+            "type of missile = " + std::to_string(typeOfMissile.type) + " pos = " + std::to_string(pos.x)
+            + " " + std::to_string(pos.y));
         Registry::getInstance().getComponents<Types::Position>().insertBack(pos);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);

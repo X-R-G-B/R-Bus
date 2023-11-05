@@ -88,7 +88,7 @@ namespace Nitwork {
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
         auto action = *actionPtr;
-        auto it = _actionsHandlers.find(action.magick);
+        auto it     = _actionsHandlers.find(action.magick);
         std::memmove(
             _receiveBuffer.data(),
             _receiveBuffer.data() + sizeof(struct action_s),
@@ -188,7 +188,8 @@ namespace Nitwork {
             Logger::error("Error: magick not matching");
             return;
         }
-        Logger::error("magick connect lobby = " + std::to_string(msgData.magick) + " (" + MAGICK_CONNECT_LOBBY + ")");
+        Logger::error(
+            "magick connect lobby = " + std::to_string(msgData.magick) + " (" + MAGICK_CONNECT_LOBBY + ")");
         if (_endpoints.size() >= _serverInfos.maxNbPlayer) {
             Logger::error("Too many clients, can't add an other one");
             canConnect = false;
@@ -265,7 +266,8 @@ namespace Nitwork {
         _isGameStarted = true;
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
-        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC)).addSystem(Systems::waveHandler);
+        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC))
+            .addSystem(Systems::waveHandler);
     }
 
     void

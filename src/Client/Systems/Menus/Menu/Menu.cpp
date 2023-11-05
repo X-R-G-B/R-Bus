@@ -128,10 +128,11 @@ namespace Menu {
 
     static std::size_t initButtonFromSprite(nlohmann::json &elem, std::function<void()> &callback)
     {
-
         std::size_t id = Registry::getInstance().addEntity();
         initFromSprite(elem);
-        std::string name = Json::isDataExist(elem, "name") ? Json::getInstance().getDataFromJson<std::string>(elem, "name") : "";
+        std::string name = Json::isDataExist(elem, "name")
+            ? Json::getInstance().getDataFromJson<std::string>(elem, "name")
+            : "";
         Types::Button button(callback, name);
         Types::Position position = {
             Types::Position(Json::getInstance().getDataFromJson<Types::Position>(elem, "position"))};
