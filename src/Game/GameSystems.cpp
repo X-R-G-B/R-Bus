@@ -82,7 +82,6 @@ namespace Systems {
 
     static void sendMissileDeath(std::size_t arrId)
     {
-        Logger::fatal("start send missile death");
         auto &arrMissiles = Registry::getInstance().getComponents<Types::Missiles>();
 
         if (arrMissiles.exist(arrId)) {
@@ -96,7 +95,6 @@ namespace Systems {
 
     static void sendEnemyDeath(std::size_t arrId)
     {
-        Logger::fatal("start send enemy death");
         auto &arrEnemies = Registry::getInstance().getComponents<Types::Enemy>();
 
         if (!arrEnemies.exist(arrId)) {
@@ -107,7 +105,6 @@ namespace Systems {
 #else
         Nitwork::NitworkServer::getInstance().addEnemyDeathMessage(arrEnemies[arrId].getConstId().id);
 #endif
-        Logger::fatal("end send enemy death");
     }
 #ifdef CLIENT
     static void sendLifeUpdateToServer(std::size_t id)
@@ -124,7 +121,6 @@ namespace Systems {
 
     static void sendPlayerDeathToServer(std::size_t id)
     {
-        Logger::fatal("start send player death");
         auto &arrPlayer      = Registry::getInstance().getComponents<Types::Player>();
         auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
 
@@ -135,7 +131,6 @@ namespace Systems {
             Logger::debug("other player send death " + std::to_string(id));
             Nitwork::NitworkClient::getInstance().addPlayerDeathMsg(arrOtherPlayer[id].constId);
         }
-        Logger::fatal("end send player death");
     }
 #endif
 

@@ -287,6 +287,7 @@ namespace Systems {
         modifEndGameText(endGameMessage);
 
         if (Registry::getInstance().getClock().elapsedSecondsSince(clockId) >= secondBeforeEnd) {
+            Nitwork::NitworkClient::getInstance().disconnectLobby();
             Scene::SceneManager::getInstance().changeScene(static_cast<std::size_t>(SELECT_LOBBY));
         }
     }

@@ -13,6 +13,7 @@
 #include "B-luga-physics/ECSSystems.hpp"
 #include "B-luga/Logger.hpp"
 #include "B-luga/Registry.hpp"
+#include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "GameSystems.hpp"
 #include "ResourcesManager.hpp"
@@ -88,7 +89,7 @@ namespace Nitwork {
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
 
         auto action = *actionPtr;
-        auto it = _actionsHandlers.find(action.magick);
+        auto it     = _actionsHandlers.find(action.magick);
         std::memmove(
             _receiveBuffer.data(),
             _receiveBuffer.data() + sizeof(struct action_s),
@@ -181,14 +182,13 @@ namespace Nitwork {
         bool canConnect = true;
 
         if (_isGameStarted) {
-            Logger::info("Game already started, connection refused");
+            Logger::warn("Game already started, connection refused");
             return;
         }
         if (msgData.magick != MAGICK_CONNECT_LOBBY) {
             Logger::error("Error: magick not matching");
             return;
         }
-        Logger::error("magick connect lobby = " + std::to_string(msgData.magick) + " (" + MAGICK_CONNECT_LOBBY + ")");
         if (_endpoints.size() >= _serverInfos.maxNbPlayer) {
             Logger::error("Too many clients, can't add an other one");
             canConnect = false;
@@ -201,7 +201,7 @@ namespace Nitwork {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         if (_isGameStarted) {
-            Logger::info("Game already started, connection refused");
+            Logger::warn("Game already started, connection refused");
             return;
         }
         if (_endpoints.size() >= _serverInfos.maxNbPlayer) {
@@ -212,7 +212,6 @@ namespace Nitwork {
             Logger::error("Client already connected");
             return;
         }
-        Logger::error("WTF WTF ICI");
         _endpoints.emplace_back(endpoint);
         auto playerId      = static_cast<n_id_t>(_endpoints.size() - 1);
         auto &jsonInstance = Json::getInstance();
@@ -250,7 +249,7 @@ namespace Nitwork {
     NitworkServer::handleReadyMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
         if (_isGameStarted) {
-            Logger::info("Game already started, connection refused");
+            Logger::warn("Game already started, connection refused");
             return;
         }
         if (!isClientAlreadyConnected(endpoint)) {
@@ -265,14 +264,15 @@ namespace Nitwork {
         _isGameStarted = true;
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
-        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC)).addSystem(Systems::waveHandler);
+        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC))
+            .addSystem(Systems::waveHandler);
     }
 
     void
     NitworkServer::handleRelativePositionMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
     {
         if (!isClientAlreadyConnected(endpoint)) {
-            Logger::info("Client not connected");
+            Logger::warn("Client not connected");
             return;
         }
         auto msgData = std::any_cast<struct msgPositionRelative_s>(msg);
@@ -306,9 +306,19 @@ namespace Nitwork {
             Logger::error("Error: magick is not MAGICK_DISCONNECT_LOBBY");
             return;
         }
+        Logger::fatal(
+            "Client disconnected: " + endpoint.address().to_string() + ":"
+            + std::to_string(endpoint.port()));
         _endpoints.erase(std::remove(_endpoints.begin(), _endpoints.end(), endpoint));
         deletePacketFromEndPoints(endpoint);
         addPlayerDeathMsg(getPlayerId(endpoint));
+        _playersReady.erase(endpoint);
+        _playersIds.erase(endpoint);
+        if (_endpoints.empty()) {
+            Logger::fatal("No more clients, restarting server");
+            Systems::SystemManagersDirector::getInstance().resetChanges();
+            _isGameStarted = false;
+        }
     }
     /* End Handle packet (msg) Section */
 

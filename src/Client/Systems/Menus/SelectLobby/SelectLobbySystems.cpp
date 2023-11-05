@@ -86,7 +86,7 @@ namespace Systems::SelectLobbySystems {
                     "inputBoxes");
                 std::size_t id = ::Menu::MenuBuilder::getInstance().initMenuEntity(lobbyBox);
                 if (arrPosition.exist(id)) {
-                    arrPosition[id].y += offset * i;
+                    arrPosition[id].y += offset * static_cast<int>(i);
                 }
                 if (arrLobbyText.exist(id)) {
                     Raylib::Vector2 pos(

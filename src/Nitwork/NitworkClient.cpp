@@ -153,12 +153,10 @@ namespace Nitwork {
                        },
             .msg = {.magick = MAGICK_DISCONNECT_LOBBY},
         };
-        Logger::error("------------------------------------ Sending disconnect lobby msg: " + std::to_string(NITWORK_DISCONNECT_LOBBY) + " " + std::to_string(MAGICK_DISCONNECT_LOBBY));
         Packet packet(
             packetDisconnectLobby.action.magick,
             std::make_any<struct packetDisconnectLobby_s>(packetDisconnectLobby),
             _serverEndpoint);
-        Logger::fatal("Disconnecting from lobby");
         addPacketToSend(packet);
     }
 
@@ -173,7 +171,6 @@ namespace Nitwork {
                        },
             .msgInit = {.magick = MAGICK_INIT}
         };
-        Logger::error("------------------------------------ Sending init msg: " + std::to_string(NITWORK_INIT) + " " + std::to_string(MAGICK_INIT));
         Packet packet(
             packetMsgInit.action.magick,
             std::make_any<struct packetMsgInit_s>(packetMsgInit),
@@ -189,7 +186,6 @@ namespace Nitwork {
             .action   = {.magick = NITWORK_READY},
             .msgReady = {.magick = MAGICK_READY}
         };
-        Logger::error("------------------------------------ Sending ready msg: " + std::to_string(NITWORK_READY) + " " + std::to_string(MAGICK_READY));
         Packet packet(
             packetMsgReady.action.magick,
             std::make_any<struct packetMsgReady_s>(packetMsgReady),
@@ -285,7 +281,6 @@ namespace Nitwork {
                        .life     = life,
                        },
         };
-        Logger::error("------------------------------------ Sending life update msg: " + std::to_string(playerId) + " " + std::to_string(MAGICK_LIFE_UPDATE));
         Packet packet(
             packetLifeUpdate.action.magick,
             std::make_any<struct packetLifeUpdate_s>(packetLifeUpdate),
@@ -349,7 +344,6 @@ namespace Nitwork {
                        .missileId = id,
                        },
         };
-        Logger::error("------------------------------------ Sending missile death msg: " + std::to_string(NITWORK_MISSILE_DEATH) + " " + std::to_string(MAGICK_MISSILE_DEATH));
         Packet packet(
             packetMissileDeath.action.magick,
             std::make_any<struct packetMissileDeath_s>(packetMissileDeath),
@@ -367,7 +361,6 @@ namespace Nitwork {
                        },
             .msg = {.magick = MAGICK_REQUEST_LIST_LOBBY},
         };
-        Logger::error("------------------------------------ Sending list lobby msg: " + std::to_string(NITWORK_LIST_LOBBY) + " " + std::to_string(MAGICK_REQUEST_LIST_LOBBY));
         Packet packet(
             packetListLobby.action.magick,
             std::make_any<struct packetRequestListLobby_s>(packetListLobby),
@@ -394,7 +387,6 @@ namespace Nitwork {
                        .maxNbPlayer = maxNbPlayer,
                        .ownerInfos  = {.ip = "", .port = _mainServerEndpoint.port()}}
         };
-        Logger::error("------------------------------------ Sending create lobby msg: " + std::to_string(NITWORK_CREATE_LOBBY) + " " + std::to_string(MAGICK_CREATE_LOBBY));
         std::strcpy(packetCreateLobby.msg.name, (name.size() > 32 ? name.substr(0, 32) : name).c_str());
         std::strcpy(
             packetCreateLobby.msg.ownerInfos.ip,
@@ -420,7 +412,6 @@ namespace Nitwork {
                        },
             .msg = {.magick = MAGICK_CONNECT_MAIN_SERVER},
         };
-        Logger::error("------------------------------------ Sending connect main server msg: " + std::to_string(NITWORK_CONNECT_MAIN_SERVER) + " " + std::to_string(MAGICK_CONNECT_MAIN_SERVER));
         Packet packet(
             packetConnectMainServer.action.magick,
             std::make_any<struct packetConnectMainServer_s>(packetConnectMainServer),
@@ -508,7 +499,6 @@ namespace Nitwork {
                        },
             .msg = {.magick = MAGICK_CONNECT_LOBBY},
         };
-        Logger::error("------------------------------------ Sending connect lobby msg: " + std::to_string(NITWORK_CONNECT_LOBBY) + " " + std::to_string(MAGICK_CONNECT_LOBBY));
         Packet packet(
             packetConnectLobby.action.magick,
             std::make_any<struct packetConnectLobby_s>(packetConnectLobby),

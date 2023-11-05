@@ -356,52 +356,53 @@ namespace Nitwork {
                 {NITWORK_CONNECT_LOBBY_RESP,
                  [this](Packet &packet) {
                      sendData<struct packetConnectLobbyResp_s>(packet);
-                 }                            },
+                 }},
                 {NITWORK_INIT,
                  [this](Packet &packet) {
                      sendData<struct packetCreatePlayer_s>(packet);
-                 }                            },
+                 }},
                 {NITWORK_LIFE_UPDATE,
                  [this](Packet &packet) {
                      sendData<struct packetLifeUpdate_s>(packet);
-                 }                            },
+                 }},
                 {NITWORK_START_WAVE,
                  [this](Packet &packet) {
                      sendData<struct packetMsgStartWave_s>(packet);
-                 }                            },
+                 }},
                 {NITWORK_ENEMY_DEATH,
                  [this](Packet &packet) {
                      sendData<struct packetEnemyDeath_s>(packet);
-                 }                            },
+                 }},
                 {NITWORK_NEW_ENEMY,
                  [this](Packet &packet) {
                      sendData<struct packetNewEnemy_s>(packet);
-                 }                            },
+                 }},
                 {NITWORK_NEW_MISSILE,
                  [this](Packet &packet) {
                      sendData<struct packetNewBullet_s>(packet);
-                 }                            },
+                 }},
                 {NITWORK_NEW_PLAYER,
                  [this](Packet &packet) {
                      sendData<struct packetCreatePlayer_s>(packet);
-                 }                            },
+                 }},
                 {NITWORK_POSITION_RELATIVE_BROADCAST,
                  [this](Packet &packet) {
                      sendData<struct packetPositionRelativeBroadcast_s>(packet);
-                 }                            },
+                 }},
                 {NITWORK_POSITION_ABSOLUTE_BROADCAST,
                  [this](Packet &packet) {
                      sendData<struct packetPositionAbsoluteBroadcast_s>(packet);
-                 }                            },
+                 }},
                 {NITWORK_PLAYER_DEATH,
                  [this](Packet &packet) {
                      sendData<struct packetPlayerDeath_s>(packet);
-                 }                            },
+                 }},
                 {NITWORK_MISSILE_DEATH,
                  [this](Packet &packet) {
                      sendData<struct packetMissileDeath_s>(packet);
-                 }                            },
-                {NITWORK_INFO_LOBBY,                  [this](Packet &packet) {
+                 }},
+                {NITWORK_INFO_LOBBY,
+                 [this](Packet &packet) {
                      sendData<struct packetInfoLobby_s>(packet);
                  }},
                 {NITWORK_END_GAME,
