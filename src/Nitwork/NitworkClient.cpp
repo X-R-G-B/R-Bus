@@ -11,6 +11,7 @@
 #include "B-luga/Logger.hpp"
 #include "NitworkClient.hpp"
 #include "B-luga/Registry.hpp"
+#include "ResourcesManager.hpp"
 
 namespace Nitwork {
     NitworkClient::NitworkClient() : _resolver(_context)
@@ -417,6 +418,73 @@ namespace Nitwork {
             std::make_any<struct packetConnectMainServer_s>(packetConnectMainServer),
             _mainServerEndpoint);
         addPacketToSend(packet);
+    }
+
+    void NitworkClient::createForkedServer(const std::string &port)
+        {
+#ifdef _WIN32
+        std::string winName = "'" + name + "'";
+        std::basic_ostringstream<TCHAR> cmdline;
+        cmdline << _T(ResourcesManager::convertPath("./r-type_server.exe").c_str()) << _T(" 0 ")
+                << _T(" ") << _T(port);
+
+        Logger::fatal("cmdline: " + cmdline.str());
+        STARTUPINFO si = {sizeof(si)};
+        PROCESS_INFORMATION pi;
+    #ifdef UNICODE
+        TCHAR *cmd = _wcsdup(cmdline.str().c_str());
+    #else
+        TCHAR *cmd = _strdup(cmdline.str().c_str());
+    #endif
+
+        if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+            Logger::error("Error: CreateProcess failed");
+            free(cmd);
+            return;
+        }
+        free(cmd);
+        _serverPids.emplace_back(pi.dwProcessId);
+#else
+        pid_t c_pid = fork();
+
+        if (c_pid == -1) {
+            Logger::error("Error: fork failed");
+            return;
+        }
+        if (c_pid == 0) {
+            if (execl(
+                    ResourcesManager::convertPath("r-type_server").c_str(),
+                    ResourcesManager::convertPath("r-type_server").c_str(),
+                    "0",
+                    port.c_str(),
+                    NULL)
+                    == -1) {
+                Logger::error("Error: execl failed");
+                return;
+            }
+            Logger::info("Server created");
+        } else {
+            _serverPids.emplace_back(c_pid);
+        }
+#endif
+    }
+
+    void NitworkClient::stop()
+    {
+        #ifdef _WIN32
+        for (auto pid : _serverPids) {
+            HANDLE hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
+            if (hProcess != NULL) {
+                TerminateProcess(hProcess, 0);
+                CloseHandle(hProcess);
+            }
+        }
+#else
+        for (auto pid : _serverPids) {
+            kill(pid, SIGINT);
+        }
+#endif
+        ANitwork::stop();
     }
 
     void NitworkClient::addConnectLobbyMsg()

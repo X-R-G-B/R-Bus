@@ -17,7 +17,8 @@ enum class JsonType : std::size_t {
     CREATE_LOBBY,
     HUD,
     ENEMIES,
-    MAXTYPE
+    CREATE_SERVER,
+    MAXTYPE,
 };
 
 namespace ResourcesManagerValues {
@@ -31,6 +32,7 @@ namespace ResourcesManagerValues {
     "assets/Json/createLobby.json" ,
     "assets/Json/HUD.json"         ,
     "assets/Json/enemies.json"     ,
+    "assets/Json/createServer.json" ,
     };
 }
 

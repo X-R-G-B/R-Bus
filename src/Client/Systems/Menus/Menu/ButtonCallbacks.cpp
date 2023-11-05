@@ -6,13 +6,13 @@
 */
 
 #include "ButtonCallbacks.hpp"
-// #include "CustomTypes.hpp"
 #include "B-luga/Logger.hpp"
 #include "NitworkClient.hpp"
 #include "B-luga-graphics/Raylib/Raylib.hpp"
 #include "B-luga/SceneManager.hpp"
 #include "SelectLobbySystems.hpp"
 #include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#include "ResourcesManager.hpp"
 #include "init.hpp"
 
 namespace Menu {
@@ -166,6 +166,24 @@ namespace Menu {
             for (auto &id : idsText) {
                 if (arrText[id]->getCurrentText() == "READY !") {
                     Registry::getInstance().removeEntity(id);
+                }
+            }
+        }
+
+        void goCreateServer()
+        {
+            Scene::SceneManager::getInstance().changeScene(CREATE_SERVER_SCENE);
+        }
+
+        void createServer()
+        {
+            auto arrInputBox = Registry::getInstance().getComponents<Types::InputBox>();
+            auto ids = Registry::getInstance().getEntitiesByComponents(
+                {typeid(Types::InputBox)});
+
+            for (auto id : ids) {
+                if (arrInputBox[id].name == "port") {
+                    Nitwork::NitworkClient::getInstance().createForkedServer(arrInputBox[id].text);
                 }
             }
         }

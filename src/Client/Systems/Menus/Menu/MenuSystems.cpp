@@ -215,6 +215,9 @@ namespace Systems {
                     case SELECT_LOBBY:
                         Scene::SceneManager::getInstance().changeScene(MENU);
                         break;
+                    case CREATE_SERVER_SCENE:
+                        Scene::SceneManager::getInstance().changeScene(MENU);
+                        break;
                     case GAME:
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
