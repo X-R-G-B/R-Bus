@@ -7,8 +7,8 @@
 
 #include "GameCustomTypes.hpp"
 #ifdef CLIENT
-    #include "B-luga-graphics/Raylib/Raylib.hpp"
     #include "B-luga-graphics/GraphicsCustomTypes.hpp"
+    #include "B-luga-graphics/Raylib/Raylib.hpp"
 #endif
 
 unsigned int Types::Enemy::_enemyNb = 0;
@@ -44,7 +44,7 @@ namespace Types {
         } else {
             unsigned int previousWave = getWaveId();
             const std::string text    = "Wave " + std::to_string(previousWave) + " survived";
-            Types::FontSize fsz      = {fontSize};
+            Types::FontSize fsz       = {fontSize};
 
             for (auto &id : ids) {
                 if (arrCol[id]->getKeyword() == textKeyword) {

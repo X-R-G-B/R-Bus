@@ -239,7 +239,7 @@ namespace Systems {
         bool found                           = false;
         const Raylib::Vector2 pos            = {0, 2};
         const int fontSize                   = 2;
-        Types::FontSize fsz                 = {fontSize};
+        Types::FontSize fsz                  = {fontSize};
         const std::string textKeywordWaveEnd = "WaveText";
         const std::string textKeyWordGameEnd = "endGameText";
 

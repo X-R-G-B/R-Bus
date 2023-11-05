@@ -10,7 +10,6 @@
     #include <sstream>
     #include <tchar.h>
 #endif
-#include "NitworkServer.hpp"
 #include <boost/asio.hpp>
 #include "B-luga-physics/ECSSystems.hpp"
 #include "B-luga/Logger.hpp"
@@ -18,6 +17,7 @@
 #include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "GameSystems.hpp"
+#include "NitworkServer.hpp"
 #include "ResourcesManager.hpp"
 #include "WaveSystem.hpp"
 #include "init.hpp"
