@@ -188,6 +188,23 @@ namespace Systems {
             }
         }
 
+        static void initMainTheme()
+        {
+            Json &json = Json::getInstance();
+
+            nlohmann::json jsonData = json.getDataByJsonType<nlohmann::json>(
+                ResourcesManager::getPathByJsonType(JsonType::MENU),
+                "mainTheme");
+            if (json.isDataExist(jsonData, "path") && json.isDataExist(jsonData, "volume")) {
+                std::string musicPath     = json.getDataFromJson<std::string>(jsonData, "path");
+                float volume              = json.getDataFromJson<float>(jsonData, "volume");
+                Raylib::MusicShared music = Raylib::Music::fromFile(musicPath, volume);
+                music->setNeedToPlay(true);
+                Registry::getInstance().addEntity();
+                Registry::getInstance().getComponents<Raylib::MusicShared>().insertBack(music);
+            }
+        }
+
         void initMenu(std::size_t managerId, std::size_t systemId)
         {
             if (Scene::SceneManager::getInstance().getCurrentScene() != MENU) {
@@ -195,7 +212,9 @@ namespace Systems {
                 return;
             }
             try {
+                initMainTheme();
                 Parallax::initParalax();
+                Logger::info("Init Parallax");
                 nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
                     ResourcesManager::getPathByJsonType(JsonType::MENU),
                     "menu");
@@ -216,6 +235,7 @@ namespace Systems {
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
                     case SELECT_LOBBY: Scene::SceneManager::getInstance().changeScene(MENU); break;
+                    case CREATE_SERVER_SCENE: Scene::SceneManager::getInstance().changeScene(MENU); break;
                     case GAME:
                         Nitwork::NitworkClient::getInstance().disconnectLobby();
                         Types::WaveInfos::getInstance().reset();
@@ -241,6 +261,8 @@ namespace Systems {
             std::vector<std::string> textures = Json::getInstance().getDatasByKey(
                 {ResourcesManager::getPathByJsonType(JsonType::ENEMIES),
                  ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PARALLAX),
+                 ResourcesManager::getPathByJsonType(JsonType::MENU),
+                 ResourcesManager::getPathByJsonType(JsonType::PARALLAX_2),
                  ResourcesManager::getPathByJsonType(JsonType::BULLETS),
                  ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER)},
                 "spritePath");
@@ -291,6 +313,23 @@ namespace Systems {
                 if (arrText[id]->getKeyword() == textKeyword) {
                     arrText[id]->setCurrentText(std::to_string(percentage) + "%");
                     arrText[id]->setFontSize(2.0F);
+                }
+            }
+        }
+
+        void resetParallaxTextForParallax(std::size_t /*unused*/, std::size_t /*unused*/)
+        {
+            auto ids     = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
+            auto arrText = Registry::getInstance().getComponents<Raylib::TextShared>();
+
+            for (auto id : ids) {
+                if (arrText[id]->getCurrentText().find("PARALLAX") != std::string::npos) {
+                    std::string paraName =
+                        "PARALLAX_"
+                        + std::to_string(
+                            Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr);
+
+                    arrText[id]->setCurrentText(paraName);
                 }
             }
         }
@@ -347,7 +386,8 @@ namespace Systems {
                 checkTextInput,
                 checkInputDeletion,
                 initSceneGame,
-                quitScene};
+                quitScene,
+                resetParallaxTextForParallax};
         }
     } // namespace Menu
 } // namespace Systems

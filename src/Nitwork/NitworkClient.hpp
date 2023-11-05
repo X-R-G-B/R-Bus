@@ -117,6 +117,22 @@ namespace Nitwork {
             void
             addCreateLobbyMsg(const std::string &name, enum gameType_e gameType, unsigned int maxNbPlayer);
 
+            /**
+             * @brief Check if the server is created by the client
+             */
+            bool serverAlreadyCreated();
+
+            /**
+             * @brief Create a server
+             * @param port port of the server
+             */
+            void createForkedServer(const std::string &port);
+
+            /**
+             * @brief Stop the server
+             */
+            void stop() final;
+
             /* Private connection methods */
 
         private:
@@ -216,6 +232,8 @@ namespace Nitwork {
              * @brief The endpoint of the server
              */
             boost::asio::ip::udp::endpoint _serverEndpoint;
+
+            std::vector<int> _serverPids; // pid of the servers
 
             // clang-format off
             /**

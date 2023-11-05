@@ -388,17 +388,6 @@ namespace Systems {
         }
     }
 
-    void quitGame(std::size_t /* unused */, std::size_t /* unused */)
-    {
-        if (Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_ESCAPE)) {
-            if (Scene::SceneManager::getInstance().getCurrentScene() == static_cast<std::size_t>(GAME)) {
-                Nitwork::NitworkClient::getInstance().disconnectLobby();
-                Types::WaveInfos::getInstance().reset();
-                Scene::SceneManager::getInstance().changeScene(static_cast<std::size_t>(SELECT_LOBBY));
-            }
-        }
-    }
-
     void receiveEndGame(std::any & /*unused*/, boost::asio::ip::udp::endpoint & /*unused*/)
     {
         auto &director = SystemManagersDirector::getInstance();
@@ -409,6 +398,6 @@ namespace Systems {
 
     std::vector<std::function<void(std::size_t, std::size_t)>> getNetworkSystems()
     {
-        return {quitGame, sendInitPacket, sendPositionRelative, sendPositionAbsolute};
+        return {sendInitPacket, sendPositionRelative, sendPositionAbsolute};
     }
 } // namespace Systems

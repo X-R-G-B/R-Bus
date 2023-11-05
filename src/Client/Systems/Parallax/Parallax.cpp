@@ -1,9 +1,11 @@
+#include "Parallax.hpp"
 #include <nlohmann/json.hpp>
 #include "B-luga-graphics/GraphicsSystems.hpp"
 #include "B-luga/Json.hpp"
-#include "ResourcesManager.hpp"
 
 namespace Systems::Parallax {
+
+    std::size_t ActualParallax::_actualParallaxNbr = 1;
 
     static void initParallaxEntity(nlohmann::basic_json<> &elem, const int maxOffsideParallax = 0)
     {
@@ -42,7 +44,8 @@ namespace Systems::Parallax {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         std::vector<nlohmann::basic_json<>> parallaxData = Json::getInstance().getDataByJsonType(
-            ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PARALLAX),
+            ResourcesManager::getPathByJsonType(
+                Parallax::ActualParallax::getInstance().getActualParallaxType()),
             "parallax");
 
         for (auto &elem : parallaxData) {

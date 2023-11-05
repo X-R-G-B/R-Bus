@@ -267,7 +267,7 @@ namespace Nitwork {
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
         director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC))
-            .addSystem(Systems::waveHandler); // le sheeiiiiiitan VERIF
+            .addSystem(Systems::waveHandler);
     }
 
     void

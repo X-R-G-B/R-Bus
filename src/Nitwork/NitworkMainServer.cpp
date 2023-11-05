@@ -197,7 +197,6 @@ namespace Nitwork {
                 << _T(maxNbPlayer) << _T(" ") << _T(gameType) << _T(" ") << _T(winName.c_str()) << _T(" ")
                 << _T(ownerIp.c_str()) << _T(" ") << _T(ownerPort);
 
-        Logger::fatal("cmdline: " + cmdline.str());
         STARTUPINFO si = {sizeof(si)};
         PROCESS_INFORMATION pi;
     #ifdef UNICODE

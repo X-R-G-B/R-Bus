@@ -10,7 +10,11 @@
 #include "B-luga-graphics/Raylib/Raylib.hpp"
 #include "B-luga/Logger.hpp"
 #include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "Menu.hpp"
 #include "NitworkClient.hpp"
+#include "Parallax.hpp"
+#include "ResourcesManager.hpp"
 #include "SelectLobbySystems.hpp"
 #include "init.hpp"
 
@@ -155,6 +159,7 @@ namespace Menu {
         void sendReadyPacket()
         {
             auto idsButton = Registry::getInstance().getEntitiesByComponents({typeid(Types::Button)});
+            auto arrButton = Registry::getInstance().getComponents<Types::Button>();
 
             Nitwork::NitworkClient::getInstance().addReadyMsg();
             for (auto &id : idsButton) {
@@ -167,6 +172,92 @@ namespace Menu {
                     Registry::getInstance().removeEntity(id);
                 }
             }
+        }
+
+        void goCreateServer()
+        {
+            Scene::SceneManager::getInstance().changeScene(CREATE_SERVER_SCENE);
+        }
+
+        void goMenu()
+        {
+            Scene::SceneManager::getInstance().changeScene(MENU);
+        }
+
+        void exitGame()
+        {
+            Scene::SceneManager::getInstance().stop();
+        }
+
+        static const std::size_t MAX_TEXT_OF_SCENE = 9;
+
+        void createServer()
+        {
+            auto arrInputBox = Registry::getInstance().getComponents<Types::InputBox>();
+            auto idsText = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
+            auto ids     = Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
+
+            if (Nitwork::NitworkClient::getInstance().serverAlreadyCreated()
+                && idsText.size() < MAX_TEXT_OF_SCENE) {
+                try {
+                    nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
+                        ResourcesManager::getPathByJsonType(JsonType::CREATE_SERVER),
+                        "errorMessage");
+                    ::Menu::MenuBuilder::getInstance().initMenuEntity(jsonData);
+                } catch (std::runtime_error &err) {
+                    Logger::warn(err.what());
+                }
+                return;
+            }
+            for (auto id : ids) {
+                if (arrInputBox[id].name == "port") {
+                    Nitwork::NitworkClient::getInstance().createForkedServer(arrInputBox[id].text);
+                }
+            }
+        }
+
+        static const std::size_t MAX_PARALLAX = 2;
+
+        void changeParallax()
+        {
+            auto ids     = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
+            auto idsPara = Registry::getInstance().getEntitiesByComponents({typeid(Types::Parallax)});
+            auto arrText = Registry::getInstance().getComponents<Raylib::TextShared>();
+            auto arrParallax = Registry::getInstance().getComponents<Types::Parallax>();
+
+            if (Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr < MAX_PARALLAX) {
+                Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr += 1;
+            } else {
+                Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr = 1;
+            }
+            for (auto id : idsPara) {
+                Registry::getInstance().addToRemove(id);
+            }
+            switch (Systems::Parallax::ActualParallax::getInstance().getActualParallaxType()) {
+                case JsonType::DEFAULT_PARALLAX:
+                    Systems::Parallax::ActualParallax::getInstance().setActualParralaxType(
+                        JsonType::PARALLAX_2);
+                    break;
+                case JsonType::PARALLAX_2:
+                    Systems::Parallax::ActualParallax::getInstance().setActualParralaxType(
+                        JsonType::DEFAULT_PARALLAX);
+                    break;
+                default:
+                    Systems::Parallax::ActualParallax::getInstance().setActualParralaxType(
+                        JsonType::DEFAULT_PARALLAX);
+                    break;
+            }
+            for (auto id : ids) {
+                if (arrText[id]->getCurrentText().find("PARALLAX") != std::string::npos) {
+                    std::string paraName =
+                        "PARALLAX_"
+                        + std::to_string(
+                            Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr);
+
+                    arrText[id]->setCurrentText(paraName);
+                }
+            }
+            Systems::Parallax::initParalax();
         }
     } // namespace Callback
 } // namespace Menu
