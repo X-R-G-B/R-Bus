@@ -220,8 +220,14 @@ namespace Menu {
             }
             for (auto id : ids) {
                 if (arrText[id]->getCurrentText().find("PARALLAX") != std::string::npos) {
-                    Logger::info("parallax name" + std::to_string(Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr));
-                    std::string paraName = "PARALLAX_" + std::to_string(Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr);
+                    Logger::info(
+                        "parallax name"
+                        + std::to_string(
+                            Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr));
+                    std::string paraName =
+                        "PARALLAX_"
+                        + std::to_string(
+                            Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr);
 
                     arrText[id]->setCurrentText(paraName);
                 }
