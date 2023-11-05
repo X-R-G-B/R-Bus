@@ -120,7 +120,7 @@ namespace Systems {
         Registry &registry                                = Registry::getInstance();
         Clock &clock_                                     = registry.getClock();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
-        Registry::components<struct health_s> arrHealth   = registry.getComponents<struct health_s>();
+        Registry::components<Types::Health> arrHealth   = registry.getComponents<Types::Health>();
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
@@ -166,9 +166,9 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         Registry &registry                              = Registry::getInstance();
         Registry::components<Types::Position> arrPos    = registry.getComponents<Types::Position>();
-        Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
+        Registry::components<Types::Health> arrHealth = registry.getComponents<Types::Health>();
         std::vector<std::size_t> ids                    = registry.getEntitiesByComponents(
-            {typeid(Types::Player), typeid(Types::Position), typeid(struct health_s)});
+            {typeid(Types::Player), typeid(Types::Position), typeid(Types::Health)});
         Clock &clock_              = registry.getClock();
         static std::size_t clockId = clock_.create(true);
 

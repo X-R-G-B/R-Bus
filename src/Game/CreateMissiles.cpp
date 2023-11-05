@@ -112,7 +112,7 @@ namespace Systems {
         Types::Missiles missileType = typeOfMissile;
         Types::Dead deadComp        = {};
         Types::PlayerAllies playerAlliesComp = {};
-        struct health_s healthComp           = {json.getDataFromJson<int>(bulletData, "health")};
+        Types::Health healthComp           = {json.getDataFromJson<int>(bulletData, "health")};
         Types::Damage damageComp             = {json.getDataFromJson<int>(bulletData, "damage")};
 
 #ifdef CLIENT
@@ -126,7 +126,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
-        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Health>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
         return id;
@@ -144,7 +144,7 @@ namespace Systems {
         Types::Missiles missileType        = typeOfMissile;
         Types::Dead deadComp               = {};
         Types::EnemyAllies enemyAlliesComp = {};
-        struct health_s healthComp         = {json.getDataFromJson<int>(bulletData, "health")};
+        Types::Health healthComp         = {json.getDataFromJson<int>(bulletData, "health")};
         Types::Damage damageComp           = {json.getDataFromJson<int>(bulletData, "damage")};
 
 #ifdef CLIENT
@@ -158,7 +158,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Missiles>().insertBack(missileType);
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
-        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Health>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
     }

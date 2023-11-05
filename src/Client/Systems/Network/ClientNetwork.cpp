@@ -21,14 +21,14 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         auto msg                                        = std::any_cast<struct msgLifeUpdate_s>(any);
         Registry &registry                              = Registry::getInstance();
-        Registry::components<struct health_s> arrHealth = registry.getComponents<struct health_s>();
+        Registry::components<Types::Health> arrHealth = registry.getComponents<Types::Health>();
         std::vector<std::size_t> ids                    = Registry::getInstance().getEntitiesByComponents(
-            {typeid(struct health_s), typeid(Types::Player)});
+            {typeid(Types::Health), typeid(Types::Player)});
 
         if (ids.empty()) {
             return;
         }
-        struct health_s &life = arrHealth[ids[0]];
+        Types::Health &life = arrHealth[ids[0]];
         if (life.hp != msg.life.hp) {
             life.hp = msg.life.hp;
         }
@@ -39,7 +39,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto enemyDeath                      = std::any_cast<struct msgEnemyDeath_s>(any);
         Registry::components<Types::Enemy> enemies = Registry::getInstance().getComponents<Types::Enemy>();
-        auto &arrHealth              = Registry::getInstance().getComponents<struct health_s>();
+        auto &arrHealth              = Registry::getInstance().getComponents<Types::Health>();
         std::vector<std::size_t> ids = enemies.getExistingsId();
 
         for (auto id : ids) {
@@ -60,7 +60,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         const auto missileDeath      = std::any_cast<struct msgMissileDeath_s>(any);
         auto &missiles               = Registry::getInstance().getComponents<Types::Missiles>();
-        auto &arrHealth              = Registry::getInstance().getComponents<struct health_s>();
+        auto &arrHealth              = Registry::getInstance().getComponents<Types::Health>();
         std::vector<std::size_t> ids = missiles.getExistingsId();
 
         for (auto id : ids) {
@@ -99,8 +99,8 @@ namespace Systems {
             Maths::addIntDecimals(newEnemy.enemyInfos.pos.x),
             Maths::addIntDecimals(newEnemy.enemyInfos.pos.y)};
         initEnemy(newEnemy.enemyInfos.type, pos, true, newEnemy.enemyInfos.id);
-        struct health_s hp = newEnemy.enemyInfos.life;
-        Registry::getInstance().getComponents<struct health_s>().insertBack(hp);
+        Types::Health hp(newEnemy.enemyInfos.life.hp);
+        Registry::getInstance().getComponents<Types::Health>().insertBack(hp);
     }
 
     static void createNewPlayer(const struct msgCreatePlayer_s &newPlayer)
@@ -110,9 +110,9 @@ namespace Systems {
         auto &arrPlayer      = registry.getComponents<Types::Player>();
         auto &arrOtherPlayer = registry.getComponents<Types::OtherPlayer>();
         auto idsPlayer       = registry.getEntitiesByComponents(
-            {typeid(Types::Position), typeid(Types::Player), typeid(struct health_s)});
+            {typeid(Types::Position), typeid(Types::Player), typeid(Types::Health)});
         auto idsOtherPlayer = registry.getEntitiesByComponents(
-            {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct health_s)});
+            {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct Types::Health)});
         Logger::debug("CREATE NEW PLAYER2");
         auto player =
             std::find_if(idsPlayer.begin(), idsPlayer.end(), [&arrPlayer, &newPlayer](std::size_t id) {
@@ -254,7 +254,7 @@ namespace Systems {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         auto &missiles = Registry::getInstance().getComponents<Types::Missiles>();
-        auto &health   = Registry::getInstance().getComponents<struct health_s>();
+        auto &health   = Registry::getInstance().getComponents<Types::Health>();
 
         const struct msgNewBullet_s &msgNewBullet = std::any_cast<struct msgNewBullet_s>(any);
 
@@ -302,11 +302,11 @@ namespace Systems {
         const auto playerDeath = std::any_cast<struct msgPlayerDeath_s>(any);
         auto &arrPlayer        = Registry::getInstance().getComponents<Types::Player>();
         auto &arrOtherPlayers  = Registry::getInstance().getComponents<Types::OtherPlayer>();
-        auto &arrHealth        = Registry::getInstance().getComponents<struct health_s>();
+        auto &arrHealth        = Registry::getInstance().getComponents<Types::Health>();
         auto playersIds        = Registry::getInstance().getEntitiesByComponents(
-            {typeid(Types::Player), typeid(struct health_s)});
+            {typeid(Types::Player), typeid(Types::Health)});
         auto otherPlayersIds = Registry::getInstance().getEntitiesByComponents(
-            {typeid(Types::OtherPlayer), typeid(struct health_s)});
+            {typeid(Types::OtherPlayer), typeid(Types::Health)});
 
         for (auto &id : playersIds) {
             if (arrPlayer[id].constId == playerDeath.playerId) {

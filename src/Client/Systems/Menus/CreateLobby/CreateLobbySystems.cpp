@@ -17,6 +17,7 @@
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "B-luga/SceneManager.hpp"
 #include "ResourcesManager.hpp"
+#include "Parallax.hpp"
 #include "init.hpp"
 
 namespace Systems {
@@ -29,6 +30,7 @@ namespace Systems {
                 return;
             }
             try {
+                Parallax::initParalax();
                 nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
                     ResourcesManager::getPathByJsonType(JsonType::CREATE_LOBBY),
                     "createLobbyMenu");

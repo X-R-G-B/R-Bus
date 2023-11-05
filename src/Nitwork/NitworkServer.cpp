@@ -18,6 +18,8 @@
 #include "ResourcesManager.hpp"
 #include "WaveSystem.hpp"
 
+enum SystemManagers;
+
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
     NitworkServer NitworkServer::_instance = NitworkServer();
@@ -143,10 +145,10 @@ namespace Nitwork {
     void NitworkServer::sendAlliesAlreadyPresent(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
     {
         auto &arrPos          = Registry::getInstance().getComponents<Types::Position>();
-        auto &arrHealth       = Registry::getInstance().getComponents<struct health_s>();
+        auto &arrHealth       = Registry::getInstance().getComponents<Types::Health>();
         auto &arrOtherPlayers = Registry::getInstance().getComponents<Types::OtherPlayer>();
         auto ids              = Registry::getInstance().getEntitiesByComponents(
-            {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(struct health_s)});
+            {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(Types::Health)});
 
         for (const auto &e : _playersIds) {
             auto allieId = e.second;
@@ -166,7 +168,7 @@ namespace Nitwork {
                            .magick        = MAGICK_NEW_PLAYER,
                            .playerId      = allieId,
                            .pos           = {arrPos[*idIt].x, arrPos[*idIt].y},
-                           .life          = arrHealth[*idIt],
+                           .life          = {.hp = arrHealth[*idIt].hp},
                            .isOtherPlayer = 1}
             };
             sendNewAllie(allieId, packetMsgCreatePlayer, endpoint, false);
@@ -245,6 +247,7 @@ namespace Nitwork {
     void
     NitworkServer::handleReadyMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
+        Logger::fatal("cacaprout");
         if (_isGameStarted) {
             Logger::info("Game already started, connection refused");
             return;
@@ -261,7 +264,8 @@ namespace Nitwork {
         _isGameStarted = true;
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
-        director.getSystemManager(0).addSystem(Systems::waveHandler);
+        director.getSystemManager(static_cast<std::size_t>(SystemManager::GAME)).addSystem(Systems::waveHandler); // le sheeiiiiiitan VERIF
+        Logger::fatal("cacaprout");
     }
 
     void

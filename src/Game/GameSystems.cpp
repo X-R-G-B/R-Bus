@@ -1,4 +1,3 @@
-
 #include "GameSystems.hpp"
 #include "B-luga/Json.hpp"
 #include "B-luga/Maths/Maths.hpp"
@@ -35,7 +34,7 @@ namespace Systems {
         Types::CollisionRect collisionRect = {Types::CollisionRect(
             Json::getInstance().getDataByVector(playerPath, {"player", "collisionRect"}))};
         Types::Position position           = {pos.x, pos.y};
-        struct health_s healthComp         = life;
+        Types::Health healthComp(life.hp);
 #ifdef CLIENT
         Types::SpriteDatas playerDatas(
             Json::getInstance().getDataByVector(
@@ -76,7 +75,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
-        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Health>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Dead>().insertBack(deadComp);
         Registry::getInstance().getComponents<Types::Container>().insertBack(container);
     }
@@ -110,16 +109,15 @@ namespace Systems {
 #endif
         Logger::fatal("end send enemy death");
     }
-
 #ifdef CLIENT
     static void sendLifeUpdateToServer(std::size_t id)
     {
         Registry::components<Types::Player> arrPlayer =
             Registry::getInstance().getComponents<Types::Player>();
-        auto arrHealth = Registry::getInstance().getComponents<struct health_s>();
+        auto arrHealth = Registry::getInstance().getComponents<Types::Health>();
 
         if (arrPlayer.exist(id)) {
-            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, arrHealth[id]);
+            Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, {arrHealth[id].hp});
         }
     }
 

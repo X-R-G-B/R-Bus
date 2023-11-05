@@ -142,7 +142,7 @@ namespace Systems {
         Types::CollisionRect collisionRect =
             Json::getInstance().getDataFromJson<Types::CollisionRect>(enemyData, "collisionRect");
         Types::Damage damageComp   = {Json::getInstance().getDataFromJson<int>(enemyData, "damage")};
-        struct health_s healthComp = {Json::getInstance().getDataFromJson<int>(enemyData, "health")};
+        Types::Health healthComp = {Json::getInstance().getDataFromJson<int>(enemyData, "health")};
         Types::Velocity velocity =
             Json::getInstance().getDataFromJson<Types::Velocity>(enemyData, "velocity");
 
@@ -157,7 +157,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::Position>().insertBack(position);
         Registry::getInstance().getComponents<Types::CollisionRect>().insertBack(collisionRect);
         Registry::getInstance().getComponents<Types::Velocity>().insertBack(velocity);
-        Registry::getInstance().getComponents<struct health_s>().insertBack(healthComp);
+        Registry::getInstance().getComponents<Types::Health>().insertBack(healthComp);
         Registry::getInstance().getComponents<Types::Damage>().insertBack(damageComp);
         Registry::getInstance().getComponents<Types::Enemy>().insertBack(enemyComp);
     }
