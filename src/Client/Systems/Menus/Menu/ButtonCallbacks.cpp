@@ -201,12 +201,17 @@ namespace Menu {
         {
 
             auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
+            auto idsPara = Registry::getInstance().getEntitiesByComponents({typeid(Types::Parallax)});
             auto arrText = Registry::getInstance().getComponents<Raylib::TextShared>();
+            auto arrParallax = Registry::getInstance().getComponents<Types::Parallax>();
 
             if (Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr < MAX_PARALLAX) {
                 Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr += 1;
             } else {
                 Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr = 1;
+            }
+            for (auto id: idsPara) {
+                Registry::getInstance().addToRemove(id);
             }
             switch(Systems::Parallax::ActualParallax::getInstance().getActualParallaxType()) {
                 case JsonType::DEFAULT_PARALLAX: Systems::Parallax::ActualParallax::getInstance().setActualParralaxType(JsonType::PARALLAX_2); break;
@@ -221,6 +226,7 @@ namespace Menu {
                     arrText[id]->setCurrentText(paraName);
                 }
             }
+            Systems::Parallax::initParalax();
         }
     } // namespace Callback
 } // namespace Menu
