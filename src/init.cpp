@@ -52,6 +52,8 @@ void initScenes()
     }
     auto &sceneManager = Scene::SceneManager::getInstance();
 #ifdef CLIENT
+    auto loadingScreen = enumListTosizet(
+        {SystemManagers::GRAPHICS, SystemManagers::MENU_SYSTEMS, SystemManagers::ECSSYSTEMS});
     auto menu = enumListTosizet(
         {SystemManagers::GRAPHICS, SystemManagers::MENU_SYSTEMS, SystemManagers::ECSSYSTEMS});
     auto selectLobby = enumListTosizet(
@@ -71,7 +73,8 @@ void initScenes()
          SystemManagers::CLIENTNETWORK,
          SystemManagers::GRAPHICS,
          SystemManagers::MENU_SYSTEMS});
-    sceneManager.setScenes({menu, selectLobby, createLobby, mainScene});
+    sceneManager.setScenes({loadingScreen, menu, selectLobby, createLobby, mainScene});
+
 #else
     auto scene = enumListTosizet({SystemManagers::ECSSYSTEMS, SystemManagers::GAME_LOGIC});
     sceneManager.setScenes({scene});
