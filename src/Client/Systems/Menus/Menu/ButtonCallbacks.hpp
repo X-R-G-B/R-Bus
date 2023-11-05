@@ -47,7 +47,7 @@ namespace Menu {
                 {CREATE_SERVER,    "createServer"                    },
                 {GO_MENU,          "goToMenu"                        },
                 {CHANGE_PARALLAX,  "changeParallax"                  },
-                {EXIT_GAME,  "exitGame"                  },
+                {EXIT_GAME,        "exitGame"                        },
         });
 
         void initConnection();
