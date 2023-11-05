@@ -74,6 +74,7 @@ void initScenes()
     sceneManager.setScenes({menu, selectLobby, createLobby, mainScene});
 #else
     auto scene = enumListTosizet({SystemManagers::ECSSYSTEMS, SystemManagers::GAME_LOGIC});
-    sceneManager.setScenes({scene});
+    auto scene2 = std::vector<std::size_t>();
+    sceneManager.setScenes({scene, scene2});
 #endif
 }

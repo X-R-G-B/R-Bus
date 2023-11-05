@@ -12,6 +12,7 @@
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga/Maths/Maths.hpp"
 #include "B-luga/SceneManager.hpp"
+#include "NitworkClient.hpp"
 #include "Menu.hpp"
 #include "SelectLobbySystems.hpp"
 #include "Parallax.hpp"
@@ -216,6 +217,7 @@ namespace Systems {
                         Scene::SceneManager::getInstance().changeScene(MENU);
                         break;
                     case GAME:
+                        Nitwork::NitworkClient::getInstance().disconnectLobby();
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
                 }

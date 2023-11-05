@@ -6,7 +6,6 @@
 */
 
 #include "ButtonCallbacks.hpp"
-// #include "CustomTypes.hpp"
 #include "B-luga/Logger.hpp"
 #include "NitworkClient.hpp"
 #include "B-luga-graphics/Raylib/Raylib.hpp"

@@ -14,6 +14,7 @@
 #include "B-luga/Logger.hpp"
 #include "B-luga/Registry.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "B-luga/SceneManager.hpp"
 #include "GameSystems.hpp"
 #include "ResourcesManager.hpp"
 #include "WaveSystem.hpp"
@@ -306,9 +307,18 @@ namespace Nitwork {
             Logger::error("Error: magick is not MAGICK_DISCONNECT_LOBBY");
             return;
         }
+        Logger::fatal("Client disconnected: " + endpoint.address().to_string() + ":"
+                      + std::to_string(endpoint.port()));
         _endpoints.erase(std::remove(_endpoints.begin(), _endpoints.end(), endpoint));
         deletePacketFromEndPoints(endpoint);
         addPlayerDeathMsg(getPlayerId(endpoint));
+        _playersReady.erase(endpoint);
+        _playersIds.erase(endpoint);
+        if (_endpoints.empty()) {
+            Logger::fatal("No more clients, restarting server");
+            Systems::SystemManagersDirector::getInstance().resetChanges();
+            _isGameStarted = false;
+        }
     }
     /* End Handle packet (msg) Section */
 
