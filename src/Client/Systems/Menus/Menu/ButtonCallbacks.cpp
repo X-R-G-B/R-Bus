@@ -156,6 +156,7 @@ namespace Menu {
         void sendReadyPacket()
         {
             auto idsButton = Registry::getInstance().getEntitiesByComponents({typeid(Types::Button)});
+            auto arrButton = Registry::getInstance().getComponents<Types::Button>();
 
             Nitwork::NitworkClient::getInstance().addReadyMsg();
             for (auto &id : idsButton) {
@@ -173,6 +174,11 @@ namespace Menu {
         void goCreateServer()
         {
             Scene::SceneManager::getInstance().changeScene(CREATE_SERVER_SCENE);
+        }
+
+        void goMenu()
+        {
+            Scene::SceneManager::getInstance().changeScene(MENU);
         }
 
         void createServer()

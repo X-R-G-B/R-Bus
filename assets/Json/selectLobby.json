@@ -259,6 +259,77 @@
                 "x": 7350,
                 "y": 7250
             }
+        },
+        {
+          "type": "button",
+          "spritePath": "assets/Menu/button.png",
+          "width": 1600,
+          "height": 1000,
+          "callback": "goToMenu",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1366.0,
+            "height": 406.0
+          },
+          "position": {
+            "x": 100,
+            "y": 500
+          },
+          "collisionRect": {
+            "width": 1600,
+            "height": 1000,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "animRect": [
+            {
+              "type": "hover",
+              "time": 80,
+              "noIncr": true,
+              "list": [
+                {
+                  "x": 1366.0,
+                  "y": 0.0,
+                  "width": 1366.0,
+                  "height": 406.0
+                }
+              ]
+            },
+            {
+              "type": "selected",
+              "time": 80,
+              "noIncr": true,
+              "list": [
+                {
+                  "x" : 2732.0,
+                  "y": 0.0,
+                  "width": 1366.0,
+                  "height": 406.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Go Back",
+          "color": "red",
+          "size": 2,
+          "position": {
+            "x": 525,
+            "y": 875
+          }
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "SELECT LOBBY",
+            "position" : {
+                "x": 4150,
+                "y": 500
+            }
         }
     ],
     "inputBoxes" : {

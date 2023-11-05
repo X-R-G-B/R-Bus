@@ -284,6 +284,16 @@
           ]
         }
       ]
+    },
+    {
+      "type": "text",
+      "color": "red",
+      "size": 2,
+      "text": "CREATE LOBBY",
+      "position" : {
+          "x": 4150,
+          "y": 500
+      }
     }
   ]
 }

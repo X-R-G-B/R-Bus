@@ -5,7 +5,7 @@
         "spritePath": "assets/Menu/button.png",
         "width": 1600,
         "height": 1000,
-        "callback": "goToSelectLobby",
+        "callback": "goToMenu",
         "rect": {
           "x": 0.0,
           "y": 0.0,
@@ -154,22 +154,12 @@
       },
       {
         "type": "text",
-        "color": "red",
-        "size": 3,
-        "text": "CREATE WITH GAME TYPE :",
-        "position" : {
-          "x": 3000,
-          "y": 6500
-        }
-      },
-      {
-        "type": "text",
         "color": "white",
         "size": 2,
-        "text": "NORMAL",
+        "text": "CREATE",
         "position" : {
-          "x": 4600,
-          "y": 7600
+          "x": 4200,
+          "y": 6500
         }
       },
       {
@@ -185,8 +175,8 @@
           "height": 406.0
         },
         "position": {
-          "x": 3750,
-          "y": 7100
+          "x": 3400,
+          "y": 6000
         },
         "collisionRect": {
           "width": 2500,
@@ -235,6 +225,16 @@
             ]
           }
         ]
+      },
+      {
+        "type": "text",
+        "color": "red",
+        "size": 2,
+        "text": "CREATE SERVER",
+        "position" : {
+            "x": 3800,
+            "y": 500
+        }
       }
     ]
   }

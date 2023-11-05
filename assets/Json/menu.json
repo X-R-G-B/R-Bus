@@ -261,6 +261,16 @@
                 "x": 4150,
                 "y": 7950
             }
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "MENU",
+            "position" : {
+                "x": 4150,
+                "y": 500
+            }
         }
     ]
 }
