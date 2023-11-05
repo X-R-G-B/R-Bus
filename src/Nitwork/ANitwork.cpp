@@ -245,8 +245,6 @@ namespace Nitwork {
                     });
                     for (auto &action : _actions) {
                         try {
-                            Logger::fatal(
-                                "NITWORK: Adding action to queue: " + std::to_string(action.first.id));
                             action.second(action.first.data, action.first.endpoint);
                         } catch (std::exception &e) {
                             Logger::fatal("StartInputHandler:");

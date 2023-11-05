@@ -65,14 +65,12 @@ void initScenes()
     });
     auto selectLobby  = enumListTosizet(
         {SystemManagers::MENU_SYSTEMS,
-          SystemManagers::NETWORK_MENU,
-          SystemManagers::CLIENTNETWORK,
-          SystemManagers::ECSSYSTEMS,
-          SystemManagers::GRAPHICS});
+         SystemManagers::NETWORK_MENU,
+         SystemManagers::ECSSYSTEMS,
+         SystemManagers::GRAPHICS});
     auto createLobby = enumListTosizet(
         {SystemManagers::MENU_SYSTEMS,
          SystemManagers::NETWORK_CREATE_LOBBY,
-         SystemManagers::CLIENTNETWORK,
          SystemManagers::ECSSYSTEMS,
          SystemManagers::GRAPHICS});
     auto mainScene = enumListTosizet(

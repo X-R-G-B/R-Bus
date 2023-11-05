@@ -271,77 +271,77 @@ namespace Nitwork {
              * @brief a map that will be used to handle the actions, in order to receive them
              */
             std::map<enum n_actionType_t, std::pair<handleBodyT, actionHandler>> _actionsHandlers = {
-                {CONNECT_LOBBY,
+                {NITWORK_CONNECT_LOBBY,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgConnectLobby_s>(actionHandler, header);
                   },
                   [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       handleConnectLobbyMsg(msg, endpoint);
                   }}},
-                {INIT,
+                {NITWORK_INIT,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgInit_s>(actionHandler, header);
                   },
                   [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       handleInitMsg(msg, endpoint);
                   }}},
-                {READY,
+                {NITWORK_READY,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgReady_s>(actionHandler, header);
                   },
                   [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       handleReadyMsg(msg, endpoint);
                   }}},
-                {POSITION_RELATIVE,
+                {NITWORK_POSITION_RELATIVE,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgPositionRelative_s>(actionHandler, header);
                   },
                   [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       handleRelativePositionMsg(msg, endpoint);
                   }}},
-                {LIFE_UPDATE,
+                {NITWORK_LIFE_UPDATE,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgLifeUpdate_s>(actionHandler, header);
                   },
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::handleLifeUpdateMsg(msg, endpoint);
                   }}},
-                {ENEMY_DEATH,
+                {NITWORK_ENEMY_DEATH,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgEnemyDeath_s>(actionHandler, header);
                   },
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::handleClientEnemyDeath(msg, endpoint);
                   }}},
-                {NEW_MISSILE,
+                {NITWORK_NEW_MISSILE,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgNewBullet_s>(actionHandler, header);
                   },
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::receiveNewBulletMsg(msg, endpoint);
                   }}},
-                {POSITION_ABSOLUTE,
+                {NITWORK_POSITION_ABSOLUTE,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgPositionAbsolute_s>(actionHandler, header);
                   },
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::receiveAbsolutePositionMsg(msg, endpoint);
                   }}},
-                {PLAYER_DEATH,
+                {NITWORK_PLAYER_DEATH,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgPlayerDeath_s>(actionHandler, header);
                   },
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::receivePlayerDeathMsg(msg, endpoint);
                   }}},
-                {MISSILE_DEATH,
+                {NITWORK_MISSILE_DEATH,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgMissileDeath_s>(actionHandler, header);
                   },
                   [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                       Systems::handleClientMissileDeath(msg, endpoint);
                   }}},
-                {DISCONNECT_LOBBY,
+                {NITWORK_DISCONNECT_LOBBY,
                  {[this](actionHandler &actionHandler, const struct header_s &header) {
                       handleBody<struct msgDisconnectLobby_s>(actionHandler, header);
                   },
@@ -353,59 +353,58 @@ namespace Nitwork {
              * @brief a map that will be used to handle the actions, in order to send them
              */
             std::map<enum n_actionType_t, actionSender> _actionToSendHandlers = {
-                {CONNECT_LOBBY_RESP,
+                {NITWORK_CONNECT_LOBBY_RESP,
                  [this](Packet &packet) {
                      sendData<struct packetConnectLobbyResp_s>(packet);
-                 }},
-                {INIT,
+                 }                            },
+                {NITWORK_INIT,
                  [this](Packet &packet) {
                      sendData<struct packetCreatePlayer_s>(packet);
-                 }},
-                {LIFE_UPDATE,
+                 }                            },
+                {NITWORK_LIFE_UPDATE,
                  [this](Packet &packet) {
                      sendData<struct packetLifeUpdate_s>(packet);
-                 }},
-                {START_WAVE,
+                 }                            },
+                {NITWORK_START_WAVE,
                  [this](Packet &packet) {
                      sendData<struct packetMsgStartWave_s>(packet);
-                 }},
-                {ENEMY_DEATH,
+                 }                            },
+                {NITWORK_ENEMY_DEATH,
                  [this](Packet &packet) {
                      sendData<struct packetEnemyDeath_s>(packet);
-                 }},
-                {NEW_ENEMY,
+                 }                            },
+                {NITWORK_NEW_ENEMY,
                  [this](Packet &packet) {
                      sendData<struct packetNewEnemy_s>(packet);
-                 }},
-                {NEW_MISSILE,
+                 }                            },
+                {NITWORK_NEW_MISSILE,
                  [this](Packet &packet) {
                      sendData<struct packetNewBullet_s>(packet);
-                 }},
-                {NEW_PLAYER,
+                 }                            },
+                {NITWORK_NEW_PLAYER,
                  [this](Packet &packet) {
                      sendData<struct packetCreatePlayer_s>(packet);
-                 }},
-                {POSITION_RELATIVE_BROADCAST,
+                 }                            },
+                {NITWORK_POSITION_RELATIVE_BROADCAST,
                  [this](Packet &packet) {
                      sendData<struct packetPositionRelativeBroadcast_s>(packet);
-                 }},
-                {POSITION_ABSOLUTE_BROADCAST,
+                 }                            },
+                {NITWORK_POSITION_ABSOLUTE_BROADCAST,
                  [this](Packet &packet) {
                      sendData<struct packetPositionAbsoluteBroadcast_s>(packet);
-                 }},
-                {PLAYER_DEATH,
+                 }                            },
+                {NITWORK_PLAYER_DEATH,
                  [this](Packet &packet) {
                      sendData<struct packetPlayerDeath_s>(packet);
-                 }},
-                {MISSILE_DEATH,
+                 }                            },
+                {NITWORK_MISSILE_DEATH,
                  [this](Packet &packet) {
                      sendData<struct packetMissileDeath_s>(packet);
-                 }},
-                {INFO_LOBBY,
-                 [this](Packet &packet) {
+                 }                            },
+                {NITWORK_INFO_LOBBY,                  [this](Packet &packet) {
                      sendData<struct packetInfoLobby_s>(packet);
                  }},
-                {END_GAME,
+                {NITWORK_END_GAME,
                  [this](Packet &packet) {
                      sendData<struct packetEndGame_s>(packet);
                  }},

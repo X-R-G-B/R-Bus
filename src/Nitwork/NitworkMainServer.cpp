@@ -62,7 +62,7 @@ namespace Nitwork {
                          .id               = 0,
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action = {.magick = CONNECT_MAIN_SERVER_RESP},
+            .action = {.magick = NITWORK_CONNECT_MAIN_SERVER_RESP},
             .msg    = {.magick = MAGICK_CONNECT_MAIN_SERVER_RESP}
         };
 
@@ -155,7 +155,7 @@ namespace Nitwork {
 
         for (std::size_t i = 0; i < lobbies.size(); i++) {
             msg.actionLobby[i] = {
-                .action = {.magick = LIST_LOBBY},
+                .action = {.magick = NITWORK_LIST_LOBBY},
                 .lobby  = {.magick = MAGICK_LIST_LOBBY, .lobby = lobbies[i]}
             };
         }

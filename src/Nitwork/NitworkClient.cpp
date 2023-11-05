@@ -149,10 +149,11 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = DISCONNECT_LOBBY,
+                       .magick = NITWORK_DISCONNECT_LOBBY,
                        },
             .msg = {.magick = MAGICK_DISCONNECT_LOBBY},
         };
+        Logger::error("------------------------------------ Sending disconnect lobby msg: " + std::to_string(NITWORK_DISCONNECT_LOBBY) + " " + std::to_string(MAGICK_DISCONNECT_LOBBY));
         Packet packet(
             packetDisconnectLobby.action.magick,
             std::make_any<struct packetDisconnectLobby_s>(packetDisconnectLobby),
@@ -168,10 +169,11 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = INIT,
+                       .magick = NITWORK_INIT,
                        },
             .msgInit = {.magick = MAGICK_INIT}
         };
+        Logger::error("------------------------------------ Sending init msg: " + std::to_string(NITWORK_INIT) + " " + std::to_string(MAGICK_INIT));
         Packet packet(
             packetMsgInit.action.magick,
             std::make_any<struct packetMsgInit_s>(packetMsgInit),
@@ -184,9 +186,10 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgReady_s packetMsgReady = {
             .header   = {0, 0, 0, 0, 1, 0},
-            .action   = {.magick = READY},
+            .action   = {.magick = NITWORK_READY},
             .msgReady = {.magick = MAGICK_READY}
         };
+        Logger::error("------------------------------------ Sending ready msg: " + std::to_string(NITWORK_READY) + " " + std::to_string(MAGICK_READY));
         Packet packet(
             packetMsgReady.action.magick,
             std::make_any<struct packetMsgReady_s>(packetMsgReady),
@@ -201,7 +204,7 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = POSITION_RELATIVE,
+                       .magick = NITWORK_POSITION_RELATIVE,
                        },
             .msg =
                 {
@@ -225,7 +228,7 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = NEW_MISSILE,
+                       .magick = NITWORK_NEW_MISSILE,
                        },
             .msg =
                 {
@@ -250,7 +253,7 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = POSITION_ABSOLUTE,
+                       .magick = NITWORK_POSITION_ABSOLUTE,
                        },
             .msg =
                 {
@@ -273,7 +276,7 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = LIFE_UPDATE,
+                       .magick = NITWORK_LIFE_UPDATE,
                        },
             .msgLifeUpdate =
                 {
@@ -282,6 +285,7 @@ namespace Nitwork {
                        .life     = life,
                        },
         };
+        Logger::error("------------------------------------ Sending life update msg: " + std::to_string(playerId) + " " + std::to_string(MAGICK_LIFE_UPDATE));
         Packet packet(
             packetLifeUpdate.action.magick,
             std::make_any<struct packetLifeUpdate_s>(packetLifeUpdate),
@@ -297,7 +301,7 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = ENEMY_DEATH,
+                       .magick = NITWORK_ENEMY_DEATH,
                        },
             .msgEnemyDeath =
                 {
@@ -319,7 +323,7 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = PLAYER_DEATH,
+                       .magick = NITWORK_PLAYER_DEATH,
                        },
             .msg = {.magick = MAGICK_PLAYER_DEATH, .playerId = id},
         };
@@ -337,7 +341,7 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = MISSILE_DEATH,
+                       .magick = NITWORK_MISSILE_DEATH,
                        },
             .msgMissileDeath =
                 {
@@ -345,6 +349,7 @@ namespace Nitwork {
                        .missileId = id,
                        },
         };
+        Logger::error("------------------------------------ Sending missile death msg: " + std::to_string(NITWORK_MISSILE_DEATH) + " " + std::to_string(MAGICK_MISSILE_DEATH));
         Packet packet(
             packetMissileDeath.action.magick,
             std::make_any<struct packetMissileDeath_s>(packetMissileDeath),
@@ -358,10 +363,11 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = LIST_LOBBY,
+                       .magick = NITWORK_LIST_LOBBY,
                        },
             .msg = {.magick = MAGICK_REQUEST_LIST_LOBBY},
         };
+        Logger::error("------------------------------------ Sending list lobby msg: " + std::to_string(NITWORK_LIST_LOBBY) + " " + std::to_string(MAGICK_REQUEST_LIST_LOBBY));
         Packet packet(
             packetListLobby.action.magick,
             std::make_any<struct packetRequestListLobby_s>(packetListLobby),
@@ -379,7 +385,7 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = CREATE_LOBBY,
+                       .magick = NITWORK_CREATE_LOBBY,
                        },
             .msg = {
                        .magick      = MAGICK_CREATE_LOBBY,
@@ -388,6 +394,7 @@ namespace Nitwork {
                        .maxNbPlayer = maxNbPlayer,
                        .ownerInfos  = {.ip = "", .port = _mainServerEndpoint.port()}}
         };
+        Logger::error("------------------------------------ Sending create lobby msg: " + std::to_string(NITWORK_CREATE_LOBBY) + " " + std::to_string(MAGICK_CREATE_LOBBY));
         std::strcpy(packetCreateLobby.msg.name, (name.size() > 32 ? name.substr(0, 32) : name).c_str());
         std::strcpy(
             packetCreateLobby.msg.ownerInfos.ip,
@@ -409,10 +416,11 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = CONNECT_MAIN_SERVER,
+                       .magick = NITWORK_CONNECT_MAIN_SERVER,
                        },
             .msg = {.magick = MAGICK_CONNECT_MAIN_SERVER},
         };
+        Logger::error("------------------------------------ Sending connect main server msg: " + std::to_string(NITWORK_CONNECT_MAIN_SERVER) + " " + std::to_string(MAGICK_CONNECT_MAIN_SERVER));
         Packet packet(
             packetConnectMainServer.action.magick,
             std::make_any<struct packetConnectMainServer_s>(packetConnectMainServer),
@@ -496,10 +504,11 @@ namespace Nitwork {
             .header = {0, 0, 0, 0, 1, 0},
             .action =
                 {
-                       .magick = CONNECT_LOBBY,
+                       .magick = NITWORK_CONNECT_LOBBY,
                        },
             .msg = {.magick = MAGICK_CONNECT_LOBBY},
         };
+        Logger::error("------------------------------------ Sending connect lobby msg: " + std::to_string(NITWORK_CONNECT_LOBBY) + " " + std::to_string(MAGICK_CONNECT_LOBBY));
         Packet packet(
             packetConnectLobby.action.magick,
             std::make_any<struct packetConnectLobby_s>(packetConnectLobby),
