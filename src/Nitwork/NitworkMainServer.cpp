@@ -139,7 +139,8 @@ namespace Nitwork {
         it->second.first(it->second.second, header);
     }
 
-    void NitworkMainServer::handleLobbyPidMsg(const std::any &data, boost::asio::ip::udp::endpoint &endpoint)
+    void
+    NitworkMainServer::handleLobbyPidMsg(const std::any &data, boost::asio::ip::udp::endpoint &endpoint)
     {
         const struct msgReplaceLobbyPid_s &msg = std::any_cast<struct msgReplaceLobbyPid_s>(data);
 

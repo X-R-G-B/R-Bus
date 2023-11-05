@@ -213,10 +213,10 @@ namespace Types {
             void reset()
             {
                 _remainingEnemies.clear();
-                _waveId = 0;
+                _waveId              = 0;
                 _isFirstEnemyCreated = false;
-                _waitingForNextWave = false;
-                _clockId = Registry::getInstance().getClock().create(false);
+                _waitingForNextWave  = false;
+                _clockId             = Registry::getInstance().getClock().create(false);
             }
 
         private:

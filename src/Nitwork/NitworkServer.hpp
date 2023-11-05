@@ -216,10 +216,7 @@ namespace Nitwork {
              * @param name The name of the lobby
              * @param gameType The type of the game
              */
-            void recreateLobby(
-                unsigned int maxNbPlayer,
-                const std::string &name,
-                enum gameType_e gameType);
+            void recreateLobby(unsigned int maxNbPlayer, const std::string &name, enum gameType_e gameType);
 
             /**
              * @brief A map that contain the endpoint of the clients and their infos

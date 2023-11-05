@@ -272,7 +272,7 @@ namespace Systems {
     {
         constexpr std::size_t secondBeforeEnd = 5;
         static std::size_t clockId            = Registry::getInstance().getClock().create(false);
-        static bool restart = false;
+        static bool restart                   = false;
         std::size_t elapsedSeconds = Registry::getInstance().getClock().elapsedSecondsSince(clockId);
         std::string seconds        = std::to_string(secondBeforeEnd - elapsedSeconds);
         std::string endGameMessage;
