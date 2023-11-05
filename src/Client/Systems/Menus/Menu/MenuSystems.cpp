@@ -252,7 +252,7 @@ namespace Systems {
                 return;
             }
             try {
-                Parallax::initParalax();
+//                Parallax::initParalax();
                 preloadTexture();
                 initHud();
             } catch (std::runtime_error &err) {

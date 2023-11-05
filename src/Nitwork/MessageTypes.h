@@ -27,9 +27,9 @@ enum enemy_type_e {
 
 enum missileTypes_e {
     CLASSIC = 0,
-    FAST,
-    BOUNCE,
-    PERFORANT,
+    FAST = 1,
+    BOUNCE = 2,
+    PERFORANT = 3,
     MAX_MISSILE_TYPE
 };
 

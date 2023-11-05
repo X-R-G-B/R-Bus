@@ -249,7 +249,6 @@ namespace Nitwork {
     void
     NitworkServer::handleReadyMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
-        Logger::fatal("cacaprout");
         if (_isGameStarted) {
             Logger::info("Game already started, connection refused");
             return;
@@ -267,7 +266,6 @@ namespace Nitwork {
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
         director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC)).addSystem(Systems::waveHandler); // le sheeiiiiiitan VERIF
-        Logger::fatal("cacaprout");
     }
 
     void
