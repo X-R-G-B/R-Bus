@@ -188,7 +188,7 @@ namespace Systems {
 
         void initMenu(std::size_t managerId, std::size_t systemId)
         {
-            if (Scene::SceneManager::getInstance().getCurrentScene() != Scenes::MENU) {
+            if (Scene::SceneManager::getInstance().getCurrentScene() != MENU) {
                 SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
                 return;
             }

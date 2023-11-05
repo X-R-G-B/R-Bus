@@ -15,6 +15,7 @@
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "Menu.hpp"
 #include "MessageTypes.h"
+#include "Parallax.hpp"
 #include "NitworkClient.hpp"
 #include "ResourcesManager.hpp"
 #include "init.hpp"
@@ -30,11 +31,12 @@ namespace Systems::SelectLobbySystems {
 
     void initSelectLoby(std::size_t managerId, std::size_t systemId)
     {
-        if (Scene::SceneManager::getInstance().getCurrentScene() != Scenes::SELECT_LOBBY) {
+        if (Scene::SceneManager::getInstance().getCurrentScene() != SELECT_LOBBY) {
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
             return;
         }
         try {
+            Parallax::initParalax();
             nlohmann::json jsonData =
                 Json::getInstance().getDataByJsonType<nlohmann::json>(ResourcesManager::getPathByJsonType(JsonType::SELECT_LOBBY), "lobbyMenu");
             ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
@@ -72,6 +74,10 @@ namespace Systems::SelectLobbySystems {
         auto &arrPosition  = Registry::getInstance().getComponents<Types::Position>();
         int offset         = 1000;
 
+        if (Scene::SceneManager::getInstance().getCurrentScene() != SELECT_LOBBY) {
+            SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
+            return;
+        }
         try {
             for (std::size_t i = 0; i < 5; i++) {
                 nlohmann::json lobbyBox = Json::getInstance().getDataByJsonType<nlohmann::json>(

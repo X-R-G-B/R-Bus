@@ -73,7 +73,7 @@ void initScenes()
          SystemManagers::CLIENTNETWORK,
          SystemManagers::GRAPHICS,
          SystemManagers::MENU_SYSTEMS});
-    sceneManager.setScenes({menu, selectLobby, mainScene});
+    sceneManager.setScenes({menu, selectLobby, createLobby, mainScene});
 #else
     auto scene = enumListTosizet({SystemManagers::ECSSYSTEMS, SystemManagers::GAME_LOGIC});
     sceneManager.setScenes({scene});

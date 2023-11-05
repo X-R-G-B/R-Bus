@@ -24,7 +24,7 @@ namespace Systems {
 
         void initCreateLobby(std::size_t managerId, std::size_t systemId)
         {
-            if (Scene::SceneManager::getInstance().getCurrentScene() != CREATE_LOBBY) {
+            if (Scene::SceneManager::getInstance().getCurrentScene() != CREATE_LOBBY_SCENE) {
                 SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
                 return;
             }
