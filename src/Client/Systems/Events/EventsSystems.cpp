@@ -292,7 +292,6 @@ namespace Systems {
         modifEndGameText(endGameMessage);
 
         if (Registry::getInstance().getClock().elapsedSecondsSince(clockId) >= secondBeforeEnd) {
-            Logger::fatal("end of gameeeeeeeeeeeeeeeeee");
             Nitwork::NitworkClient::getInstance().disconnectLobby();
             Types::WaveInfos::getInstance().reset();
             restart = true;
