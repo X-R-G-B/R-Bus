@@ -7,6 +7,9 @@
 
 #pragma once
 
+#if defined(_WIN32)
+    #include <tchar.h>
+#endif
 #include "ANitwork.hpp"
 #include "ServerNetwork.hpp"
 
@@ -223,7 +226,7 @@ namespace Nitwork {
              * @param endpoint The endpoint of the client that sent the packet
              * @param pid The pid of the lobby
              */
-            void sendLobbyPid(const boost::asio::ip::udp::endpoint &endpoint, pid_t pid);
+            void sendLobbyPid(const boost::asio::ip::udp::endpoint &endpoint, int pid);
 
             /**
              * @brief A map that contain the endpoint of the clients and their infos

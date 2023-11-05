@@ -238,7 +238,8 @@ namespace Systems {
     {
         bool found                           = false;
         const Raylib::Vector2 pos            = {0, 2};
-        constexpr std::size_t fontSize       = 2;
+        const int fontSize                   = 2;
+        Types::FontSize fsz                 = {fontSize};
         const std::string textKeywordWaveEnd = "WaveText";
         const std::string textKeyWordGameEnd = "endGameText";
 
@@ -265,6 +266,7 @@ namespace Systems {
                 Raylib::Color(Raylib::ColorDef::White),
                 textKeyWordGameEnd);
             Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(endGameText);
+            Registry::getInstance().getComponents<Types::FontSize>().insertBack(fsz);
         }
     }
 
