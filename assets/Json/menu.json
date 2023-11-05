@@ -328,5 +328,9 @@
         "imgPath": "assets/Menu/loading.gif",
         "width": 100,
         "height": 100
+    },
+    "mainTheme": {
+        "path": "assets/Audio/Musics/home.mp3",
+        "volume": 0.65
     }
 }

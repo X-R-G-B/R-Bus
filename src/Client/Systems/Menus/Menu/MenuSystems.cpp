@@ -187,6 +187,23 @@ namespace Systems {
             }
         }
 
+        static void initMainTheme()
+        {
+            Json &json = Json::getInstance();
+
+            nlohmann::json jsonData = json.getDataByJsonType<nlohmann::json>(
+                ResourcesManager::getPathByJsonType(JsonType::MENU),
+                "mainTheme");
+            if (json.isDataExist(jsonData, "path") && json.isDataExist(jsonData, "volume")) {
+                std::string musicPath     = json.getDataFromJson<std::string>(jsonData, "path");
+                float volume              = json.getDataFromJson<float>(jsonData, "volume");
+                Raylib::MusicShared music = Raylib::Music::fromFile(musicPath, volume);
+                music->setNeedToPlay(true);
+                Registry::getInstance().addEntity();
+                Registry::getInstance().getComponents<Raylib::MusicShared>().insertBack(music);
+            }
+        }
+
         void initMenu(std::size_t managerId, std::size_t systemId)
         {
             if (Scene::SceneManager::getInstance().getCurrentScene() != MENU) {
@@ -194,6 +211,7 @@ namespace Systems {
                 return;
             }
             try {
+                initMainTheme();
                 Parallax::initParalax();
                 Logger::info("Init Parallax");
                 nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
