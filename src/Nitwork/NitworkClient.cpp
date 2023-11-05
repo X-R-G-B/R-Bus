@@ -426,7 +426,6 @@ namespace Nitwork {
             return;
         }
 #ifdef _WIN32
-        std::string winName = "'" + name + "'";
         std::basic_ostringstream<TCHAR> cmdline;
         cmdline << _T(ResourcesManager::convertPath("./r-type_server.exe").c_str()) << _T(" 0 ")
                 << _T(" ") << _T(port);
