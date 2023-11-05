@@ -41,9 +41,9 @@ namespace Menu {
                 {GO_SELECT_LOBBY,  "goToSelectLobby"                 },
                 {CREATE_NORMAL,    "onButtonCreateLobbyNormalClicked"},
                 {SEND_READY,       "sendReadyPacket"                 },
-                {GO_CREATE_SERVER,       "goCreateServer"                 },
-                {CREATE_SERVER,       "createServer"                 },
-                {GO_MENU,       "goToMenu"                 },
+                {GO_CREATE_SERVER, "goCreateServer"                  },
+                {CREATE_SERVER,    "createServer"                    },
+                {GO_MENU,          "goToMenu"                        },
         });
 
         void initConnection();
@@ -71,18 +71,21 @@ namespace Menu {
         void createServer();
 
         const std::unordered_map<CallbackType, std::function<void()>> callbacks = {
-            {CallbackType::DEFAULT_CALLBACK, &defaultCallBack                 },
-            {CallbackType::INIT_CONNECTION,  &initConnection                  },
-            {CallbackType::CONNECT,          &connectLobbySelected            },
-            {CallbackType::CREATE,           &onButtonGotoCreateLobbyClicked  },
-            {CallbackType::GO_SELECT_LOBBY,  &gotToSelectLobby                },
-            {CallbackType::GO_BACK,          &goBackPage                      },
-            {CallbackType::GO_NEXT,          &goNextPage                      },
-            {CallbackType::CREATE_NORMAL,    &onButtonCreateLobbyNormalClicked},
-            {CallbackType::SEND_READY,       &sendReadyPacket               },
-            {CallbackType::GO_CREATE_SERVER,       &goCreateServer                },
-            {CallbackType::CREATE_SERVER,       &createServer                },
-            {CallbackType::GO_MENU,       &goMenu,                }
+            {CallbackType::DEFAULT_CALLBACK, &defaultCallBack},
+            {CallbackType::INIT_CONNECTION, &initConnection},
+            {CallbackType::CONNECT, &connectLobbySelected},
+            {CallbackType::CREATE, &onButtonGotoCreateLobbyClicked},
+            {CallbackType::GO_SELECT_LOBBY, &gotToSelectLobby},
+            {CallbackType::GO_BACK, &goBackPage},
+            {CallbackType::GO_NEXT, &goNextPage},
+            {CallbackType::CREATE_NORMAL, &onButtonCreateLobbyNormalClicked},
+            {CallbackType::SEND_READY, &sendReadyPacket},
+            {CallbackType::GO_CREATE_SERVER, &goCreateServer},
+            {CallbackType::CREATE_SERVER, &createServer},
+            {
+             CallbackType::GO_MENU,
+             &goMenu,
+             }
         };
     } // namespace Callback
 } // namespace Menu
