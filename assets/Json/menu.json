@@ -103,6 +103,16 @@
             ]
         },
         {
+            "type": "text",
+            "color": "red",
+            "size": 1.5,
+            "text": "PARALLAX_1",
+            "position" : {
+                "x": 8300,
+                "y": 800
+            }
+        },
+        {
             "type": "button",
             "callback": "goCreateServer",
             "spritePath": "assets/Menu/button.png",
