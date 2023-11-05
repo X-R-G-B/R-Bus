@@ -6,12 +6,15 @@
 */
 
 #include "WaveSystem.hpp"
-#include "ECSCustomTypes.hpp"
-#include "Json.hpp"
-#include "Registry.hpp"
-#include "SystemManagersDirector.hpp"
-#include "SystemManager.hpp"
-#include "Systems.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga/Json.hpp"
+#include "B-luga/Registry.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "B-luga/SystemManagers/SystemManager.hpp"
+#include "GameCustomTypes.hpp"
+#include "GameSystems.hpp"
+#include "ResourcesManager.hpp"
+// #include "Systems.hpp"
 
 std::size_t Wave::_clockId = 0;
 std::mutex Wave::_mutex;
@@ -19,7 +22,7 @@ std::mutex Wave::_mutex;
 Wave::Wave() : _waveIndex(0), _msBeforeNextWave(0), _isGameEnded(false), _isTimeBetweenWaves(false)
 {
     try {
-        _wavesId = Json::getInstance().getObjectsIdInArray<std::size_t>(JsonType::WAVE, "waves");
+        _wavesId = Json::getInstance().getObjectsIdInArray<std::size_t>(ResourcesManager::getPathByJsonType(JsonType::WAVE), "waves");
     } catch (const std::exception &e) {
         Logger::fatal("WaveInit: " + std::string(e.what()));
     }
@@ -46,7 +49,7 @@ void Wave::startNextWave()
     try {
         std::size_t id = _wavesId.at(_waveIndex);
         nlohmann::json waveData =
-            Json::getInstance().getJsonObjectById<std::size_t>(JsonType::WAVE, id, "waves");
+            Json::getInstance().getJsonObjectById<std::size_t>(ResourcesManager::getPathByJsonType(JsonType::WAVE), id, "waves");
         _msBeforeNextWave = Json::getInstance().getDataFromJson<std::size_t>(waveData, "msBeforeNextWave");
         Types::WaveInfos::getInstance().setWaveId(static_cast<unsigned int>(id));
         server.addStarWaveMessage(static_cast<n_id_t>(_wavesId.at(_waveIndex)));

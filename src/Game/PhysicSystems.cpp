@@ -8,16 +8,16 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 #include <fstream>
-#include "ECSCustomTypes.hpp"
-#include "Maths.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga/Maths/Maths.hpp"
 #include "MessageTypes.h"
-#include "Registry.hpp"
-#include "Systems.hpp"
+#include "B-luga/Registry.hpp"
+// #include "Systems.hpp"
 
 #ifdef CLIENT
-    #include "CustomTypes.hpp"
+    // #include "CustomTypes.hpp"
     #include "NitworkClient.hpp"
-    #include "Raylib.hpp"
+    #include "B-luga-graphics/Raylib/Raylib.hpp"
 #else
     #include "NitworkServer.hpp"
 #endif

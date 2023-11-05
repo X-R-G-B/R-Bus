@@ -7,7 +7,7 @@
 #include "GameCustomTypes.hpp"
 #include "ResourcesManager.hpp"
 #include "CreateMissiles.hpp"
-#include "WaveSystems.hpp"
+#include "WaveSystemsAll.hpp"
 #ifdef CLIENT
     #include "B-luga-graphics/AnimRect.hpp"
     #include "NitworkClient.hpp"
@@ -16,13 +16,6 @@
 #endif
 
 namespace Systems {
-    const std::vector<JsonType> enemyPaths {JsonType::DEFAULT_ENEMY, JsonType::TERMINATORBOSS};
-
-    std::string getPathFromEnemyType(enemy_type_e enemyType)
-    {
-        return ResourcesManager::getPathByJsonType(enemyPaths[enemyType]);
-    }
-
     void initPlayer(
         unsigned int constId,
         const struct position_absolute_s &pos,

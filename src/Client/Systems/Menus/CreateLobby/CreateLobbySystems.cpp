@@ -8,30 +8,30 @@
 #include "CreateLobbySystems.hpp"
 #include <algorithm>
 #include <string>
-#include "CustomTypes.hpp"
-#include "ECSCustomTypes.hpp"
-#include "Geometry.hpp"
-#include "Graphics.hpp"
+// #include "CustomTypes.hpp"
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga-graphics/Raylib/Raylib.hpp"
 #include "Menu.hpp"
 #include "MessageTypes.h"
 #include "NitworkClient.hpp"
-#include "SceneManager.hpp"
-#include "SystemManagersDirector.hpp"
-#include "Systems.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "ResourcesManager.hpp"
+#include "init.hpp"
 
 namespace Systems {
     namespace CreateLobby {
 
         void initCreateLobby(std::size_t managerId, std::size_t systemId)
         {
-            if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::CREATE_LOBBY) {
+            if (Scene::SceneManager::getInstance().getCurrentScene() != CREATE_LOBBY) {
                 SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
                 return;
             }
             try {
                 nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
-                    "createLobbyMenu",
-                    JsonType::CREATE_LOBBY);
+                    ResourcesManager::getPathByJsonType(JsonType::CREATE_LOBBY),
+                    "createLobbyMenu");
                 ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
                     Json::getInstance().getDatasFromList(jsonData));
             } catch (const std::exception &err) {
@@ -45,7 +45,7 @@ namespace Systems {
         std::vector<std::function<void(std::size_t /*unused*/, std::size_t /*unused*/)>>
         getCreateLobbySystems()
         {
-            return {initCreateLobby, Systems::moveEntities};
+            return {initCreateLobby};
         }
 
     } // namespace CreateLobby

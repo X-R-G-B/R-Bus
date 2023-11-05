@@ -6,12 +6,14 @@
 */
 
 #include "ButtonCallbacks.hpp"
-#include "CustomTypes.hpp"
-#include "Logger.hpp"
+// #include "CustomTypes.hpp"
+#include "B-luga/Logger.hpp"
 #include "NitworkClient.hpp"
-#include "Raylib.hpp"
-#include "SceneManager.hpp"
+#include "B-luga-graphics/Raylib/Raylib.hpp"
+#include "B-luga/SceneManager.hpp"
 #include "SelectLobbySystems.hpp"
+#include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#include "init.hpp"
 
 namespace Menu {
     namespace Callback {
@@ -74,12 +76,12 @@ namespace Menu {
 
         void onButtonGotoCreateLobbyClicked()
         {
-            Scene::SceneManager::getInstance().changeScene(Scene::Scene::CREATE_LOBBY);
+            Scene::SceneManager::getInstance().changeScene(CREATE_LOBBY_SCENE);
         }
 
         void gotToSelectLobby()
         {
-            Scene::SceneManager::getInstance().changeScene(Scene::Scene::SELECT_LOBBY);
+            Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
         }
 
         void defaultCallBack()
@@ -121,14 +123,14 @@ namespace Menu {
         {
             auto arrLobbyStatus =
                 Registry::getInstance().getComponents<::Systems::SelectLobbySystems::LobbyStatus>();
-            auto arrText = Registry::getInstance().getComponents<Raylib::Text>();
+            auto arrText = Registry::getInstance().getComponents<Raylib::TextShared>();
             auto ids     = Registry::getInstance().getEntitiesByComponents(
-                {typeid(Raylib::Text), typeid(::Systems::SelectLobbySystems::LobbyStatus)});
+                {typeid(Raylib::TextShared), typeid(::Systems::SelectLobbySystems::LobbyStatus)});
 
             for (auto &id : ids) {
                 arrLobbyStatus[id].ip   = "";
                 arrLobbyStatus[id].port = -1;
-                arrText[id].setText(std::string(""));
+                arrText[id]->setCurrentText(std::string(""));
             }
         }
 
@@ -159,10 +161,10 @@ namespace Menu {
             for (auto &id : idsButton) {
                 Registry::getInstance().removeEntity(id);
             }
-            auto &arrText   = Registry::getInstance().getComponents<Raylib::Text>();
-            auto idsText   = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::Text)});
+            auto &arrText   = Registry::getInstance().getComponents<Raylib::TextShared>();
+            auto idsText   = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
             for (auto &id : idsText) {
-                if (arrText[id].getCurrentText() == "READY !") {
+                if (arrText[id]->getCurrentText() == "READY !") {
                     Registry::getInstance().removeEntity(id);
                 }
             }

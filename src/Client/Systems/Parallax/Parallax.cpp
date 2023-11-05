@@ -42,7 +42,7 @@ namespace Systems::Parallax {
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         std::vector<nlohmann::basic_json<>> parallaxData = Json::getInstance().getDataByJsonType(
-            ResourcesManager::getPathByJsonType(JsonType::PARALLAX),
+            ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PARALLAX),
             "parallax");
 
         for (auto &elem : parallaxData) {

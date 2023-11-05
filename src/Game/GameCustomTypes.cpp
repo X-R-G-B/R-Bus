@@ -7,7 +7,7 @@
 
 #include "GameCustomTypes.hpp"
 #ifdef CLIENT
-    #include "Raylib.hpp"
+    #include "B-luga-graphics/Raylib/Raylib.hpp"
 #endif
 
 unsigned int Types::Enemy::_enemyNb = 0;
@@ -29,13 +29,13 @@ namespace Types {
 #ifdef CLIENT
         Registry &registry            = Registry::getInstance();
         const std::string textKeyword = "WaveText";
-        std::vector<std::size_t> ids  = registry.getEntitiesByComponents({typeid(Raylib::Text)});
-        Registry::components<Raylib::Text> arrCol = registry.getComponents<Raylib::Text>();
+        std::vector<std::size_t> ids  = registry.getEntitiesByComponents({typeid(Raylib::TextShared)});
+        Registry::components<Raylib::TextShared> arrCol = registry.getComponents<Raylib::TextShared>();
         static constexpr float fontSize = 4.0F;
 
         if (value == false) {
             for (auto &id : ids) {
-                if (arrCol[id].getKeyword() == textKeyword) {
+                if (arrCol[id]->getKeyword() == textKeyword) {
                     registry.removeEntity(id);
                     break;
                 }
@@ -45,14 +45,14 @@ namespace Types {
             const std::string text    = "Wave " + std::to_string(previousWave) + " survived";
 
             for (auto &id : ids) {
-                if (arrCol[id].getKeyword() == textKeyword) {
-                    arrCol[id].setText(text);
+                if (arrCol[id]->getKeyword() == textKeyword) {
+                    arrCol[id]->setCurrentText(text);
                     break;
                 }
             }
             Registry::getInstance().addEntity();
-            Raylib::Text endWaveText = Raylib::Text(text, {20, 10}, fontSize, Raylib::WHITE, textKeyword);
-            Registry::getInstance().getComponents<Raylib::Text>().insertBack(endWaveText);
+            Raylib::TextShared endWaveText = Raylib::Text::fromText(text, {20, 10}, fontSize, Raylib::Color(Raylib::ColorDef::White), textKeyword);
+            Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(endWaveText);
         }
 #endif
         _waitingForNextWave = value;

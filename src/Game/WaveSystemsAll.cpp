@@ -7,16 +7,24 @@
 
 #include <fstream>
 #include <sstream>
-#include "ECSCustomTypes.hpp"
-#include "Maths.hpp"
-#include "Registry.hpp"
-#include "SystemManagersDirector.hpp"
-#include "Systems.hpp"
+#ifdef CLIENT
+    #include "B-luga-graphics/AnimRect.hpp"
+    #include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#endif
+#include "B-luga-physics/ECSCustomTypes.hpp"
+#include "B-luga/Maths/Maths.hpp"
+#include "B-luga/Registry.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "GameCustomTypes.hpp"
+#include "PhysicSystems.hpp"
+#include "ResourcesManager.hpp"
+#include "CreateMissiles.hpp"
+// #include "Systems.hpp"
 
 #ifdef CLIENT
-    #include "CustomTypes.hpp"
+    // #include "CustomTypes.hpp"
     #include "NitworkClient.hpp"
-    #include "Raylib.hpp"
+    #include "B-luga-graphics/Raylib/Raylib.hpp"
 #else
     #include "NitworkServer.hpp"
 #endif
@@ -60,7 +68,7 @@ namespace Systems {
         Json &json = Json::getInstance();
 
         const std::string enemyId = getEnemyId(enemyType);
-        nlohmann::json data = json.getJsonObjectById<std::string>(JsonType::ENEMIES, enemyId, "enemies");
+        nlohmann::json data = json.getJsonObjectById<std::string>(ResourcesManager::getPathByJsonType(JsonType::ENEMIES), enemyId, "enemies");
         return data;
     }
 
@@ -69,33 +77,33 @@ namespace Systems {
     static void initEnemyWeapon(nlohmann::json jsonData, Types::EnemyAttack &attackData)
     {
         Json &json = Json::getInstance();
-        if (!json.isDataExist(jsonData, "attack")) {
+        if (!Json::isDataExist(jsonData, "attack")) {
             attackData.isAttacking = false;
             return;
         }
-        if (json.isDataExist(jsonData["attack"], "bulletId")) {
+        if (Json::isDataExist(jsonData["attack"], "bulletId")) {
             std::string id         = json.getDataFromJson<std::string>(jsonData["attack"], "bulletId");
             attackData.missileType = getMissileTypeFromId(id);
         }
-        if (json.isDataExist(jsonData["attack"], "missileDirection")) {
+        if (Json::isDataExist(jsonData["attack"], "missileDirection")) {
             attackData.launchDirection =
                 json.getDataFromJson<Types::Position>(jsonData["attack"], "missileDirection");
         }
-        if (json.isDataExist(jsonData["attack"], "numberOfMissiles")) {
+        if (Json::isDataExist(jsonData["attack"], "numberOfMissiles")) {
             attackData.numberOfMissiles = json.getDataFromJson<int>(jsonData["attack"], "numberOfMissiles");
         }
-        if (json.isDataExist(jsonData["attack"], "msBetweenMissiles")) {
+        if (Json::isDataExist(jsonData["attack"], "msBetweenMissiles")) {
             attackData.msBetweenMissiles =
                 json.getDataFromJson<float>(jsonData["attack"], "msBetweenMissiles");
         }
-        if (json.isDataExist(jsonData["attack"], "missileSpawnOffset")) {
+        if (Json::isDataExist(jsonData["attack"], "missileSpawnOffset")) {
             attackData.missileSpawnOffset =
                 json.getDataFromJson<float>(jsonData["attack"], "missileSpawnOffset");
         }
-        if (json.isDataExist(jsonData["attack"], "bulletSpeed")) {
+        if (Json::isDataExist(jsonData["attack"], "bulletSpeed")) {
             attackData.bulletSpeed = json.getDataFromJson<float>(jsonData["attack"], "bulletSpeed");
         }
-        if (json.isDataExist(jsonData["attack"], "emitterId")) {
+        if (Json::isDataExist(jsonData["attack"], "emitterId")) {
             attackData.emitterId = json.getDataFromJson<std::string>(jsonData["attack"], "emitterId");
         }
     }
@@ -124,9 +132,9 @@ namespace Systems {
         if (Json::isDataExist(enemyData, "musicPath")) {
             std::string musicPath =
                 Json::getInstance().getDataFromJson<std::string>(enemyData, "musicPath");
-            Raylib::Music music(musicPath, musicVolume);
-            music.setNeedToPlay(true);
-            Registry::getInstance().getComponents<Raylib::Music>().insertBack(music);
+            Raylib::MusicShared music = Raylib::Music::fromFile(musicPath, musicVolume);
+            music->setNeedToPlay(true);
+            Registry::getInstance().getComponents<Raylib::MusicShared>().insertBack(music);
         }
 
 #endif
@@ -163,7 +171,7 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(registry.mutex);
 
         nlohmann::json enemiesData = Json::getInstance().getJsonObjectById<std::size_t>(
-            JsonType::WAVE,
+            ResourcesManager::getPathByJsonType(JsonType::WAVE),
             waveInfos.getWaveId(),
             "waves");
         std::vector<nlohmann::json> enemies =
@@ -186,18 +194,18 @@ namespace Systems {
         Types::WaveInfos &waveInfos = Types::WaveInfos::getInstance();
 
         // Handle the end of the wave
-        if (waveInfos.isFirstEnemyCreated() == true && Types::Enemy::isEnemyAlive() == false
-            && waveInfos.isEnemyRemaining() == false) {
+        if (waveInfos.isFirstEnemyCreated() && !Types::Enemy::isEnemyAlive()
+            && !waveInfos.isEnemyRemaining()) {
             waveInfos.prepareNextWave();
             return;
         }
         // If no enemy remaining, no need to continue
-        if (waveInfos.isEnemyRemaining() == false) {
+        if (!waveInfos.isEnemyRemaining()) {
             return;
         }
         // Handle the creation of the enemies
-        auto &enemy = waveInfos.getRemainingEnemies().front();
-        if (waveInfos.isFirstEnemyCreated() == false) {
+        const auto &enemy = waveInfos.getRemainingEnemies().front();
+        if (!waveInfos.isFirstEnemyCreated()) {
             waveInfos.setFirstEnemyCreated(true);
         } else if (
             Registry::getInstance().getClock().elapsedMillisecondsSince(waveInfos.getClockId())

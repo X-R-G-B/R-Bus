@@ -195,7 +195,7 @@ namespace Systems {
             try {
                 Parallax::initParalax();
                 nlohmann::json jsonData =
-                    Json::getInstance().getDataByJsonType<nlohmann::json>("menu", JsonType::MENU);
+                    Json::getInstance().getDataByJsonType<nlohmann::json>(ResourcesManager::getPathByJsonType(JsonType::MENU), "menu");
                 ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
                     Json::getInstance().getDatasFromList(jsonData));
             } catch (std::runtime_error &err) {
@@ -225,12 +225,12 @@ namespace Systems {
         // this system is not in the good file for the moment
         void initHud(std::size_t managerId, std::size_t systemId)
         {
-            if (Scene::SceneManager::getInstance().getCurrentScene() != Scene::Scene::MAIN_GAME) {
+            if (Scene::SceneManager::getInstance().getCurrentScene() != GAME) {
                 return;
             }
             try {
                 nlohmann::json jsonData =
-                    Json::getInstance().getDataByJsonType<nlohmann::json>("gameHud", JsonType::HUD);
+                    Json::getInstance().getDataByJsonType<nlohmann::json>(ResourcesManager::getPathByJsonType(JsonType::HUD), "gameHud");
                 ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
                     Json::getInstance().getDatasFromList(jsonData));
             } catch (std::runtime_error &err) {
@@ -248,7 +248,6 @@ namespace Systems {
                 hoverInputBox,
                 checkTextInput,
                 checkInputDeletion,
-                Systems::moveEntities,
                 initHud,
                 quitScene};
         }

@@ -9,26 +9,28 @@
 
 enum class JsonType : std::size_t {
     DEFAULT_PLAYER = 0,
-    DEFAULT_ENEMY,
-    TERMINATORBOSS,
-    BULLETS,
+    DEFAULT_PARALLAX,
     WAVE,
-    MENU_DATA,
+    BULLETS,
+    MENU,
     SELECT_LOBBY,
-    PARALLAX,
+    CREATE_LOBBY,
+    HUD,
+    ENEMIES,
     MAXTYPE
 };
 
 namespace ResourcesManagerValues {
     const std::vector<std::string> paths = {
-        "assets/Json/playerData.json",
-        "assets/Json/enemyData.json",
-        "assets/Json/terminatorData.json",
-        "assets/Json/bullets.json",
-        "assets/Json/wave.json",
-        "assets/Json/menu.json",
-        "assets/Json/selectLobby.json",
-        "assets/Json/parallaxData.json",
+    "assets/Json/playerData.json"  ,
+    "assets/Json/parallaxData.json",
+    "assets/Json/waves.json"       ,
+    "assets/Json/bullets.json"     ,
+    "assets/Json/menu.json"        ,
+    "assets/Json/selectLobby.json" ,
+    "assets/Json/createLobby.json" ,
+    "assets/Json/HUD.json"         ,
+    "assets/Json/enemies.json"     ,
     };
 }
 

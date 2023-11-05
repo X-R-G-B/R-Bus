@@ -11,8 +11,10 @@
 #include "B-luga/Maths/Maths.hpp"
 #include "B-luga/Registry.hpp"
 #include "MessageTypes.h"
+#include "PhysicSystems.hpp"
 #include "ResourcesManager.hpp"
 #ifdef CLIENT
+    #include "B-luga-graphics/Raylib/Raylib.hpp"
     #include "B-luga-graphics/AnimRect.hpp"
     #include "B-luga-graphics/GraphicsCustomTypes.hpp"
     #include "NitworkClient.hpp"
@@ -27,9 +29,18 @@ namespace Systems {
         {PERFORANT, "perforant"}
     };
 
+    std::string getMissileId(missileTypes_e type)
+    {
+        auto it = missileTypeMap.find(type);
+        if (it != missileTypeMap.end()) {
+            return it->second;
+        }
+        throw std::runtime_error("Unknown missile type");
+    }
+
     missileTypes_e getMissileTypeFromId(const std::string &id)
     {
-        for (auto &it : missileTypeMap) {
+        for (const auto &it : missileTypeMap) {
             if (it.second == id) {
                 return it.first;
             }
@@ -50,10 +61,10 @@ namespace Systems {
     static void playBulletSound(Types::Missiles &typeOfMissile)
     {
         Json &json = Json::getInstance();
-        Registry::components<Raylib::Sound> arrSounds =
-            Registry::getInstance().getComponents<Raylib::Sound>();
+        Registry::components<Raylib::SoundShared> arrSounds =
+            Registry::getInstance().getComponents<Raylib::SoundShared>();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileIdFromType(typeOfMissile.type), "bullets");
+            json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileIdFromType(typeOfMissile.type), "bullets");
 
         const std::string soundPathShoot = json.getDataFromJson<std::string>(bulletData, "soundPath");
 
@@ -77,7 +88,7 @@ namespace Systems {
         Registry::getInstance().getComponents<Types::SpriteDatas>().insertBack(bulletDatas);
         Registry::getInstance().getComponents<Types::Rect>().insertBack(spriteRect);
 
-        if (json.isDataExist(bulletData, "animRect")) {
+        if (Json::isDataExist(bulletData, "animRect")) {
             nlohmann::basic_json<> animRectData =
                 Json::getInstance().getDataFromJson<nlohmann::basic_json<>>(bulletData, "animRect");
             Types::AnimRect animRect(spriteRect, animRectData, Types::RectListType::MOVE);
@@ -94,7 +105,7 @@ namespace Systems {
         Json &json = Json::getInstance();
         std::size_t id = Registry::getInstance().addEntity();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileIdFromType(typeOfMissile.type), "bullets");
+            json.getJsonObjectById<std::string>(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileIdFromType(typeOfMissile.type), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");
@@ -127,7 +138,7 @@ namespace Systems {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
         nlohmann::json bulletData =
-            json.getJsonObjectById(JsonType::BULLETS, getMissileIdFromType(typeOfMissile.type), "bullets");
+            json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileIdFromType(typeOfMissile.type), "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         Types::Missiles missileType        = typeOfMissile;
@@ -211,7 +222,6 @@ namespace Systems {
 
     static void launchEnemyMissile(Types::Enemy &enemy, Types::Position &pos, std::size_t id)
     {
-        Types::Missiles missileType = {enemy.getAttack().missileType};
         if (enemy.getAttack().emitterId == "circle") {
             launchMissileInCircle(enemy, pos, id);
         }
@@ -220,7 +230,7 @@ namespace Systems {
         }
     }
 
-    void updateEnemiesAttacks(std::size_t, std::size_t)
+    void updateEnemiesAttacks(std::size_t /* unused */, std::size_t /* unused */)
     {
         Registry::components<Types::Enemy> arrEnemies =
             Registry::getInstance().getComponents<Types::Enemy>();
@@ -233,7 +243,7 @@ namespace Systems {
             auto &attack = arrEnemies[id].getAttack();
             if (attack.isAttacking) {
                 if (Registry::getInstance().getClock().elapsedMillisecondsSince(attack.clockId)
-                    >= attack.msBetweenMissiles) {
+                    >= static_cast<std::size_t>(attack.msBetweenMissiles)) {
                     launchEnemyMissile(arrEnemies[id], arrPositions[id], id);
                     Registry::getInstance().getClock().restart(attack.clockId);
                 }
