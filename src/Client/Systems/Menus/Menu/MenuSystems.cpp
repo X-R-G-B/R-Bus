@@ -6,16 +6,17 @@
 */
 
 #include "MenuSystems.hpp"
-#include "B-luga-graphics/Raylib/Graphics/Graphics.hpp"
 #include "B-luga-graphics/AnimRect.hpp"
 #include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#include "B-luga-graphics/Raylib/Graphics/Graphics.hpp"
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga/Maths/Maths.hpp"
 #include "B-luga/SceneManager.hpp"
 #include "Menu.hpp"
-#include "SelectLobbySystems.hpp"
+#include "NitworkClient.hpp"
 #include "Parallax.hpp"
 #include "ResourcesManager.hpp"
+#include "SelectLobbySystems.hpp"
 #include "init.hpp"
 
 namespace Systems {
@@ -194,12 +195,13 @@ namespace Systems {
             }
             try {
                 Parallax::initParalax();
-                nlohmann::json jsonData =
-                    Json::getInstance().getDataByJsonType<nlohmann::json>(ResourcesManager::getPathByJsonType(JsonType::MENU), "menu");
+                nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
+                    ResourcesManager::getPathByJsonType(JsonType::MENU),
+                    "menu");
                 ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
                     Json::getInstance().getDatasFromList(jsonData));
             } catch (std::runtime_error &err) {
-                Logger::info(err.what());
+                Logger::warn(err.what());
             }
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
@@ -212,10 +214,9 @@ namespace Systems {
                     case CREATE_LOBBY_SCENE:
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
-                    case SELECT_LOBBY:
-                        Scene::SceneManager::getInstance().changeScene(MENU);
-                        break;
+                    case SELECT_LOBBY: Scene::SceneManager::getInstance().changeScene(MENU); break;
                     case GAME:
+                        Nitwork::NitworkClient::getInstance().disconnectLobby();
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
                     case LOADING_SCREEN:
@@ -328,7 +329,7 @@ namespace Systems {
                 Parallax::initParalax();
                 initHud();
             } catch (std::runtime_error &err) {
-                Logger::info(err.what());
+                Logger::warn(err.what());
             }
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }

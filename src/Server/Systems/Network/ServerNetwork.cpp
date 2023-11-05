@@ -63,7 +63,7 @@ namespace Systems {
                             .life = {.hp = arrHealth[id].hp},
                             .pos =
                                 {static_cast<char>(Maths::removeIntDecimals(arrPos[id].x)),
-                                      static_cast<char>(Maths::removeIntDecimals(arrPos[id].y))},
+                                     static_cast<char>(Maths::removeIntDecimals(arrPos[id].y))},
                             .type = arrEnemies[id].type,
                     });
                 }
@@ -84,7 +84,7 @@ namespace Systems {
             Maths::addIntDecimals(msgNewBullet.pos.x),
             Maths::addIntDecimals(msgNewBullet.pos.y),
         };
-        struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
+        struct Types::Missiles missileType = {msgNewBullet.missileType};
         auto id                            = Systems::createPlayerMissile(position, missileType);
         if (!arrMissiles.exist(id) || !arrHealth.exist(id)) {
             Logger::error("Error: missile not created");

@@ -31,7 +31,7 @@ namespace Types {
         const std::string textKeyword = "WaveText";
         std::vector<std::size_t> ids  = registry.getEntitiesByComponents({typeid(Raylib::TextShared)});
         Registry::components<Raylib::TextShared> arrCol = registry.getComponents<Raylib::TextShared>();
-        static constexpr float fontSize = 4.0F;
+        static constexpr float fontSize                 = 4.0F;
 
         if (value == false) {
             for (auto &id : ids) {
@@ -51,7 +51,12 @@ namespace Types {
                 }
             }
             Registry::getInstance().addEntity();
-            Raylib::TextShared endWaveText = Raylib::Text::fromText(text, {20, 10}, fontSize, Raylib::Color(Raylib::ColorDef::White), textKeyword);
+            Raylib::TextShared endWaveText = Raylib::Text::fromText(
+                text,
+                {20, 10},
+                fontSize,
+                Raylib::Color(Raylib::ColorDef::White),
+                textKeyword);
             Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(endWaveText);
         }
 #endif

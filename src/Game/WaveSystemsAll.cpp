@@ -15,16 +15,16 @@
 #include "B-luga/Maths/Maths.hpp"
 #include "B-luga/Registry.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "CreateMissiles.hpp"
 #include "GameCustomTypes.hpp"
 #include "PhysicSystems.hpp"
 #include "ResourcesManager.hpp"
-#include "CreateMissiles.hpp"
 // #include "Systems.hpp"
 
 #ifdef CLIENT
     // #include "CustomTypes.hpp"
-    #include "NitworkClient.hpp"
     #include "B-luga-graphics/Raylib/Raylib.hpp"
+    #include "NitworkClient.hpp"
 #else
     #include "NitworkServer.hpp"
 #endif
@@ -68,7 +68,10 @@ namespace Systems {
         Json &json = Json::getInstance();
 
         const std::string enemyId = getEnemyId(enemyType);
-        nlohmann::json data = json.getJsonObjectById<std::string>(ResourcesManager::getPathByJsonType(JsonType::ENEMIES), enemyId, "enemies");
+        nlohmann::json data       = json.getJsonObjectById<std::string>(
+            ResourcesManager::getPathByJsonType(JsonType::ENEMIES),
+            enemyId,
+            "enemies");
         return data;
     }
 
@@ -141,7 +144,7 @@ namespace Systems {
         Types::Enemy enemyComp = (setId ? Types::Enemy(enemyType, enemyId) : Types::Enemy(enemyType));
         Types::CollisionRect collisionRect =
             Json::getInstance().getDataFromJson<Types::CollisionRect>(enemyData, "collisionRect");
-        Types::Damage damageComp   = {Json::getInstance().getDataFromJson<int>(enemyData, "damage")};
+        Types::Damage damageComp = {Json::getInstance().getDataFromJson<int>(enemyData, "damage")};
         Types::Health healthComp = {Json::getInstance().getDataFromJson<int>(enemyData, "health")};
         Types::Velocity velocity =
             Json::getInstance().getDataFromJson<Types::Velocity>(enemyData, "velocity");
