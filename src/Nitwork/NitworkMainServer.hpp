@@ -116,6 +116,13 @@ namespace Nitwork {
                 const std::string &ownerIp,
                 int ownerPort);
 
+            /**
+             * @brief Handle the lobby pid message
+             * @param msg The message
+             * @param endpoint The endpoint of the sender
+             */
+            void handleLobbyPidMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint);
+
         private:
             NitworkMainServer() = default;
 
@@ -196,6 +203,17 @@ namespace Nitwork {
                         },
                         [](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
                             Systems::handleInfoLobbyMsg(msg, endpoint);
+                        }
+                    }
+                },
+                {
+                    NITWORK_LOBBY_PID,
+                    {
+                        [this](actionHandler &actionHandler, const struct header_s &header) {
+                            handleBody<struct msgReplaceLobbyPid_s>(actionHandler, header);
+                        },
+                        [this](std::any &msg, boost::asio::ip::udp::endpoint &endpoint) {
+                            handleLobbyPidMsg(msg, endpoint);
                         }
                     }
                 }

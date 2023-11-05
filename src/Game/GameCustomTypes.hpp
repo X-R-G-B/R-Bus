@@ -210,6 +210,15 @@ namespace Types {
 
             void prepareNextWave();
 
+            void reset()
+            {
+                _remainingEnemies.clear();
+                _waveId = 0;
+                _isFirstEnemyCreated = false;
+                _waitingForNextWave = false;
+                _clockId = Registry::getInstance().getClock().create(false);
+            }
+
         private:
             std::vector<std::pair<nlohmann::json, std::size_t>> _remainingEnemies;
             unsigned int _waveId;

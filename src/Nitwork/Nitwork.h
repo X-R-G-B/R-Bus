@@ -50,6 +50,7 @@
     #define MAGICK_DISCONNECT_LOBBY '\x1b'
     #define MAGICK_MISSILE_DEATH '\x1c'
     #define MAGICK_END_GAME '\x1d'
+    #define MAGICK_LOBBY_PID '\x1e'
 
 typedef unsigned char n_magick_t;
 typedef int n_idsReceived_t;
@@ -85,6 +86,7 @@ enum n_actionType_t {
     NITWORK_DISCONNECT_LOBBY = 22,
     NITWORK_CREATE_LOBBY = 23,
     NITWORK_END_GAME = 24,
+    NITWORK_LOBBY_PID = 25,
     NITWORK_N_ACTION_TYPE_MAX,
 };
 
@@ -424,6 +426,19 @@ PACK(struct packetEndGame_s {
     struct header_s header;
     struct action_s action;
     struct msgEndGame_s msg;
+});
+
+/* Message Lobby PID */
+PACK(struct msgReplaceLobbyPid_s {
+    n_magick_t magick;
+    char name[32];
+    int pid;
+});
+
+PACK(struct packetReplaceLobbyPid_s {
+    struct header_s header;
+    struct action_s action;
+    struct msgReplaceLobbyPid_s msg;
 });
 
 #endif

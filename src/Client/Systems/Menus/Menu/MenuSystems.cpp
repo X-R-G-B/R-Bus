@@ -17,6 +17,7 @@
 #include "SelectLobbySystems.hpp"
 #include "Parallax.hpp"
 #include "ResourcesManager.hpp"
+#include "GameCustomTypes.hpp"
 #include "init.hpp"
 
 namespace Systems {
@@ -218,6 +219,7 @@ namespace Systems {
                         break;
                     case GAME:
                         Nitwork::NitworkClient::getInstance().disconnectLobby();
+                        Types::WaveInfos::getInstance().reset();
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
                 }

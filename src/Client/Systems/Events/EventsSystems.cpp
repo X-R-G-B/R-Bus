@@ -268,10 +268,15 @@ namespace Systems {
     {
         constexpr std::size_t secondBeforeEnd = 5;
         static std::size_t clockId            = Registry::getInstance().getClock().create(false);
+        static bool restart = false;
         std::size_t elapsedSeconds = Registry::getInstance().getClock().elapsedSecondsSince(clockId);
         std::string seconds        = std::to_string(secondBeforeEnd - elapsedSeconds);
         std::string endGameMessage;
 
+        if (restart) {
+            Registry::getInstance().getClock().restart(clockId);
+            restart = false;
+        }
         if (isGameWin() == true) {
             endGameMessage =
                 "You win! Redirecting to menu in " + seconds + (seconds == "1" ? " second" : " seconds");
@@ -283,7 +288,10 @@ namespace Systems {
         modifEndGameText(endGameMessage);
 
         if (Registry::getInstance().getClock().elapsedSecondsSince(clockId) >= secondBeforeEnd) {
+            Logger::fatal("end of gameeeeeeeeeeeeeeeeee");
             Nitwork::NitworkClient::getInstance().disconnectLobby();
+            Types::WaveInfos::getInstance().reset();
+            restart = true;
             Scene::SceneManager::getInstance().changeScene(static_cast<std::size_t>(SELECT_LOBBY));
         }
     }
