@@ -118,12 +118,14 @@ namespace Systems {
             Nitwork::NitworkClient::getInstance().addLifeUpdateMsg(arrPlayer[id].constId, health);
         }
     }
+#endif
 
-    static void sendPlayerDeathToServer(std::size_t id)
+    static void sendPlayerDeath(std::size_t id)
     {
         auto &arrPlayer      = Registry::getInstance().getComponents<Types::Player>();
         auto &arrOtherPlayer = Registry::getInstance().getComponents<Types::OtherPlayer>();
 
+#ifdef CLIENT
         if (arrPlayer.exist(id)) {
             Logger::debug("Player send death " + std::to_string(id));
             Nitwork::NitworkClient::getInstance().addPlayerDeathMsg(arrPlayer[id].constId);
@@ -131,8 +133,17 @@ namespace Systems {
             Logger::debug("other player send death " + std::to_string(id));
             Nitwork::NitworkClient::getInstance().addPlayerDeathMsg(arrOtherPlayer[id].constId);
         }
-    }
+#else
+        auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::OtherPlayer)});
+
+        if (arrOtherPlayer.exist(id)) {
+            Nitwork::NitworkServer::getInstance().addPlayerDeathMsg(arrOtherPlayer[id].constId);
+            if (ids.size() == 1) {
+                Nitwork::NitworkServer::getInstance().addEndGameMsg();
+            }
+        }
 #endif
+    }
 
     void GamePlugin::initPlugin()
     {
@@ -140,8 +151,8 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(registry.mutex);
         registry.addEventCallback(Events::ENTITY_DEATH, sendEnemyDeath);
         registry.addEventCallback(Events::ENTITY_DEATH, sendMissileDeath);
+        registry.addEventCallback(Events::ENTITY_DEATH, sendPlayerDeath);
 #ifdef CLIENT
-        registry.addEventCallback(Events::ENTITY_DEATH, sendPlayerDeathToServer);
         registry.addEventCallback(Events::TAKE_DAMAGE, sendLifeUpdateToServer);
 #endif
         registry.addAllie(static_cast<std::size_t>(AlliesType::PLAYERS), typeid(Types::Player));

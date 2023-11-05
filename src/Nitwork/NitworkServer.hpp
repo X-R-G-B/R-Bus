@@ -197,6 +197,36 @@ namespace Nitwork {
 
             /**
              * @brief A map that contain the endpoint of the clients and their infos
+             * @param maxNbPlayer The max number of player that can be in the lobby
+             * @param gameType The type of the game
+             * @param name The name of the lobby
+             * @param ownerIp The ip of the owner of the lobby
+             * @param ownerPort The port of the owner of the lobby
+             */
+            void forkProcessAndCreateLobby(
+                unsigned int maxNbPlayer,
+                enum gameType_e gameType,
+                const std::string &name,
+                const std::string &ownerIp,
+                int ownerPort);
+
+            /**
+             * @brief A map that contain the endpoint of the clients and their infos
+             * @param maxNbPlayer The max number of player that can be in the lobby
+             * @param name The name of the lobby
+             * @param gameType The type of the game
+             */
+            void recreateLobby(unsigned int maxNbPlayer, const std::string &name, enum gameType_e gameType);
+
+            /**
+             * @brief A map that contain the endpoint of the clients and their infos
+             * @param endpoint The endpoint of the client that sent the packet
+             * @param pid The pid of the lobby
+             */
+            void sendLobbyPid(const boost::asio::ip::udp::endpoint &endpoint, pid_t pid);
+
+            /**
+             * @brief A map that contain the endpoint of the clients and their infos
              * @param playerId The id of the player that sent the packet
              * @param packetMsgCreatePlayer The infos of the player that will be created
              * @param endpoint The endpoint of the client that sent the packet
@@ -408,6 +438,10 @@ namespace Nitwork {
                 {NITWORK_END_GAME,
                  [this](Packet &packet) {
                      sendData<struct packetEndGame_s>(packet);
+                 }},
+                {NITWORK_LOBBY_PID,
+                 [this](Packet &packet) {
+                     sendData<struct packetReplaceLobbyPid_s>(packet);
                  }},
             };
     };
