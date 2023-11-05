@@ -200,7 +200,7 @@ namespace Systems {
                 ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
                     Json::getInstance().getDatasFromList(jsonData));
             } catch (std::runtime_error &err) {
-                Logger::info(err.what());
+                Logger::warn(err.what());
             }
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
@@ -254,11 +254,11 @@ namespace Systems {
                 return;
             }
             try {
-//                Parallax::initParalax();
+                Parallax::initParalax();
                 preloadTexture();
                 initHud();
             } catch (std::runtime_error &err) {
-                Logger::info(err.what());
+                Logger::warn(err.what());
             }
             SystemManagersDirector::getInstance().getSystemManager(managerId).removeSystem(systemId);
         }
