@@ -316,7 +316,6 @@ namespace Systems {
         }
         for (auto &id : otherPlayersIds) {
             if (arrOtherPlayers[id].constId == playerDeath.playerId) {
-                Logger::fatal("Other player death: " + std::to_string(playerDeath.playerId));
                 arrHealth[id].hp = 0;
                 return;
             }

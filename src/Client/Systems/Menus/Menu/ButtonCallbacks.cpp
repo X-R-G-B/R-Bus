@@ -157,7 +157,6 @@ namespace Menu {
         {
             auto idsButton = Registry::getInstance().getEntitiesByComponents({typeid(Types::Button)});
 
-            Logger::error("!!!!!!!!!!!sendReadyPacket!!!!!!");
             Nitwork::NitworkClient::getInstance().addReadyMsg();
             for (auto &id : idsButton) {
                 Registry::getInstance().removeEntity(id);

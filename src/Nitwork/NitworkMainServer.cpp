@@ -76,7 +76,7 @@ namespace Nitwork {
     void NitworkMainServer::handleInitMsg(std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
         if (isClientAlreadyConnected(endpoint)) {
-            Logger::info("Client already connected");
+            Logger::warn("Client already connected");
             sendConnectMainServerResp(endpoint);
             return;
         }
