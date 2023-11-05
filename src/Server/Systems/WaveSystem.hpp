@@ -8,13 +8,12 @@
 #pragma once
 
 #include <cstddef>
-#include <vector>
 #include <mutex>
+#include <vector>
 #include "NitworkServer.hpp"
 
 class Wave {
     public:
-
         Wave();
         void startNextWave();
         bool isWaveEnded() const;
@@ -25,7 +24,6 @@ class Wave {
         static std::size_t _clockId;
 
     private:
-
         std::vector<std::size_t> _wavesId;
         int _waveIndex;
         std::size_t _msBeforeNextWave;

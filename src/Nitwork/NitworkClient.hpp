@@ -228,7 +228,7 @@ namespace Nitwork {
              */
             boost::asio::ip::udp::endpoint _serverEndpoint;
 
-            std::vector<int> _serverPids;          // pid of the servers
+            std::vector<int> _serverPids; // pid of the servers
 
             // clang-format off
             /**

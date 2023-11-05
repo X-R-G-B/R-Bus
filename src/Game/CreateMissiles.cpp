@@ -14,9 +14,9 @@
 #include "PhysicSystems.hpp"
 #include "ResourcesManager.hpp"
 #ifdef CLIENT
-    #include "B-luga-graphics/Raylib/Raylib.hpp"
     #include "B-luga-graphics/AnimRect.hpp"
     #include "B-luga-graphics/GraphicsCustomTypes.hpp"
+    #include "B-luga-graphics/Raylib/Raylib.hpp"
     #include "NitworkClient.hpp"
 #endif
 
@@ -63,8 +63,10 @@ namespace Systems {
         Json &json = Json::getInstance();
         Registry::components<Raylib::SoundShared> arrSounds =
             Registry::getInstance().getComponents<Raylib::SoundShared>();
-        nlohmann::json bulletData =
-            json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileIdFromType(typeOfMissile.type), "bullets");
+        nlohmann::json bulletData = json.getJsonObjectById(
+            ResourcesManager::getPathByJsonType(JsonType::BULLETS),
+            getMissileIdFromType(typeOfMissile.type),
+            "bullets");
 
         const std::string soundPathShoot = json.getDataFromJson<std::string>(bulletData, "soundPath");
 
@@ -80,7 +82,7 @@ namespace Systems {
 #ifdef CLIENT
     static void addSpriteRectsForBullet(nlohmann::json &bulletData, Types::CollisionRect &collisionRect)
     {
-        Json &json = Json::getInstance();
+        Json &json                   = Json::getInstance();
         const std::string bulletPath = json.getDataFromJson<std::string>(bulletData, "spritePath");
         Types::Rect spriteRect       = json.getDataFromJson<Types::Rect>(bulletData, "spriteRect");
         Types::SpriteDatas
@@ -102,17 +104,19 @@ namespace Systems {
         if (typeOfMissile.type >= MAX_MISSILE_TYPE || typeOfMissile.type < 0) {
             throw std::runtime_error("Unknown missile type");
         }
-        Json &json = Json::getInstance();
-        std::size_t id = Registry::getInstance().addEntity();
-        nlohmann::json bulletData =
-            json.getJsonObjectById<std::string>(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileIdFromType(typeOfMissile.type), "bullets");
+        Json &json                = Json::getInstance();
+        std::size_t id            = Registry::getInstance().addEntity();
+        nlohmann::json bulletData = json.getJsonObjectById<std::string>(
+            ResourcesManager::getPathByJsonType(JsonType::BULLETS),
+            getMissileIdFromType(typeOfMissile.type),
+            "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         Types::Velocity velocity    = json.getDataFromJson<Types::Velocity>(bulletData, "velocity");
         Types::Missiles missileType = typeOfMissile;
         Types::Dead deadComp        = {};
         Types::PlayerAllies playerAlliesComp = {};
-        Types::Health healthComp           = {json.getDataFromJson<int>(bulletData, "health")};
+        Types::Health healthComp             = {json.getDataFromJson<int>(bulletData, "health")};
         Types::Damage damageComp             = {json.getDataFromJson<int>(bulletData, "damage")};
 
 #ifdef CLIENT
@@ -137,14 +141,16 @@ namespace Systems {
     {
         Json &json = Json::getInstance();
         Registry::getInstance().addEntity();
-        nlohmann::json bulletData =
-            json.getJsonObjectById(ResourcesManager::getPathByJsonType(JsonType::BULLETS), getMissileIdFromType(typeOfMissile.type), "bullets");
+        nlohmann::json bulletData = json.getJsonObjectById(
+            ResourcesManager::getPathByJsonType(JsonType::BULLETS),
+            getMissileIdFromType(typeOfMissile.type),
+            "bullets");
         Types::CollisionRect collisionRect =
             json.getDataFromJson<Types::CollisionRect>(bulletData, "collisionRect");
         Types::Missiles missileType        = typeOfMissile;
         Types::Dead deadComp               = {};
         Types::EnemyAllies enemyAlliesComp = {};
-        Types::Health healthComp         = {json.getDataFromJson<int>(bulletData, "health")};
+        Types::Health healthComp           = {json.getDataFromJson<int>(bulletData, "health")};
         Types::Damage damageComp           = {json.getDataFromJson<int>(bulletData, "damage")};
 
 #ifdef CLIENT

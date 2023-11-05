@@ -263,7 +263,8 @@ namespace Nitwork {
         _isGameStarted = true;
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
-        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC)).addSystem(Systems::waveHandler); // le sheeiiiiiitan VERIF
+        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC))
+            .addSystem(Systems::waveHandler); // le sheeiiiiiitan VERIF
         Logger::fatal("cacaprout");
     }
 
@@ -539,9 +540,7 @@ namespace Nitwork {
             .action = {.magick = END_GAME},
             .msg    = {.magick = MAGICK_END_GAME}
         };
-        Packet packet(
-            packetEndGame.action.magick,
-            std::make_any<struct packetEndGame_s>(packetEndGame));
+        Packet packet(packetEndGame.action.magick, std::make_any<struct packetEndGame_s>(packetEndGame));
         sendToAllClients(packet);
     }
 
