@@ -115,7 +115,7 @@ namespace Systems {
             Registry::components<Types::InputBox> arrInputBox =
                 Registry::getInstance().getComponents<Types::InputBox>();
             std::vector<std::size_t> ids = Registry::getInstance().getEntitiesByComponents(
-                {typeid(Types::InputBox), typeid(Raylib::Text)});
+                {typeid(Types::InputBox), typeid(Raylib::TextShared)});
             static auto clockId = Registry::getInstance().getClock().create();
 
             if (Raylib::KeyboardInput::isKeyDown(Raylib::KeyboardKey::KB_BACKSPACE)
