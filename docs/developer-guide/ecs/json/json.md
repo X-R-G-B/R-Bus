@@ -34,11 +34,6 @@ This function is useful when you want to take a json list inside your json becau
 std::vector<nlohmann::json> Json::getDatasByJsonType(const std::vector<std::string> &indexes, JsonType dataType);
 ```
 
-- Get a data from an existing json data :
-```cpp
-nlohmann::json &Json::getDataFromJson(nlohmann::json jsonData, const std::string &index);
-```
-
 - Get a data but precise the type of what you want with template :
 ```cpp
 template <typename T>
@@ -48,6 +43,11 @@ T Json::getDataFromJson(nlohmann::json jsonData, const std::string &index);
 - Get a data from a vector of json data :
 ```cpp
 std::vector<nlohmann::json> Json::getDatasFromList(const std::vector<nlohmann::json> &list, const std::string &key);
+```
+
+- Get a json object from a jsonType and an id :
+```cpp
+nlohmann::json Json::getJsonObjectById(JsonType type, const std::string &id, const std::string &arrayName);
 ```
 
 - Get a json list from a json data :
@@ -128,7 +128,34 @@ std::vector<nlohmann::json> enemyData =
 And now you can iterate on your datas :
 ```cpp
 for (auto &data : enemyData) {
-    std::cout << Json::getInstance().getDataFromJson(elem, "spritePath") <<  
+    std::cout << Json::getInstance().getDataFromJson<std::string>(elem, "spritePath") <<
         std::endl;
 }
+```
+
+### Get a json object from a jsonType and an id
+Here's a json file with an array of enemy objects :
+```json
+{
+    "enemy" : [
+        {
+            "id" : "1",
+            "spritePath" : "path"
+        },
+        {
+            "id" : "2",
+            "spritePath" : "path"
+        }
+    ]
+}
+```
+
+Here's how to get an enemy object from his id :
+```cpp
+    nlohmann::json object = Json::getJsonObjectById(enemyType, "1", "enemy");
+    //the returned object will be :
+    // {
+    //     "id" : "1",
+    //     "spritePath" : "path"
+    // }
 ```

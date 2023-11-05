@@ -6,11 +6,12 @@
 */
 
 #include "ServerNetwork.hpp"
-#include "ECSCustomTypes.hpp"
-#include "Maths.hpp"
+#include "B-luga-physics/ECSSystems.hpp"
+#include "B-luga/Maths/Maths.hpp"
+#include "B-luga/Registry.hpp"
+#include "CreateMissiles.hpp"
+#include "GameSystems.hpp"
 #include "NitworkServer.hpp"
-#include "Registry.hpp"
-#include "Systems.hpp"
 
 namespace Systems {
     void handleLifeUpdateMsg(const std::any &any, boost::asio::ip::udp::endpoint &endpoint)
@@ -18,10 +19,10 @@ namespace Systems {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
         auto msg              = std::any_cast<struct msgLifeUpdate_s>(any);
         Registry &registry    = Registry::getInstance();
-        auto &arrHealth       = registry.getComponents<struct health_s>();
+        auto &arrHealth       = registry.getComponents<Types::Health>();
         auto &arrOtherPlayers = registry.getComponents<Types::OtherPlayer>();
         std::vector<std::size_t> ids =
-            registry.getEntitiesByComponents({typeid(struct health_s), typeid(Types::OtherPlayer)});
+            registry.getEntitiesByComponents({typeid(Types::Health), typeid(Types::OtherPlayer)});
 
         for (auto &id : ids) {
             auto &life        = arrHealth[id];
@@ -31,6 +32,7 @@ namespace Systems {
                     endpoint,
                     msg.playerId,
                     msg.life);
+                arrHealth[id].hp = msg.life.hp;
                 return;
             }
         }
@@ -47,44 +49,50 @@ namespace Systems {
             return;
         }
         auto &arrEnemies = registry.getComponents<Types::Enemy>();
-        auto arrHealth   = registry.getComponents<struct health_s>();
+        auto arrHealth   = registry.getComponents<Types::Health>();
         auto arrPos      = registry.getComponents<Types::Position>();
-        auto it = std::find_if(arrEnemies.begin(), arrEnemies.end(), [&msgEnemyDeath](auto &enemy) {
-            return enemy.getConstId().id == msgEnemyDeath.enemyId.id;
-        });
-        if (it == arrEnemies.end()) {
-            return;
+        auto ids         = arrEnemies.getExistingsId();
+
+        for (auto &id : ids) {
+            if (arrEnemies[id].getConstId().id == msgEnemyDeath.enemyId.id) {
+                if (arrHealth.exist(id) && arrPos.exist(id)) {
+                    Nitwork::NitworkServer::getInstance().addNewEnemyMessage(
+                        endpoint,
+                        {
+                            .id   = arrEnemies[id].getConstId(),
+                            .life = {.hp = arrHealth[id].hp},
+                            .pos =
+                                {static_cast<char>(Maths::removeIntDecimals(arrPos[id].x)),
+                                     static_cast<char>(Maths::removeIntDecimals(arrPos[id].y))},
+                            .type = arrEnemies[id].type,
+                    });
+                }
+                return;
+            }
         }
-        auto index = std::distance(arrEnemies.begin(), it);
-        if (!arrEnemies.exist(index) || !arrHealth.exist(index) || !arrPos.exist(index)) {
-            return;
-        }
-        Nitwork::NitworkServer::getInstance().addNewEnemyMessage(
-            endpoint,
-            {
-                .id   = arrEnemies[index].getConstId(),
-                .life = arrHealth[index],
-                .pos =
-                    {static_cast<char>(Maths::removeIntDecimals(arrPos[index].x)),
-                          static_cast<char>(Maths::removeIntDecimals(arrPos[index].y))},
-                .type = arrEnemies[index].type,
-        });
     }
 
-    void receiveNewBulletMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    void receiveNewBulletMsg(const std::any &msg, boost::asio::ip::udp::endpoint & /* unused */)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        auto &arrMissiles = Registry::getInstance().getComponents<Types::Missiles>();
+        auto &arrHealth   = Registry::getInstance().getComponents<Types::Health>();
 
-        const struct msgNewBullet_s &msgNewBullet = std::any_cast<struct msgNewBullet_s>(msg);
+        struct msgNewBullet_s msgNewBullet = std::any_cast<struct msgNewBullet_s>(msg);
 
         struct Types::Position position = {
             Maths::addIntDecimals(msgNewBullet.pos.x),
             Maths::addIntDecimals(msgNewBullet.pos.y),
         };
-        struct Types::Missiles missileType = {static_cast<missileTypes_e>(msgNewBullet.missileType)};
-        Systems::createMissile(position, missileType);
-        //         send bullet to clients but not the sender
-        Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg(msgNewBullet, endpoint);
+        struct Types::Missiles missileType = {msgNewBullet.missileType};
+        auto id                            = Systems::createPlayerMissile(position, missileType);
+        if (!arrMissiles.exist(id) || !arrHealth.exist(id)) {
+            Logger::error("Error: missile not created");
+            return;
+        }
+        msgNewBullet.id   = arrMissiles[id].constId;
+        msgNewBullet.life = arrHealth[id].hp;
+        Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg(msgNewBullet);
     }
 
     void receiveAbsolutePositionMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
@@ -114,4 +122,73 @@ namespace Systems {
         }
         Logger::error("Error: player not found");
     }
+
+    void receivePlayerDeathMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const struct msgPlayerDeath_s &msgPlayerDeath = std::any_cast<struct msgPlayerDeath_s>(msg);
+        auto &registry                                = Registry::getInstance();
+        auto &arrHealth                               = registry.getComponents<Types::Health>();
+        auto &arrPos                                  = registry.getComponents<Types::Position>();
+        auto &arrOtherPlayers                         = registry.getComponents<Types::OtherPlayer>();
+        std::vector<std::size_t> ids                  = registry.getEntitiesByComponents(
+            {typeid(Types::Health), typeid(Types::OtherPlayer), typeid(Types::Position)});
+
+        for (auto &id : ids) {
+            auto &life        = arrHealth[id];
+            auto &otherPlayer = arrOtherPlayers[id];
+            auto &pos         = arrPos[id];
+            if (otherPlayer.constId == msgPlayerDeath.playerId) {
+                if (life.hp > 0) {
+                    Nitwork::NitworkServer::getInstance().addNewPlayerMsg(
+                        endpoint,
+                        {
+                            .magick   = MAGICK_NEW_PLAYER,
+                            .playerId = otherPlayer.constId,
+                            .pos      = {pos.x, pos.y},
+                            .life     = {.hp = life.hp},
+                            .isOtherPlayer =
+                                (Nitwork::NitworkServer::getInstance().getPlayerId(endpoint)
+                                 != otherPlayer.constId),
+                    });
+                }
+                return;
+            }
+        }
+        Nitwork::NitworkServer::getInstance().addPlayerDeathMsg(msgPlayerDeath.playerId);
+    }
+
+    void handleClientMissileDeath(const std::any &msg, boost::asio::ip::udp::endpoint & /* us=nused */)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        const struct msgMissileDeath_s &msgMissileDeath = std::any_cast<struct msgMissileDeath_s>(msg);
+        auto &registry                                  = Registry::getInstance();
+
+        if (msgMissileDeath.magick != MAGICK_MISSILE_DEATH) {
+            Logger::error("Error: magick is not CLIENT_MISSILE_DEATH");
+            return;
+        }
+        auto &arrMissiles = registry.getComponents<Types::Missiles>();
+        auto arrHealth    = registry.getComponents<Types::Health>();
+        auto arrPos       = registry.getComponents<Types::Position>();
+        auto ids          = arrMissiles.getExistingsId();
+
+        for (auto &id : ids) {
+            if (arrMissiles[id].constId == msgMissileDeath.missileId) {
+                if (arrHealth.exist(id) && arrPos.exist(id)) {
+                    Nitwork::NitworkServer::getInstance().broadcastNewBulletMsg({
+                        .magick = MAGICK_NEW_MISSILE,
+                        .pos =
+                            {static_cast<char>(Maths::removeIntDecimals(arrPos[id].x)),
+                                  static_cast<char>(Maths::removeIntDecimals(arrPos[id].y))},
+                        .id          = msgMissileDeath.missileId,
+                        .life        = arrHealth[id].hp,
+                        .missileType = arrMissiles[id].type,
+                    });
+                }
+                return;
+            }
+        }
+    }
+
 } // namespace Systems

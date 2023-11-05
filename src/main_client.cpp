@@ -5,54 +5,32 @@
 ** main
 */
 
-#include "Logger.hpp"
+#include <boost/asio.hpp>
+#include "B-luga/Logger.hpp"
+#include "B-luga/Registry.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "NitworkClient.hpp"
-#include "Registry.hpp"
 #include "ResourcesManager.hpp"
-#include "SceneManager.hpp"
+#include "init.hpp"
 
 constexpr int EXIT_EPITECH = 84;
 
-static bool isNumber(const std::string &str)
-{
-    return std::all_of(str.begin(), str.end(), ::isdigit);
-}
-
-static bool checkArgs(int ac, const char **av)
-{
-    if (ac != 3) {
-        Logger::error("Usage: ./r-type_client <ip> <port>");
-        return false;
-    }
-    const std::vector<std::string> args(av + 1, av + ac);
-    if (args[0].empty()) {
-        Logger::error("Invalid ip");
-        return false;
-    }
-    if (!isNumber(args[1]) || std::stoi(args[1]) < 0 || std::stoi(args[1]) > 65535) {
-        Logger::error("Invalid port");
-        return false;
-    }
-    return true;
-}
-
-int main(int ac, const char **av)
+int main(int /*unused*/, const char **av)
 {
 #ifndef NDEBUG
-    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
+    Logger::setLogLevel(LogLevel::Debug);
+#else
+    Logger::setLogLevel(LogLevel::Warn);
 #endif
-    ECS::ResourcesManager::init(av[0]);
-    if (!checkArgs(ac, av)) {
+    ResourcesManager::init(av[0]);
+    initScenes();
+    if (!Nitwork::NitworkClient::getInstance().startClient()) {
         return EXIT_EPITECH;
     }
-    auto &sceneManager = Scene::SceneManager::getInstance();
-    if (!Nitwork::NitworkClient::getInstance()
-             .startClient(std::stoi(av[2]), av[1], DEFAULT_THREAD_NB, TICKS_PER_SECOND)) {
-        return EXIT_EPITECH;
+    int res = Scene::SceneManager::getInstance().run();
+    if (Nitwork::NitworkClient::getInstance().isRunning()) {
+        Nitwork::NitworkClient::getInstance().stop();
     }
-    Nitwork::NitworkClient::getInstance().addInitMsg();
-    Nitwork::NitworkClient::getInstance().addReadyMsg();
-    int res = sceneManager.run();
-    Nitwork::NitworkClient::getInstance().stop();
     return res;
 }

@@ -28,15 +28,17 @@
 
 - [Common logic](developer-guide/common-logic.md)
 
-- [Network](developer-guide/network/README.md)
-    - [RFC](developer-guide/network/rfc.md)
+- [Network](network/README.md)
+    - [RFC](network/rfc/RFC.md)
 
 - [ECS](developer-guide/ecs/README.md)
     - [UML](developer-guide/ecs/uml.md)
     - [Clock](developer-guide/ecs/clock.md)
     - [Maths](developer-guide/ecs/maths.md)
     - [Logger](developer-guide/ecs/logger.md)
-    - [Json](developer-guide/ecs/json/json.md)
+    - [Json](developer-guide/ecs/json/README.md)
+        - [Json](developer-guide/ecs/json/json.md)
+    - [Bullets](developer-guide/ecs/bullets.md)
 
 - [Server](developer-guide/server/README.md)
 
@@ -46,18 +48,15 @@
         - [Audio file formats](developer-guide/client/audio/fileFormats.md)
         - [Music](developer-guide/client/audio/music.md)
         - [Sounds](developer-guide/client/audio/sounds.md)
-
     - [Events]()
         - [keyboard](developer-guide/client/events/keyboard.md)
         - [Mouse](developer-guide/client/events/mouse.md)
-
     - [Geometry]()
         - [Color](developer-guide/client/geometry/color.md)
         - [Rectangle](developer-guide/client/geometry/rectangle.md)
         - [Vector2](developer-guide/client/geometry/vector2.md)
         - [Vector3](developer-guide/client/geometry/vector3.md)
         - [Vector4](developer-guide/client/geometry/vector4.md)
-
     - [Graphic]()
         - [Colors pixels](developer-guide/client/graphic/colorsPixels.md)
         - [Config flags](developer-guide/client/graphic/configFlags.md)

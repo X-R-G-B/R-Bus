@@ -5,12 +5,22 @@
 ** NitworkServer
 */
 
+#if defined(_WIN32)
+    #define _CRT_SECURE_NO_WARNINGS
+    #include <sstream>
+    #include <tchar.h>
+#endif
+#include <boost/asio.hpp>
+#include "B-luga-physics/ECSSystems.hpp"
+#include "B-luga/Logger.hpp"
+#include "B-luga/Registry.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "GameSystems.hpp"
 #include "NitworkServer.hpp"
-#include "ECSCustomTypes.hpp"
-#include "Logger.hpp"
-#include "Registry.hpp"
-#include "SystemManagersDirector.hpp"
-#include "Systems.hpp"
+#include "ResourcesManager.hpp"
+#include "WaveSystem.hpp"
+#include "init.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -22,10 +32,38 @@ namespace Nitwork {
         return _instance;
     }
 
-    bool NitworkServer::startServer(int port, int nbPlayer, int threadNb, int tick)
+    bool NitworkServer::startServer(
+        int nbPlayer,
+        enum gameType_e gameType,
+        const std::string &name,
+        const std::string &ownerIp,
+        int ownerPort,
+        int port,
+        int threadNb,
+        int tick)
     {
-        _maxNbPlayer = nbPlayer;
-        return ANitwork::start(port, threadNb, tick, "");
+        auto startStatus = ANitwork::start(port, threadNb, tick, "");
+
+        _serverInfos.maxNbPlayer = nbPlayer;
+        std::strcpy(_serverInfos.name, (name.size() > 32) ? name.substr(0, 32).data() : name.data());
+        std::strcpy(
+            _serverInfos.ownerInfos.ip,
+            (ownerIp.size() > 16) ? ownerIp.substr(0, 16).data() : ownerIp.data());
+        _serverInfos.ownerInfos.port = ownerPort;
+        _serverInfos.lobbyInfos.port = _socket.local_endpoint().port();
+        std::strcpy(
+            _serverInfos.lobbyInfos.ip,
+            (_socket.local_endpoint().address().to_string().size() > 16)
+                ? _socket.local_endpoint().address().to_string().substr(0, 16).data()
+                : _socket.local_endpoint().address().to_string().data());
+        _serverInfos.gameType = gameType;
+        // TODO: add gameType to lobby
+        return startStatus;
+    }
+
+    struct lobby_s NitworkServer::getServerInfos() const
+    {
+        return _serverInfos;
     }
 
     bool NitworkServer::startNitworkConfig(int port, const std::string & /* unused */)
@@ -35,30 +73,11 @@ namespace Nitwork {
 
         _socket.open(boost::asio::ip::udp::v4());
         if (!_socket.is_open()) {
-            std::cerr << "Error: socket not open" << std::endl;
+            Logger::error("Socket not open");
             return false;
         }
         _socket.bind(endpoint);
         return true;
-    }
-
-    void NitworkServer::sendToAllClients(const Packet &packet)
-    {
-        for (auto &endpoint : _endpoints) {
-            addPacketToSend(Packet(packet, endpoint));
-        }
-    }
-
-    void
-    NitworkServer::sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint)
-    {
-        for (auto &e : _endpoints) {
-            if (e != endpoint) {
-                Logger::debug(
-                    "Package sent to: " + e.address().to_string() + ":" + std::to_string(e.port()));
-                addPacketToSend(Packet(packet, e));
-            }
-        }
     }
 
     void NitworkServer::handleBodyAction(
@@ -67,23 +86,33 @@ namespace Nitwork {
     {
         // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        auto *action = reinterpret_cast<struct action_s *>(_receiveBuffer.data() + sizeof(struct header_s));
+        auto *actionPtr = reinterpret_cast<struct action_s *>(_receiveBuffer.data());
         // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast,
         // cppcoreguidelines-pro-bounds-pointer-arithmetic)
-        auto it = _actionsHandlers.find(action->magick);
+
+        auto action = *actionPtr;
+        auto it     = _actionsHandlers.find(action.magick);
+        std::memmove(
+            _receiveBuffer.data(),
+            _receiveBuffer.data() + sizeof(struct action_s),
+            _receiveBuffer.size() - sizeof(struct action_s));
+        std::memset(
+            _receiveBuffer.data() + _receiveBuffer.size() - sizeof(struct action_s),
+            0,
+            sizeof(struct action_s));
 
         if (it == _actionsHandlers.end()) {
-            std::cerr << "Error: action not found" << std::endl;
+            Logger::error("Error: action not found");
             return;
         }
         if (it->second.first == nullptr) {
-            std::cerr << "Error: action handler is null" << std::endl;
+            Logger::error("Error: action handler is null");
             return;
         }
         Logger::debug(
             "Received packet from " + endpoint.address().to_string() + ":" + std::to_string(endpoint.port())
             + " with id " + std::to_string(header.id) + " and action of type "
-            + std::to_string(action->magick));
+            + std::to_string(action.magick));
         it->second.first(it->second.second, header);
     }
 
@@ -94,95 +123,158 @@ namespace Nitwork {
     }
     /* End Getters Section */
 
-    /* Check Methods Section */
-    bool NitworkServer::isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const
-    {
-        auto endPointIt = std::find_if(
-            _endpoints.begin(),
-            _endpoints.end(),
-            [&endpoint](const boost::asio::ip::udp::endpoint &e) {
-                return e.address() == endpoint.address() && e.port() == endpoint.port();
-            });
-
-        return endPointIt != _endpoints.end();
-    }
-    /* End Check Methods Section */
-
     void NitworkServer::sendNewAllie(
         n_id_t playerId,
-        struct packetNewAllie_s packetMsgNewAllie,
+        struct packetCreatePlayer_s packetMsgCreatePlayer,
         boost::asio::ip::udp::endpoint &endpoint,
         bool butNoOne)
     {
-        packetMsgNewAllie.msg.playerId = playerId;
+        packetMsgCreatePlayer.msg.playerId = playerId;
         if (butNoOne) {
             Packet packet(
-                packetMsgNewAllie.action.magick,
-                std::make_any<struct packetNewAllie_s>(packetMsgNewAllie));
+                packetMsgCreatePlayer.action.magick,
+                std::make_any<struct packetCreatePlayer_s>(packetMsgCreatePlayer));
             sendToAllClientsButNotOne(packet, endpoint);
         } else {
             Packet packet(
-                packetMsgNewAllie.action.magick,
-                std::make_any<struct packetNewAllie_s>(packetMsgNewAllie),
+                packetMsgCreatePlayer.action.magick,
+                std::make_any<struct packetCreatePlayer_s>(packetMsgCreatePlayer),
                 endpoint);
             addPacketToSend(packet);
         }
     }
 
     /* Handle packet (msg) Section */
+    void NitworkServer::sendAlliesAlreadyPresent(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
+    {
+        auto &arrPos          = Registry::getInstance().getComponents<Types::Position>();
+        auto &arrHealth       = Registry::getInstance().getComponents<Types::Health>();
+        auto &arrOtherPlayers = Registry::getInstance().getComponents<Types::OtherPlayer>();
+        auto ids              = Registry::getInstance().getEntitiesByComponents(
+            {typeid(Types::Position), typeid(Types::OtherPlayer), typeid(Types::Health)});
+
+        for (const auto &e : _playersIds) {
+            auto allieId = e.second;
+            if (allieId == playerId) {
+                continue;
+            }
+            auto idIt = std::find_if(ids.begin(), ids.end(), [allieId, &arrOtherPlayers](std::size_t id) {
+                return arrOtherPlayers[id].constId == allieId;
+            });
+            if (idIt == ids.end()) {
+                continue;
+            }
+            struct packetCreatePlayer_s packetMsgCreatePlayer = {
+                .header = {0, 0, 0, 0, 1, 0},
+                .action = {.magick = NITWORK_NEW_PLAYER},
+                .msg    = {
+                           .magick        = MAGICK_NEW_PLAYER,
+                           .playerId      = allieId,
+                           .pos           = {arrPos[*idIt].x, arrPos[*idIt].y},
+                           .life          = {.hp = arrHealth[*idIt].hp},
+                           .isOtherPlayer = 1}
+            };
+            sendNewAllie(allieId, packetMsgCreatePlayer, endpoint, false);
+        }
+    }
+
+    void NitworkServer::handleConnectLobbyMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        auto msgData    = std::any_cast<struct msgConnectLobby_s>(msg);
+        bool canConnect = true;
+
+        if (_isGameStarted) {
+            Logger::warn("Game already started, connection refused");
+            return;
+        }
+        if (msgData.magick != MAGICK_CONNECT_LOBBY) {
+            Logger::error("Error: magick not matching");
+            return;
+        }
+        if (_endpoints.size() >= _serverInfos.maxNbPlayer) {
+            Logger::error("Too many clients, can't add an other one");
+            canConnect = false;
+        }
+        addConnectLobbyRespMsg(endpoint, canConnect);
+    }
+
     void
     NitworkServer::handleInitMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        if (_endpoints.size() >= _maxNbPlayer) {
-            std::cerr << "Too many clients, can't add an other one" << std::endl;
+        if (_isGameStarted) {
+            Logger::warn("Game already started, connection refused");
+            return;
+        }
+        if (_endpoints.size() >= _serverInfos.maxNbPlayer) {
+            Logger::error("Too many clients, can't add an other one");
             return;
         }
         if (isClientAlreadyConnected(endpoint)) {
-            std::cerr << "Client already connected" << std::endl;
+            Logger::error("Client already connected");
             return;
         }
         _endpoints.emplace_back(endpoint);
-        auto playerId = static_cast<n_id_t>(_endpoints.size() - 1);
-        // Send new Allie to others
-        addPlayerInitMessage(endpoint, playerId);
-        struct packetNewAllie_s packetMsgNewAllie = {
+        auto playerId      = static_cast<n_id_t>(_endpoints.size() - 1);
+        auto &jsonInstance = Json::getInstance();
+
+        struct packetCreatePlayer_s packetMsgCreatePlayer = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = NEW_ALLIE},
-            .msg    = {.magick = MAGICK_NEW_ALLIE, .playerId = playerId}
+            .action = {.magick = NITWORK_NEW_PLAYER},
+            .msg    = {
+                       .magick   = MAGICK_NEW_PLAYER,
+                       .playerId = playerId,
+                       .pos =
+                    {jsonInstance.getDataByVector<int>(
+                         ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER),
+                         {"player", "position", "x"}),
+                        jsonInstance.getDataByVector<int>(
+                         ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER),
+                         {"player", "position", "y"})},
+                       .life          = {jsonInstance.getDataByVector<int>(
+                    ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER),
+                    {"player", "health"})},
+                       .isOtherPlayer = 0}
         };
-        Systems::initPlayer(playerId, true);
-        sendNewAllie(playerId, packetMsgNewAllie, endpoint);
-        for (const auto &[_, allieId] : _playersIds) {
-            if (allieId == playerId) {
-                continue;
-            }
-            sendNewAllie(allieId, packetMsgNewAllie, endpoint, false);
-        }
+        addPlayerInitMessage(endpoint, packetMsgCreatePlayer.msg);
+        packetMsgCreatePlayer.msg.isOtherPlayer = 1;
+        Systems::initPlayer(
+            playerId,
+            packetMsgCreatePlayer.msg.pos,
+            packetMsgCreatePlayer.msg.life,
+            static_cast<bool>(packetMsgCreatePlayer.msg.isOtherPlayer));
+        sendNewAllie(playerId, packetMsgCreatePlayer, endpoint);
+        sendAlliesAlreadyPresent(endpoint, playerId);
     }
 
     void
     NitworkServer::handleReadyMsg(const std::any & /* unused */, boost::asio::ip::udp::endpoint &endpoint)
     {
+        if (_isGameStarted) {
+            Logger::warn("Game already started, connection refused");
+            return;
+        }
         if (!isClientAlreadyConnected(endpoint)) {
             Logger::info("Client not connected");
             return;
         }
-        if (_endpoints.size() < _maxNbPlayer) {
-            Logger::info("A new client is ready, waiting for others");
+        _playersReady[endpoint] = true;
+        if (_endpoints.size() != _playersReady.size()) {
+            Logger::info("Client ready, waiting for others");
             return;
         }
-        addStarWaveMessage(endpoint, Types::Enemy::getEnemyNb());
+        _isGameStarted = true;
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
-        director.getSystemManager(0).addSystem(Systems::initWave);
+        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC))
+            .addSystem(Systems::waveHandler);
     }
 
     void
     NitworkServer::handleRelativePositionMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
     {
         if (!isClientAlreadyConnected(endpoint)) {
-            Logger::info("Client not connected");
+            Logger::warn("Client not connected");
             return;
         }
         auto msgData = std::any_cast<struct msgPositionRelative_s>(msg);
@@ -195,7 +287,7 @@ namespace Nitwork {
                          .id               = 0,
                          .nb_action        = 1,
                          .magick2          = HEADER_CODE2},
-            .action = {.magick = POSITION_RELATIVE_BROADCAST},
+            .action = {.magick = NITWORK_POSITION_RELATIVE_BROADCAST},
             .msg    = {
                          .magick   = MAGICK_POSITION_RELATIVE_BROADCAST,
                          .pos      = {.x = pos.x, .y = pos.y},
@@ -206,32 +298,193 @@ namespace Nitwork {
             std::make_any<struct packetPositionRelativeBroadcast_s>(msgPosBroadcast));
         sendToAllClientsButNotOne(packet, endpoint);
     }
+
+    void NitworkServer::forkProcessAndCreateLobby(
+        unsigned int maxNbPlayer,
+        enum gameType_e gameType,
+        const std::string &name,
+        const std::string &ownerIp,
+        int ownerPort)
+    {
+#ifdef _WIN32
+        std::string winName = "'" + name + "'";
+        std::basic_ostringstream<TCHAR> cmdline;
+        cmdline << _T(ResourcesManager::convertPath("./r-type_server.exe").c_str()) << _T(" 1 ")
+                << _T(maxNbPlayer) << _T(" ") << _T(gameType) << _T(" ") << _T(winName.c_str()) << _T(" ")
+                << _T(ownerIp.c_str()) << _T(" ") << _T(ownerPort);
+
+        Logger::fatal("cmdline: " + cmdline.str());
+        STARTUPINFO si = {sizeof(si)};
+        PROCESS_INFORMATION pi;
+    #ifdef UNICODE
+        TCHAR *cmd = _wcsdup(cmdline.str().c_str());
+    #else
+        TCHAR *cmd = _strdup(cmdline.str().c_str());
+    #endif
+
+        if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+            Logger::error("Error: CreateProcess failed");
+            free(cmd);
+            return;
+        }
+        free(cmd);
+        sendLobbyPid(
+            boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string(ownerIp), ownerPort),
+            pi.dwProcessId);
+#else
+        pid_t c_pid = fork();
+
+        if (c_pid == -1) {
+            Logger::error("Error: fork failed");
+            return;
+        }
+        if (c_pid == 0) {
+            Logger::info("Lobby " + name + " created");
+            if (execl(
+                    ResourcesManager::convertPath("r-type_server").c_str(),
+                    ResourcesManager::convertPath("r-type_server").c_str(),
+                    "1",
+                    std::to_string(maxNbPlayer).c_str(),
+                    std::to_string(gameType).c_str(),
+                    name.c_str(),
+                    ownerIp.c_str(),
+                    std::to_string(ownerPort).c_str(),
+                    NULL)
+                == -1) {
+                Logger::error("Error: execl failed");
+            }
+        } else {
+            sendLobbyPid(
+                boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string(ownerIp), ownerPort),
+                c_pid);
+        }
+#endif
+    }
+
+    void NitworkServer::recreateLobby(
+        unsigned int maxNbPlayer,
+        const std::string &name,
+        enum gameType_e gameType)
+    {
+        if (maxNbPlayer < 1) {
+            Logger::error("Invalid number of players: " + std::to_string(maxNbPlayer));
+            return;
+        }
+        if (name.empty()) {
+            Logger::error("Invalid name: " + name);
+            return;
+        }
+        forkProcessAndCreateLobby(
+            maxNbPlayer,
+            gameType,
+            name,
+            _serverInfos.ownerInfos.ip,
+            _serverInfos.ownerInfos.port);
+    }
+
+    void NitworkServer::sendLobbyPid(const boost::asio::ip::udp::endpoint &endpoint, int pid)
+    {
+        struct packetReplaceLobbyPid_s packetLobbyPid = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = NITWORK_LOBBY_PID},
+            .msg    = {.magick = MAGICK_LOBBY_PID, .name = "", .pid = pid}
+        };
+        std::strcpy(packetLobbyPid.msg.name, _serverInfos.name);
+        Packet packet(
+            packetLobbyPid.action.magick,
+            std::make_any<struct packetReplaceLobbyPid_s>(packetLobbyPid),
+            endpoint);
+        addPacketToSend(packet);
+    }
+
+    void NitworkServer::handleDisconnectMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
+        auto msgData = std::any_cast<struct msgDisconnectLobby_s>(msg);
+
+        if (msgData.magick != MAGICK_DISCONNECT_LOBBY) {
+            Logger::error("Error: magick is not MAGICK_DISCONNECT_LOBBY");
+            return;
+        }
+        Logger::fatal(
+            "Client disconnected: " + endpoint.address().to_string() + ":"
+            + std::to_string(endpoint.port()));
+        _endpoints.erase(std::remove(_endpoints.begin(), _endpoints.end(), endpoint));
+        deletePacketFromEndPoints(endpoint);
+        addPlayerDeathMsg(getPlayerId(endpoint));
+        _playersReady.erase(endpoint);
+        if (_endpoints.empty()) {
+            recreateLobby(_serverInfos.maxNbPlayer, _serverInfos.name, _serverInfos.gameType);
+            Scene::SceneManager::getInstance().stop();
+        }
+    }
     /* End Handle packet (msg) Section */
 
     /* Message Creation Section */
-    void NitworkServer::addPlayerInitMessage(boost::asio::ip::udp::endpoint &endpoint, n_id_t playerId)
+    void NitworkServer::addConnectLobbyRespMsg(boost::asio::ip::udp::endpoint &endpoint, bool canConnect)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
-        struct packetMsgPlayerInit_s packetMsgPlayerInit = {
+        struct packetConnectLobbyResp_s packetConnectLobbyResp = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = INIT},
-            .msg    = {.magick = MAGICK_INIT, .playerId = playerId}
+            .action = {.magick = NITWORK_CONNECT_LOBBY_RESP},
+            .msg    = {.magick = MAGICK_CONNECT_LOBBY_RESP, .isOk = static_cast<char>(canConnect)}
         };
         Packet packet(
-            packetMsgPlayerInit.action.magick,
-            std::make_any<struct packetMsgPlayerInit_s>(packetMsgPlayerInit),
+            packetConnectLobbyResp.action.magick,
+            std::make_any<struct packetConnectLobbyResp_s>(packetConnectLobbyResp),
             endpoint);
         addPacketToSend(packet);
-        _playersIds[endpoint] = playerId;
     }
 
-    void NitworkServer::addStarWaveMessage(boost::asio::ip::udp::endpoint & /* unused */, n_id_t enemyId)
+    void NitworkServer::addInfoLobbyMsg()
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetInfoLobby_s packetInfo = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = NITWORK_INFO_LOBBY},
+            .msg    = {
+                       .magick      = MAGICK_INFO_LOBBY,
+                       .name        = {},
+                       .maxNbPlayer = _serverInfos.maxNbPlayer,
+                       .gameType    = _serverInfos.gameType,
+                       .ownerInfos  = _serverInfos.ownerInfos}
+        };
+        std::strcpy(packetInfo.msg.name, _serverInfos.name);
+        boost::asio::ip::udp::endpoint mainServer = boost::asio::ip::udp::endpoint(
+            boost::asio::ip::address::from_string(_serverInfos.ownerInfos.ip),
+            _serverInfos.ownerInfos.port);
+        Packet packet(
+            packetInfo.action.magick,
+            std::make_any<struct packetInfoLobby_s>(packetInfo),
+            mainServer);
+        addPacketToSend(packet);
+    }
+
+    void NitworkServer::addPlayerInitMessage(
+        boost::asio::ip::udp::endpoint &endpoint,
+        const msgCreatePlayer_s &playerMsg)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetCreatePlayer_s packetCreatePlayer = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = NITWORK_NEW_PLAYER},
+            .msg    = playerMsg
+        };
+        Packet packet(
+            packetCreatePlayer.action.magick,
+            std::make_any<struct packetCreatePlayer_s>(packetCreatePlayer),
+            endpoint);
+        addPacketToSend(packet);
+        _playersIds[endpoint] = playerMsg.playerId;
+    }
+
+    void NitworkServer::addStarWaveMessage(n_id_t waveId)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetMsgStartWave_s packetMsgStartWave = {
             .header       = {0, 0, 0, 0, 1, 0},
-            .action       = {.magick = START_WAVE},
-            .msgStartWave = {.magick = MAGICK_START_WAVE, .enemyNb = enemyId}
+            .action       = {.magick = NITWORK_START_WAVE},
+            .msgStartWave = {.magick = MAGICK_START_WAVE, .waveId = waveId}
         };
         Packet packet(
             packetMsgStartWave.action.magick,
@@ -247,7 +500,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetLifeUpdate_s packetLifeUpdate = {
             .header        = {0, 0, 0, 0, 1, 0},
-            .action        = {.magick = LIFE_UPDATE},
+            .action        = {.magick = NITWORK_LIFE_UPDATE},
             .msgLifeUpdate = {.magick = MAGICK_LIFE_UPDATE, .playerId = playerId, .life = life}
         };
         Packet packet(
@@ -262,7 +515,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetEnemyDeath_s packetEnemyDeath = {
             .header        = {0, 0, 0, 0, 1, 0},
-            .action        = {.magick = ENEMY_DEATH},
+            .action        = {.magick = NITWORK_ENEMY_DEATH},
             .msgEnemyDeath = {.magick = MAGICK_ENEMY_DEATH, .enemyId = {.id = enemyId}}
         };
         Packet packet(
@@ -278,7 +531,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetNewEnemy_s packetNewEnemy = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = NEW_ENEMY},
+            .action = {.magick = NITWORK_NEW_ENEMY},
             .msg    = {.magick = MAGICK_NEW_ENEMY, .enemyInfos = enemyInfos}
         };
         Packet packet(
@@ -288,20 +541,18 @@ namespace Nitwork {
         addPacketToSend(packet);
     }
 
-    void NitworkServer::broadcastNewBulletMsg(
-        const struct msgNewBullet_s &msg,
-        boost::asio::ip::udp::endpoint &senderEndpoint)
+    void NitworkServer::broadcastNewBulletMsg(const struct msgNewBullet_s &msg)
     {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetNewBullet_s packetNewBullet = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = NEW_BULLET},
+            .action = {.magick = NITWORK_NEW_MISSILE},
             .msg    = msg
         };
         Packet packet(
             packetNewBullet.action.magick,
             std::make_any<struct packetNewBullet_s>(packetNewBullet));
-        sendToAllClientsButNotOne(packet, senderEndpoint);
+        sendToAllClients(packet);
     }
 
     void NitworkServer::broadcastAbsolutePositionMsg(
@@ -311,7 +562,7 @@ namespace Nitwork {
         std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
         struct packetPositionAbsoluteBroadcast_s packetPosAbsoluteBroadcast = {
             .header = {0, 0, 0, 0, 1, 0},
-            .action = {.magick = POSITION_ABSOLUTE_BROADCAST},
+            .action = {.magick = NITWORK_POSITION_ABSOLUTE_BROADCAST},
             .msg    = {
                        .magick   = MAGICK_POSITION_ABSOLUTE_BROADCAST,
                        .pos      = {.x = pos.x, .y = pos.y},
@@ -321,6 +572,84 @@ namespace Nitwork {
             packetPosAbsoluteBroadcast.action.magick,
             std::make_any<struct packetPositionAbsoluteBroadcast_s>(packetPosAbsoluteBroadcast));
         sendToAllClientsButNotOne(packet, senderEndpoint);
+    }
+
+    void NitworkServer::addPlayerDeathMsg(n_id_t id)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetPlayerDeath_s packetPlayerDeath = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = NITWORK_PLAYER_DEATH},
+            .msg    = {.magick = MAGICK_PLAYER_DEATH, .playerId = id}
+        };
+        Packet packet(
+            packetPlayerDeath.action.magick,
+            std::make_any<struct packetPlayerDeath_s>(packetPlayerDeath));
+        sendToAllClients(packet);
+    }
+
+    void NitworkServer::addPlayerDeathMsg(n_id_t id, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetPlayerDeath_s packetPlayerDeath = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = NITWORK_PLAYER_DEATH},
+            .msg    = {.magick = MAGICK_PLAYER_DEATH, .playerId = id}
+        };
+        Packet packet(
+            packetPlayerDeath.action.magick,
+            std::make_any<struct packetPlayerDeath_s>(packetPlayerDeath),
+            endpoint);
+        addPacketToSend(packet);
+    }
+
+    void NitworkServer::addNewPlayerMsg(
+        boost::asio::ip::udp::endpoint &endpoint,
+        const struct msgCreatePlayer_s &playerMsg)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetCreatePlayer_s packetCreatePlayer = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = NITWORK_NEW_PLAYER},
+            .msg    = playerMsg
+        };
+        Packet packet(
+            packetCreatePlayer.action.magick,
+            std::make_any<struct packetCreatePlayer_s>(packetCreatePlayer),
+            endpoint);
+        addPacketToSend(packet);
+    }
+
+    void NitworkServer::addMissileDeathMsg(n_id_t id)
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetMissileDeath_s packetMissileDeath = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action =
+                {
+                       .magick = NITWORK_MISSILE_DEATH,
+                       },
+            .msgMissileDeath =
+                {
+                       .magick    = MAGICK_MISSILE_DEATH,
+                       .missileId = id,
+                       },
+        };
+        Packet packet(
+            packetMissileDeath.action.magick,
+            std::make_any<struct packetMissileDeath_s>(packetMissileDeath));
+    }
+
+    void NitworkServer::addEndGameMsg()
+    {
+        std::lock_guard<std::mutex> lock(_receivedPacketsIdsMutex);
+        struct packetEndGame_s packetEndGame = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = NITWORK_END_GAME},
+            .msg    = {.magick = MAGICK_END_GAME}
+        };
+        Packet packet(packetEndGame.action.magick, std::make_any<struct packetEndGame_s>(packetEndGame));
+        sendToAllClients(packet);
     }
 
     n_id_t NitworkServer::getPlayerId(const boost::asio::ip::udp::endpoint &endpoint) const

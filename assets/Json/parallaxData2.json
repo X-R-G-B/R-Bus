@@ -1,0 +1,145 @@
+{
+    "parallax": [
+        {
+            "spritePath": "assets/Map/parallax2/black-background.png",
+            "width": 100.0,
+            "height": 100.0,
+            "position": {
+                "x": 0,
+                "y": 0
+            },
+            "velocity": {
+                "speedX": 0,
+                "speedY": 0
+            },
+            "copy": false
+        },
+        {
+            "spritePath": "assets/Map/parallax2/parallax2-firstImage.png",
+            "width": 100.0,
+            "height": 100.0,
+            "position": {
+                "x": 0,
+                "y": 0
+            },
+            "velocity" : {
+                "speedX" : -3,
+                "speedY" :0
+            },
+            "copy": false
+        },
+        {
+            "spritePath": "assets/Map/parallax2/parallax2-secondImage.png",
+            "width": 100.0,
+            "height": 100.0,
+            "position": {
+                "x": 10000,
+                "y": 0
+            },
+            "velocity" : {
+                "speedX" : -3,
+                "speedY" :0
+            },
+            "copy": false
+        },
+        {
+            "spritePath": "assets/Map/parallax2/background-stars.png",
+            "width": 100.0,
+            "height": 100.0,
+            "position": {
+                "x": 0,
+                "y": 0
+            },
+            "velocity" : {
+                "speedX" : -6,
+                "speedY" :0
+            },
+            "copy": true
+        },
+        {
+            "spritePath": "assets/Map/parallax2/stars.png",
+            "width": 100.0,
+            "height": 100.0,
+            "position": {
+                "x": 0,
+                "y": 0
+            },
+            "velocity" : {
+                "speedX" : -8,
+                "speedY" :0
+            },
+            "copy": true
+        },
+        {
+            "spritePath": "assets/Map/parallax2/planet_fire.png",
+            "width": 20.0,
+            "height": 20.0,
+            "position": {
+                "x": 4000,
+                "y": 3000
+            },
+            "velocity" : {
+                "speedX" : -5,
+                "speedY" : 0
+            },
+            "copy": false
+        },
+        {
+            "spritePath": "assets/Map/parallax2/planet_grey.png",
+            "width": 5.0,
+            "height": 5.0,
+            "position": {
+                "x": 4400,
+                "y": 3000
+            },
+            "velocity" : {
+                "speedX" : -8,
+                "speedY" :0
+            },
+            "copy": false
+        },
+        {
+            "spritePath": "assets/Map/parallax2/planet_green.png",
+            "width": 7.0,
+            "height": 7.0,
+            "position": {
+                "x": 4400,
+                "y": 8000
+            },
+            "velocity" : {
+                "speedX" : -13,
+                "speedY" :0
+            },
+            "copy": false
+        },
+
+        {
+            "spritePath": "assets/Map/parallax2/planet_blue.png",
+            "width": 13.0,
+            "height": 13.0,
+            "position": {
+                "x": 10000,
+                "y": 2000
+            },
+            "velocity" : {
+                "speedX" : -10,
+                "speedY" :0
+            },
+            "copy": false
+        },
+        {
+            "spritePath": "assets/Map/parallax2/porthole.png",
+            "width": 100.0,
+            "height": 100.0,
+            "position": {
+                "x": 0,
+                "y": 0
+            },
+            "velocity" : {
+                "speedX" : -40,
+                "speedY" : 0
+            },
+            "copy": true
+        }
+    ]
+}

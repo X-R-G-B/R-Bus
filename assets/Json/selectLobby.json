@@ -1,0 +1,456 @@
+{
+    "lobbyMenu": [
+        {
+            "type": "sprite",
+            "spritePath": "assets/Menu/bix-box.png",
+            "width": 8000,
+            "height": 8000,
+            "position": {
+                "x": 1000,
+                "y": 1000
+            },
+            "rect": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 2312.0,
+                "height": 1518.0
+            }
+        },
+        {
+            "type": "button",
+            "callback": "changeParallax",
+            "spritePath": "assets/Menu/button.png",
+            "width": 1500,
+            "height" : 750,
+            "rect": {
+                "x": 51.0,
+                "y": 51.0,
+                "width": 1265.0,
+                "height": 305.0
+            },
+            "position" : {
+                "x": 8000,
+                "y": 500
+            },
+            "collisionRect": {
+                "width": 1500,
+                "height": 750,
+                "offsetX": 0,
+                "offsetY": 0
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 1416.0,
+                            "y": 49.0,
+                            "width": 1267.0,
+                            "height": 307.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 2759.0,
+                            "y": 31.0,
+                            "width": 1303.0,
+                            "height": 340.0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 1.5,
+            "text": "PARALLAX_1",
+            "position" : {
+                "x": 8300,
+                "y": 800
+            }
+        },
+        {
+            "type": "button",
+            "spritePath": "assets/Menu/button.png",
+            "callback": "onButtonGoToCreateLobbyClicked",
+            "width": 1000,
+            "height": 800,
+            "rect": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1366.0,
+                "height": 406.0
+            },
+            "position": {
+                "x": 5500,
+                "y": 7000
+            },
+            "collisionRect": {
+                "width": 1000,
+                "height": 800,
+                "offsetX": 0,
+                "offsetY": 0
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 1416.0,
+                            "y": 49.0,
+                            "width": 1267.0,
+                            "height": 307.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 2759.0,
+                            "y": 31.0,
+                            "width": 1303.0,
+                            "height": 340.0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "button",
+            "spritePath": "assets/Menu/button.png",
+            "callback": "connectLobbySelected",
+            "width": 1000,
+            "height": 800,
+            "rect": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1366.0,
+                "height": 406.0
+            },
+            "position": {
+                "x": 3500,
+                "y": 7000
+            },
+            "collisionRect": {
+                "width": 1000,
+                "height": 800,
+                "offsetX": 0,
+                "offsetY": 0
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 1416.0,
+                            "y": 49.0,
+                            "width": 1267.0,
+                            "height": 307.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 2759.0,
+                            "y": 31.0,
+                            "width": 1303.0,
+                            "height": 340.0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "button",
+            "spritePath": "assets/Menu/button.png",
+            "width": 1000,
+            "height": 800,
+            "callback": "goBackPage",
+            "rect": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1366.0,
+                "height": 406.0
+            },
+            "position": {
+                "x": 2000,
+                "y": 7000
+            },
+            "collisionRect": {
+                "width": 1000,
+                "height": 800,
+                "offsetX": 0,
+                "offsetY": 0
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 1416.0,
+                            "y": 49.0,
+                            "width": 1267.0,
+                            "height": 307.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 2759.0,
+                            "y": 31.0,
+                            "width": 1303.0,
+                            "height": 340.0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "button",
+            "spritePath": "assets/Menu/button.png",
+            "width": 1000,
+            "height": 800,
+            "callback": "goNextPage",
+            "rect": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 1366.0,
+                "height": 406.0
+            },
+            "position": {
+                "x": 7000,
+                "y": 7000
+            },
+            "collisionRect": {
+                "width": 1000,
+                "height": 800,
+                "offsetX": 0,
+                "offsetY": 0
+            },
+            "animRect": [
+                {
+                    "type": "hover",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 1416.0,
+                            "y": 49.0,
+                            "width": 1267.0,
+                            "height": 307.0
+                        }
+                    ]
+                },
+                {
+                    "type": "selected",
+                    "time": 80,
+                    "noIncr": true,
+                    "list": [
+                        {
+                            "x" : 2759.0,
+                            "y": 31.0,
+                            "width": 1303.0,
+                            "height": 340.0
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "<---",
+            "position" : {
+                "x": 2300,
+                "y": 7250
+            }
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 1.5,
+            "text": "CREATE",
+            "position" : {
+                "x": 5700,
+                "y": 7300
+            }
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 1.5,
+            "text": "CONNECT",
+            "position" : {
+                "x": 3665,
+                "y": 7300
+            }
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "--->",
+            "position" : {
+                "x": 7350,
+                "y": 7250
+            }
+        },
+        {
+          "type": "button",
+          "spritePath": "assets/Menu/button.png",
+          "width": 1600,
+          "height": 1000,
+          "callback": "goToMenu",
+          "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1366.0,
+            "height": 406.0
+          },
+          "position": {
+            "x": 100,
+            "y": 500
+          },
+          "collisionRect": {
+            "width": 1600,
+            "height": 1000,
+            "offsetX": 0,
+            "offsetY": 0
+          },
+          "animRect": [
+            {
+              "type": "hover",
+              "time": 80,
+              "noIncr": true,
+              "list": [
+                {
+                  "x": 1366.0,
+                  "y": 0.0,
+                  "width": 1366.0,
+                  "height": 406.0
+                }
+              ]
+            },
+            {
+              "type": "selected",
+              "time": 80,
+              "noIncr": true,
+              "list": [
+                {
+                  "x" : 2732.0,
+                  "y": 0.0,
+                  "width": 1366.0,
+                  "height": 406.0
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": "Go Back",
+          "color": "red",
+          "size": 2,
+          "position": {
+            "x": 525,
+            "y": 875
+          }
+        },
+        {
+            "type": "text",
+            "color": "red",
+            "size": 2,
+            "text": "SELECT LOBBY",
+            "position" : {
+                "x": 4150,
+                "y": 500
+            }
+        }
+    ],
+    "inputBoxes" : {
+        "name": "name",
+        "type": "input",
+        "font": "assets/Fonts/soliden/SolidenTrial-Black.otf",
+        "spritePath": "assets/Menu/input-box.png",
+        "text": "",
+        "color": "red",
+        "textSize": 2,
+        "maxChar": 30,
+        "width": 6000,
+        "height": 800,
+        "textPosition": {
+            "x": 3100,
+            "y": 1950
+        },
+        "position" : {
+            "x": 2000,
+            "y": 1700
+        },
+        "rect": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1670.0,
+            "height": 278.0
+        },
+        "collisionRect": {
+            "width": 6000,
+            "height": 800,
+            "offsetX": 0,
+            "offsetY": 0
+        },
+        "animRect": [
+            {
+                "type": "hover",
+                "time": 80,
+                "noIncr": true,
+                "list": [
+                    {
+                        "x" : 1697.0,
+                        "y": 31.0,
+                        "width": 1618.0,
+                        "height": 221.0
+                    }
+                ]
+            },
+            {
+                "type": "selected",
+                "time": 80,
+                "noIncr": true,
+                "list": [
+                    {
+                        "x" : 3348.0,
+                        "y": 14.0,
+                        "width": 1651.0,
+                        "height": 252.0
+                    }
+                ]
+            }
+        ]
+    }
+}

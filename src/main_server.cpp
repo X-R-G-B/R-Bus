@@ -1,72 +1,87 @@
+#include <boost/asio.hpp>
 #include <csignal>
-#include "Logger.hpp"
+#include "B-luga/Logger.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "NitworkMainServer.hpp"
 #include "NitworkServer.hpp"
-#include "Registry.hpp"
 #include "ResourcesManager.hpp"
-#include "SystemManagersDirector.hpp"
-#include "Systems.hpp"
+#include "ServerArgsHandling.hpp"
+#include "init.hpp"
 
 constexpr int EXIT_EPITECH = 84;
-constexpr int PORT_MIN     = 0;
-constexpr int PORT_MAX     = 65535;
 static bool isRunning      = true;
 
 static void signalHandler(int signum)
 {
     Logger::info("Interrupt signal (" + std::to_string(signum) + ") received.");
+    Scene::SceneManager::getInstance().stop();
     isRunning = false;
     signal(SIGINT, SIG_DFL);
 }
 
-static bool isNumber(const std::string &str)
+static void displayAvailableIps()
 {
-    return std::all_of(str.begin(), str.end(), ::isdigit);
+    auto ips = Nitwork::NitworkMainServer::getInstance().getAvailableIps();
+
+    Logger::info("Available IPs:");
+    for (const auto &ip : ips) {
+        Logger::info("    " + ip);
+    }
 }
 
-static bool checkArgs(int ac, const char **av)
+int mainMainServer(const std::vector<std::string> &av)
 {
-    if (ac != 3) {
-        Logger::error("Usage: ./r-type_server <port> <playerNb>");
-        return false;
+    Logger::info("Starting Main Server...");
+    auto port = std::stoi(av[2]);
+
+    if (!Nitwork::NitworkMainServer::getInstance().startServer(port)) {
+        return EXIT_EPITECH;
     }
-    const std::vector<std::string> args(av + 1, av + ac);
-    for (const auto &arg : args) {
-        if (!isNumber(arg)) {
-            Logger::error("Invalid argument: " + arg);
-            return false;
-        }
+    displayAvailableIps();
+    while (isRunning && Nitwork::NitworkMainServer::getInstance().isRunning()) { };
+    Nitwork::NitworkMainServer::getInstance().stop();
+    return EXIT_SUCCESS;
+}
+
+int mainLobbyServer(const std::vector<std::string> &av)
+{
+    Logger::info("Starting Server...");
+    auto nbPlayer  = std::stoi(av[2]);
+    auto gameType  = static_cast<gameType_e>(std::stoi(av[3]));
+    auto name      = av[4];
+    auto ownerIp   = av[5];
+    auto ownerPort = std::stoi(av[6]);
+
+    if (!Nitwork::NitworkServer::getInstance().startServer(nbPlayer, gameType, name, ownerIp, ownerPort)) {
+        return EXIT_EPITECH;
     }
-    if (std::stoi(args[0]) < PORT_MIN || std::stoi(args[0]) > PORT_MAX || std::stoi(args[1]) < 1) {
-        Logger::error("Invalid port or playerNb");
-        return false;
-    }
-    return true;
+    initScenes();
+    signal(SIGINT, signalHandler);
+    Nitwork::NitworkServer::getInstance().addInfoLobbyMsg();
+    Scene::SceneManager::getInstance().run();
+    Nitwork::NitworkServer::getInstance().stop();
+    return EXIT_SUCCESS;
 }
 
 int main(int ac, const char **av)
 {
 #ifndef NDEBUG
-    Registry::getInstance().getLogger().setLogLevel(Logger::LogLevel::Debug);
+    Logger::setLogLevel(LogLevel::Debug);
+#else
+    Logger::setLogLevel(LogLevel::Info);
 #endif
-    ECS::ResourcesManager::init(av[0]);
-    if (!checkArgs(ac, av)) {
-        return EXIT_EPITECH;
-    }
-    Logger::info("Starting Server...");
-    if (!Nitwork::NitworkServer::getInstance().startServer(std::stoi(av[1]), std::stoi(av[2]))) {
-        return EXIT_EPITECH;
-    }
-    auto &director = Systems::SystemManagersDirector::getInstance();
-    std::unique_lock<std::mutex> lock(director.mutex);
-    director.addSystemManager(Systems::getECSSystems());
-    signal(SIGINT, signalHandler);
+    std::vector<std::string> args(av, av + ac);
+    auto serverType  = Args::ServerArgsHandling::checkArgs(ac, av);
+    auto programPath = std::string(av[0]);
 
-    lock.unlock();
-    while (isRunning && Nitwork::NitworkServer::getInstance().isRunning()) {
-        lock.lock();
-        director.getSystemManager(0).updateSystems();
-        lock.unlock();
+    signal(SIGINT, signalHandler);
+    ResourcesManager::init(programPath);
+    if (serverType == Args::MAIN_SERVER) {
+        return mainMainServer(args);
+    } else if (serverType == Args::LOBBY_SERVER) {
+        return mainLobbyServer(args);
+    } else {
+        Args::ServerArgsHandling::help();
+        return (serverType == Args::SHOW_HELP ? EXIT_SUCCESS : EXIT_EPITECH);
     }
-    Nitwork::NitworkServer::getInstance().stop();
-    return 0;
 }

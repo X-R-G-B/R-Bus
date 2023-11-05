@@ -7,16 +7,18 @@
 
 #pragma once
 
+#include <boost/asio.hpp>
 #include <condition_variable>
-#include <iostream>
 #include <list>
+#include <memory>
 #include <mutex>
+#include <type_traits>
 #include <unordered_map>
+#include "B-luga/Logger.hpp"
 #include "INitwork.hpp"
-#include "Logger.hpp"
+#include "Zstd.hpp"
 
 namespace Nitwork {
-    constexpr int MAX_PACKET_SIZE = 1024;
 
     class ANitwork : public INitwork {
         public:
@@ -40,6 +42,7 @@ namespace Nitwork {
             void sendData(Packet &packet)
             {
                 n_id_t id = getPacketId(packet.endpoint);
+
                 if (packet.body.type() != typeid(T)) {
                     Logger::error("NITWORK: Invalid type");
                     return;
@@ -61,17 +64,26 @@ namespace Nitwork {
                         HEADER_CODE2};
                     data.header = newHeader;
                 }
+#ifdef DEBUG
+                if constexpr (!std::is_same_v<T, struct packetListLobby_s>) {
+                    Logger::fatal(
+                        "id of packet = " + std::to_string(id)
+                        + " action type = " + std::to_string(data.action.magick));
+                }
+#endif
+                std::shared_ptr<std::vector<char>> compressedPacket =
+                    std::make_shared<std::vector<char>>(Zstd::compress(data));
 
                 _socket.async_send_to(
-                    boost::asio::buffer(&data, sizeof(T)),
+                    boost::asio::buffer(*compressedPacket),
                     packet.endpoint,
-                    [](const boost::system::error_code &error, std::size_t bytes_sent) {
+                    [compressedPacket](const boost::system::error_code &error, std::size_t bytes_sent) {
                         Logger::debug("NITWORK: Package sent");
                         if (error) {
                             Logger::error("NITWORK: " + std::string(error.message()));
                             return;
                         }
-                        if (bytes_sent != sizeof(T)) {
+                        if (bytes_sent != compressedPacket->size()) {
                             Logger::error("NITWORK: Package not sent");
                             return;
                         }
@@ -91,11 +103,24 @@ namespace Nitwork {
             void handleBody(const actionHandler &handler, const struct header_s &header)
             {
                 // NOLINTBEGIN(cppcoreguidelines-pro-type-reinterpret-cast)
-                auto *body = reinterpret_cast<B *>(
-                    _receiveBuffer.data() + sizeof(struct header_s) + sizeof(struct action_s));
+                auto *body = reinterpret_cast<B *>(_receiveBuffer.data());
                 // NOLINTEND(cppcoreguidelines-pro-type-reinterpret-cast)
                 handleBodyDatas<B>(handler, header, *body, boost::system::error_code());
+                std::memmove(
+                    _receiveBuffer.data(),
+                    _receiveBuffer.data() + sizeof(B),
+                    _receiveBuffer.size() - sizeof(B));
+                std::memset(_receiveBuffer.data() + _receiveBuffer.size() - sizeof(B), 0, sizeof(B));
             }
+
+            // send package to all clients but not the endpoint
+            void sendToAllClientsButNotOne(const Packet &packet, boost::asio::ip::udp::endpoint &endpoint);
+            // send package to all clients
+            void sendToAllClients(const Packet &packet);
+            // check if the client is already connected
+            bool isClientAlreadyConnected(boost::asio::ip::udp::endpoint &endpoint) const;
+
+            void deletePacketFromEndPoints(const boost::asio::ip::udp::endpoint &endpoint);
 
         private:
             // start the NitworkServer threads (context threads, clock thread, input thread and output
@@ -164,8 +189,6 @@ namespace Nitwork {
 
         private:
             bool _isRunning = false; // A boolean to know if the NitworkServer is running
-
-            n_id_t _packetId; // The packet id
 
             std::mutex _inputQueueMutex;          // Mutex for the input queue
             std::mutex _tickMutex;                // Mutex for the tick
