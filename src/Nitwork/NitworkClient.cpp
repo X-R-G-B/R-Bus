@@ -7,6 +7,8 @@
 
 #if defined(_WIN32)
     #define _CRT_SECURE_NO_WARNINGS
+    #include <tchar.h>
+#else
 #endif
 #include "NitworkClient.hpp"
 #include "B-luga/Logger.hpp"

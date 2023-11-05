@@ -241,6 +241,8 @@ namespace Systems {
             std::vector<std::string> textures = Json::getInstance().getDatasByKey(
                 {ResourcesManager::getPathByJsonType(JsonType::ENEMIES),
                  ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PARALLAX),
+                 ResourcesManager::getPathByJsonType(JsonType::MENU),
+                 ResourcesManager::getPathByJsonType(JsonType::PARALLAX_2),
                  ResourcesManager::getPathByJsonType(JsonType::BULLETS),
                  ResourcesManager::getPathByJsonType(JsonType::DEFAULT_PLAYER)},
                 "spritePath");
