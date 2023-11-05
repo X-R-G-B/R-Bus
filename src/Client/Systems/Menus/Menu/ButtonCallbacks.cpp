@@ -15,6 +15,7 @@
 #include "Parallax.hpp"
 #include "ResourcesManager.hpp"
 #include "SelectLobbySystems.hpp"
+#include "Menu.hpp"
 #include "init.hpp"
 
 namespace Menu {
@@ -187,7 +188,21 @@ namespace Menu {
         {
             auto arrInputBox = Registry::getInstance().getComponents<Types::InputBox>();
             auto ids         = Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
+            static bool isExist = false; 
 
+            if (Nitwork::NitworkClient::getInstance().serverAlreadyCreated() && !isExist) {
+                try {
+                    nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
+                        ResourcesManager::getPathByJsonType(JsonType::CREATE_SERVER),
+                        "errorMessage");
+                    ::Menu::MenuBuilder::getInstance().initMenuEntity(
+                        jsonData);
+                } catch (std::runtime_error &err) {
+                    Logger::warn(err.what());
+                }
+                isExist = true;
+                return;
+            }
             for (auto id : ids) {
                 if (arrInputBox[id].name == "port") {
                     Nitwork::NitworkClient::getInstance().createForkedServer(arrInputBox[id].text);

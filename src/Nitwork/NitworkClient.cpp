@@ -421,6 +421,14 @@ namespace Nitwork {
         addPacketToSend(packet);
     }
 
+    bool NitworkClient::serverAlreadyCreated()
+    {
+        if (_serverPids.size() > 0) {
+            return true;
+        }
+        return (false);
+    }
+
     void NitworkClient::createForkedServer(const std::string &port)
     {
         if (_serverPids.size() > 0) {

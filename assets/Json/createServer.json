@@ -297,6 +297,16 @@
             "y": 500
         }
       }
-    ]
+    ],
+    "errorMessage": {
+      "type": "text",
+        "color": "red",
+        "size": 2,
+        "text": "SERVER ALREADY CREATED",
+        "position" : {
+            "x": 3200,
+            "y": 8500
+        }
+    }
   }
   

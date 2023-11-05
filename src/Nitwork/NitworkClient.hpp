@@ -118,6 +118,11 @@ namespace Nitwork {
             addCreateLobbyMsg(const std::string &name, enum gameType_e gameType, unsigned int maxNbPlayer);
 
             /**
+             * @brief Check if the server is created by the client
+             */
+            bool serverAlreadyCreated();
+            
+            /**
              * @brief Create a server
              * @param port port of the server
              */
