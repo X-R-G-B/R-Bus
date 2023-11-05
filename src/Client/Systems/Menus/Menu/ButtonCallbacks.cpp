@@ -189,13 +189,15 @@ namespace Menu {
             Scene::SceneManager::getInstance().stop();
         }
 
+        static const std::size_t MAX_TEXT_OF_SCENE = 9;
+
         void createServer()
         {
             auto arrInputBox = Registry::getInstance().getComponents<Types::InputBox>();
+            auto idsText = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
             auto ids         = Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
-            static bool isExist = false;
 
-            if (Nitwork::NitworkClient::getInstance().serverAlreadyCreated() && !isExist) {
+            if (Nitwork::NitworkClient::getInstance().serverAlreadyCreated() && idsText.size() < MAX_TEXT_OF_SCENE) {
                 try {
                     nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
                         ResourcesManager::getPathByJsonType(JsonType::CREATE_SERVER),
@@ -204,7 +206,6 @@ namespace Menu {
                 } catch (std::runtime_error &err) {
                     Logger::warn(err.what());
                 }
-                isExist = true;
                 return;
             }
             for (auto id : ids) {
