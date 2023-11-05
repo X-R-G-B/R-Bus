@@ -12,11 +12,11 @@
 #include <list>
 #include <memory>
 #include <mutex>
+#include <type_traits>
 #include <unordered_map>
 #include "B-luga/Logger.hpp"
 #include "INitwork.hpp"
 #include "Zstd.hpp"
-#include <type_traits>
 
 namespace Nitwork {
 
@@ -66,12 +66,13 @@ namespace Nitwork {
                 }
 #ifdef DEBUG
                 if constexpr (!std::is_same_v<T, struct packetListLobby_s>) {
-                    Logger::fatal("id of packet = " + std::to_string(id) + " action type = " + std::to_string(data.action.magick));
+                    Logger::fatal(
+                        "id of packet = " + std::to_string(id)
+                        + " action type = " + std::to_string(data.action.magick));
                 }
 #endif
                 std::shared_ptr<std::vector<char>> compressedPacket =
                     std::make_shared<std::vector<char>>(Zstd::compress(data));
-
 
                 _socket.async_send_to(
                     boost::asio::buffer(*compressedPacket),

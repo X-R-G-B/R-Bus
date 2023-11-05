@@ -10,14 +10,14 @@
 #include <fstream>
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga/Maths/Maths.hpp"
-#include "MessageTypes.h"
 #include "B-luga/Registry.hpp"
+#include "MessageTypes.h"
 // #include "Systems.hpp"
 
 #ifdef CLIENT
     // #include "CustomTypes.hpp"
-    #include "NitworkClient.hpp"
     #include "B-luga-graphics/Raylib/Raylib.hpp"
+    #include "NitworkClient.hpp"
 #else
     #include "NitworkServer.hpp"
 #endif

@@ -120,7 +120,7 @@ namespace Systems {
         Registry &registry                                = Registry::getInstance();
         Clock &clock_                                     = registry.getClock();
         Registry::components<Types::Position> arrPosition = registry.getComponents<Types::Position>();
-        Registry::components<Types::Health> arrHealth   = registry.getComponents<Types::Health>();
+        Registry::components<Types::Health> arrHealth     = registry.getComponents<Types::Health>();
         std::vector<std::size_t> ids =
             registry.getEntitiesByComponents({typeid(Types::Player), typeid(Types::Position)});
 
@@ -164,10 +164,10 @@ namespace Systems {
     {
         bool isKeyPressed = false;
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
-        Registry &registry                              = Registry::getInstance();
-        Registry::components<Types::Position> arrPos    = registry.getComponents<Types::Position>();
+        Registry &registry                            = Registry::getInstance();
+        Registry::components<Types::Position> arrPos  = registry.getComponents<Types::Position>();
         Registry::components<Types::Health> arrHealth = registry.getComponents<Types::Health>();
-        std::vector<std::size_t> ids                    = registry.getEntitiesByComponents(
+        std::vector<std::size_t> ids                  = registry.getEntitiesByComponents(
             {typeid(Types::Player), typeid(Types::Position), typeid(Types::Health)});
         Clock &clock_              = registry.getClock();
         static std::size_t clockId = clock_.create(true);
@@ -223,9 +223,8 @@ namespace Systems {
 
     static bool isGameWin()
     {
-        Registry &registry = Registry::getInstance();
-        std::vector<std::size_t> idsPlayer =
-            registry.getEntitiesByComponents({typeid(Types::Player)});
+        Registry &registry                 = Registry::getInstance();
+        std::vector<std::size_t> idsPlayer = registry.getEntitiesByComponents({typeid(Types::Player)});
         std::vector<std::size_t> idsOtherPlayer =
             registry.getEntitiesByComponents({typeid(Types::OtherPlayer)});
 
@@ -237,15 +236,15 @@ namespace Systems {
 
     static void modifEndGameText(const std::string &endGameMessage)
     {
-        bool found                            = false;
-        const Raylib::Vector2 pos             = {0, 2};
-        constexpr std::size_t fontSize        = 2;
-        const std::string textKeywordWaveEnd  = "WaveText";
-        const std::string textKeyWordGameEnd  = "endGameText";
+        bool found                           = false;
+        const Raylib::Vector2 pos            = {0, 2};
+        constexpr std::size_t fontSize       = 2;
+        const std::string textKeywordWaveEnd = "WaveText";
+        const std::string textKeyWordGameEnd = "endGameText";
 
         std::vector<std::size_t> ids =
             Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
-        auto &textArray            = Registry::getInstance().getComponents<Raylib::TextShared>();
+        auto &textArray = Registry::getInstance().getComponents<Raylib::TextShared>();
 
         for (auto &id : ids) {
             if (textArray[id]->getKeyword() == textKeyWordGameEnd) {
@@ -259,7 +258,12 @@ namespace Systems {
 
         if (found == false) {
             Registry::getInstance().addEntity();
-            Raylib::TextShared endGameText = Raylib::Text::fromText(endGameMessage, pos, fontSize, Raylib::Color(Raylib::ColorDef::White), textKeyWordGameEnd);
+            Raylib::TextShared endGameText = Raylib::Text::fromText(
+                endGameMessage,
+                pos,
+                fontSize,
+                Raylib::Color(Raylib::ColorDef::White),
+                textKeyWordGameEnd);
             Registry::getInstance().getComponents<Raylib::TextShared>().insertBack(endGameText);
         }
     }

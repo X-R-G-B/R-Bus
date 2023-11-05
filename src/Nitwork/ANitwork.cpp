@@ -247,7 +247,8 @@ namespace Nitwork {
                         try {
                             action.second(action.first.data, action.first.endpoint);
                         } catch (std::exception &e) {
-                            Logger::error("StartInputHandler: NITWORK: catch action: " + std::string(e.what()));
+                            Logger::error(
+                                "StartInputHandler: NITWORK: catch action: " + std::string(e.what()));
                         }
                     }
                     _actions.clear();

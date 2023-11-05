@@ -6,12 +6,12 @@
 */
 
 #include "ButtonCallbacks.hpp"
-#include "B-luga/Logger.hpp"
-#include "NitworkClient.hpp"
-#include "B-luga-graphics/Raylib/Raylib.hpp"
-#include "B-luga/SceneManager.hpp"
-#include "SelectLobbySystems.hpp"
 #include "B-luga-graphics/GraphicsCustomTypes.hpp"
+#include "B-luga-graphics/Raylib/Raylib.hpp"
+#include "B-luga/Logger.hpp"
+#include "B-luga/SceneManager.hpp"
+#include "NitworkClient.hpp"
+#include "SelectLobbySystems.hpp"
 #include "init.hpp"
 
 namespace Menu {
@@ -160,8 +160,8 @@ namespace Menu {
             for (auto &id : idsButton) {
                 Registry::getInstance().removeEntity(id);
             }
-            auto &arrText   = Registry::getInstance().getComponents<Raylib::TextShared>();
-            auto idsText   = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
+            auto &arrText = Registry::getInstance().getComponents<Raylib::TextShared>();
+            auto idsText  = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
             for (auto &id : idsText) {
                 if (arrText[id]->getCurrentText() == "READY !") {
                     Registry::getInstance().removeEntity(id);

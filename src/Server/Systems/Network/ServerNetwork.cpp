@@ -63,7 +63,7 @@ namespace Systems {
                             .life = {.hp = arrHealth[id].hp},
                             .pos =
                                 {static_cast<char>(Maths::removeIntDecimals(arrPos[id].x)),
-                                      static_cast<char>(Maths::removeIntDecimals(arrPos[id].y))},
+                                     static_cast<char>(Maths::removeIntDecimals(arrPos[id].y))},
                             .type = arrEnemies[id].type,
                     });
                 }
