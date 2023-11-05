@@ -10,9 +10,9 @@
     #include <tchar.h>
 #else
 #endif
-#include "NitworkClient.hpp"
 #include "B-luga/Logger.hpp"
 #include "B-luga/Registry.hpp"
+#include "NitworkClient.hpp"
 #include "ResourcesManager.hpp"
 
 namespace Nitwork {
