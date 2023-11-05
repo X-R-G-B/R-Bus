@@ -14,6 +14,7 @@
 #include "GameCustomTypes.hpp"
 #include "GameSystems.hpp"
 #include "ResourcesManager.hpp"
+#include "init.hpp"
 // #include "Systems.hpp"
 
 std::size_t Wave::_clockId = 0;
@@ -59,7 +60,7 @@ void Wave::startNextWave()
         _isGameEnded = true;
         return;
     }
-    director.getSystemManager(0).addSystem(Systems::initWave);
+    director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC)).addSystem(Systems::initWave);
 }
 
 bool Wave::isWaveEnded() const

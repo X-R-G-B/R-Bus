@@ -84,7 +84,7 @@ namespace Systems {
         const auto wave = std::any_cast<struct msgStartWave_s>(any);
         Types::WaveInfos::getInstance().setWaveId(wave.waveId);
         Types::WaveInfos::getInstance().setWaitingForNextWave(false);
-        director.getSystemManager(static_cast<std::size_t>(GAME))
+        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC))
             .addSystem(initWave);
         Logger::info("Wave started");
     }

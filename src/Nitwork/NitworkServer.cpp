@@ -17,8 +17,7 @@
 #include "GameSystems.hpp"
 #include "ResourcesManager.hpp"
 #include "WaveSystem.hpp"
-
-enum SystemManagers;
+#include "init.hpp"
 
 namespace Nitwork {
     // NOLINTBEGIN(cppcoreguidelines-avoid-non-const-global-variables)
@@ -264,7 +263,7 @@ namespace Nitwork {
         _isGameStarted = true;
         auto &director = Systems::SystemManagersDirector::getInstance();
         std::lock_guard<std::mutex> lock(director.mutex);
-        director.getSystemManager(static_cast<std::size_t>(SystemManager::GAME)).addSystem(Systems::waveHandler); // le sheeiiiiiitan VERIF
+        director.getSystemManager(static_cast<std::size_t>(SystemManagers::GAME_LOGIC)).addSystem(Systems::waveHandler); // le sheeiiiiiitan VERIF
         Logger::fatal("cacaprout");
     }
 
