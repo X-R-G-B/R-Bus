@@ -5,17 +5,16 @@
 ** NitworkMainServer
 */
 
-#include "B-luga/Logger.hpp"
 #ifdef _WIN32
     #include <sstream>
     #include <tchar.h>
-    #include <windows.h>
 #else
 extern "C"
 {
     #include <unistd.h>
 }
 #endif
+#include "B-luga/Logger.hpp"
 #include "NitworkMainServer.hpp"
 #include "ResourcesManager.hpp"
 
@@ -177,12 +176,9 @@ namespace Nitwork {
 #ifdef _WIN32
         std::string winName = "'" + name + "'";
         std::basic_ostringstream<TCHAR> cmdline;
-        cmdline << _T(ECS::ResourcesManager::convertPath(
-                          "./r-type_server.exe",
-                          ECS::ResourcesManager::FileType::BINARY)
-                          .c_str())
-                << _T(" 1 ") << _T(maxNbPlayer) << _T(" ") << _T(gameType) << _T(" ") << _T(winName.c_str())
-                << _T(" ") << _T(ownerIp.c_str()) << _T(" ") << _T(ownerPort);
+        cmdline << _T(ResourcesManager::convertPath("./r-type_server.exe").c_str()) << _T(" 1 ")
+                << _T(maxNbPlayer) << _T(" ") << _T(gameType) << _T(" ") << _T(winName.c_str()) << _T(" ")
+                << _T(ownerIp.c_str()) << _T(" ") << _T(ownerPort);
 
         Logger::fatal("cmdline: " + cmdline.str());
         STARTUPINFO si = {sizeof(si)};
