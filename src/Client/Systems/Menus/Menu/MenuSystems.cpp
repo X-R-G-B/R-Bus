@@ -12,11 +12,11 @@
 #include "B-luga-physics/ECSCustomTypes.hpp"
 #include "B-luga/Maths/Maths.hpp"
 #include "B-luga/SceneManager.hpp"
+#include "GameCustomTypes.hpp"
 #include "Menu.hpp"
 #include "NitworkClient.hpp"
 #include "Parallax.hpp"
 #include "ResourcesManager.hpp"
-#include "GameCustomTypes.hpp"
 #include "SelectLobbySystems.hpp"
 #include "init.hpp"
 

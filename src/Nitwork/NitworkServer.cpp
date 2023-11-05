@@ -350,8 +350,9 @@ namespace Nitwork {
                 Logger::error("Error: execl failed");
             }
         } else {
-            sendLobbyPid(boost::asio::ip::udp::endpoint(
-                             boost::asio::ip::address::from_string(ownerIp), ownerPort), c_pid);
+            sendLobbyPid(
+                boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string(ownerIp), ownerPort),
+                c_pid);
         }
 #endif
     }
@@ -369,7 +370,12 @@ namespace Nitwork {
             Logger::error("Invalid name: " + name);
             return;
         }
-        forkProcessAndCreateLobby(maxNbPlayer, gameType, name, _serverInfos.ownerInfos.ip, _serverInfos.ownerInfos.port);
+        forkProcessAndCreateLobby(
+            maxNbPlayer,
+            gameType,
+            name,
+            _serverInfos.ownerInfos.ip,
+            _serverInfos.ownerInfos.port);
     }
 
     void NitworkServer::sendLobbyPid(const boost::asio::ip::udp::endpoint &endpoint, pid_t pid)
