@@ -299,13 +299,19 @@ namespace Systems {
 
         void resetParallaxTextForParallax(std::size_t /*unused*/, std::size_t /*unused*/)
         {
-            auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
+            auto ids     = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
             auto arrText = Registry::getInstance().getComponents<Raylib::TextShared>();
 
             for (auto id : ids) {
                 if (arrText[id]->getCurrentText().find("PARALLAX") != std::string::npos) {
-                    Logger::info("parallax name" + std::to_string(Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr));
-                    std::string paraName = "PARALLAX_" + std::to_string(Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr);
+                    Logger::info(
+                        "parallax name"
+                        + std::to_string(
+                            Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr));
+                    std::string paraName =
+                        "PARALLAX_"
+                        + std::to_string(
+                            Systems::Parallax::ActualParallax::getInstance()._actualParallaxNbr);
 
                     arrText[id]->setCurrentText(paraName);
                 }

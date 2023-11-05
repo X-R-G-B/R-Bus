@@ -47,7 +47,7 @@ namespace Systems::Parallax {
             ResourcesManager::getPathByJsonType(
                 Parallax::ActualParallax::getInstance().getActualParallaxType()),
             "parallax");
-        
+
         for (auto &elem : parallaxData) {
             initParallaxEntity(elem);
             if (Json::getInstance().isDataExist(elem, "copy")
