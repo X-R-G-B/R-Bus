@@ -219,9 +219,7 @@ namespace Systems {
                         Nitwork::NitworkClient::getInstance().disconnectLobby();
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
-                    case LOADING_SCREEN:
-                        Scene::SceneManager::getInstance().stop();
-                        break;
+                    case LOADING_SCREEN: Scene::SceneManager::getInstance().stop(); break;
                 }
             }
         }
@@ -260,11 +258,13 @@ namespace Systems {
             std::string textKeyword         = "loading";
             Json &json                      = Json::getInstance();
 
-            nlohmann::json jsonData = json.getDataByJsonType<nlohmann::json>(ResourcesManager::getPathByJsonType(JsonType::MENU), "background");
+            nlohmann::json jsonData = json.getDataByJsonType<nlohmann::json>(
+                ResourcesManager::getPathByJsonType(JsonType::MENU),
+                "background");
             std::string path = json.getDataFromJson<std::string>(jsonData, "imgPath");
-            float width = json.getDataFromJson<float>(jsonData, "width");
-            float height = json.getDataFromJson<float>(jsonData, "height");
-            auto background = Raylib::Sprite::fromFile(path, width, height, id);
+            float width      = json.getDataFromJson<float>(jsonData, "width");
+            float height     = json.getDataFromJson<float>(jsonData, "height");
+            auto background  = Raylib::Sprite::fromFile(path, width, height, id);
             Registry::getInstance().getComponents<Raylib::SpriteShared>().insertBack(background);
             Registry::getInstance().setToFrontLayers(id);
             Registry::getInstance().getComponents<Types::Position>().insertBack(position);
@@ -280,9 +280,9 @@ namespace Systems {
 
         static void updateText(std::size_t size, std::size_t loadedTexture)
         {
-            std::size_t percentage = (loadedTexture * 100) / size;
-            std::string textKeyword  = "loading";
-            auto &arrText = Registry::getInstance().getComponents<Raylib::TextShared>();
+            std::size_t percentage  = (loadedTexture * 100) / size;
+            std::string textKeyword = "loading";
+            auto &arrText           = Registry::getInstance().getComponents<Raylib::TextShared>();
             auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Raylib::TextShared)});
 
             for (auto id : ids) {
@@ -318,7 +318,6 @@ namespace Systems {
                 initLoadingScreen();
                 step++;
             }
-            
         }
 
         void initSceneGame(std::size_t managerId, std::size_t systemId)
