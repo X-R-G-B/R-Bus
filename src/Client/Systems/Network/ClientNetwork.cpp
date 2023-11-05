@@ -393,6 +393,8 @@ namespace Systems {
         if (Raylib::KeyboardInput::isKeyPressed(Raylib::KeyboardKey::KB_ESCAPE)) {
             if (Scene::SceneManager::getInstance().getCurrentScene() == static_cast<std::size_t>(GAME)) {
                 Nitwork::NitworkClient::getInstance().disconnectLobby();
+                Types::WaveInfos::getInstance().reset();
+                Scene::SceneManager::getInstance().changeScene(static_cast<std::size_t>(SELECT_LOBBY));
             }
         }
     }

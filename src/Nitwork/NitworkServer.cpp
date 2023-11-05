@@ -297,6 +297,102 @@ namespace Nitwork {
         sendToAllClientsButNotOne(packet, endpoint);
     }
 
+    void NitworkServer::forkProcessAndCreateLobby(
+        unsigned int maxNbPlayer,
+        enum gameType_e gameType,
+        const std::string &name,
+        const std::string &ownerIp,
+        int ownerPort)
+    {
+#ifdef _WIN32
+        std::string winName = "'" + name + "'";
+        std::basic_ostringstream<TCHAR> cmdline;
+        cmdline << _T(ResourcesManager::convertPath("./r-type_server.exe").c_str()) << _T(" 1 ")
+                << _T(maxNbPlayer) << _T(" ") << _T(gameType) << _T(" ") << _T(winName.c_str()) << _T(" ")
+                << _T(ownerIp.c_str()) << _T(" ") << _T(ownerPort);
+
+        Logger::fatal("cmdline: " + cmdline.str());
+        STARTUPINFO si = {sizeof(si)};
+        PROCESS_INFORMATION pi;
+    #ifdef UNICODE
+        TCHAR *cmd = _wcsdup(cmdline.str().c_str());
+    #else
+        TCHAR *cmd = _strdup(cmdline.str().c_str());
+    #endif
+
+        if (!CreateProcess(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+            Logger::error("Error: CreateProcess failed");
+            free(cmd);
+            return;
+        }
+        free(cmd);
+        _lobbyPids.emplace_back(pi.dwProcessId);
+#else
+        pid_t c_pid = fork();
+
+        if (c_pid == -1) {
+            Logger::error("Error: fork failed");
+            return;
+        }
+        if (c_pid == 0) {
+            Logger::info("Lobby " + name + " created");
+            if (execl(
+                    ResourcesManager::convertPath("r-type_server").c_str(),
+                    ResourcesManager::convertPath("r-type_server").c_str(),
+                    "1",
+                    std::to_string(maxNbPlayer).c_str(),
+                    std::to_string(gameType).c_str(),
+                    name.c_str(),
+                    ownerIp.c_str(),
+                    std::to_string(ownerPort).c_str(),
+                    NULL)
+                == -1) {
+                Logger::error("Error: execl failed");
+            }
+        } else {
+            sendLobbyPid(
+                boost::asio::ip::udp::endpoint(boost::asio::ip::address::from_string(ownerIp), ownerPort),
+                c_pid);
+        }
+#endif
+    }
+
+    void NitworkServer::recreateLobby(
+        unsigned int maxNbPlayer,
+        const std::string &name,
+        enum gameType_e gameType)
+    {
+        if (maxNbPlayer < 1) {
+            Logger::error("Invalid number of players: " + std::to_string(maxNbPlayer));
+            return;
+        }
+        if (name.empty()) {
+            Logger::error("Invalid name: " + name);
+            return;
+        }
+        forkProcessAndCreateLobby(
+            maxNbPlayer,
+            gameType,
+            name,
+            _serverInfos.ownerInfos.ip,
+            _serverInfos.ownerInfos.port);
+    }
+
+    void NitworkServer::sendLobbyPid(const boost::asio::ip::udp::endpoint &endpoint, pid_t pid)
+    {
+        struct packetReplaceLobbyPid_s packetLobbyPid = {
+            .header = {0, 0, 0, 0, 1, 0},
+            .action = {.magick = NITWORK_LOBBY_PID},
+            .msg    = {.magick = MAGICK_LOBBY_PID, .name = "", .pid = pid}
+        };
+        std::strcpy(packetLobbyPid.msg.name, _serverInfos.name);
+        Packet packet(
+            packetLobbyPid.action.magick,
+            std::make_any<struct packetReplaceLobbyPid_s>(packetLobbyPid),
+            endpoint);
+        addPacketToSend(packet);
+    }
+
     void NitworkServer::handleDisconnectMsg(const std::any &msg, boost::asio::ip::udp::endpoint &endpoint)
     {
         std::lock_guard<std::mutex> lock(Registry::getInstance().mutex);
@@ -313,11 +409,9 @@ namespace Nitwork {
         deletePacketFromEndPoints(endpoint);
         addPlayerDeathMsg(getPlayerId(endpoint));
         _playersReady.erase(endpoint);
-        _playersIds.erase(endpoint);
         if (_endpoints.empty()) {
-            Logger::fatal("No more clients, restarting server");
-            Systems::SystemManagersDirector::getInstance().resetChanges();
-            _isGameStarted = false;
+            recreateLobby(_serverInfos.maxNbPlayer, _serverInfos.name, _serverInfos.gameType);
+            Scene::SceneManager::getInstance().stop();
         }
     }
     /* End Handle packet (msg) Section */

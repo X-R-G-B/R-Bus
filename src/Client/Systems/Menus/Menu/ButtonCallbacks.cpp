@@ -11,11 +11,11 @@
 #include "B-luga/Logger.hpp"
 #include "B-luga/SceneManager.hpp"
 #include "B-luga/SystemManagers/SystemManagersDirector.hpp"
+#include "Menu.hpp"
 #include "NitworkClient.hpp"
 #include "Parallax.hpp"
 #include "ResourcesManager.hpp"
 #include "SelectLobbySystems.hpp"
-#include "Menu.hpp"
 #include "init.hpp"
 
 namespace Menu {
@@ -184,7 +184,6 @@ namespace Menu {
             Scene::SceneManager::getInstance().changeScene(MENU);
         }
 
-
         void exitGame()
         {
             Scene::SceneManager::getInstance().stop();
@@ -194,15 +193,14 @@ namespace Menu {
         {
             auto arrInputBox = Registry::getInstance().getComponents<Types::InputBox>();
             auto ids         = Registry::getInstance().getEntitiesByComponents({typeid(Types::InputBox)});
-            static bool isExist = false; 
+            static bool isExist = false;
 
             if (Nitwork::NitworkClient::getInstance().serverAlreadyCreated() && !isExist) {
                 try {
                     nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
                         ResourcesManager::getPathByJsonType(JsonType::CREATE_SERVER),
                         "errorMessage");
-                    ::Menu::MenuBuilder::getInstance().initMenuEntity(
-                        jsonData);
+                    ::Menu::MenuBuilder::getInstance().initMenuEntity(jsonData);
                 } catch (std::runtime_error &err) {
                     Logger::warn(err.what());
                 }

@@ -121,7 +121,7 @@ namespace Nitwork {
              * @brief Check if the server is created by the client
              */
             bool serverAlreadyCreated();
-            
+
             /**
              * @brief Create a server
              * @param port port of the server

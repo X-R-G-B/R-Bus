@@ -139,6 +139,23 @@ namespace Nitwork {
         it->second.first(it->second.second, header);
     }
 
+    void
+    NitworkMainServer::handleLobbyPidMsg(const std::any &data, boost::asio::ip::udp::endpoint &endpoint)
+    {
+        const struct msgReplaceLobbyPid_s &msg = std::any_cast<struct msgReplaceLobbyPid_s>(data);
+
+        Logger::info("Lobby pid: " + std::to_string(msg.pid));
+        _lobbies.erase(
+            std::remove_if(
+                _lobbies.begin(),
+                _lobbies.end(),
+                [&msg](const struct lobby_s &lobby) {
+                    return std::strcmp(lobby.name, msg.name) == 0;
+                }),
+            _lobbies.end());
+        _lobbyPids.emplace_back(msg.pid);
+    }
+
     /* Send methods */
     void NitworkMainServer::sendListLobby(
         const boost::asio::ip::udp::endpoint &endpoint,
