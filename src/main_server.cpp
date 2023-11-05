@@ -15,6 +15,7 @@ static void signalHandler(int signum)
 {
     Logger::info("Interrupt signal (" + std::to_string(signum) + ") received.");
     Scene::SceneManager::getInstance().stop();
+    isRunning = false;
     signal(SIGINT, SIG_DFL);
 }
 
