@@ -222,17 +222,24 @@ namespace Systems {
             }
         }
 
-        // this system is not in the good file for the moment
-        void initHud(std::size_t managerId, std::size_t systemId)
+        // this two systems are not in the good file for the moment
+        static void initHud()
+        {
+            nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
+                ResourcesManager::getPathByJsonType(JsonType::HUD),
+                "gameHud");
+            ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
+                Json::getInstance().getDatasFromList(jsonData));
+        }
+
+        void initSceneGame(std::size_t managerId, std::size_t systemId)
         {
             if (Scene::SceneManager::getInstance().getCurrentScene() != GAME) {
                 return;
             }
             try {
-                nlohmann::json jsonData =
-                    Json::getInstance().getDataByJsonType<nlohmann::json>(ResourcesManager::getPathByJsonType(JsonType::HUD), "gameHud");
-                ::Menu::MenuBuilder::getInstance().initMenuSceneEntity(
-                    Json::getInstance().getDatasFromList(jsonData));
+                Parallax::initParalax();
+                initHud();
             } catch (std::runtime_error &err) {
                 Logger::info(err.what());
             }
@@ -248,7 +255,7 @@ namespace Systems {
                 hoverInputBox,
                 checkTextInput,
                 checkInputDeletion,
-                initHud,
+                initSceneGame,
                 quitScene};
         }
     } // namespace Menu
