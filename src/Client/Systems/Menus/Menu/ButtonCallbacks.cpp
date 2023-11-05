@@ -10,9 +10,11 @@
 #include "B-luga-graphics/Raylib/Raylib.hpp"
 #include "B-luga/Logger.hpp"
 #include "B-luga/SceneManager.hpp"
+#include "B-luga/SystemManagers/SystemManagersDirector.hpp"
 #include "NitworkClient.hpp"
 #include "ResourcesManager.hpp"
 #include "SelectLobbySystems.hpp"
+#include "Parallax.hpp"
 #include "init.hpp"
 
 namespace Menu {
@@ -190,6 +192,17 @@ namespace Menu {
                 if (arrInputBox[id].name == "port") {
                     Nitwork::NitworkClient::getInstance().createForkedServer(arrInputBox[id].text);
                 }
+            }
+        }
+
+        void changeParallax()
+        {
+            auto ids = Registry::getInstance().getEntitiesByComponents({typeid(Types::Parallax)});
+
+            switch(Systems::Parallax::ActualParallax::getInstance().getActualParallaxType()) {
+                case JsonType::DEFAULT_PARALLAX: Systems::Parallax::ActualParallax::getInstance().setActualParralaxType(JsonType::PARALLAX_2); break;
+                case JsonType::PARALLAX_2: Systems::Parallax::ActualParallax::getInstance().setActualParralaxType(JsonType::DEFAULT_PARALLAX); break;
+                default: Systems::Parallax::ActualParallax::getInstance().setActualParralaxType(JsonType::DEFAULT_PARALLAX); break;
             }
         }
     } // namespace Callback

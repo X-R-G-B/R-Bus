@@ -195,6 +195,7 @@ namespace Systems {
             }
             try {
                 Parallax::initParalax();
+                Logger::info("Init Parallax");
                 nlohmann::json jsonData = Json::getInstance().getDataByJsonType<nlohmann::json>(
                     ResourcesManager::getPathByJsonType(JsonType::MENU),
                     "menu");
