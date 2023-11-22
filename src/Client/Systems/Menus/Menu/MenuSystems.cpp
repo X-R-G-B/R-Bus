@@ -236,20 +236,26 @@ namespace Systems {
                 }
                 Registry::getInstance().getClock().restart(clockId);
                 switch (Scene::SceneManager::getInstance().getCurrentScene()) {
-                    case MENU: Logger::fatal("in menu"); Scene::SceneManager::getInstance().stop(); break;
+                    case MENU:
+                        Scene::SceneManager::getInstance().stop();
+                        break;
                     case CREATE_LOBBY_SCENE:
-                        Logger::fatal("in select create lobby");
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
-                    case SELECT_LOBBY: Logger::fatal("in select lobby"); Scene::SceneManager::getInstance().changeScene(MENU); break;
-                    case CREATE_SERVER_SCENE: Logger::fatal("in create server"); Scene::SceneManager::getInstance().changeScene(MENU); break;
+                    case SELECT_LOBBY:
+                        Scene::SceneManager::getInstance().changeScene(MENU);
+                        break;
+                    case CREATE_SERVER_SCENE: 
+                        Scene::SceneManager::getInstance().changeScene(MENU);
+                        break;
                     case GAME:
-                        Logger::fatal("in game");
                         Nitwork::NitworkClient::getInstance().disconnectLobby();
                         Types::WaveInfos::getInstance().reset();
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
-                    case LOADING_SCREEN: Scene::SceneManager::getInstance().stop(); break;
+                    case LOADING_SCREEN:
+                        Scene::SceneManager::getInstance().stop();
+                        break;
                 }
             }
         }
