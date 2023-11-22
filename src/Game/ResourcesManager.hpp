@@ -185,8 +185,13 @@ class ResourcesManager {
 
             if (!ResourcesManager::isExists(path_tmp.string(), "share")
                 || !ResourcesManager::isExists(path_tmp.string(), "bin")) {
-                Logger::fatal("RESOURCE_MANAGER: Path don't contain OK: " + path_tmp.string());
-                return ResourcesManager::getRessourcePathNormal(pathFolderInit);
+                Logger::warn("RESOURCE_MANAGER: Path don't contain OK: " + path_tmp.string());
+                path_tmp = path_tmp.parent_path();
+                if (!ResourcesManager::isExists(path_tmp.string(), "share")
+                    || !ResourcesManager::isExists(path_tmp.string(), "bin")) {
+                    Logger::warn("RESOURCE_MANAGER: Path don't contain OK: " + path_tmp.string());
+                    return ResourcesManager::getRessourcePathNormal(pathFolderInit);
+                }
             }
             return path_tmp.string();
         }
@@ -196,7 +201,12 @@ class ResourcesManager {
             boost::filesystem::path path_tmp = pathFolderInit;
 
             if (!ResourcesManager::isExists(path_tmp.string(), "assets")) {
-                Logger::fatal("RESOURCE_MANAGER: Path don't contain OK: " + path_tmp.string());
+                Logger::warn("RESOURCE_MANAGER: Path don't contain OK: " + path_tmp.string());
+                path_tmp = path_tmp.parent_path();
+                if (!ResourcesManager::isExists(path_tmp.string(), "assets")) {
+                    Logger::warn("RESOURCE_MANAGER: Path don't contain OK: " + path_tmp.string());
+                    return "";
+                }
                 return "";
             }
             return path_tmp.string();
