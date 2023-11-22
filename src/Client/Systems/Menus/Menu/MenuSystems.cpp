@@ -236,26 +236,18 @@ namespace Systems {
                 }
                 Registry::getInstance().getClock().restart(clockId);
                 switch (Scene::SceneManager::getInstance().getCurrentScene()) {
-                    case MENU:
-                        Scene::SceneManager::getInstance().stop();
-                        break;
+                    case MENU: Scene::SceneManager::getInstance().stop(); break;
                     case CREATE_LOBBY_SCENE:
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
-                    case SELECT_LOBBY:
-                        Scene::SceneManager::getInstance().changeScene(MENU);
-                        break;
-                    case CREATE_SERVER_SCENE: 
-                        Scene::SceneManager::getInstance().changeScene(MENU);
-                        break;
+                    case SELECT_LOBBY: Scene::SceneManager::getInstance().changeScene(MENU); break;
+                    case CREATE_SERVER_SCENE: Scene::SceneManager::getInstance().changeScene(MENU); break;
                     case GAME:
                         Nitwork::NitworkClient::getInstance().disconnectLobby();
                         Types::WaveInfos::getInstance().reset();
                         Scene::SceneManager::getInstance().changeScene(SELECT_LOBBY);
                         break;
-                    case LOADING_SCREEN:
-                        Scene::SceneManager::getInstance().stop();
-                        break;
+                    case LOADING_SCREEN: Scene::SceneManager::getInstance().stop(); break;
                 }
             }
         }
