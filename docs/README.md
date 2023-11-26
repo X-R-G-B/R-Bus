@@ -52,6 +52,21 @@ There are two ways to install R-Bus:
 
 </details>
 
+## :space_invader: How to play
+
+| Key         | Action                    |
+|-------------|---------------------------|
+| Left arrow  | Move left                 |
+| Right arrow | Move right                |
+| Up arrow    | Move up                   |
+| Down arrow  | Move down                 |
+| Space       | Shoot normal bullets     |
+| C           | Shoot fast bullets       |
+| V           | Shoot bouncing bullets   |
+| B           | Shoot penetrating bullets|
+| Esc         | Go back                   |
+
+
 ## :book: Documentation
 - [R-Bus Documentation](https://x-r-g-b.github.io/R-Bus/)
 
