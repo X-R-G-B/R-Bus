@@ -34,6 +34,14 @@ jobs:
           curl -sSL $url | tar -xz --directory=./mdbook
           echo `pwd`/mdbook >> $GITHUB_PATH
 
+      - name: Install emojify
+        if: steps.filter.outputs.docs == 'true' || steps.filter.outputs.docs2 == 'true' || github.ref == 'refs/heads/main'
+        run: |
+          wget --no-verbose https://github.com/shonfeder/emojitsu/releases/download/0.1.1/gh-actions-emojitsu
+          chmod +x gh-actions-emojitsu
+          # Emojify the markdown
+          find . -type f -name "*.md" -exec ./gh-actions-emojitsu emojify -i {} \;
+
       - name: Build Book
         if: steps.filter.outputs.docs == 'true' || steps.filter.outputs.docs2 == 'true' || github.ref == 'refs/heads/main'
         run: mdbook build
